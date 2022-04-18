@@ -1,0 +1,18 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/master/.vs/TTG Tools/v15/Server/sqlite3
+/master/.vs/TTG Tools/v15
+/master/bin
+/master/obj
+/master/zlib/zlib.net.dll
+/.dropbox
+/desktop.ini
+/master/.vs/TTG Tools/v14
+/master/.vs/TTG Tools/v16/Server/sqlite3
+/master/.vs/TTG Tools/v16
+/master/Старый рабочий код
+/master/WorkedOldCode.txt
+/Старая версия TTG Tools
+/master/packages
