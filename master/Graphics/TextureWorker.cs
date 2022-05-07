@@ -794,7 +794,8 @@ namespace TTG_Tools
             tex.Tex.Textures[i].BlockSize = BitConverter.ToInt32(tmp, 0);
             poz += 4;
 
-            if (checkHeader == "6VSM" && tex.SomeValue == 9)
+            //if (checkHeader == "6VSM" && tex.SomeValue == 9)
+            if (((checkHeader == "6VSM") || (checkHeader == "5VSM")) && tex.SomeValue >= 8)
             {
                 poz += 4; //Skip Mip size
             }
@@ -1292,7 +1293,8 @@ namespace TTG_Tools
                 bw.Write(tex.Height);
                 pos += 4;
 
-                if (checkHeader == "6VSM" && tex.SomeValue == 9)
+                //if (checkHeader == "6VSM" && tex.SomeValue == 9)
+                if (((checkHeader == "6VSM") || (checkHeader == "5VSM")) && tex.SomeValue >= 8)
                 {
                     bw.Write(tex.Faces);
                     pos += 4;
@@ -1307,7 +1309,8 @@ namespace TTG_Tools
                 bw.Write(tex.block);
                 pos += tex.block.Length;
 
-                if(tex.SomeValue == 9)
+                //if(tex.SomeValue == 9)
+                if (tex.SomeValue >= 8)
                 {
                     bw.Write(tex.subBlock2.Block);
                     pos += tex.subBlock2.Size;
@@ -1347,7 +1350,8 @@ namespace TTG_Tools
                         bw.Write(tex.Tex.Textures[i].BlockSize);
                         pos += 4;
 
-                        if (checkHeader == "6VSM" && tex.SomeValue == 9)
+                        //if (checkHeader == "6VSM" && tex.SomeValue == 9)
+                        if (((checkHeader == "6VSM") || (checkHeader == "5VSM")) && tex.SomeValue >= 8)
                         {
                             bw.Write(tex.Tex.Textures[i].MipSize);
                             pos += 4;
@@ -1378,7 +1382,8 @@ namespace TTG_Tools
                         bw.Write(tex.Tex.Textures[i].BlockSize);
                         pos += 4;
 
-                        if (checkHeader == "6VSM" && tex.SomeValue == 9)
+                        //if (checkHeader == "6VSM" && tex.SomeValue == 9)
+                        if (((checkHeader == "6VSM") || (checkHeader == "5VSM")) && tex.SomeValue >= 8)
                         {
                             bw.Write(tex.Tex.Textures[i].MipSize);
                             pos += 4;
@@ -1803,7 +1808,8 @@ namespace TTG_Tools
             tex.Height = BitConverter.ToInt32(tmp, 0);
             poz += 4;
 
-            if(checkHeader == "6VSM" && tex.SomeValue == 9)
+            //if(checkHeader == "6VSM" && tex.SomeValue == 9)
+            if (((checkHeader == "6VSM") || (checkHeader == "5VSM")) && tex.SomeValue >= 8)
             {
                 tmp = new byte[4];
                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
@@ -1839,6 +1845,7 @@ namespace TTG_Tools
                 case 7:
                     blSize = 0x34;
                     break;
+                case 8:
                 case 9:
                     blSize = 0x38;
                     break;
@@ -1851,7 +1858,8 @@ namespace TTG_Tools
 
             poz += tex.block.Length;
 
-            if(tex.SomeValue == 9)
+            //if(tex.SomeValue == 9)
+            if (tex.SomeValue >= 8)
             {
                 tmp = new byte[4];
                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
@@ -1931,7 +1939,8 @@ namespace TTG_Tools
 
             AdditionalInfo = "Texture format: " + format + ". Mip count: " + Convert.ToString(tex.Mip);
 
-            if(checkHeader == "6VSM" && tex.SomeValue == 9)
+            //if(checkHeader == "6VSM" && tex.SomeValue == 9)
+            if (((checkHeader == "6VSM") || (checkHeader == "5VSM")) && tex.SomeValue >= 8)
             {
                 AdditionalInfo += ". Faces: " + Convert.ToString(tex.Faces) + ". Array members: " + Convert.ToString(tex.ArrayMembers);
             }

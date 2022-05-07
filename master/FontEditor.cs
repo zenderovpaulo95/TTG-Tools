@@ -741,10 +741,11 @@ namespace TTG_Tools
                         Form.ActiveForm.Text = "Font Editor. Opened file " + FileName;
 
                     }
-            catch
+            catch(Exception ex)
                 {
                     binContent = null;
                     GC.Collect();
+                    MessageBox.Show("Unknown error: " + ex.Message);
                 }
             }
                 }
