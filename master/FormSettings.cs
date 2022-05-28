@@ -51,12 +51,11 @@ namespace TTG_Tools
             MainMenu.settings.deleteDDSafterImport = checkBoxDDS_after_import.Checked;
             MainMenu.settings.pathForInputFolder = textBoxInputFolder.Text;
             MainMenu.settings.pathForOutputFolder = textBoxOutputFolder.Text;
-            MainMenu.settings.additionalChar = textBoxAdditionalChar.Text;
             MainMenu.settings.importingOfName = checkBoxImportingOfNames.Checked;
             MainMenu.settings.sortSameString = checkBoxSortStrings.Checked;
             MainMenu.settings.exportRealID = checkBoxExportRealID.Checked;
+            MainMenu.settings.clearMessages = clearMessagesCB.Checked;
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
-            else if (rbNonNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 1;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 2;
 
             //MainMenu.settings.unicodeSupport = checkUnicode.Checked;
@@ -90,13 +89,11 @@ namespace TTG_Tools
             {
                 rbNormalUnicode.Checked = true;
                 MainMenu.settings.unicodeSettings = 0;
-                rbNonNormalUnicode.Enabled = false;
                 rbNonNormalUnicode2.Enabled = false;
                 rbNormalUnicode.Enabled = false;
             }
             else
             {
-                rbNonNormalUnicode.Enabled = true;
                 rbNonNormalUnicode2.Enabled = true;
                 rbNormalUnicode.Enabled = true;
             }
@@ -115,17 +112,16 @@ namespace TTG_Tools
             checkBoxImportingOfNames.Checked = MainMenu.settings.importingOfName;
             checkBoxSortStrings.Checked = MainMenu.settings.sortSameString;
             checkBoxExportRealID.Checked = MainMenu.settings.exportRealID;
+            clearMessagesCB.Checked = MainMenu.settings.clearMessages;
             textBoxInputFolder.Text = MainMenu.settings.pathForInputFolder;
             textBoxOutputFolder.Text = MainMenu.settings.pathForOutputFolder;
-            textBoxAdditionalChar.Text=MainMenu.settings.additionalChar;
+
             switch (MainMenu.settings.unicodeSettings)
             {
                 case 0:
                     rbNormalUnicode.Checked = true;
                     break;
                 case 1:
-                    rbNonNormalUnicode.Checked = true;
-                    break;
                 case 2:
                     rbNonNormalUnicode2.Checked = true;
                     break;
@@ -133,7 +129,6 @@ namespace TTG_Tools
                     rbNormalUnicode.Checked = true;
                     break;
             }
-            //checkUnicode.Checked = MainMenu.settings.unicodeSupport;
         }
     }
 }

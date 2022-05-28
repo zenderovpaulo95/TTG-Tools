@@ -25,10 +25,9 @@ namespace TTG_Tools
         private bool _deleteDDSafterImport;
         private bool _importingOfName;
         private bool _sortSameString;
-        private string _AdditionalChar = "";
         private bool _exportRealID;
         private int _unicodeSettings;
-        private bool _ignoreAdditionalChar;
+        private bool _clearMessages; //For Auto (De)Packer
 
         private bool _encLangdb;
         private bool _encDDSonly;
@@ -74,6 +73,19 @@ namespace TTG_Tools
                 _pathForOutputFolder = value;
             }
         }
+
+        [XmlAttribute("clearMessages")]
+        public bool clearMessages
+        {
+            get
+            {
+                return _clearMessages;
+            }
+            set
+            {
+                _clearMessages = value;
+            }
+        }
         
         [XmlAttribute("ASCII_N")]
         public int ASCII_N
@@ -87,18 +99,7 @@ namespace TTG_Tools
                 _ASCII_N = value;
             }
         }
-        [XmlAttribute("AdditionalChar")]
-        public string additionalChar
-        {
-            get
-            {
-                return _AdditionalChar;
-            }
-            set
-            {
-                _AdditionalChar = value;
-            }
-        }
+        
         [XmlAttribute("deleteD3DTXafterImport")]
         public bool deleteD3DTXafterImport
         {
@@ -111,6 +112,7 @@ namespace TTG_Tools
                 _deleteD3DTXafterImport = value;
             }
         }
+
         [XmlAttribute("deleteDDSafterImport")]
         public bool deleteDDSafterImport
         {
@@ -398,20 +400,6 @@ namespace TTG_Tools
             }
         }
 
-        [XmlAttribute("ignoreAdditionalChar")]
-
-        public bool ignoreAdditionalChar
-        {
-            get
-            {
-                return _ignoreAdditionalChar;
-            }
-            set
-            {
-                _ignoreAdditionalChar = value;
-            }
-        }
-
         [XmlAttribute("swizzleNintendoSwitch")]
 
         public bool swizzleNintendoSwitch
@@ -429,7 +417,6 @@ namespace TTG_Tools
         public Settings(
             string _pathForInputFolder,
             string _pathForOutputFolder,
-            string _additionalChar,
             int _ASCII_N,
             bool _deleteD3DTXafterImport,
             bool _deleteDDSafterImport,
@@ -452,15 +439,14 @@ namespace TTG_Tools
             bool _encryptLuaInArchive,
             bool _compressArchive,
             bool _oldXmode,
-            int archiveFormat,
+            int _archiveFormat,
             int _versionArchiveIndex,
-            bool _ignoreAdditionalChar,
-            bool _swizzleNintendoSwitch)
+            bool _swizzleNintendoSwitch,
+            bool _clearMessages)
         {
             this.ASCII_N = _ASCII_N;
             this.pathForInputFolder = _pathForInputFolder;
             this.pathForOutputFolder = _pathForOutputFolder;
-            this.additionalChar = _AdditionalChar;
             this.deleteD3DTXafterImport = _deleteD3DTXafterImport;
             this.deleteDDSafterImport = _deleteDDSafterImport;
             this.importingOfName = _importingOfName;
@@ -483,8 +469,9 @@ namespace TTG_Tools
             this.compressArchive = _compressArchive;
             this.oldXmode = _oldXmode;
             this.archiveFormat = _archiveFormat;
-            this.ignoreAdditionalChar = _ignoreAdditionalChar;
+            this.versionArchiveIndex = _versionArchiveIndex;
             this.swizzleNintendoSwitch = _swizzleNintendoSwitch;
+            this.clearMessages = _clearMessages;
         }
 
         public Settings()

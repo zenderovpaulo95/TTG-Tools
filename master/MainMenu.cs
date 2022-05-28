@@ -12,7 +12,7 @@ namespace TTG_Tools
 {
     public partial class MainMenu : Form
     {
-        public static Settings settings = new Settings("", "", "ГЁЙЦУКЕНШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮгёйцукеншщзхъфывапролджэячсмитьбю", 1251, false, false, false, true, false, 0, false, false, false, false, false, false, 0, 0, "", "", "", false, false, false, false, 0, 0, false, false);
+        public static Settings settings = new Settings("", "", 1251, false, false, false, true, false, 0, false, false, false, false, false, false, 0, 0, "", "", "", false, false, false, false, 0, 0, false, false);
 
         [DllImport("kernel32.dll")]
         public static extern void SetProcessWorkingSetSize(IntPtr hWnd, int i, int j);
@@ -75,21 +75,6 @@ namespace TTG_Tools
                 XmlSerializer settingsDeserializer = new System.Xml.Serialization.XmlSerializer(typeof(Settings));
                 settings = (Settings)settingsDeserializer.Deserialize(reader);
                 reader.Close();
-
-                if ((settings.additionalChar == "") && !settings.ignoreAdditionalChar)
-                {
-                    DialogResult status = MessageBox.Show("TTG Tools didn't find additional characters for Tales From the Borderlands (old version)\r\nand Game of Thrones for correct showing text in game. Open settings form? You can ignore that message by click \"Cancel\" button.", "Open settings form?", MessageBoxButtons.YesNoCancel);
-                    if (status == DialogResult.Yes)
-                    {
-                        Form formSettings = new FormSettings();
-                        formSettings.Show();
-                    }
-                    if(status == DialogResult.Cancel)
-                    {
-                        settings.ignoreAdditionalChar = true;
-                        Settings.SaveConfig(settings);
-                    }
-                }
 
                 #region Adding blowfish encryption keys
                 byte[] TelltaleTexasHoldEm = { 0x8f, 0xd8, 0x98, 0x99, 0x96, 0xbc, 0xa2, 0xae, 0xd7, 0xde, 0xc5, 0xd3, 0x9d, 0xca, 0xc5, 0xa7, 0xd8, 0x95, 0x92, 0xe9, 0x8d, 0xe4, 0xa1, 0xd4, 0xd7, 0x71, 0xde, 0xc0, 0x9e, 0xde, 0xb1, 0xa3, 0xca, 0xaa, 0xa4, 0x9f, 0xd0, 0xce, 0x9e, 0xde, 0xc5, 0xe3, 0xe3, 0xd1, 0xa9, 0x82, 0xc1, 0xda, 0xaa, 0xd5, 0x76, 0xa2, 0xdb, 0xd7, 0xb1 };

@@ -225,15 +225,6 @@ namespace TTG_Tools
                     case 0:
                         hexData = (byte[])UnicodeEncoding.UTF8.GetBytes(data);
                         break;
-                    case 1:
-                        string alphabet = MainMenu.settings.additionalChar;
-                                    //for (int a = alphabet.Length - 1; a > 0; a--)
-                        for (int a = 0; a < alphabet.Length; a++)
-                        {
-                           data = data.Replace(("Г" + alphabet[a].ToString()), alphabet[a].ToString());
-                        }
-                        hexData = (byte[])UnicodeEncoding.UTF8.GetBytes(data);
-                        break;
                     case 2:
                         hexData = (byte[])Encoding.UTF8.GetBytes(data);
                         hexData = Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(1252), hexData);

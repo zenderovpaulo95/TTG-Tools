@@ -139,6 +139,12 @@ Maybe some games doesn't work. Please contact with me if you will have problems.
 ===
 [Version history]
 
+v1.0.11 (28.05.2022)
+- TTG Tools:
+Removed support additional char for games Tales from the Borderlands and Game of Thrones (recommend extract your translated files with old versions and reimport this new version if your ASCII region is not 1252.)
++ TTG Tools/Auto (De)Packer:
+Add option clear messages after extract/repack files in settings form.
+
 v.1.0.10 (09.03.2022)
 + Font Editor:
 Minor fixes for support Walking Dead: Michonne

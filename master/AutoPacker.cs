@@ -71,6 +71,8 @@ namespace TTG_Tools
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (MainMenu.settings.clearMessages) listBox1.Items.Clear();
+
             try
             {
                 DirectoryInfo di = new DirectoryInfo(MainMenu.settings.pathForInputFolder);
@@ -739,6 +741,8 @@ namespace TTG_Tools
 
         private void buttonDecrypt_Click(object sender, EventArgs e)
         {
+            if (MainMenu.settings.clearMessages) listBox1.Items.Clear();
+
             string versionOfGame = " ";//CheckVersionOfGameFromCombobox(comboBox1.SelectedIndex);
             numKey = comboBox1.SelectedIndex;
             selected_index = comboBox2.SelectedIndex;

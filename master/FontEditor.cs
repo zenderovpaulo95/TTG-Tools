@@ -1464,8 +1464,6 @@ namespace TTG_Tools
             {
                 FileInfo fi = new FileInfo(openFD.FileName);
 
-                int charsCount = 0;
-
                 string[] strings = File.ReadAllLines(fi.FullName);
 
                 int ch = -1;

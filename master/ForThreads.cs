@@ -676,32 +676,13 @@ namespace TTG_Tools
                                 landb[all_text[q].number - 1].lenght_of_name = BitConverter.GetBytes(landb[all_text[q].number - 1].name.Length);
                             }
 
-                            if (versionOfGame == "TFTB")
+                            if ((versionOfGame == "TFTB") && (MainMenu.settings.unicodeSettings == 2))
                             {
-                                if (MainMenu.settings.unicodeSettings == 1)
-                                {
-                                    if (all_text[q].text.IndexOf("\\0") > 0)
-                                    {
-                                        all_text[q].text = all_text[q].text.Replace("\\0", "\0");
-                                        return;
-                                    }
-
-
-                                    string alphabet = MainMenu.settings.additionalChar;
-
-                                    for (int a = 0; a < alphabet.Length; a++)
-                                    {
-                                        all_text[q].text = all_text[q].text.Replace(alphabet[a].ToString(), ("Г" + alphabet[a]));
-                                    }
-                                }
-                                else if(MainMenu.settings.unicodeSettings == 2)
-                                {
                                     byte[] tmp = UnicodeEncoding.UTF8.GetBytes(all_text[q].text);
                                     tmp = Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmp);
                                     tmp = Encoding.Convert(Encoding.GetEncoding(1252), Encoding.UTF8, tmp);
                                     all_text[q].text = UnicodeEncoding.UTF8.GetString(tmp);
                                     tmp = null;
-                                }
                             }
 
                             //index = all_text[q].number;
