@@ -637,6 +637,189 @@ namespace TTG_Tools
             }
         }
 
+        public void ExportPROP(FileInfo inputFile, string destFilePath)
+        {
+            FileStream fs = new FileStream(inputFile.FullName, FileMode.Open);
+            BinaryReader br = new BinaryReader(fs);
+
+            if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + destFilePath)) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + destFilePath);
+
+            FileStream fsw = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + destFilePath, FileMode.CreateNew);
+            StreamWriter sw = new StreamWriter(fsw);
+
+            try
+            {
+                byte[] header = br.ReadBytes(4);
+                int count = br.ReadInt32();
+                for(int i = 0; i < count; i++)
+                {
+                    int len = br.ReadInt32();
+                    byte[] name = br.ReadBytes(len);
+                    byte[] block = br.ReadBytes(4);
+                }
+
+                int one = br.ReadInt32();
+                int zero = br.ReadInt32();
+
+                ClassesStructs.PropertyClass.ClassPropertySet propClass = new ClassesStructs.PropertyClass.ClassPropertySet();
+                propClass.properties.imProps.block_length = br.ReadInt32();
+                propClass.properties.imProps.count = br.ReadInt32();
+
+                propClass.properties.imProps.import_props = new ClassesStructs.PropertyClass.ClassPropertySet.im_props[propClass.properties.imProps.count];
+
+                for(int i = 0; i < propClass.properties.imProps.count; i++)
+                {
+                    propClass.properties.imProps.import_props[i].str_name_len = br.ReadInt32();
+                    byte[] tmp = br.ReadBytes(propClass.properties.imProps.import_props[i].str_name_len);
+                    propClass.properties.imProps.import_props[i].str_name = Encoding.ASCII.GetString(tmp);
+
+                    sw.WriteLine("refs " + propClass.properties.imProps.import_props[i].str_name);
+                }
+
+                propClass.properties.block_length = br.ReadInt32();
+                propClass.properties.count = br.ReadInt32();
+                propClass.properties.vals = new ClassesStructs.PropertyClass.ClassPropertySet.prop_values[propClass.properties.count];
+
+                for(int i = 0; i < propClass.properties.count; i++)
+                {
+                    propClass.properties.vals[i].crc64_value = br.ReadBytes(8);
+                    propClass.properties.vals[i].str_val_len = br.ReadInt32();
+                    propClass.properties.vals[i].str_val_len = br.ReadInt32();
+                    byte[] tmp_str = br.ReadBytes(propClass.properties.vals[i].str_val_len);
+                    propClass.properties.vals[i].str_val = Encoding.ASCII.GetString(tmp_str);
+                    propClass.properties.vals[i].count_values = br.ReadInt32();
+
+                    propClass.properties.vals[i].values_s = new ClassesStructs.PropertyClass.ClassPropertySet.values[propClass.properties.vals[i].count_values];
+
+                    string str_tmp;
+                    int tmp_i;
+
+                    if (propClass.properties.vals[i].str_val.Contains("class Handle<"))
+                    {
+                        int beg = propClass.properties.vals[i].str_val.IndexOf('<') + 1;
+                        int end = propClass.properties.vals[i].str_val.IndexOf('>');
+                        str_tmp = propClass.properties.vals[i].str_val.Substring(beg, end - beg);
+                        propClass.properties.vals[i].str_val = str_tmp;
+                    }
+
+                    for (int j = 0; j < propClass.properties.vals[i].count_values; j++)
+                    {
+                        str_tmp = "";
+
+                        propClass.properties.vals[i].values_s[j].crc64_val_type = br.ReadBytes(8);
+                        propClass.properties.vals[i].values_s[j].block_len_str_type = br.ReadInt32();
+                        propClass.properties.vals[i].values_s[j].str_type_len = br.ReadInt32();
+                        tmp_str = br.ReadBytes(propClass.properties.vals[i].values_s[j].str_type_len);
+                        propClass.properties.vals[i].values_s[j].str_type = "\"" + Encoding.ASCII.GetString(tmp_str) + "\"";
+
+                        switch (propClass.properties.vals[i].str_val)
+                        {
+                            case "int":
+                                tmp_str = br.ReadBytes(4);
+                                str_tmp = propClass.properties.vals[i].str_val + " ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"" + BitConverter.ToInt32(tmp_str, 0).ToString() + "\"";
+                                break;
+
+                            case "bool":
+                                tmp_str = br.ReadBytes(1);
+                                str_tmp = propClass.properties.vals[i].str_val + " ";
+                                propClass.properties.vals[i].values_s[j].str_val = BitConverter.ToBoolean(tmp_str, 0) == true ? "\"True\"" : "\"False\"";
+                                break;
+
+                            case "float":
+                                tmp_str = br.ReadBytes(4);
+                                str_tmp = propClass.properties.vals[i].str_val + " ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"" + BitConverter.ToSingle(tmp_str, 0).ToString() + "\"";
+                                break;
+
+                            case "class String":
+                                tmp_i = br.ReadInt32();
+                                tmp_str = br.ReadBytes(tmp_i);
+                                str_tmp = "string ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"" + Encoding.ASCII.GetString(tmp_str).ToString() + "\"";
+                                break;
+
+                            case "class Color":
+                                float[] colors = new float[4]; //RGBA
+                                colors[0] = br.ReadSingle();
+                                colors[1] = br.ReadSingle();
+                                colors[2] = br.ReadSingle();
+                                colors[3] = br.ReadSingle();
+                                str_tmp = "color ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"(" + Convert.ToString(colors[0]) + ", " + Convert.ToString(colors[1]) + ", " + Convert.ToString(colors[2]) + ", " + Convert.ToString(colors[3]) + ")\"";
+                                break;
+
+                            case "class Vector2":
+                                float[] vec2 = new float[2];
+                                vec2[0] = br.ReadSingle();
+                                vec2[1] = br.ReadSingle();
+
+                                str_tmp = "vec2 ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"(" + Convert.ToString(vec2[0]) + ", " + Convert.ToString(vec2[1]) + ")\"";
+                                break;
+
+                            case "class Vector3":
+                                float[] vec3 = new float[3];
+                                vec3[0] = br.ReadSingle();
+                                vec3[1] = br.ReadSingle();
+                                vec3[2] = br.ReadSingle();
+
+                                str_tmp = "vec3 ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"(" + Convert.ToString(vec3[0]) + ", " + Convert.ToString(vec3[1]) + ", " + Convert.ToString(vec3[2]) + ")\"";
+                                break;
+
+                            case "class Rect":
+                                int[] rect = new int[4];
+
+                                rect[0] = br.ReadInt32();
+                                rect[1] = br.ReadInt32();
+                                rect[2] = br.ReadInt32();
+                                rect[3] = br.ReadInt32();
+
+                                str_tmp = "rect ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"(" + Convert.ToString(rect[0]) + ", " + Convert.ToString(rect[1]) + ", " + Convert.ToString(rect[2]) + ", " + Convert.ToString(rect[3]) + ")\"";
+                                break;
+
+                            case "class Font":
+                                tmp_i = br.ReadInt32();
+                                tmp_str = br.ReadBytes(tmp_i);
+                                str_tmp = "Font ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"" + Encoding.ASCII.GetString(tmp_str).ToString() + "\"";
+                                break;
+
+                            case "class DialogResource":
+                                tmp_i = br.ReadInt32();
+                                tmp_str = br.ReadBytes(tmp_i);
+                                str_tmp = "DialogResource ";
+                                propClass.properties.vals[i].values_s[j].str_val = "\"" + Encoding.ASCII.GetString(tmp_str).ToString() + "\"";
+                                break;
+                        }
+
+                        str_tmp += propClass.properties.vals[i].values_s[j].str_type + " : " + propClass.properties.vals[i].values_s[j].str_val;
+
+                        sw.WriteLine(str_tmp);
+                    }
+                }
+
+                br.Close();
+                fs.Close();
+
+                sw.Close();
+                fsw.Close();
+
+                ReportForWork("File " + inputFile.Name + " successfully extracted.");
+            }
+            catch
+            {
+                if (sw != null) sw.Close();
+                if (fsw != null) fsw.Close();
+
+                if(br != null) br.Close();
+                if(fs != null) fs.Close();
+                ReportForWork("Something wrong with file " + inputFile.Name);
+            }
+        }
+
         public void ImportTXTinLANDB(FileInfo[] inputFiles, FileInfo[] fileDestination, int i, int j, string pathOutput, ref bool correctWork, string versionOfGame)
         {
             int index = -1;
@@ -870,8 +1053,10 @@ namespace TTG_Tools
                 destinationForExportList.Add(".d3dtx");
                 destinationForExportList.Add(".landb");
                 destinationForExportList.Add(".dlog");
+                destinationForExportList.Add(".prop");
 
                 List<int> extractedFormat = new List<int>();
+                extractedFormat.Add(-1);
                 extractedFormat.Add(-1);
                 extractedFormat.Add(-1);
                 extractedFormat.Add(-1);
@@ -914,6 +1099,12 @@ namespace TTG_Tools
                                 case ".dlog":
                                     ExtractDlogFile(inputFiles, i);
                                     extractedFormat[3] = 3;
+                                    break;
+                                case ".prop":
+                                    int lenExt = inputFiles[i].Extension.Length;
+                                    string f_name = inputFiles[i].Name.Remove(inputFiles[i].Name.Length - lenExt, lenExt) + ".txt";
+                                    ExportPROP(inputFiles[i], f_name);
+                                    extractedFormat[4] = 4;
                                     break;
                                 default:
                                     {
