@@ -59,7 +59,20 @@ namespace TTG_Tools
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 2;
 
             //MainMenu.settings.unicodeSupport = checkUnicode.Checked;
-            Settings.SaveConfig(MainMenu.settings);
+            if (((MainMenu.settings.pathForInputFolder != "") && (Directory.Exists(MainMenu.settings.pathForInputFolder)))
+                && ((MainMenu.settings.pathForOutputFolder != "") && (Directory.Exists(MainMenu.settings.pathForOutputFolder))))
+            {
+                Settings.SaveConfig(MainMenu.settings);
+
+                if (Program.FirstTime)
+                {
+                    MessageBox.Show("Please restart application to confirm settings");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please set a correct paths for input and output folders!");
+            }
         }
 
         private void buttonOkSettings_Click(object sender, EventArgs e)

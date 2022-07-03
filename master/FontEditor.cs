@@ -371,6 +371,15 @@ namespace TTG_Tools
 
                         if (BitConverter.ToString(tmp) == "81-53-37-63-9E-4A-3A-9A")
                         {
+                            if((countElements == 1) && (Encoding.ASCII.GetString(check_header) == "6VSM"))
+                            {
+                                MessageBox.Show("This font is a vector font. Try use Auto (De)Packer.");
+                                font = null;
+                                GC.Collect();
+                                edited = false;
+                                return;
+                            }
+
                             for (int i = 0; i < countElements; i++)
                             {
                                 font.binElements[i] = new byte[8];
