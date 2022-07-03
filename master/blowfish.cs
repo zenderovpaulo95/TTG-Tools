@@ -54,6 +54,7 @@ namespace BlowFishCS
         //  http://etherhack.co.uk/symmetric/blowfish/blowfish.html
         private bool nonStandardMethod;
 
+
         #endregion
 
         #region "Constructors"
