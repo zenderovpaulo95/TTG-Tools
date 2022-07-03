@@ -138,6 +138,11 @@ Maybe some games doesn't work. Please contact with me if you will have problems.
 
 ===
 [Version history]
+v.1.0.12 (03.07.2022)
++ TTG Tools:
+Now if at first time launches settings form and after set up settings application relaunch as normal.
++ Font editor
+Return message about vector fonts.
 
 v1.0.11 (28.05.2022)
 - TTG Tools:
