@@ -851,56 +851,60 @@ namespace TTG_Tools
 
                     if (error == string.Empty)
                     {
-                        for (int q = 0; q < all_text.Count; q++)
+                        if (landb.Count == all_text.Count)
                         {
-                            if (MainMenu.settings.importingOfName == true)
+                            for (int q = 0; q < all_text.Count; q++)
                             {
-                                landb[all_text[q].number - 1].name = all_text[q].name;
-                                landb[all_text[q].number - 1].lenght_of_name = BitConverter.GetBytes(landb[all_text[q].number - 1].name.Length);
-                            }
+                                if (MainMenu.settings.importingOfName == true)
+                                {
+                                    landb[all_text[q].number - 1].name = all_text[q].name;
+                                    landb[all_text[q].number - 1].lenght_of_name = BitConverter.GetBytes(landb[all_text[q].number - 1].name.Length);
+                                }
 
-                            if ((versionOfGame == "TFTB") && (MainMenu.settings.unicodeSettings == 2))
-                            {
+                                if ((versionOfGame == "TFTB") && (MainMenu.settings.unicodeSettings == 2))
+                                {
                                     byte[] tmp = UnicodeEncoding.UTF8.GetBytes(all_text[q].text);
                                     tmp = Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmp);
                                     tmp = Encoding.Convert(Encoding.GetEncoding(1252), Encoding.UTF8, tmp);
                                     all_text[q].text = UnicodeEncoding.UTF8.GetString(tmp);
                                     tmp = null;
-                            }
+                                }
 
-                            //index = all_text[q].number;
+                                //index = all_text[q].number;
 
-                            if (fileDestination[j].Extension == ".txt") landb[all_text[q].number - 1].text = all_text[q].text.Replace("\r\n", "\n");
-                            else if (fileDestination[j].Extension != ".txt" && MainMenu.settings.tsvFormat) landb[all_text[q].number - 1].text = all_text[q].text;
-                            else if (fileDestination[j].Extension != ".txt" && landb[all_text[q].number - 1].text.Contains("\\n")) landb[all_text[q].number - 1].text = all_text[q].text.Replace("\\n", "\n");
+                                if (fileDestination[j].Extension == ".txt") landb[all_text[q].number - 1].text = all_text[q].text.Replace("\r\n", "\n");
+                                else if (fileDestination[j].Extension != ".txt" && MainMenu.settings.tsvFormat) landb[all_text[q].number - 1].text = all_text[q].text;
+                                else if (fileDestination[j].Extension != ".txt" && landb[all_text[q].number - 1].text.Contains("\\n")) landb[all_text[q].number - 1].text = all_text[q].text.Replace("\\n", "\n");
 
-                            if ((versionOfGame == "TFTB") && (MainMenu.settings.unicodeSettings != 1))
-                            {
-                                if (landb[all_text[q].number - 1].text.IndexOf("(ANSI)") > 0)
+                                if ((versionOfGame == "TFTB") && (MainMenu.settings.unicodeSettings != 1))
                                 {
-                                    landb[all_text[q].number - 1].text = landb[all_text[q].number - 1].text.Replace("(ANSI)", "\0");
-                                    landb[all_text[q].number - 1].lenght_of_text = BitConverter.GetBytes(landb[all_text[q].number - 1].text.Length);
+                                    if (landb[all_text[q].number - 1].text.IndexOf("(ANSI)") > 0)
+                                    {
+                                        landb[all_text[q].number - 1].text = landb[all_text[q].number - 1].text.Replace("(ANSI)", "\0");
+                                        landb[all_text[q].number - 1].lenght_of_text = BitConverter.GetBytes(landb[all_text[q].number - 1].text.Length);
+                                    }
+                                    else
+                                    {
+                                        byte[] unicode_bin = (byte[])Encoding.UTF8.GetBytes(landb[all_text[q].number - 1].text);
+                                        landb[all_text[q].number - 1].lenght_of_text = BitConverter.GetBytes(unicode_bin.Length);
+                                    }
                                 }
                                 else
                                 {
-                                    byte[] unicode_bin = (byte[])Encoding.UTF8.GetBytes(landb[all_text[q].number - 1].text);
-                                    landb[all_text[q].number - 1].lenght_of_text = BitConverter.GetBytes(unicode_bin.Length);
-                                }
-                            }
-                            else
-                            {
-                                if (landb[all_text[q].number - 1].text.IndexOf("(ANSI)") > 0)
-                                {
-                                    landb[all_text[q].number - 1].text = landb[all_text[q].number - 1].text.Replace("(ANSI)", "\0");
-                                }
+                                    if (landb[all_text[q].number - 1].text.IndexOf("(ANSI)") > 0)
+                                    {
+                                        landb[all_text[q].number - 1].text = landb[all_text[q].number - 1].text.Replace("(ANSI)", "\0");
+                                    }
 
-                                landb[all_text[q].number - 1].lenght_of_text = BitConverter.GetBytes(landb[all_text[q].number - 1].text.Length);
+                                    landb[all_text[q].number - 1].lenght_of_text = BitConverter.GetBytes(landb[all_text[q].number - 1].text.Length);
+                                }
                             }
+                            Methods.DeleteCurrentFile(pathOutput + "\\" + inputFiles[i].Name);
+                            AutoPacker.CreateLandb(header, landb, end_of_file, (pathOutput + "\\" + inputFiles[i].Name), versionOfGame);
+
+                            ReportForWork("File: " + fileDestination[j].Name + " imported in " + inputFiles[i].Name);
                         }
-                        Methods.DeleteCurrentFile(pathOutput + "\\" + inputFiles[i].Name);
-                        AutoPacker.CreateLandb(header, landb, end_of_file, (pathOutput + "\\" + inputFiles[i].Name), versionOfGame);
-
-                        ReportForWork("File: " + fileDestination[j].Name + " imported in " + inputFiles[i].Name);
+                        else ReportForWork("Import in file: " + inputFiles[i].Name + " is incorrect! Incorrect count of text file and landb file.");
                     }
                     else
                     {

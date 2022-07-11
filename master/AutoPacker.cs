@@ -487,7 +487,7 @@ namespace TTG_Tools
                             s = texts[i].Split(')');
                             if (s.Count() > 1)
                             {
-                                //тут отрезаем тупые пробелы между скобкой
+                                //Remove useless spaces (тут отрезаем тупые пробелы между скобкой)
                                 name = "";
                                 string[] temp = s[1].Split(' ');
                                 foreach (string s_temp in temp)
