@@ -95,6 +95,8 @@
     <Compile Include="blowfish.cs" />
     <Compile Include="ClassesStructs\FlagsClass.cs" />
     <Compile Include="ClassesStructs\PropertyClass.cs" />
+    <Compile Include="ClassesStructs\Text\LandbClass.cs" />
+    <Compile Include="ClassesStructs\Text\LangdbClass.cs" />
     <Compile Include="CRCs.cs" />
     <Compile Include="EncryptionVariants.cs">
       <SubType>Form</SubType>
