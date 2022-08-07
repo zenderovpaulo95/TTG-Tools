@@ -23,7 +23,20 @@ namespace TTG_Tools
         {
             public string FileName;
             public uint Offset;
-            public uint Size;
+            public uint FileOffset; //In oldest archives
+            public int Size;
+        }
+
+        void Progress(int i)
+        {
+            if (progressBar1.InvokeRequired)
+            {
+                progressBar1.Invoke(new ProgressHandler(Progress), i);
+            }
+            else
+            {
+                progressBar1.Value = i;
+            }
         }
 
         byte[] key = null;
@@ -38,7 +51,9 @@ namespace TTG_Tools
             {
                 FileStream fs = new FileStream(FileName, FileMode.Open);
                 BinaryReader br = new BinaryReader(fs);
+                uint f_off = 0;
                 int version = br.ReadInt32();
+                f_off += 4;
 
                 if(version < 2 || version > 9)
                 {
@@ -48,6 +63,7 @@ namespace TTG_Tools
 
                 int encrypted = br.ReadInt32();
                 int two = br.ReadInt32();
+                f_off += 8;
 
                 if(two != 2)
                 {
@@ -56,6 +72,7 @@ namespace TTG_Tools
                 }
 
                 int ArcSize = br.ReadInt32();
+                f_off += Convert.ToUInt32(ArcSize) + 4;
 
                 byte[] block = br.ReadBytes(ArcSize);
 
@@ -88,7 +105,8 @@ namespace TTG_Tools
                     Files[i].FileName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
                     int zero = brms.ReadInt32();
                     Files[i].Offset = brms.ReadUInt32();
-                    Files[i].Size = brms.ReadUInt32();
+                    Files[i].FileOffset = Files[i].Offset + f_off;
+                    Files[i].Size = brms.ReadInt32();
                 }
 
                 brms.Close();
@@ -157,6 +175,43 @@ namespace TTG_Tools
             }
 
             encKeyListCB.SelectedIndex = 0;
+        }
+
+        private void unpackBtn_Click(object sender, EventArgs e)
+        {
+            if(Directory.Exists(dirPathTB.Text) && File.Exists(filePathTB.Text)
+                && (FileList != null) && (FileList.Length > 0))
+            {
+                progressBar1.Minimum = 0;
+                progressBar1.Maximum = FileList.Length - 1;
+
+                FileStream fs = new FileStream(filePathTB.Text, FileMode.Open);
+                BinaryReader br = new BinaryReader(fs);
+
+                for(int i = 0; i < FileList.Length; i++)
+                {
+                    br.BaseStream.Seek(FileList[i].FileOffset, SeekOrigin.Begin);
+                    byte[] tmp = br.ReadBytes(FileList[i].Size);
+                    string FilePath = dirPathTB.Text + "\\" + FileList[i].FileName;
+
+                    if (File.Exists(FilePath)) File.Delete(FilePath);
+
+                    FileStream fsw = new FileStream(FilePath, FileMode.CreateNew);
+                    BinaryWriter bw = new BinaryWriter(fsw);
+                    bw.Write(tmp);
+                    bw.Close();
+                    fsw.Close();
+
+                    Progress(i);
+
+                    tmp = null;
+                }
+
+                br.Close();
+                fs.Close();
+
+                GC.Collect();
+            }
         }
     }
 }

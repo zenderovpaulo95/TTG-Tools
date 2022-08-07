@@ -114,6 +114,7 @@
             this.unpackBtn.TabIndex = 7;
             this.unpackBtn.Text = "Unpack";
             this.unpackBtn.UseVisualStyleBackColor = true;
+            this.unpackBtn.Click += new System.EventHandler(this.unpackBtn_Click);
             // 
             // dataGridView1
             // 
