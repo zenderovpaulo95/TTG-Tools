@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TTG_Tools</RootNamespace>
     <AssemblyName>TTG Tools</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>ttgtool.ico</ApplicationIcon>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -86,6 +86,12 @@
     <Compile Include="ArchivePacker.Designer.cs">
       <DependentUpon>ArchivePacker.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveUnpacker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveUnpacker.Designer.cs">
+      <DependentUpon>ArchiveUnpacker.cs</DependentUpon>
+    </Compile>
     <Compile Include="AutoPacker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,6 +154,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchivePacker.resx">
       <DependentUpon>ArchivePacker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveUnpacker.resx">
+      <DependentUpon>ArchiveUnpacker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AutoPacker.resx">
       <DependentUpon>AutoPacker.cs</DependentUpon>
