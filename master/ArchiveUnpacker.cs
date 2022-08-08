@@ -40,7 +40,7 @@ namespace TTG_Tools
         }
 
         byte[] key = null;
-
+        int version;
         FileStruct[] FileList;
 
         private FileStruct[] GetFileListTTARCH(string FileName)
@@ -52,7 +52,7 @@ namespace TTG_Tools
                 FileStream fs = new FileStream(FileName, FileMode.Open);
                 BinaryReader br = new BinaryReader(fs);
                 uint f_off = 0;
-                int version = br.ReadInt32();
+                version = br.ReadInt32();
                 f_off += 4;
 
                 if(version < 2 || version > 9)
@@ -190,9 +190,21 @@ namespace TTG_Tools
 
                 for(int i = 0; i < FileList.Length; i++)
                 {
+                    string format = FileList[i].FileName.Substring(FileList[i].FileName.Length - 5, 5);
                     br.BaseStream.Seek(FileList[i].FileOffset, SeekOrigin.Begin);
                     byte[] tmp = br.ReadBytes(FileList[i].Size);
-                    string FilePath = dirPathTB.Text + "\\" + FileList[i].FileName;
+                    Methods.meta_crypt(tmp, key, version, true);
+
+                    string FileName = FileList[i].FileName;
+                    if (format.ToLower() == ".lenc")
+                    {
+                        FileName = FileList[i].FileName.Remove(FileList[i].FileName.Length - 5, 5) + ".lua";
+
+                        BlowFish decLua = new BlowFish(key, version);
+                        tmp = decLua.Crypt_ECB(tmp, version, true);
+                    }
+
+                    string FilePath = dirPathTB.Text + "\\" + FileName;
 
                     if (File.Exists(FilePath)) File.Delete(FilePath);
 
