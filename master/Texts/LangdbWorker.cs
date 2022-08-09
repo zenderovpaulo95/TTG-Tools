@@ -10,11 +10,160 @@ namespace TTG_Tools.Texts
 {
     public class LangdbWorker
     {
-        public static LangdbClass GetStringsFromLangdb(byte[] block)
+        public static LangdbClass GetStringsFromLangdb(BinaryReader br, bool hasFlags)
         {
-            LangdbClass langdb = new LangdbClass();
+            try
+            {
+                LangdbClass langdb = new LangdbClass();
+                langdb.blockLength = 0;
+                int checkBlockLength = br.ReadInt32();
+                long checkSize = br.BaseStream.Length - br.BaseStream.Position + 4;
 
-            return langdb;
+                langdb.isBlockLength = false;
+
+                if (checkSize == checkBlockLength)
+                {
+                    langdb.blockLength = checkBlockLength;
+                    langdb.isBlockLength = true;
+                    langdb.langdbCount = br.ReadInt32();
+                }
+                else
+                {
+                    langdb.blockLength = -1;
+                    langdb.isBlockLength = false;
+                    langdb.langdbCount = checkBlockLength;
+                }
+
+                langdb.langdbs = new langdb[langdb.langdbCount];
+                if (hasFlags) langdb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[langdb.langdbCount];
+
+                for (int i = 0; i < langdb.langdbCount; i++)
+                {
+                    langdb.langdbs[i].anmID = br.ReadUInt32();
+                    langdb.langdbs[i].voxID = br.ReadUInt32();
+
+                    int blockSize = -1;
+
+                    if (langdb.isBlockLength) blockSize = br.ReadInt32();
+                    int stringLength = br.ReadInt32();
+                    byte[] tmp = br.ReadBytes(stringLength);
+                    langdb.langdbs[i].actorName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+
+                    if (langdb.isBlockLength) blockSize = br.ReadInt32();
+                    stringLength = br.ReadInt32();
+                    tmp = br.ReadBytes(stringLength);
+                    langdb.langdbs[i].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    if ((langdb.langdbs[i].actorSpeech.IndexOf('\n') >= 0)
+                        || (langdb.langdbs[i].actorSpeech.IndexOf("\r\n") >= 0))
+                    {
+                        if (langdb.langdbs[i].actorSpeech.IndexOf("\r\n") >= 0) langdb.langdbs[i].actorSpeech = langdb.langdbs[i].actorSpeech.Replace("\r\n", "\\r\\n");
+                        else langdb.langdbs[i].actorSpeech = langdb.langdbs[i].actorSpeech.Replace("\n", "\\n");
+                    }
+
+                    if (langdb.isBlockLength) blockSize = br.ReadInt32();
+                    stringLength = br.ReadInt32();
+                    tmp = br.ReadBytes(stringLength);
+                    langdb.langdbs[i].anmFile = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+
+                    if (langdb.isBlockLength) blockSize = br.ReadInt32();
+                    stringLength = br.ReadInt32();
+                    tmp = br.ReadBytes(stringLength);
+                    langdb.langdbs[i].voxFile = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+
+                    if (hasFlags)
+                    {
+                        langdb.flags[i] = new ClassesStructs.FlagsClass.LangdbFlagClass();
+                        langdb.flags[i].flags = br.ReadBytes(3);
+                    }
+
+                    langdb.langdbs[i].zero = br.ReadInt32();
+                }
+
+                return langdb;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static string DoWork(string InputFile, bool extract, bool FullEncrypt, ref byte[] EncKey, int version)
+        {
+            string result = "";
+
+            FileInfo fi = new FileInfo(InputFile);
+
+            byte[] buffer = File.ReadAllBytes(InputFile);
+            MemoryStream ms = new MemoryStream(buffer);
+            BinaryReader br = new BinaryReader(ms);
+
+            try
+            {
+                byte[] checkHeader = br.ReadBytes(4);
+                int countBlocks = br.ReadInt32();
+
+                string[] classes = new string[countBlocks];
+
+                bool hasFlags = false;
+
+                for (int i = 0; i < countBlocks; i++)
+                {
+                    int len = br.ReadInt32();
+                    byte[] tmp = br.ReadBytes(len);
+                    classes[i] = Encoding.ASCII.GetString(tmp);
+                    if (classes[i].ToLower() == "class flags") hasFlags = true;
+                    tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
+                }
+
+                ClassesStructs.Text.LangdbClass langdbs = GetStringsFromLangdb(br, hasFlags);
+                br.Close();
+                ms.Close();
+                buffer = null;
+
+                if (langdbs == null)
+                {
+                    return "File " + fi.Name + ": unknown error.";
+                }
+                if (langdbs != null && langdbs.langdbCount == 0)
+                {
+                    langdbs = null;
+                    GC.Collect();
+                    return fi.Name + " is EMPTY.";
+                }
+
+                if(extract)
+                {
+                    if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt");
+                    FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt", FileMode.CreateNew);
+                    StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
+
+                    for(int i = 0; i < langdbs.langdbCount; i++)
+                    {
+                        sw.WriteLine(langdbs.langdbs[i].voxID + ") " + langdbs.langdbs[i].actorName);
+                        sw.WriteLine(langdbs.langdbs[i].actorSpeech);
+                    }
+
+                    sw.Close();
+                    fs.Close();
+
+                    result = fi.Name + " successfully extracted.";
+                }
+                else
+                {
+
+                }
+            }
+            catch
+            {
+                if(buffer != null) buffer = null;
+                if(br != null) br.Close();
+                if(ms != null) ms.Close();
+
+                result = "Something wrong with langdb file " + fi.Name;
+            }
+
+            GC.Collect();
+            return result;
         }
     }
 }

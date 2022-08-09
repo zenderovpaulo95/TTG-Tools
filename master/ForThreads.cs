@@ -1079,10 +1079,12 @@ namespace TTG_Tools
                             {
                                 case ".langdb":
                                     {
-                                        int lenghtOfExtension = inputFiles[i].Extension.Length;
+                                        string message = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, true, false, ref encKey, 2);
+                                        ReportForWork(message);
+                                        /*int lenghtOfExtension = inputFiles[i].Extension.Length;
                                         string fileName = inputFiles[i].Name.Remove(inputFiles[i].Name.Length - lenghtOfExtension, lenghtOfExtension) + ".txt";
                                         if (MainMenu.settings.tsvFormat) fileName = inputFiles[i].Name.Remove(inputFiles[i].Name.Length - lenghtOfExtension, lenghtOfExtension) + ".tsv";
-                                        ExportTXTfromLANGDB(inputFiles, i, pathOutput, fileName, versionOfGame);
+                                        ExportTXTfromLANGDB(inputFiles, i, pathOutput, fileName, versionOfGame);*/
                                         extractedFormat[0] = 0;
                                         break;
                                     }

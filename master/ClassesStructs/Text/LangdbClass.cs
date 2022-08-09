@@ -14,6 +14,7 @@ namespace TTG_Tools.ClassesStructs.Text
         public string actorSpeech;
         public string anmFile;
         public string voxFile;
+        public int zero; //Some zero values
     }
     public class LangdbClass
     {
@@ -21,7 +22,7 @@ namespace TTG_Tools.ClassesStructs.Text
         public int blockLength;
         public int langdbCount;
 
-        langdb[] langdbs;
-        FlagsClass.LangdbFlagClass[] flags;
+        public langdb[] langdbs;
+        public FlagsClass.LangdbFlagClass[] flags;
     }
 }

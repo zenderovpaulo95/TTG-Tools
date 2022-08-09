@@ -18,11 +18,11 @@ namespace TTG_Tools
             string xmlPath = Application.StartupPath + "\\config.xml";
             if (File.Exists(xmlPath))
             {
+                FirstTime = false;
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new MainMenu());
-
-                FirstTime = false;
             }
             else
             {
