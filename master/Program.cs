@@ -1,29 +1,4 @@
-<<<<<<< HEAD
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-
-namespace TTG_Tools
-{
-    static class Program
-    {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainMenu());
-        }
-    }
-}
-=======
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 
@@ -57,4 +32,3 @@ namespace TTG_Tools
         }
     }
 }
->>>>>>> cff1486165f08fc8356befbdc6f9e91a39b189db

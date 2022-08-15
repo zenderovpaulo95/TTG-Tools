@@ -223,6 +223,7 @@ namespace TTG_Tools
                 switch(UnicodeMode)
                 {
                     case 0:
+                    case 1:
                         hexData = (byte[])UnicodeEncoding.UTF8.GetBytes(data);
                         break;
                     case 2:

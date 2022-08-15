@@ -1544,6 +1544,7 @@ namespace TTG_Tools
                                 {
                                     lenghtForHeaderForVersion = 108;
                                     len_magic = 12;
+                                    if (MainMenu.settings.unicodeSettings != 1) UnicodeSupport = 1;
                                     break;
                                 }
                             case 10:

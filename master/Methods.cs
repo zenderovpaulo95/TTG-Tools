@@ -388,7 +388,7 @@ namespace TTG_Tools
                 byte[] temp_hex_string = new byte[len_string];
                 Array.Copy(array, poz, temp_hex_string, 0, len_string);
 
-                for (int i = 0; i < temp_hex_string.Length; i++)
+                /*for (int i = 0; i < temp_hex_string.Length; i++)
                 {
                     if (temp_hex_string[i] == 0x00 && i == temp_hex_string.Length - 1)
                     {
@@ -399,10 +399,11 @@ namespace TTG_Tools
                         UnicodeNum = MainMenu.settings.unicodeSettings;
                         break;
                     }
-                }
+                }*/
 
                 string result;
-                if (MainMenu.settings.unicodeSettings != 1) result = UnicodeEncoding.UTF8.GetString(temp_hex_string);
+                //if (MainMenu.settings.unicodeSettings != 1) result = UnicodeEncoding.UTF8.GetString(temp_hex_string);
+                if (UnicodeNum != 1) result = UnicodeEncoding.UTF8.GetString(temp_hex_string);
                 else result = ASCIIEncoding.GetEncoding(ASCII_N).GetString(temp_hex_string);
                 return result;
             }
