@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace TTG_Tools.ClassesStructs.Text
 {
-    internal class LandbClass
+    public struct Landb
     {
+
+    }
+
+    public class LandbClass
+    {
+
     }
 }
