@@ -58,6 +58,20 @@ namespace TTG_Tools
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 2;
 
+            if(specificCB.Checked)
+            {
+                switch(specificEncComboBox.SelectedIndex)
+                {
+                    case 0:
+                        MainMenu.settings.ASCII_N = 874;
+                        break;
+
+                    case 1:
+                        MainMenu.settings.ASCII_N = 932;
+                        break;
+                }
+            }
+
             //MainMenu.settings.unicodeSupport = checkUnicode.Checked;
             if (((MainMenu.settings.pathForInputFolder != "") && (Directory.Exists(MainMenu.settings.pathForInputFolder)))
                 && ((MainMenu.settings.pathForOutputFolder != "") && (Directory.Exists(MainMenu.settings.pathForOutputFolder))))
@@ -128,6 +142,11 @@ namespace TTG_Tools
             clearMessagesCB.Checked = MainMenu.settings.clearMessages;
             textBoxInputFolder.Text = MainMenu.settings.pathForInputFolder;
             textBoxOutputFolder.Text = MainMenu.settings.pathForOutputFolder;
+
+            specificEncComboBox.Items.Add("874 (Thai)");
+            specificEncComboBox.Items.Add("932 (Japanese)");
+
+            specificEncComboBox.SelectedIndex = 0;
 
             switch (MainMenu.settings.unicodeSettings)
             {
