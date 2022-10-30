@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using BlowFishCS;
+using zlib;
 
 namespace TTG_Tools
 {
@@ -41,7 +42,53 @@ namespace TTG_Tools
 
         byte[] key = null;
         int version;
+        int[] compressedBlocks = null;
+        uint arcSize = 0;
+        uint cArcSize = 0;
         FileStruct[] FileList;
+
+        private static void CopyStream(Stream inStream, Stream outStream)
+        {
+            byte[] buffer = new byte[2000];
+            int len;
+            while ((len = inStream.Read(buffer, 0, 2000)) > 0)
+            {
+                outStream.Write(buffer, 0, len);
+            }
+            outStream.Flush();
+        }
+
+        private static byte[] ZlibDeCompressor(byte[] bytes) //Для старых архивов (с версии 3 по 7)
+        {
+            byte[] retBytes;
+            using (MemoryStream outMemoryStream = new MemoryStream())
+            using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream))
+            using (Stream inMemoryStream = new MemoryStream(bytes))
+            {
+                CopyStream(inMemoryStream, outZStream);
+                outZStream.finish();
+                retBytes = outMemoryStream.ToArray();
+            }
+
+            return retBytes;
+        }
+
+        private static byte[] DeflateDeCompressor(byte[] bytes) //Для старых (версии 8 и 9) и новых архивов
+        {
+            byte[] retVal;
+            using (MemoryStream compressedMemoryStream = new MemoryStream())
+            {
+                System.IO.Compression.DeflateStream compressStream = new System.IO.Compression.DeflateStream(compressedMemoryStream, System.IO.Compression.CompressionMode.Decompress, true);
+                compressStream.Write(bytes, 0, bytes.Length);
+                compressStream.Close();
+                retVal = new byte[compressedMemoryStream.Length];
+                compressedMemoryStream.Position = 0L;
+                compressedMemoryStream.Read(retVal, 0, retVal.Length);
+                compressedMemoryStream.Close();
+                compressStream.Close();
+            }
+            return retVal;
+        }
 
         private FileStruct[] GetFileListTTARCH(string FileName)
         {
@@ -71,10 +118,30 @@ namespace TTG_Tools
                     return null;
                 }
 
-                int ArcSize = br.ReadInt32();
-                f_off += Convert.ToUInt32(ArcSize) + 4;
+                if (version > 2)
+                {
+                    int archMode = br.ReadInt32(); //Compressed or not archive
+                    f_off += 4;
+                    int blockCount = br.ReadInt32();
+                    f_off += 4;
 
-                byte[] block = br.ReadBytes(ArcSize);
+                    compressedBlocks = blockCount == 2 ? null : new int[blockCount];
+
+                    for(int i = 0; i < blockCount; i++)
+                    {
+                        compressedBlocks[i] = br.ReadInt32();
+                        f_off += 4;
+                    }
+
+                    arcSize = br.ReadUInt32();
+                }
+
+                int headerSize = br.ReadInt32();
+                f_off += Convert.ToUInt32(headerSize) + 4;
+
+                int blockSize = cArcSize != 0 ? 0 : headerSize;
+
+                byte[] block = br.ReadBytes(blockSize);
 
                 if(encrypted == 1)
                 {
