@@ -52,8 +52,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip2 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip3 = new System.Windows.Forms.ToolTip(this.components);
-            this.specificCB = new System.Windows.Forms.CheckBox();
-            this.specificEncComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownASCII)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -114,7 +112,7 @@
             // 
             this.clearMessagesCB.AutoSize = true;
             this.clearMessagesCB.Location = new System.Drawing.Point(246, 131);
-            this.clearMessagesCB.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.clearMessagesCB.Margin = new System.Windows.Forms.Padding(2);
             this.clearMessagesCB.Name = "clearMessagesCB";
             this.clearMessagesCB.Size = new System.Drawing.Size(193, 17);
             this.clearMessagesCB.TabIndex = 7;
@@ -125,7 +123,7 @@
             // 
             this.checkBoxSortStrings.AutoSize = true;
             this.checkBoxSortStrings.Location = new System.Drawing.Point(246, 104);
-            this.checkBoxSortStrings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBoxSortStrings.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxSortStrings.Name = "checkBoxSortStrings";
             this.checkBoxSortStrings.Size = new System.Drawing.Size(78, 17);
             this.checkBoxSortStrings.TabIndex = 4;
@@ -136,7 +134,7 @@
             // 
             this.checkBoxExportRealID.AutoSize = true;
             this.checkBoxExportRealID.Location = new System.Drawing.Point(12, 76);
-            this.checkBoxExportRealID.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBoxExportRealID.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxExportRealID.Name = "checkBoxExportRealID";
             this.checkBoxExportRealID.Size = new System.Drawing.Size(229, 17);
             this.checkBoxExportRealID.TabIndex = 3;
@@ -147,7 +145,7 @@
             // 
             this.checkBoxImportingOfNames.AutoSize = true;
             this.checkBoxImportingOfNames.Location = new System.Drawing.Point(246, 76);
-            this.checkBoxImportingOfNames.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBoxImportingOfNames.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxImportingOfNames.Name = "checkBoxImportingOfNames";
             this.checkBoxImportingOfNames.Size = new System.Drawing.Size(116, 17);
             this.checkBoxImportingOfNames.TabIndex = 3;
@@ -254,9 +252,9 @@
             this.groupBox2.Controls.Add(this.rbNonNormalUnicode2);
             this.groupBox2.Controls.Add(this.rbNormalUnicode);
             this.groupBox2.Location = new System.Drawing.Point(56, 206);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox2.Size = new System.Drawing.Size(354, 73);
             this.groupBox2.TabIndex = 13;
             this.groupBox2.TabStop = false;
@@ -266,7 +264,7 @@
             // 
             this.rbNonNormalUnicode2.AutoSize = true;
             this.rbNonNormalUnicode2.Location = new System.Drawing.Point(5, 35);
-            this.rbNonNormalUnicode2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rbNonNormalUnicode2.Margin = new System.Windows.Forms.Padding(2);
             this.rbNonNormalUnicode2.Name = "rbNonNormalUnicode2";
             this.rbNonNormalUnicode2.Size = new System.Drawing.Size(330, 30);
             this.rbNonNormalUnicode2.TabIndex = 2;
@@ -279,7 +277,7 @@
             // 
             this.rbNormalUnicode.AutoSize = true;
             this.rbNormalUnicode.Location = new System.Drawing.Point(5, 17);
-            this.rbNormalUnicode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rbNormalUnicode.Margin = new System.Windows.Forms.Padding(2);
             this.rbNormalUnicode.Name = "rbNormalUnicode";
             this.rbNormalUnicode.Size = new System.Drawing.Size(101, 17);
             this.rbNormalUnicode.TabIndex = 0;
@@ -290,31 +288,11 @@
         "f your symbols.");
             this.rbNormalUnicode.UseVisualStyleBackColor = true;
             // 
-            // specificCB
-            // 
-            this.specificCB.AutoSize = true;
-            this.specificCB.Location = new System.Drawing.Point(142, 9);
-            this.specificCB.Name = "specificCB";
-            this.specificCB.Size = new System.Drawing.Size(146, 17);
-            this.specificCB.TabIndex = 14;
-            this.specificCB.Text = "Specific ASCII encodings";
-            this.specificCB.UseVisualStyleBackColor = true;
-            // 
-            // specificEncComboBox
-            // 
-            this.specificEncComboBox.FormattingEnabled = true;
-            this.specificEncComboBox.Location = new System.Drawing.Point(294, 7);
-            this.specificEncComboBox.Name = "specificEncComboBox";
-            this.specificEncComboBox.Size = new System.Drawing.Size(121, 21);
-            this.specificEncComboBox.TabIndex = 15;
-            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(475, 329);
-            this.Controls.Add(this.specificEncComboBox);
-            this.Controls.Add(this.specificCB);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonApplyAndExitSettings);
             this.Controls.Add(this.buttonExitSettingsForm);
@@ -363,7 +341,5 @@
         private System.Windows.Forms.ToolTip toolTip3;
         private System.Windows.Forms.RadioButton rbNonNormalUnicode2;
         private System.Windows.Forms.CheckBox clearMessagesCB;
-        private System.Windows.Forms.CheckBox specificCB;
-        private System.Windows.Forms.ComboBox specificEncComboBox;
     }
 }

@@ -408,14 +408,6 @@ namespace TTG_Tools
             int version = Convert.ToInt32(param[6]);
             bool FullEncrypt = param[7] == "True";
             byte[] encKey = null;
-            /*if (param[5] == "True")
-            {
-                deleteFromInputSource = true;
-            }
-            if (param[4] == "True")
-            {
-                deleteFromInputImported = true;
-            }*/
 
             bool[] show = { false, false, false, false };
 
@@ -474,7 +466,6 @@ namespace TTG_Tools
                                     {
                                         case ".d3dtx":
                                             {
-                                            //ImportDDSinD3DTX(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
                                             string result = TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, false, FullEncrypt, ref encKey, version);
                                             ReportForWork(result);
                                             show[0] = true;    
@@ -494,7 +485,7 @@ namespace TTG_Tools
                                             }
                                         case ".prop":
                                             {
-                                                ImportTXTinPROP(inputFiles, fileDestination, i, j, pathOutput, ref correct_work);
+                                            ImportTXTinPROP(inputFiles[i], fileDestination[j]);
                                             show[3] = true;
                                                 break;
                                             }
@@ -559,70 +550,209 @@ namespace TTG_Tools
             }
         }
 
-        public void ImportTXTinPROP(FileInfo[] inputFiles, FileInfo[] fileDestination, int i, int j, string pathOutput, ref bool correctWork)
+        public void ImportTXTinPROP(FileInfo inputFile, FileInfo DestinationFile)
         {
-            FileStream fs = new FileStream(inputFiles[i].FullName, FileMode.Open);
-            byte[] binContent = Methods.ReadFull(fs);
-            fs.Close();
+            byte[] binContent = File.ReadAllBytes(inputFile.FullName);
+            string[] strs = File.ReadAllLines(DestinationFile.FullName);
 
-            List<AutoPacker.Prop> proplist = new List<AutoPacker.Prop>();
-            List<string> strs = new List<string>();
+            int posBlSize = 0;
+            int blockSize = 0;
+            int blHeadSize = 0;
 
-            byte[] header = null, countOfBlock = null, lengthAllText = null;
-            int type = -1;
+            MemoryStream ms = new MemoryStream(binContent);
+            BinaryReader br = new BinaryReader(ms);
+            string destFilePath = MainMenu.settings.pathForOutputFolder + "\\" + inputFile.Name;
 
-            AutoPacker.ReadProp(binContent, proplist, ref header, ref countOfBlock, ref lengthAllText, ref type);
+            if (File.Exists(destFilePath)) File.Delete(destFilePath);
+            FileStream fs = new FileStream(destFilePath, FileMode.CreateNew);
+            BinaryWriter bw = new BinaryWriter(fs);
 
-            string[] texts = File.ReadAllLines(fileDestination[j].FullName);
-
-            bool number_find = false;
-            int n_str = -1;
-            //int number_of_next_list = 0;
-
-            for (int c = 0; c < texts.Length; c++)
+            try
             {
-                if (texts[c].IndexOf(")") > -1 && number_find == false)
-                {
-                    if ((Methods.IsNumeric(texts[c].Substring(0, texts[c].IndexOf(")")))))
-                    {
-                        number_find = true;
-                        n_str++;
-                        strs.Add("");
-                    }
-                    else
-                    {
-                        strs[n_str] += "\r\n" + texts[c];
-                        number_find = false;
-                    }
-                }
-                else
-                {
-                    strs[n_str] += texts[c];
-                    number_find = false;
-                }
-            }
+                byte[] header = br.ReadBytes(4);
+                bw.Write(header);
 
-            if (proplist.Count == strs.Count)
+                if ((Encoding.ASCII.GetString(header) == "5VSM") || (Encoding.ASCII.GetString(header) == "6VSM"))
+                {
+                    blHeadSize = br.ReadInt32();
+                    bw.Write(blHeadSize);
+                    blHeadSize = 0;
+
+                    byte[] tmp_bl = br.ReadBytes(8);
+                    bw.Write(tmp_bl);
+                }
+
+                int count = br.ReadInt32();
+                bw.Write(count);
+
+                for(int i = 0; i < count; i++)
+                {
+                    byte[] block = br.ReadBytes(8);
+                    bw.Write(block);
+
+                    block = br.ReadBytes(4);
+                    bw.Write(block);
+                }
+
+                int one = br.ReadInt32();
+                bw.Write(one);
+                blHeadSize += 4;
+
+                int one2 = -1;
+
+                int unknown1 = br.ReadInt32();
+                bw.Write(unknown1);
+                blHeadSize += 4;
+
+                int blLen = -1;
+                byte[] bl = null;
+
+                if (Encoding.ASCII.GetString(header) != "6VSM")
+                {
+                    blLen = br.ReadInt32();
+                    bw.Write(blLen);
+                    blHeadSize += blLen;
+
+                    bl = br.ReadBytes(blLen - 4);
+                    bw.Write(bl);
+                    blHeadSize += blLen;
+                }
+
+                posBlSize = (int)br.BaseStream.Position;
+
+                int orBlSize = br.ReadInt32();
+                bw.Write(orBlSize);
+                blockSize += 4;
+                blHeadSize += 4;
+
+                one = br.ReadInt32();
+                bw.Write(one);
+                blockSize += 4;
+                blHeadSize += 4;
+
+                if (Encoding.ASCII.GetString(header) == "6VSM")
+                {
+                    one2 = br.ReadInt32();
+                    bw.Write(one2);
+
+                    blHeadSize += 4;
+                    blockSize += 4;
+                }
+
+                byte[] check_bl = br.ReadBytes(8);
+                bw.Write(check_bl);
+                blockSize += 8;
+                blHeadSize += 8;
+
+                if(Encoding.ASCII.GetString(header) == "ERTM")
+                {
+                    one = br.ReadInt32();
+                    bw.Write(one);
+                    blockSize += 4;
+                }
+
+                count = br.ReadInt32();
+                bw.Write(count);
+                blockSize += 4;
+                blHeadSize += 4;
+
+                int c = 1;
+
+                if(BitConverter.ToString(check_bl) == "B4-F4-5A-5F-60-6E-9C-CD")
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        bl = br.ReadBytes(8);
+                        bw.Write(bl);
+                        blockSize += 8;
+                        blHeadSize += 8;
+
+                        if(Encoding.ASCII.GetString(header) == "ERTM")
+                        {
+                            one = br.ReadInt32();
+                            bw.Write(one);
+                            blockSize += 4;
+                        }
+
+                        blLen = br.ReadInt32();
+                        bl = br.ReadBytes(blLen);
+                        blockSize += 4;
+                        blHeadSize += 4;
+
+                        bl = Encoding.ASCII.GetString(header) == "6VSM" ? Encoding.UTF8.GetBytes(strs[c]) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(strs[c]);
+                        blLen = bl.Length;
+                        bw.Write(blLen);
+                        bw.Write(bl);
+
+                        blockSize += blLen;
+                        blHeadSize += blLen;
+                        c += 2;
+                    }
+                }
+                if(BitConverter.ToString(check_bl) == "25-03-C6-1F-D8-64-1B-4F")
+                {
+                    for(int i = 0; i < count; i++)
+                    {
+                        int subCount = 0;
+                        bl = br.ReadBytes(8);
+                        bw.Write(bl);
+                        blockSize += 8;
+                        blHeadSize += 8;
+
+                        if (Encoding.ASCII.GetString(header) == "ERTM")
+                        {
+                            one = br.ReadInt32();
+                            bw.Write(one);
+                            blockSize += 4;
+                        }
+
+                        subCount = br.ReadInt32();
+                        bw.Write(subCount);
+                        blockSize += 4;
+                        blHeadSize += 4;
+
+                        for(int j = 0; j < subCount * 2; j++)
+                        {
+                            blLen = br.ReadInt32();
+                            bl = br.ReadBytes(blLen);
+                            bl = Encoding.ASCII.GetString(header) == "6VSM" ? Encoding.UTF8.GetBytes(strs[c]) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(strs[c]);
+                            blLen = bl.Length;
+                            bw.Write(blLen);
+                            bw.Write(bl);
+                            blockSize += 4 + blLen;
+                            blHeadSize += 4 + blLen;
+
+                            c += 2;
+                        }
+                    }
+                }
+
+                bw.BaseStream.Seek(posBlSize, SeekOrigin.Begin);
+                bw.Write(blockSize);
+
+                if((Encoding.ASCII.GetString(header) == "5VSM") || (Encoding.ASCII.GetString(header) == "6VSM"))
+                {
+                    bw.BaseStream.Seek(4, SeekOrigin.Begin);
+                    bw.Write(blHeadSize);
+                }
+
+                bw.Close();
+                fs.Close();
+                br.Close();
+                ms.Close();
+
+                ReportForWork("File " + DestinationFile.Name + " imported in " + inputFile.Name + ".");
+            }
+            catch
             {
-                try
-                {
-                    for (int c = 0; c < proplist.Count; c++)
-                    {
-                        proplist[c].text = strs[c];
-                        if (proplist[c].text.Contains("\r\n")) proplist[c].text = proplist[c].text.Replace("\r\n", "\n");
-                        byte[] tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(proplist[c].text);
-                        proplist[c].lenght_of_text = BitConverter.GetBytes((int)tmp.Length);
-                    }
+                if (br != null) br.Close();
+                if (ms != null) ms.Close();
 
-                    AutoPacker.CreateProp(header, countOfBlock, proplist, (pathOutput + "\\" + inputFiles[i].Name), type);
-                    ReportForWork("File " + Methods.GetNameOfFileOnly(inputFiles[i].Name, ".prop") + ".txt imported in " + inputFiles[i].Name);
-                }
-                catch
-                {
-                    ReportForWork("Something wrong with import file " + inputFiles[i].Name);
-                }
+                if (bw != null) bw.Close();
+                if (fs != null) fs.Close();
+
+                ReportForWork("Something wrong with file " + inputFile.Name);
             }
-            else ReportForWork("Count of strings doesn't equal in files " + inputFiles[i].Name + " & " + fileDestination[j].Name);
         }
 
         public void findStringByID(List<TextCollector.TXT_collection> all_text, int c, ref int id)
@@ -648,6 +778,116 @@ namespace TTG_Tools
             StreamWriter sw = new StreamWriter(fsw);
 
             try
+            {
+                //Read for checkpoint_text.prop and statsInfo_text.prop files
+
+                byte[] header = br.ReadBytes(4);
+
+                int blockSize = 0;
+                long subblockSize = 0; //default 0
+
+                if((Encoding.ASCII.GetString(header) == "5VSM") || (Encoding.ASCII.GetString(header) == "6VSM"))
+                {
+                    blockSize = br.ReadInt32();
+                    subblockSize = br.ReadInt64();
+                }
+
+                int countHeaders = br.ReadInt32();
+
+                for(int i = 0; i < countHeaders; i++)
+                {
+                    byte[] crc64Val = br.ReadBytes(8);
+                    byte[] values = br.ReadBytes(4);   //Some values after crc64's strings
+                }
+
+                int one = br.ReadInt32();
+                int someValue1 = br.ReadInt32();
+
+                if (Encoding.ASCII.GetString(header) != "6VSM")
+                {
+                    int blSize1 = br.ReadInt32();
+                    byte[] someContent = br.ReadBytes(blSize1 - 4);
+                }
+
+                int blSize2 = br.ReadInt32();
+                int one1 = br.ReadInt32();
+                int one2 = -1;
+                if (Encoding.ASCII.GetString(header) == "6VSM") one2 = br.ReadInt32();
+                byte[] bValue = br.ReadBytes(8);
+
+                int c_str = 1;
+
+                if (BitConverter.ToString(bValue) == "B4-F4-5A-5F-60-6E-9C-CD")
+                {
+                    if (Encoding.ASCII.GetString(header) == "ERTM") one1 = br.ReadInt32();
+                    int countBlocks = br.ReadInt32();
+
+                    string[] strs = new string[countBlocks];
+
+                    for(int i = 0; i < countBlocks; i++)
+                    {
+                        bValue = br.ReadBytes(8);
+                        if (Encoding.ASCII.GetString(header) == "ERTM") one1 = br.ReadInt32();
+                        int len = br.ReadInt32();
+                        bValue = br.ReadBytes(len);
+                        strs[i] = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(bValue);
+
+                        if (Encoding.ASCII.GetString(header) == "6VSM") strs[i] = Encoding.UTF8.GetString(bValue);
+
+                        sw.WriteLine(Convert.ToString(c_str) + ")");
+                        sw.WriteLine(strs[i]);
+                        c_str++;
+                    }
+                }
+                if(BitConverter.ToString(bValue) == "25-03-C6-1F-D8-64-1B-4F")
+                {
+                    if (Encoding.ASCII.GetString(header) == "ERTM") one1 = br.ReadInt32();
+                    int countBlocks = br.ReadInt32();
+
+                    string[][] strs = new string[countBlocks][];
+
+                    int countSubBlocks = 0;
+
+                    for(int i = 0; i < countBlocks; i++)
+                    {
+                        bValue = br.ReadBytes(8);
+                        if (Encoding.ASCII.GetString(header) == "ERTM") one1 = br.ReadInt32();
+                        countSubBlocks = br.ReadInt32();
+                        var Pos = br.BaseStream.Position;
+                        strs[i] = new string[countSubBlocks * 2];
+
+                        for(int j = 0; j < countSubBlocks * 2; j++)
+                        {
+                            int len = br.ReadInt32();
+                            bValue = br.ReadBytes(len);
+                            strs[i][j] = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(bValue);
+
+                            if (Encoding.ASCII.GetString(header) == "6VSM") strs[i][j] = Encoding.UTF8.GetString(bValue);
+
+                            sw.WriteLine(Convert.ToString(c_str) + ")");
+                            sw.WriteLine(strs[i][j]);
+                            c_str++;
+                        }
+                    }
+                }
+
+                ReportForWork("File " + inputFile.Name + " successfully extracted.");
+
+                br.Close();
+                fs.Close();
+                sw.Close();
+                fsw.Close();
+            }
+            catch
+            {
+                if (br != null) br.Close();
+                if (fs != null) fs.Close();
+                if (sw != null) sw.Close();
+                if (fsw != null) fsw.Close();
+                ReportForWork("Something wrong with file " + inputFile.Name);
+            }
+
+            /*try
             {
                 byte[] header = br.ReadBytes(4);
                 int count = br.ReadInt32();
@@ -817,7 +1057,7 @@ namespace TTG_Tools
                 if(br != null) br.Close();
                 if(fs != null) fs.Close();
                 ReportForWork("Something wrong with file " + inputFile.Name);
-            }
+            }*/
         }
 
         public void ImportTXTinLANDB(FileInfo[] inputFiles, FileInfo[] fileDestination, int i, int j, string pathOutput, ref bool correctWork, string versionOfGame)

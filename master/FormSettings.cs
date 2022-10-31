@@ -58,20 +58,6 @@ namespace TTG_Tools
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 2;
 
-            if(specificCB.Checked)
-            {
-                switch(specificEncComboBox.SelectedIndex)
-                {
-                    case 0:
-                        MainMenu.settings.ASCII_N = 874;
-                        break;
-
-                    case 1:
-                        MainMenu.settings.ASCII_N = 932;
-                        break;
-                }
-            }
-
             //MainMenu.settings.unicodeSupport = checkUnicode.Checked;
             if (((MainMenu.settings.pathForInputFolder != "") && (Directory.Exists(MainMenu.settings.pathForInputFolder)))
                 && ((MainMenu.settings.pathForOutputFolder != "") && (Directory.Exists(MainMenu.settings.pathForOutputFolder))))
@@ -102,17 +88,29 @@ namespace TTG_Tools
 
         private void numericUpDownASCII_ValueChanged(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(numericUpDownASCII.Value.ToString()) >= 1250 && Convert.ToInt32(numericUpDownASCII.Value.ToString()) <= 1258)
+            if(Convert.ToInt32(numericUpDownASCII.Value) < 874)
             {
-                //ASCII_N = Convert.ToInt32(numericUpDownASCII.Value.ToString());
+                numericUpDownASCII.Value = 874;
             }
-            else
+
+            if (Convert.ToInt32(numericUpDownASCII.Value) > 1258)
             {
-                numericUpDownASCII.Value = 1250;
+                numericUpDownASCII.Value = 1258;
+            }
+
+            switch (Convert.ToInt32(numericUpDownASCII.Value.ToString()))
+            {
+                case 1249:
+                    numericUpDownASCII.Value = 874;
+                    break;
+
+                case 875:
+                    numericUpDownASCII.Value = 1250;
+                    break;
             }
 
             //Terrible fix for users windows-1252 encoding
-            if(Convert.ToInt32(numericUpDownASCII.Value.ToString()) == 1252)
+            if (Convert.ToInt32(numericUpDownASCII.Value.ToString()) == 1252)
             {
                 rbNormalUnicode.Checked = true;
                 MainMenu.settings.unicodeSettings = 0;
@@ -142,11 +140,6 @@ namespace TTG_Tools
             clearMessagesCB.Checked = MainMenu.settings.clearMessages;
             textBoxInputFolder.Text = MainMenu.settings.pathForInputFolder;
             textBoxOutputFolder.Text = MainMenu.settings.pathForOutputFolder;
-
-            specificEncComboBox.Items.Add("874 (Thai)");
-            specificEncComboBox.Items.Add("932 (Japanese)");
-
-            specificEncComboBox.SelectedIndex = 0;
 
             switch (MainMenu.settings.unicodeSettings)
             {
