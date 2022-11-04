@@ -88,17 +88,25 @@ namespace TTG_Tools
 
         private void numericUpDownASCII_ValueChanged(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(numericUpDownASCII.Value.ToString()) >= 1250 && Convert.ToInt32(numericUpDownASCII.Value.ToString()) <= 1258)
+            if (Convert.ToInt32(numericUpDownASCII.Value) < 874)
             {
-                //ASCII_N = Convert.ToInt32(numericUpDownASCII.Value.ToString());
+                numericUpDownASCII.Value = 874;
             }
-            else
+            if (Convert.ToInt32(numericUpDownASCII.Value) > 1258)
             {
-                numericUpDownASCII.Value = 1250;
+                numericUpDownASCII.Value = 1258;
             }
-
+            switch (Convert.ToInt32(numericUpDownASCII.Value.ToString()))
+            {
+                case 1249:
+                    numericUpDownASCII.Value = 874;
+                    break;
+                case 875:
+                    numericUpDownASCII.Value = 1250;
+                    break;
+            }
             //Terrible fix for users windows-1252 encoding
-            if(Convert.ToInt32(numericUpDownASCII.Value.ToString()) == 1252)
+            if (Convert.ToInt32(numericUpDownASCII.Value.ToString()) == 1252)
             {
                 rbNormalUnicode.Checked = true;
                 MainMenu.settings.unicodeSettings = 0;
