@@ -138,6 +138,14 @@ Maybe some games doesn't work. Please contact with me if you will have problems.
 
 ===
 [Version history]
+v.1.0.13 (04.11.2022)
++ TTG Tools:
+Add support Thai ASCII encoding (need set 874 in settings form).
+
++ Auto (De)Packer:
+Add support checkpoint_text.prop and statsInfo_text.prop for original season, android version
+and Definitive edition.
+
 v.1.0.12 (03.07.2022)
 + TTG Tools:
 Now if at first time launches settings form and after set up settings application relaunch as normal.
