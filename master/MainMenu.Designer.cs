@@ -42,7 +42,6 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
-            this.arcUnpackerBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // OpenAutopackerForm
@@ -57,7 +56,7 @@
             // 
             // About
             // 
-            this.About.Location = new System.Drawing.Point(88, 130);
+            this.About.Location = new System.Drawing.Point(161, 91);
             this.About.Name = "About";
             this.About.Size = new System.Drawing.Size(112, 23);
             this.About.TabIndex = 1;
@@ -114,7 +113,7 @@
             // 
             // buttonSettings
             // 
-            this.buttonSettings.Location = new System.Drawing.Point(159, 90);
+            this.buttonSettings.Location = new System.Drawing.Point(12, 91);
             this.buttonSettings.Name = "buttonSettings";
             this.buttonSettings.Size = new System.Drawing.Size(111, 23);
             this.buttonSettings.TabIndex = 9;
@@ -155,22 +154,11 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
-            // arcUnpackerBtn
-            // 
-            this.arcUnpackerBtn.Location = new System.Drawing.Point(13, 90);
-            this.arcUnpackerBtn.Name = "arcUnpackerBtn";
-            this.arcUnpackerBtn.Size = new System.Drawing.Size(111, 23);
-            this.arcUnpackerBtn.TabIndex = 13;
-            this.arcUnpackerBtn.Text = "Archive unpacker";
-            this.arcUnpackerBtn.UseVisualStyleBackColor = true;
-            this.arcUnpackerBtn.Click += new System.EventHandler(this.arcUnpackerBtn_Click);
-            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(285, 164);
-            this.Controls.Add(this.arcUnpackerBtn);
+            this.ClientSize = new System.Drawing.Size(285, 128);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -206,6 +194,5 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button arcUnpackerBtn;
     }
 }

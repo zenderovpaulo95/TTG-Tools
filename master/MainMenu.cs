@@ -506,8 +506,6 @@ namespace TTG_Tools
 
         private void arcUnpackerBtn_Click(object sender, EventArgs e)
         {
-            ArchiveUnpacker arcUnpacker = new ArchiveUnpacker();
-            arcUnpacker.Show();
         }
     }
 }

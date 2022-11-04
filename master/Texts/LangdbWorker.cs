@@ -35,10 +35,12 @@ namespace TTG_Tools.Texts
                 }
 
                 langdb.langdbs = new langdb[langdb.langdbCount];
-                if (hasFlags) langdb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[langdb.langdbCount];
+                //if (hasFlags) langdb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[langdb.langdbCount];
+                langdb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[langdb.langdbCount];
 
                 for (int i = 0; i < langdb.langdbCount; i++)
                 {
+                    langdb.langdbs[i].stringNumber = ((uint)i + 1);
                     langdb.langdbs[i].anmID = br.ReadUInt32();
                     langdb.langdbs[i].voxID = br.ReadUInt32();
 
@@ -70,11 +72,11 @@ namespace TTG_Tools.Texts
                     tmp = br.ReadBytes(stringLength);
                     langdb.langdbs[i].voxFile = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
-                    if (hasFlags)
-                    {
+                    /*if (hasFlags)
+                    {*/
                         langdb.flags[i] = new ClassesStructs.FlagsClass.LangdbFlagClass();
                         langdb.flags[i].flags = br.ReadBytes(3);
-                    }
+                    //}
 
                     langdb.langdbs[i].zero = br.ReadInt32();
                 }
@@ -105,19 +107,39 @@ namespace TTG_Tools.Texts
                 string[] classes = new string[countBlocks];
 
                 bool hasFlags = false;
+                byte[] checkBlock = br.ReadBytes(8);
+                br.BaseStream.Seek(8, SeekOrigin.Begin);
+                ulong checkCRC64 = 0;
+                bool isHashStrings = false;
 
-                for (int i = 0; i < countBlocks; i++)
+                if (BitConverter.ToString(checkBlock) == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(checkCRC64, InEngineWords.ClassStructsNames.langdbClass.ToLower()))))
                 {
-                    int len = br.ReadInt32();
-                    byte[] tmp = br.ReadBytes(len);
-                    classes[i] = Encoding.ASCII.GetString(tmp);
-                    if (classes[i].ToLower() == "class flags") hasFlags = true;
-                    tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
+                    isHashStrings = true;
+
+                    for (int i = 0; i < countBlocks; i++)
+                    {
+                        byte[] tmp = br.ReadBytes(8);
+                        classes[i] = BitConverter.ToString(tmp);
+                        if (classes[i].ToLower() == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(checkCRC64, InEngineWords.ClassStructsNames.flagsClass.ToLower())))) hasFlags = true;
+                        tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < countBlocks; i++)
+                    {
+                        int len = br.ReadInt32();
+                        byte[] tmp = br.ReadBytes(len);
+                        classes[i] = Encoding.ASCII.GetString(tmp);
+                        if (classes[i].ToLower() == "class flags") hasFlags = true;
+                        tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
+                    }
                 }
 
                 ClassesStructs.Text.LangdbClass langdbs = GetStringsFromLangdb(br, hasFlags);
                 br.Close();
                 ms.Close();
+
                 buffer = null;
 
                 if (langdbs == null)
@@ -133,13 +155,17 @@ namespace TTG_Tools.Texts
 
                 if(extract)
                 {
+                    //TO DO:
+                    //Need to think about sort same strings!
+
                     if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt");
                     FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt", FileMode.CreateNew);
                     StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
 
                     for(int i = 0; i < langdbs.langdbCount; i++)
                     {
-                        sw.WriteLine(langdbs.langdbs[i].voxID + ") " + langdbs.langdbs[i].actorName);
+                        if (MainMenu.settings.exportRealID) sw.WriteLine(langdbs.langdbs[i].voxID + ") " + langdbs.langdbs[i].actorName);
+                        else sw.WriteLine(langdbs.langdbs[i].stringNumber + ") " + langdbs.langdbs[i].actorName);
                         sw.WriteLine(langdbs.langdbs[i].actorSpeech);
                     }
 

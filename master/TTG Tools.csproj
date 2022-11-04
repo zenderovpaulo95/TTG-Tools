@@ -86,12 +86,6 @@
     <Compile Include="ArchivePacker.Designer.cs">
       <DependentUpon>ArchivePacker.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveUnpacker.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveUnpacker.Designer.cs">
-      <DependentUpon>ArchiveUnpacker.cs</DependentUpon>
-    </Compile>
     <Compile Include="AutoPacker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -117,6 +111,8 @@
     <Compile Include="Graphics\DDS\Decompress.cs" />
     <Compile Include="Graphics\DDS\Flags.cs" />
     <Compile Include="Graphics\PVR\pvr.cs" />
+    <Compile Include="InEngineWords\ClassStructsNames.cs" />
+    <Compile Include="InEngineWords\VariableTypes.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ForThreads.cs" />
     <Compile Include="FontEditor.cs">
@@ -155,9 +151,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchivePacker.resx">
       <DependentUpon>ArchivePacker.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveUnpacker.resx">
-      <DependentUpon>ArchiveUnpacker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AutoPacker.resx">
       <DependentUpon>AutoPacker.cs</DependentUpon>
