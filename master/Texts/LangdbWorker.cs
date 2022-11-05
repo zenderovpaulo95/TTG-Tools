@@ -40,7 +40,7 @@ namespace TTG_Tools.Texts
 
                 for (int i = 0; i < langdb.langdbCount; i++)
                 {
-                    langdb.langdbs[i].stringNumber = ((uint)i + 1);
+                    langdb.langdbs[i].stringNumber = (uint)(i + 1);
                     langdb.langdbs[i].anmID = br.ReadUInt32();
                     langdb.langdbs[i].voxID = br.ReadUInt32();
 
@@ -136,7 +136,7 @@ namespace TTG_Tools.Texts
                     }
                 }
 
-                ClassesStructs.Text.LangdbClass langdbs = GetStringsFromLangdb(br, hasFlags);
+                LangdbClass langdbs = GetStringsFromLangdb(br, hasFlags);
                 br.Close();
                 ms.Close();
 
@@ -181,7 +181,6 @@ namespace TTG_Tools.Texts
             }
             catch
             {
-                if(buffer != null) buffer = null;
                 if(br != null) br.Close();
                 if(ms != null) ms.Close();
 

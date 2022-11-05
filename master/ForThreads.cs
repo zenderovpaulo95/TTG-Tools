@@ -408,14 +408,6 @@ namespace TTG_Tools
             int version = Convert.ToInt32(param[6]);
             bool FullEncrypt = param[7] == "True";
             byte[] encKey = null;
-            /*if (param[5] == "True")
-            {
-                deleteFromInputSource = true;
-            }
-            if (param[4] == "True")
-            {
-                deleteFromInputImported = true;
-            }*/
 
             bool[] show = { false, false, false, false };
 
@@ -1219,6 +1211,8 @@ namespace TTG_Tools
                 extractedFormat.Add(-1);
                 extractedFormat.Add(-1);
 
+                string message = "";
+
                 foreach (string destinationForExport in destinationForExportList)
                 {
                     DirectoryInfo dir = new DirectoryInfo(pathInput);
@@ -1232,7 +1226,7 @@ namespace TTG_Tools
                             {
                                 case ".langdb":
                                     {
-                                        string message = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, true, false, ref encKey, 2);
+                                        message = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, true, false, ref encKey, 2);
                                         ReportForWork(message);
                                         /*int lenghtOfExtension = inputFiles[i].Extension.Length;
                                         string fileName = inputFiles[i].Name.Remove(inputFiles[i].Name.Length - lenghtOfExtension, lenghtOfExtension) + ".txt";
@@ -1243,16 +1237,15 @@ namespace TTG_Tools
                                     }
                                 case ".d3dtx":
                                     {
-                                        string message = TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, true, false, ref encKey, version);
+                                        message = TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, true, false, ref encKey, version);
                                         ReportForWork(message);
                                         extractedFormat[1] = 1;
-                                        //string message = TextureWorker.ExportTexture(inputFiles, i, AutoPacker.selected_index, key, version, versionOfGame, MainMenu.settings.iOSsupport);
-                                        //if (message != "") ReportForWork(message);
-                                        //else ReportForWork("Unknown error. Please send me file.");
                                         break;
                                     }
                                 case ".landb":
-                                    ExtractLandbFile(inputFiles, i, versionOfGame);
+                                    //ExtractLandbFile(inputFiles, i, versionOfGame);
+                                    message = Texts.LandbWorker.DoWork(inputFiles[i].FullName, true);
+                                    ReportForWork(message);
                                     extractedFormat[2] = 2;
                                     break;
                                 case ".dlog":
