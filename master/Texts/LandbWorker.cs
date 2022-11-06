@@ -10,7 +10,7 @@ namespace TTG_Tools.Texts
 {
     public class LandbWorker
     {
-        private static LandbClass GetStringsFromLandb(BinaryReader br, bool hasFlags)
+        private static LandbClass GetStringsFromLandb(BinaryReader br, bool hasFlags, bool newFormat)
         {
             LandbClass landb = new LandbClass();
 
@@ -88,14 +88,18 @@ namespace TTG_Tools.Texts
                     tmp = null;
                 }
 
-                landb.unknownData = null;
-                if((br.BaseStream.Length - br.BaseStream.Position) > 0)
-                {
-                    int size = (int)(br.BaseStream.Length - br.BaseStream.Position);
-                    landb.unknownData = br.ReadBytes(size);
+                landb.someAfterData = new SomeDateAfterLandb();
+                landb.someAfterData.commonBlockSize = br.ReadInt32();
+                landb.someAfterData.firstBlockSize = br.ReadInt32();
+                landb.someAfterData.firstBlock = br.ReadBytes(landb.someAfterData.firstBlockSize - 4);
+                landb.someAfterData.secondBlockSize = br.ReadInt32();
+                landb.someAfterData.secondBlock = br.ReadBytes(landb.someAfterData.secondBlockSize - 4);
 
-                }
-
+                landb.lastLandbData = new LastLandbData();
+                landb.lastLandbData.Unknown1 = br.ReadInt32();
+                landb.lastLandbData.Unknown2 = br.ReadInt32();
+                landb.lastLandbData.Unknown3 = br.ReadInt32();
+                landb.lastLandbData.Unknown4 = br.ReadInt32();
             }
             catch
             {
@@ -119,6 +123,12 @@ namespace TTG_Tools.Texts
             {
                 byte[] checkHeader = br.ReadBytes(4);
                 int countBlocks = br.ReadInt32();
+                bool newFormat = false;
+
+                if((Encoding.ASCII.GetString(checkHeader) == "5VSM") || (Encoding.ASCII.GetString(checkHeader) == "6VSM"))
+                {
+                    newFormat = true;
+                }
 
                 string[] classes = new string[countBlocks];
 
@@ -135,7 +145,7 @@ namespace TTG_Tools.Texts
                    tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
                 }
 
-                LandbClass landbs = GetStringsFromLandb(br, hasFlags);
+                LandbClass landbs = GetStringsFromLandb(br, hasFlags, newFormat);
                 br.Close();
                 ms.Close();
 

@@ -43,19 +43,15 @@ namespace TTG_Tools.ClassesStructs.Text
         public int flags;
     }
 
-    /*public struct SomeDateAfterLandb
+    public struct SomeDateAfterLandb
     {
         public int commonBlockSize;
 
         public int firstBlockSize;
-        public int firstCountElements;
-        public int[] firstNameSize;
-        public string[] firstName;
+        public byte[] firstBlock;
 
         public int secondBlockSize;
-        public int secondCountElements;
-        public int[] secondNameSize;
-        public string[] secondName;
+        public byte[] secondBlock;
     }
 
     public struct LastLandbData //16 bytes of some data
@@ -64,10 +60,11 @@ namespace TTG_Tools.ClassesStructs.Text
         public int Unknown2;
         public int Unknown3;
         public int Unknown4;
-    }*/
+    }
 
     public class LandbClass
     {
+        public int landbFileSize; //For 5VSM and 6VSM formats
         //public bool isBlockLength; Maybe I'll remove that
         public int blockSize1;
         public int someValue1;
@@ -79,8 +76,8 @@ namespace TTG_Tools.ClassesStructs.Text
 
         public Landb[] landbs;
         public FlagsClass.LangdbFlagClass[] flags;
-        public byte[] unknownData;
-        /*public SomeDateAfterLandb someAfterData;
-        public LastLandbData lastLandbData;*/
+        //public byte[] unknownData;
+        public SomeDateAfterLandb someAfterData;
+        public LastLandbData lastLandbData;
     }
 }
