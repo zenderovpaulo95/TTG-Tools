@@ -10,6 +10,7 @@ namespace TTG_Tools.ClassesStructs.Text
     {
         public uint stringNumber; //Current string number
         public uint anmID; //Actor's animation
+        public ulong crc64Langres; //Langres's CRC64
         public uint wavID; //Actor's speech
         public int zero1; //Some zero value
 
@@ -17,9 +18,11 @@ namespace TTG_Tools.ClassesStructs.Text
         public int blockAnmNameSize;
         public int anmNameSize;
         public string anmName;
+        public int someValue1; //If game since Wolf among us
         public int blockWavNameSize;
         public int wavNameSize;
         public string wavName;
+        public int someValue2; //If game since Wolf among us
 
         public int blockUnknownNameSize; //I don't know what does it mean
         public int unknownNameSize;
@@ -65,6 +68,7 @@ namespace TTG_Tools.ClassesStructs.Text
     public class LandbClass
     {
         public int landbFileSize; //For 5VSM and 6VSM formats
+        public int landbLastFileSize; //Last block after list landb
         //public bool isBlockLength; Maybe I'll remove that
         public int blockSize1;
         public int someValue1;
@@ -73,6 +77,9 @@ namespace TTG_Tools.ClassesStructs.Text
 
         public int blockLength;
         public int landbCount;
+
+        public bool isNewFormat;
+        public bool hasMetaLangresName; //uses since The Wolf among us
 
         public Landb[] landbs;
         public FlagsClass.LangdbFlagClass[] flags;

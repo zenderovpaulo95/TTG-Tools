@@ -10,12 +10,24 @@ namespace TTG_Tools.Texts
 {
     public class LandbWorker
     {
-        private static LandbClass GetStringsFromLandb(BinaryReader br, bool hasFlags, bool newFormat)
+        private static LandbClass GetStringsFromLandb(BinaryReader br, bool hasCRC64Langres, bool newFormat)
         {
             LandbClass landb = new LandbClass();
 
             try
-            {
+            { 
+                landb.isNewFormat = newFormat;
+                landb.hasMetaLangresName = hasCRC64Langres;
+
+                if(landb.isNewFormat)
+                {
+                    var pos = br.BaseStream.Position;
+                    br.BaseStream.Seek(4, SeekOrigin.Begin);
+                    landb.landbFileSize = br.ReadInt32();
+                    landb.landbLastFileSize = br.ReadInt32();
+                    br.BaseStream.Seek(pos, SeekOrigin.Begin);
+                }
+
                 landb.blockSize1 = br.ReadInt32();
                 landb.someValue1 = br.ReadInt32();
                 landb.blockSize2 = br.ReadInt32();
@@ -33,6 +45,7 @@ namespace TTG_Tools.Texts
                 {
                     landb.landbs[i].stringNumber = (uint)(i + 1);
                     landb.landbs[i].wavID = br.ReadUInt32();
+                    if (landb.hasMetaLangresName) landb.landbs[i].crc64Langres = br.ReadUInt64();
                     landb.landbs[i].anmID = br.ReadUInt32();
                     landb.landbs[i].zero1 = br.ReadInt32();
 
@@ -40,11 +53,13 @@ namespace TTG_Tools.Texts
                     landb.landbs[i].anmNameSize = br.ReadInt32();
                     tmp = br.ReadBytes(landb.landbs[i].anmNameSize);
                     landb.landbs[i].anmName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    if (landb.isNewFormat) landb.landbs[i].someValue1 = br.ReadInt32();
 
                     landb.landbs[i].blockWavNameSize = br.ReadInt32();
                     landb.landbs[i].wavNameSize = br.ReadInt32();
                     tmp = br.ReadBytes(landb.landbs[i].wavNameSize);
                     landb.landbs[i].wavName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    if (landb.isNewFormat) landb.landbs[i].someValue2 = br.ReadInt32();
 
                     landb.landbs[i].blockUnknownNameSize = br.ReadInt32();
                     landb.landbs[i].unknownNameSize = br.ReadInt32();
@@ -122,30 +137,35 @@ namespace TTG_Tools.Texts
             try
             {
                 byte[] checkHeader = br.ReadBytes(4);
-                int countBlocks = br.ReadInt32();
-                bool newFormat = false;
 
-                if((Encoding.ASCII.GetString(checkHeader) == "5VSM") || (Encoding.ASCII.GetString(checkHeader) == "6VSM"))
+                bool newFormat = false;
+                int pos = 8;
+
+                if ((Encoding.ASCII.GetString(checkHeader) == "5VSM") || (Encoding.ASCII.GetString(checkHeader) == "6VSM"))
                 {
                     newFormat = true;
+                    pos = 16;
                 }
 
-                string[] classes = new string[countBlocks];
-
-                bool hasFlags = false;
+                //bool hasFlags = false;
+                bool hasCRC64Langres = false;
                 byte[] checkBlock = br.ReadBytes(8);
-                br.BaseStream.Seek(8, SeekOrigin.Begin);
-                ulong checkCRC64 = 0;
+                br.BaseStream.Seek(pos, SeekOrigin.Begin);
+
+                int countBlocks = br.ReadInt32();
+
+                string[] classes = new string[countBlocks];
 
                 for (int i = 0; i < countBlocks; i++)
                 {
                    byte[] tmp = br.ReadBytes(8);
                    classes[i] = BitConverter.ToString(tmp);
-                   if (classes[i].ToLower() == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(checkCRC64, InEngineWords.ClassStructsNames.flagsClass.ToLower())))) hasFlags = true;
+                    //if (classes[i] == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(0, InEngineWords.ClassStructsNames.flagsClass.ToLower())))) hasFlags = true;
+                   if (classes[i] == "B0-9F-D8-63-34-02-4F-00") hasCRC64Langres = true;
                    tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
                 }
 
-                LandbClass landbs = GetStringsFromLandb(br, hasFlags, newFormat);
+                LandbClass landbs = GetStringsFromLandb(br, hasCRC64Langres, newFormat);
                 br.Close();
                 ms.Close();
 
