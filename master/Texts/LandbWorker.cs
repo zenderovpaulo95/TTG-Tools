@@ -10,7 +10,7 @@ namespace TTG_Tools.Texts
 {
     public class LandbWorker
     {
-        private static LandbClass GetStringsFromLandb(BinaryReader br, bool hasCRC64Langres, bool newFormat)
+        private static LandbClass GetStringsFromLandb(BinaryReader br, bool hasCRC64Langres, bool newFormat, bool isUnicode)
         {
             LandbClass landb = new LandbClass();
 
@@ -18,6 +18,7 @@ namespace TTG_Tools.Texts
             { 
                 landb.isNewFormat = newFormat;
                 landb.hasMetaLangresName = hasCRC64Langres;
+                landb.isUnicode = isUnicode;
 
                 if(landb.isNewFormat)
                 {
@@ -39,7 +40,7 @@ namespace TTG_Tools.Texts
                 landb.landbs = new Landb[landb.landbCount];
                 landb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[landb.landbCount];
 
-                byte[] tmp = null;
+                byte[] tmp = null;                
 
                 for (int i = 0; i < landb.landbCount; i++)
                 {
@@ -50,16 +51,32 @@ namespace TTG_Tools.Texts
                     landb.landbs[i].zero1 = br.ReadInt32();
 
                     landb.landbs[i].blockAnmNameSize = br.ReadInt32();
-                    landb.landbs[i].anmNameSize = br.ReadInt32();
-                    tmp = br.ReadBytes(landb.landbs[i].anmNameSize);
-                    landb.landbs[i].anmName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
-                    if (landb.isNewFormat) landb.landbs[i].someValue1 = br.ReadInt32();
+                    if(landb.hasMetaLangresName)
+                    {
+                        tmp = br.ReadBytes(8);
+                        landb.landbs[i].anmNameSize = 8;
+                        landb.landbs[i].anmName = BitConverter.ToString(tmp);
+                    }
+                    else
+                    {
+                        landb.landbs[i].anmNameSize = br.ReadInt32();
+                        tmp = br.ReadBytes(landb.landbs[i].anmNameSize);
+                        landb.landbs[i].anmName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    }
 
                     landb.landbs[i].blockWavNameSize = br.ReadInt32();
-                    landb.landbs[i].wavNameSize = br.ReadInt32();
-                    tmp = br.ReadBytes(landb.landbs[i].wavNameSize);
-                    landb.landbs[i].wavName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
-                    if (landb.isNewFormat) landb.landbs[i].someValue2 = br.ReadInt32();
+                    if (landb.hasMetaLangresName)
+                    {
+                        tmp = br.ReadBytes(8);
+                        landb.landbs[i].wavNameSize = 8;
+                        landb.landbs[i].wavName = BitConverter.ToString(tmp);
+                    }
+                    else
+                    {
+                        landb.landbs[i].wavNameSize = br.ReadInt32();
+                        tmp = br.ReadBytes(landb.landbs[i].wavNameSize);
+                        landb.landbs[i].wavName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    }
 
                     landb.landbs[i].blockUnknownNameSize = br.ReadInt32();
                     landb.landbs[i].unknownNameSize = br.ReadInt32();
@@ -72,15 +89,21 @@ namespace TTG_Tools.Texts
                     landb.landbs[i].blockActorNameSize = br.ReadInt32();
                     landb.landbs[i].actorNameSize = br.ReadInt32();
                     tmp = br.ReadBytes(landb.landbs[i].actorNameSize);
-                    landb.landbs[i].actorName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    landb.landbs[i].actorName = landb.isUnicode ? Encoding.UTF8.GetString(tmp) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                     landb.landbs[i].blockActorSpeechSize = br.ReadInt32();
                     landb.landbs[i].actorSpeechSize = br.ReadInt32();
                     tmp = br.ReadBytes(landb.landbs[i].actorSpeechSize);
-                    landb.landbs[i].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    landb.landbs[i].actorSpeech = landb.isUnicode ? Encoding.UTF8.GetString(tmp) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                     landb.landbs[i].blockSize = br.ReadInt32();
                     landb.landbs[i].someValue = br.ReadInt32();
+
+                    if(landb.isUnicode)
+                    {
+                        landb.landbs[i].blockSizeUni = br.ReadInt32();
+                        landb.landbs[i].someDataUni = br.ReadBytes(landb.landbs[i].blockSizeUni - 4);
+                    }
 
                     landb.landbs[i].flags = br.ReadInt32();
                     tmp = Encoding.ASCII.GetBytes(Convert.ToString(landb.landbs[i].flags, 2));
@@ -139,7 +162,9 @@ namespace TTG_Tools.Texts
                 byte[] checkHeader = br.ReadBytes(4);
 
                 bool newFormat = false;
-                int pos = 8;
+                bool hasCRC64Langres = false;
+                bool isUnicode = false;
+                int pos = 4;
 
                 if ((Encoding.ASCII.GetString(checkHeader) == "5VSM") || (Encoding.ASCII.GetString(checkHeader) == "6VSM"))
                 {
@@ -148,8 +173,6 @@ namespace TTG_Tools.Texts
                 }
 
                 //bool hasFlags = false;
-                bool hasCRC64Langres = false;
-                byte[] checkBlock = br.ReadBytes(8);
                 br.BaseStream.Seek(pos, SeekOrigin.Begin);
 
                 int countBlocks = br.ReadInt32();
@@ -162,10 +185,11 @@ namespace TTG_Tools.Texts
                    classes[i] = BitConverter.ToString(tmp);
                     //if (classes[i] == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(0, InEngineWords.ClassStructsNames.flagsClass.ToLower())))) hasFlags = true;
                    if (classes[i] == "B0-9F-D8-63-34-02-4F-00") hasCRC64Langres = true;
+                    if (classes[i] == "53-DC-A5-33-DB-D6-DC-7E") isUnicode = true;
                    tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
                 }
 
-                LandbClass landbs = GetStringsFromLandb(br, hasCRC64Langres, newFormat);
+                LandbClass landbs = GetStringsFromLandb(br, hasCRC64Langres, newFormat, isUnicode);
                 br.Close();
                 ms.Close();
 

@@ -18,11 +18,9 @@ namespace TTG_Tools.ClassesStructs.Text
         public int blockAnmNameSize;
         public int anmNameSize;
         public string anmName;
-        public int someValue1; //If game since Wolf among us
         public int blockWavNameSize;
         public int wavNameSize;
         public string wavName;
-        public int someValue2; //If game since Wolf among us
 
         public int blockUnknownNameSize; //I don't know what does it mean
         public int unknownNameSize;
@@ -42,6 +40,10 @@ namespace TTG_Tools.ClassesStructs.Text
 
         public int blockSize;
         public int someValue;
+
+        //For games since Tales from the Borderlands
+        public int blockSizeUni;
+        public byte[] someDataUni;
 
         public int flags;
     }
@@ -80,6 +82,7 @@ namespace TTG_Tools.ClassesStructs.Text
 
         public bool isNewFormat;
         public bool hasMetaLangresName; //uses since The Wolf among us
+        public bool isUnicode; //Maybe. I named it for a correctly UTF-8 support
 
         public Landb[] landbs;
         public FlagsClass.LangdbFlagClass[] flags;
