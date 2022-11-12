@@ -126,7 +126,7 @@ namespace TTG_Tools.Texts
                     tmp = null;
                 }
 
-                landb.someAfterData = new SomeDateAfterLandb();
+                landb.someAfterData = new SomeDataAfterLandb();
                 landb.someAfterData.commonBlockSize = br.ReadInt32();
                 landb.someAfterData.firstBlockSize = br.ReadInt32();
                 landb.someAfterData.firstBlock = br.ReadBytes(landb.someAfterData.firstBlockSize - 4);
@@ -183,9 +183,8 @@ namespace TTG_Tools.Texts
                 {
                    byte[] tmp = br.ReadBytes(8);
                    classes[i] = BitConverter.ToString(tmp);
-                    //if (classes[i] == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(0, InEngineWords.ClassStructsNames.flagsClass.ToLower())))) hasFlags = true;
-                   if (classes[i] == "B0-9F-D8-63-34-02-4F-00") hasCRC64Langres = true;
-                    if (classes[i] == "53-DC-A5-33-DB-D6-DC-7E") isUnicode = true;
+                   if(classes[i] == "B0-9F-D8-63-34-02-4F-00") hasCRC64Langres = true;
+                   if(classes[i] == "53-DC-A5-33-DB-D6-DC-7E") isUnicode = true;
                    tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
                 }
 
@@ -199,7 +198,7 @@ namespace TTG_Tools.Texts
                 {
                     return "File " + fi.Name + ": unknown error.";
                 }
-                if (landbs != null && landbs.landbCount == 0)
+                if ((landbs != null) && (landbs.landbCount == 0))
                 {
                     landbs = null;
                     GC.Collect();

@@ -21,7 +21,7 @@ namespace TTG_Tools
         public event RefAllText BackAllText;
         public event RefAllText2 BackAllText2;
 
-        public void ExtractDlogFile(FileInfo[] fi, int i)
+       /* public void ExtractDlogFile(FileInfo[] fi, int i)
         {
             List<AutoPacker.Langdb> database = new List<AutoPacker.Langdb>();
             FileStream fs = new FileStream(fi[i].FullName, FileMode.Open);
@@ -87,9 +87,9 @@ namespace TTG_Tools
             {
                 ReportForWork("File " + fi[i].Name + " exported in " + Methods.GetNameOfFileOnly(fi[i].Name, ".dlog") + ".txt");
             }
-        }
+        }*/
 
-        public void ExtractLandbFile(FileInfo[] fi, int i, string versionOfGame)
+        /*public void ExtractLandbFile(FileInfo[] fi, int i, string versionOfGame)
         {
             List<byte[]> header = new List<byte[]>();
             byte[] lenght_of_all_text = new byte[4];
@@ -241,7 +241,7 @@ namespace TTG_Tools
             {
                 ReportForWork("File " + fi[i].Name + " is EMPTY!");
             }
-        }
+        }*/
 
         public void CreateExportingTXTfromAllTextN(ref List<TextEditor.AllText> allText)
         {
@@ -474,7 +474,7 @@ namespace TTG_Tools
                                             }
                                         case ".landb":
                                             {
-                                                ImportTXTinLANDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
+                                                //ImportTXTinLANDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
                                             show[1] = true;
                                                 break;
                                             }
@@ -965,7 +965,7 @@ namespace TTG_Tools
             }*/
         }
 
-        public void ImportTXTinLANDB(FileInfo[] inputFiles, FileInfo[] fileDestination, int i, int j, string pathOutput, ref bool correctWork, string versionOfGame)
+        /*public void ImportTXTinLANDB(FileInfo[] inputFiles, FileInfo[] fileDestination, int i, int j, string pathOutput, ref bool correctWork, string versionOfGame)
         {
             int index = -1;
             try
@@ -1061,7 +1061,7 @@ namespace TTG_Tools
             {
                 ReportForWork("Import in file: " + inputFiles[i].Name + " is incorrect! Index: " + index);
             }
-        }
+        }*/
 
         public void ImportTXTinLANGDB(FileInfo[] inputFiles, FileInfo[] fileDestination, int i, int j, string pathOutput, ref bool correctWork, string versionOfGame)
         {
@@ -1249,7 +1249,9 @@ namespace TTG_Tools
                                     extractedFormat[2] = 2;
                                     break;
                                 case ".dlog":
-                                    ExtractDlogFile(inputFiles, i);
+                                    message = Texts.DlogWorker.DoWork(inputFiles[i].FullName, true);
+                                    //ExtractDlogFile(inputFiles, i);
+                                    ReportForWork(message);
                                     extractedFormat[3] = 3;
                                     break;
                                 case ".prop":

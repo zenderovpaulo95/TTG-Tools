@@ -55,7 +55,8 @@
         public static string kfValStringSample = "KeyframedValue<String>::Sample";
         public static string kfValVec3 = "KeyframedValue<Vector3>";
         public static string kfValVec3Sample = "KeyframedValue<Vector3>::Sample";
-        public static string langdbClass = "LanguageDatabase";
+        public static string languagedatabaseClass = "LanguageDatabase";
+        public static string languagedbClass = "languagedb";
         public static string langresClass = "LanguageResource";
         public static string langresProxy = "LanguageResourceProxy";
         public static string lightTypeClass = "LightType";

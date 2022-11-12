@@ -48,7 +48,7 @@ namespace TTG_Tools.ClassesStructs.Text
         public int flags;
     }
 
-    public struct SomeDateAfterLandb
+    public struct SomeDataAfterLandb
     {
         public int commonBlockSize;
 
@@ -87,7 +87,7 @@ namespace TTG_Tools.ClassesStructs.Text
         public Landb[] landbs;
         public FlagsClass.LangdbFlagClass[] flags;
         //public byte[] unknownData;
-        public SomeDateAfterLandb someAfterData;
+        public SomeDataAfterLandb someAfterData;
         public LastLandbData lastLandbData;
     }
 }

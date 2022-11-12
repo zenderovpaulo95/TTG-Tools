@@ -95,6 +95,7 @@
     <Compile Include="blowfish.cs" />
     <Compile Include="ClassesStructs\FlagsClass.cs" />
     <Compile Include="ClassesStructs\PropertyClass.cs" />
+    <Compile Include="ClassesStructs\Text\DlogClass.cs" />
     <Compile Include="ClassesStructs\Text\LandbClass.cs" />
     <Compile Include="ClassesStructs\Text\LangdbClass.cs" />
     <Compile Include="CRCs.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Graphics\TextureWorker.cs" />
+    <Compile Include="Texts\DlogWorker.cs" />
     <Compile Include="Texts\LandbWorker.cs" />
     <Compile Include="Texts\LangdbWorker.cs" />
     <EmbeddedResource Include="About.resx">

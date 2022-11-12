@@ -133,7 +133,8 @@ namespace TTG_Tools
             return result;
         }
 
-        public static string FindingDecrytKey(byte[] bytes, string TypeFile, ref byte[] KeyEnc, ref int version) //Ищем ключ расшифровки для файлов langdb, dlog и d3dtx
+        //Finding decrypt/encrypt key for langdb, dlog & d3dtx files
+        public static string FindingDecrytKey(byte[] bytes, string TypeFile, ref byte[] KeyEnc, ref int version)
         {
             string result = null;
             byte[] decKey = null;

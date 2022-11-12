@@ -74,8 +74,8 @@ namespace TTG_Tools.Texts
 
                     /*if (hasFlags)
                     {*/
-                        langdb.flags[i] = new ClassesStructs.FlagsClass.LangdbFlagClass();
-                        langdb.flags[i].flags = br.ReadBytes(3);
+                    langdb.flags[i] = new ClassesStructs.FlagsClass.LangdbFlagClass();
+                    langdb.flags[i].flags = br.ReadBytes(3);
                     //}
 
                     langdb.langdbs[i].zero = br.ReadInt32();
@@ -112,7 +112,7 @@ namespace TTG_Tools.Texts
                 ulong checkCRC64 = 0;
                 bool isHashStrings = false;
 
-                if (BitConverter.ToString(checkBlock) == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(checkCRC64, InEngineWords.ClassStructsNames.langdbClass.ToLower()))))
+                if (BitConverter.ToString(checkBlock) == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(checkCRC64, InEngineWords.ClassStructsNames.languagedatabaseClass.ToLower()))))
                 {
                     isHashStrings = true;
 
@@ -146,7 +146,7 @@ namespace TTG_Tools.Texts
                 {
                     return "File " + fi.Name + ": unknown error.";
                 }
-                if (langdbs != null && langdbs.langdbCount == 0)
+                if ((langdbs != null) && (langdbs.langdbCount == 0))
                 {
                     langdbs = null;
                     GC.Collect();

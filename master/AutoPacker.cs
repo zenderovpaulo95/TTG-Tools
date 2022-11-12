@@ -374,7 +374,7 @@ namespace TTG_Tools
 
                     }
                 }
-                if (i + 1 < fi.Count())
+                /*if (i + 1 < fi.Count())
                 {
                     bool work = false;
                     int offset1 = 0;
@@ -431,7 +431,7 @@ namespace TTG_Tools
                         i++;
                         work = false;
                     }
-                }
+                }*/
             }
         }
 
@@ -1009,7 +1009,7 @@ namespace TTG_Tools
             }
         }
 
-        public static void ReadDlog(byte[] binContent, dlog[] first_database, List<Langdb> database, byte version)
+        /*public static void ReadDlog(byte[] binContent, dlog[] first_database, List<Langdb> database, byte version)
         {
             {
                 int number = 0;
@@ -1745,29 +1745,7 @@ namespace TTG_Tools
                 }
             }
             //catch { }
-        }
-
-        public class chapterOfDDS
-        {
-            public byte[] number_of_chapter;
-            public byte[] one;
-            public byte[] lenght_of_chapter;
-            public byte[] kratnost;
-            public byte[] content_chapter;
-            public byte[] hz;
-
-            public chapterOfDDS() { }
-            public chapterOfDDS(byte[] number_of_chapter, byte[] one, byte[] lenght_of_chapter, byte[] kratnost, byte[] content_chapter, byte[] hz)
-            {
-                this.number_of_chapter = number_of_chapter;
-                this.one = one;
-                this.lenght_of_chapter = lenght_of_chapter;
-                this.kratnost = kratnost;
-                this.content_chapter = content_chapter;
-                this.hz = hz;
-            }
-
-        }
+        }*/
 
         public class Prop
         {
@@ -1821,7 +1799,7 @@ namespace TTG_Tools
             }
         }
 
-        public static void CreateDlog(dlog[] first_database, List<Langdb> database, byte version, string path)
+        /*public static void CreateDlog(dlog[] first_database, List<Langdb> database, byte version, string path)
         {
             //проверяем наличие файла, удаляем его и создаем пустой
             FileStream MyFileStream;
@@ -2141,7 +2119,7 @@ namespace TTG_Tools
             }
             //закрываем поток
             MyFileStream.Close();
-        }
+        }*/
 
         public static Int32 GetSizeOfByteMassiv(byte[] str)
         {
