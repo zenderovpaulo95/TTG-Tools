@@ -33,6 +33,8 @@ namespace TTG_Tools.ClassesStructs.Text
         public int actorSpeechSize;
         public string actorSpeech;
 
+        public byte[] flags; //Will be 000 for a compatible
+
         public int someValue2;
         public int someValue3;
         public int someValue4;

@@ -155,22 +155,41 @@ namespace TTG_Tools.Texts
 
                 if(extract)
                 {
-                    //TO DO:
-                    //Need to think about sort same strings!
+                    ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
+
+                    txts.txtList = new List<CommonText>();
+
+                    for(int i = 0; i < langdbs.langdbCount; i++)
+                    {
+                        ClassesStructs.Text.CommonText txt;
+
+                        txt.isBothSpeeches = true;
+                        txt.strNumber = MainMenu.settings.exportRealID ? langdbs.langdbs[i].anmID : langdbs.langdbs[i].stringNumber;
+                        txt.actorName = langdbs.langdbs[i].actorName;
+                        txt.actorSpeechOriginal = langdbs.langdbs[i].actorSpeech;
+                        txt.actorSpeechTranslation = langdbs.langdbs[i].actorSpeech;
+                        txt.flags = Encoding.ASCII.GetString(langdbs.flags[i].flags);
+
+                        txts.txtList.Add(txt);
+                    }
+
+                    if(MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
 
                     if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt");
                     FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt", FileMode.CreateNew);
                     StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
 
-                    for(int i = 0; i < langdbs.langdbCount; i++)
+                    for(int i = 0; i < txts.txtList.Count; i++)
                     {
-                        if (MainMenu.settings.exportRealID) sw.WriteLine(langdbs.langdbs[i].voxID + ") " + langdbs.langdbs[i].actorName);
-                        else sw.WriteLine(langdbs.langdbs[i].stringNumber + ") " + langdbs.langdbs[i].actorName);
-                        sw.WriteLine(langdbs.langdbs[i].actorSpeech);
+                        sw.WriteLine(txts.txtList[i].strNumber + ") " + txts.txtList[i].actorName);
+                        sw.WriteLine(txts.txtList[i].actorSpeechOriginal);
                     }
 
                     sw.Close();
                     fs.Close();
+
+                    txts.txtList.Clear();
+                    txts = null;
 
                     result = fi.Name + " successfully extracted.";
                 }

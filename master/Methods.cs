@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Linq;
 using System.IO;
 
 namespace TTG_Tools
@@ -420,7 +422,7 @@ namespace TTG_Tools
             catch { }
         }
 
-        public static bool MakePause()
+        /*public static bool MakePause()
         {
             int start = GetTime() + 2500;
             int i = 0;
@@ -429,15 +431,15 @@ namespace TTG_Tools
                 i++;
             }
             return true;
-        }
+        }*/
 
-        static int GetTime()
+        /*static int GetTime()
         {
             DateTime time = DateTime.Now;
             return (((time.Hour * 60 + time.Minute) * 60 + time.Second) * 1000 + time.Millisecond);
-        }
+        }*/
 
-        public static int FindStartOfBinarySomething(byte[] array, int offset, byte[] something)
+        /*public static int FindStartOfBinarySomething(byte[] array, int offset, byte[] something)
         {
             int poz = offset;
             byte[] tmp = new byte[something.Length];
@@ -457,7 +459,7 @@ namespace TTG_Tools
             poz--;
 
             return poz;
-        }
+        }*/
 
         public static int FindStartOfStringSomething(byte[] array, int offset, string string_something)
         {
@@ -621,7 +623,6 @@ namespace TTG_Tools
                     if (i % block_crypt == 0)
                     {
                         BlowFishCS.BlowFish enc = new BlowFishCS.BlowFish(key, version_archive);
-                        //block = enc.Crypt_ECB(block, version_archive, false);
                         block = enc.Crypt_ECB(block, version_archive, decrypt);
                         Array.Copy(block, 0, temp_file, poz, block.Length);
                     }
@@ -654,8 +655,8 @@ namespace TTG_Tools
         }
 
         public static byte[] encryptLua(byte[] luaContent, byte[] key, bool newEngine, int version)
-        {   //newEngine - игры, выпущенные с Tales From the Borderlands и переизданные на новом движке
-        
+        {
+            //newEngine - игры, выпущенные с Tales From the Borderlands и переизданные на новом движке
             BlowFishCS.BlowFish DoEncLua = new BlowFishCS.BlowFish(key, version);
             byte[] header = new byte[4];
 
@@ -693,6 +694,54 @@ namespace TTG_Tools
             }
 
             return luaContent;
+        }
+
+        public static ClassesStructs.Text.CommonTextClass SortString(ClassesStructs.Text.CommonTextClass text)
+        {
+            string firstStr = "", secondStr = "";
+            ClassesStructs.Text.CommonTextClass newText = new ClassesStructs.Text.CommonTextClass();
+            newText.txtList = new System.Collections.Generic.List<ClassesStructs.Text.CommonText>();
+
+            ClassesStructs.Text.CommonText tmpTxt;
+
+            for (int i = 0; i < text.txtList.Count; i++)
+            {
+                firstStr = DeleteCommentary(text.txtList[i].actorSpeechOriginal, "{", "}");
+                firstStr = DeleteCommentary(firstStr, "[", "]");
+                firstStr = Regex.Replace(firstStr, @"[^\w]", "");
+
+                tmpTxt.isBothSpeeches = text.txtList[i].isBothSpeeches;
+                tmpTxt.strNumber = text.txtList[i].strNumber;
+                tmpTxt.actorName = text.txtList[i].actorName;
+                tmpTxt.actorSpeechOriginal = text.txtList[i].actorSpeechOriginal;
+                tmpTxt.actorSpeechTranslation = text.txtList[i].actorSpeechTranslation;
+                tmpTxt.flags = text.txtList[i].flags;
+
+                newText.txtList.Add(tmpTxt);
+
+                for (int j = i + 1; j < text.txtList.Count; j++)
+                {
+                    secondStr = DeleteCommentary(text.txtList[j].actorSpeechOriginal, "{", "}");
+                    secondStr = DeleteCommentary(secondStr, "[", "]");
+                    secondStr = Regex.Replace(secondStr, @"[^\w]", "");
+
+                    if (firstStr.ToLower() == secondStr.ToLower())
+                    {
+                        tmpTxt.isBothSpeeches = text.txtList[j].isBothSpeeches;
+                        tmpTxt.strNumber = text.txtList[j].strNumber;
+                        tmpTxt.actorName = text.txtList[j].actorName;
+                        tmpTxt.actorSpeechOriginal = text.txtList[j].actorSpeechOriginal;
+                        tmpTxt.actorSpeechTranslation = text.txtList[j].actorSpeechTranslation;
+                        tmpTxt.flags = text.txtList[j].flags;
+
+                        newText.txtList.Add(tmpTxt);
+                    }
+                }
+            }
+
+            newText.txtList = newText.txtList.Distinct().ToList();
+
+            return newText;
         }
 
         public static string DeleteCommentary(string str, string start, string end)

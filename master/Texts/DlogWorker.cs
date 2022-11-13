@@ -159,22 +159,41 @@ namespace TTG_Tools.Texts
 
                 if(extract)
                 {
-                    //TO DO:
-                    //Need to think about sort same strings!
+                    ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
+
+                    txts.txtList = new List<CommonText>();
+
+                    for (int i = 0; i < dlog.landb.landbCount; i++)
+                    {
+                        ClassesStructs.Text.CommonText txt;
+
+                        txt.isBothSpeeches = true;
+                        txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : dlog.landb.landbs[i].stringNumber;
+                        txt.actorName = dlog.landb.landbs[i].actorName;
+                        txt.actorSpeechOriginal = dlog.landb.landbs[i].actorSpeech;
+                        txt.actorSpeechTranslation = dlog.landb.landbs[i].actorSpeech;
+                        txt.flags = "000"; //default will be 000
+
+                        txts.txtList.Add(txt);
+                    }
+
+                    if (MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
 
                     if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4) + "txt");
                     FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4) + "txt", FileMode.CreateNew);
                     StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
 
-                    for (int i = 0; i < dlog.landb.landbCount; i++)
+                    for (int i = 0; i < txts.txtList.Count; i++)
                     {
-                        if (MainMenu.settings.exportRealID) sw.WriteLine(dlog.landb.landbs[i].wavID + ") " + dlog.landb.landbs[i].actorName);
-                        else sw.WriteLine(dlog.landb.landbs[i].stringNumber + ") " + dlog.landb.landbs[i].actorName);
-                        sw.WriteLine(dlog.landb.landbs[i].actorSpeech);
+                        sw.WriteLine(txts.txtList[i].strNumber + ") " + txts.txtList[i].actorName);
+                        sw.WriteLine(txts.txtList[i].actorSpeechOriginal);
                     }
 
                     sw.Close();
                     fs.Close();
+
+                    txts.txtList.Clear();
+                    txts = null;
 
                     result = fi.Name + " successfully extracted.";
                 }

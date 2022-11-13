@@ -172,7 +172,6 @@ namespace TTG_Tools.Texts
                     pos = 16;
                 }
 
-                //bool hasFlags = false;
                 br.BaseStream.Seek(pos, SeekOrigin.Begin);
 
                 int countBlocks = br.ReadInt32();
@@ -207,22 +206,41 @@ namespace TTG_Tools.Texts
 
                 if (extract)
                 {
-                    //TO DO:
-                    //Need to think about sort same strings!
+                    ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
+
+                    txts.txtList = new List<CommonText>();
+
+                    for (int i = 0; i < landbs.landbCount; i++)
+                    {
+                        ClassesStructs.Text.CommonText txt;
+
+                        txt.isBothSpeeches = true;
+                        txt.strNumber = MainMenu.settings.exportRealID ? landbs.landbs[i].anmID : landbs.landbs[i].stringNumber;
+                        txt.actorName = landbs.landbs[i].actorName;
+                        txt.actorSpeechOriginal = landbs.landbs[i].actorSpeech;
+                        txt.actorSpeechTranslation = landbs.landbs[i].actorSpeech;
+                        txt.flags = Encoding.ASCII.GetString(landbs.flags[i].flags);
+
+                        txts.txtList.Add(txt);
+                    }
+
+                    if (MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
 
                     if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt");
                     FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt", FileMode.CreateNew);
                     StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
 
-                    for (int i = 0; i < landbs.landbCount; i++)
+                    for (int i = 0; i < txts.txtList.Count; i++)
                     {
-                        if (MainMenu.settings.exportRealID) sw.WriteLine(landbs.landbs[i].wavID + ") " + landbs.landbs[i].actorName);
-                        else sw.WriteLine(landbs.landbs[i].stringNumber + ") " + landbs.landbs[i].actorName);
-                        sw.WriteLine(landbs.landbs[i].actorSpeech);
+                        sw.WriteLine(txts.txtList[i].strNumber + ") " + landbs.landbs[i].actorName);
+                        sw.WriteLine(txts.txtList[i].actorSpeechOriginal);
                     }
 
                     sw.Close();
                     fs.Close();
+
+                    txts.txtList.Clear();
+                    txts = null;
 
                     result = fi.Name + " successfully extracted.";
                 }
