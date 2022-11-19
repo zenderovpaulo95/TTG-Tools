@@ -226,7 +226,12 @@ namespace TTG_Tools.Texts
 
                     if (MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
 
-                    if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt");
+                    string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5);
+                    outputFile += MainMenu.settings.tsvFormat ? "tsv" : "txt";
+
+                    Texts.SaveText.OldMethod(txts.txtList, false, landbs.isUnicode, outputFile);
+
+                    /*if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt");
                     FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt", FileMode.CreateNew);
                     StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
 
@@ -237,7 +242,7 @@ namespace TTG_Tools.Texts
                     }
 
                     sw.Close();
-                    fs.Close();
+                    fs.Close();*/
 
                     txts.txtList.Clear();
                     txts = null;

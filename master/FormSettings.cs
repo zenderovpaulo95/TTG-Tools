@@ -56,7 +56,7 @@ namespace TTG_Tools
             MainMenu.settings.exportRealID = checkBoxExportRealID.Checked;
             MainMenu.settings.clearMessages = clearMessagesCB.Checked;
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
-            else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 2;
+            else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
 
             //MainMenu.settings.unicodeSupport = checkUnicode.Checked;
             if (((MainMenu.settings.pathForInputFolder != "") && (Directory.Exists(MainMenu.settings.pathForInputFolder)))

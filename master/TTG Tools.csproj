@@ -149,6 +149,8 @@
     <Compile Include="Texts\DlogWorker.cs" />
     <Compile Include="Texts\LandbWorker.cs" />
     <Compile Include="Texts\LangdbWorker.cs" />
+    <Compile Include="Texts\ReadText.cs" />
+    <Compile Include="Texts\SaveText.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
       <SubType>Designer</SubType>

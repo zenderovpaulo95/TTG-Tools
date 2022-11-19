@@ -7,6 +7,21 @@ using System.Threading.Tasks;
 namespace TTG_Tools.ClassesStructs.Text
 {
     //For Sam and Max season 3
+
+    public struct LangresDB
+    {
+        public int blockActorNameSize;
+        public int actorNameSize;
+        public string actorName;
+
+        public int blockActorSpeechSize;
+        public int actorSpeechSize;
+        public string actorSpeech;
+
+        public int someValue1;
+        public int someValue2;
+    }
+
     public struct DlogLandbs
     {
         public uint stringNumber; //Current string number
@@ -23,22 +38,14 @@ namespace TTG_Tools.ClassesStructs.Text
         public string wavName;
 
         public int blockLangresSize;
-        public int someValue1;
+        public int langresStrsCount; //count of langres strings
 
-        public int blockActorNameSize;
-        public int actorNameSize;
-        public string actorName;
-
-        public int blockActorSpeechSize;
-        public int actorSpeechSize;
-        public string actorSpeech;
+        public LangresDB[] lang;
 
         public byte[] flags; //Will be 000 for a compatible
 
-        public int someValue2;
         public int someValue3;
         public int someValue4;
-        public int someValue5;
     }
 
     public class DlogLandb

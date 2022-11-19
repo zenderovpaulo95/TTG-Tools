@@ -65,22 +65,31 @@ namespace TTG_Tools.Texts
                     dlog.landb.landbs[i].wavName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                     dlog.landb.landbs[i].blockLangresSize = br.ReadInt32();
-                    dlog.landb.landbs[i].someValue1 = br.ReadInt32();
+                    dlog.landb.landbs[i].langresStrsCount = br.ReadInt32();
 
-                    dlog.landb.landbs[i].blockActorNameSize = br.ReadInt32();
-                    dlog.landb.landbs[i].actorNameSize = br.ReadInt32();
-                    tmp = br.ReadBytes(dlog.landb.landbs[i].actorNameSize);
-                    dlog.landb.landbs[i].actorName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    if ((dlog.landb.landbs[i].blockLangresSize > 8) && (dlog.landb.landbs[i].langresStrsCount > 0))
+                    {
+                        dlog.landb.landbs[i].lang = new LangresDB[dlog.landb.landbs[i].langresStrsCount];
 
-                    dlog.landb.landbs[i].blockActorSpeechSize = br.ReadInt32();
-                    dlog.landb.landbs[i].actorSpeechSize = br.ReadInt32();
-                    tmp = br.ReadBytes(dlog.landb.landbs[i].actorSpeechSize);
-                    dlog.landb.landbs[i].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                        for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
+                        {
+                            dlog.landb.landbs[i].lang[j].blockActorNameSize = br.ReadInt32();
+                            dlog.landb.landbs[i].lang[j].actorNameSize = br.ReadInt32();
+                            tmp = br.ReadBytes(dlog.landb.landbs[i].lang[j].actorNameSize);
+                            dlog.landb.landbs[i].lang[j].actorName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
-                    dlog.landb.landbs[i].someValue2 = br.ReadInt32();
+                            dlog.landb.landbs[i].lang[j].blockActorSpeechSize = br.ReadInt32();
+                            dlog.landb.landbs[i].lang[j].actorSpeechSize = br.ReadInt32();
+                            tmp = br.ReadBytes(dlog.landb.landbs[i].lang[j].actorSpeechSize);
+                            dlog.landb.landbs[i].lang[j].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+
+                            dlog.landb.landbs[i].lang[j].someValue1 = br.ReadInt32();
+                            dlog.landb.landbs[i].lang[j].someValue2 = br.ReadInt32();
+                        }
+                    }
+
                     dlog.landb.landbs[i].someValue3 = br.ReadInt32();
                     dlog.landb.landbs[i].someValue4 = br.ReadInt32();
-                    dlog.landb.landbs[i].someValue5 = br.ReadInt32();
                 }
 
                 dlog.landb.someDataAfterLandb = new DlogSomeDataAfterLandb();
@@ -169,18 +178,30 @@ namespace TTG_Tools.Texts
 
                         txt.isBothSpeeches = true;
                         txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : dlog.landb.landbs[i].stringNumber;
-                        txt.actorName = dlog.landb.landbs[i].actorName;
-                        txt.actorSpeechOriginal = dlog.landb.landbs[i].actorSpeech;
-                        txt.actorSpeechTranslation = dlog.landb.landbs[i].actorSpeech;
-                        txt.flags = "000"; //default will be 000
 
-                        txts.txtList.Add(txt);
+                        for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
+                        {
+                            if(dlog.landb.landbs[i].langresStrsCount > 1)
+                            {
+                                txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : dlog.landb.landbs[i].stringNumber;
+                            }
+                            txt.actorName = dlog.landb.landbs[i].lang[j].actorName;
+                            txt.actorSpeechOriginal = dlog.landb.landbs[i].lang[j].actorSpeech;
+                            txt.actorSpeechTranslation = dlog.landb.landbs[i].lang[j].actorSpeech;
+                            txt.flags = "000"; //default will be 000
+
+                            txts.txtList.Add(txt);
+                        }
                     }
 
                     if (MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
 
-                    if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4) + "txt");
-                    FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4) + "txt", FileMode.CreateNew);
+                    string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4);
+                    outputFile += MainMenu.settings.tsvFormat ? "tsv" : "txt";
+
+                    Texts.SaveText.OldMethod(txts.txtList, false, false, outputFile);
+
+                    /*FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4) + "txt", FileMode.CreateNew);
                     StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
 
                     for (int i = 0; i < txts.txtList.Count; i++)
@@ -190,7 +211,7 @@ namespace TTG_Tools.Texts
                     }
 
                     sw.Close();
-                    fs.Close();
+                    fs.Close();*/
 
                     txts.txtList.Clear();
                     txts = null;
