@@ -171,19 +171,20 @@ namespace TTG_Tools.Texts
                     ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
 
                     txts.txtList = new List<CommonText>();
+                    uint c = 1;
 
                     for (int i = 0; i < dlog.landb.landbCount; i++)
                     {
                         ClassesStructs.Text.CommonText txt;
 
                         txt.isBothSpeeches = true;
-                        txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : dlog.landb.landbs[i].stringNumber;
+                        txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : c;
 
                         for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
                         {
                             if(dlog.landb.landbs[i].langresStrsCount > 1)
                             {
-                                txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : dlog.landb.landbs[i].stringNumber;
+                                txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : c;
                             }
                             txt.actorName = dlog.landb.landbs[i].lang[j].actorName;
                             txt.actorSpeechOriginal = dlog.landb.landbs[i].lang[j].actorSpeech;
@@ -191,6 +192,7 @@ namespace TTG_Tools.Texts
                             txt.flags = "000"; //default will be 000
 
                             txts.txtList.Add(txt);
+                            c++;
                         }
                     }
 
@@ -199,19 +201,16 @@ namespace TTG_Tools.Texts
                     string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4);
                     outputFile += MainMenu.settings.tsvFormat ? "tsv" : "txt";
 
-                    Texts.SaveText.OldMethod(txts.txtList, false, false, outputFile);
-
-                    /*FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 4, 4) + "txt", FileMode.CreateNew);
-                    StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
-
-                    for (int i = 0; i < txts.txtList.Count; i++)
+                    switch(MainMenu.settings.newTxtFormat)
                     {
-                        sw.WriteLine(txts.txtList[i].strNumber + ") " + txts.txtList[i].actorName);
-                        sw.WriteLine(txts.txtList[i].actorSpeechOriginal);
-                    }
+                        case true:
+                            Texts.SaveText.NewMethod(txts.txtList, false, outputFile);
+                            break;
 
-                    sw.Close();
-                    fs.Close();*/
+                        default:
+                            Texts.SaveText.OldMethod(txts.txtList, false, false, outputFile);
+                            break;
+                    }
 
                     txts.txtList.Clear();
                     txts = null;

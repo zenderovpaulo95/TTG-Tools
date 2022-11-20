@@ -215,7 +215,7 @@ namespace TTG_Tools.Texts
                         ClassesStructs.Text.CommonText txt;
 
                         txt.isBothSpeeches = true;
-                        txt.strNumber = MainMenu.settings.exportRealID ? landbs.landbs[i].anmID : landbs.landbs[i].stringNumber;
+                        txt.strNumber = MainMenu.settings.exportRealID || MainMenu.settings.newTxtFormat ? landbs.landbs[i].anmID : landbs.landbs[i].stringNumber;
                         txt.actorName = landbs.landbs[i].actorName;
                         txt.actorSpeechOriginal = landbs.landbs[i].actorSpeech;
                         txt.actorSpeechTranslation = landbs.landbs[i].actorSpeech;
@@ -229,20 +229,16 @@ namespace TTG_Tools.Texts
                     string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5);
                     outputFile += MainMenu.settings.tsvFormat ? "tsv" : "txt";
 
-                    Texts.SaveText.OldMethod(txts.txtList, false, landbs.isUnicode, outputFile);
-
-                    /*if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt");
-                    FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 5, 5) + "txt", FileMode.CreateNew);
-                    StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
-
-                    for (int i = 0; i < txts.txtList.Count; i++)
+                    switch(MainMenu.settings.newTxtFormat)
                     {
-                        sw.WriteLine(txts.txtList[i].strNumber + ") " + landbs.landbs[i].actorName);
-                        sw.WriteLine(txts.txtList[i].actorSpeechOriginal);
-                    }
+                        case true:
+                            Texts.SaveText.NewMethod(txts.txtList, landbs.isUnicode, outputFile);
+                            break;
 
-                    sw.Close();
-                    fs.Close();*/
+                        default:
+                            Texts.SaveText.OldMethod(txts.txtList, false, landbs.isUnicode, outputFile);
+                            break;
+                    }
 
                     txts.txtList.Clear();
                     txts = null;

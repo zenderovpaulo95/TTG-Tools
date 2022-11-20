@@ -2200,7 +2200,11 @@ namespace TTG_Tools
             {
                 tsvFilesRB.Checked = true;
             }
-            else txtFilesRB.Checked = true;
+            else
+            {
+                if (!MainMenu.settings.tsvFormat && MainMenu.settings.newTxtFormat) newTxtFormatRB.Checked = true;
+                else txtFilesRB.Checked = true;
+            }
             checkEncDDS.Checked = MainMenu.settings.encDDSonly;
             checkIOS.Checked = MainMenu.settings.iOSsupport;
             checkEncLangdb.Checked = MainMenu.settings.encLangdb;
@@ -2329,6 +2333,14 @@ namespace TTG_Tools
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             MainMenu.settings.swizzleNintendoSwitch = checkBox1.Checked;
+            Settings.SaveConfig(MainMenu.settings);
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            MainMenu.settings.newTxtFormat = newTxtFormatRB.Checked;
+
+            if (MainMenu.settings.newTxtFormat) MainMenu.settings.tsvFormat = false;
             Settings.SaveConfig(MainMenu.settings);
         }
     }

@@ -153,13 +153,13 @@ namespace TTG_Tools.Texts
                     return fi.Name + " is EMPTY.";
                 }
 
-                if(extract)
+                if (extract)
                 {
                     ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
 
                     txts.txtList = new List<CommonText>();
 
-                    for(int i = 0; i < langdbs.langdbCount; i++)
+                    for (int i = 0; i < langdbs.langdbCount; i++)
                     {
                         ClassesStructs.Text.CommonText txt;
 
@@ -173,25 +173,21 @@ namespace TTG_Tools.Texts
                         txts.txtList.Add(txt);
                     }
 
-                    if(MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
+                    if (MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
 
                     string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6);
                     outputFile += MainMenu.settings.tsvFormat ? "tsv" : "txt";
 
-                    Texts.SaveText.OldMethod(txts.txtList, false, false, outputFile);
-
-                    /*if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt")) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt");
-                    FileStream fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi.Name.Remove(fi.Name.Length - 6, 6) + "txt", FileMode.CreateNew);
-                    StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
-
-                    for(int i = 0; i < txts.txtList.Count; i++)
+                    switch (MainMenu.settings.newTxtFormat)
                     {
-                        sw.WriteLine(txts.txtList[i].strNumber + ") " + txts.txtList[i].actorName);
-                        sw.WriteLine(txts.txtList[i].actorSpeechOriginal);
-                    }
+                        case true:
+                            Texts.SaveText.NewMethod(txts.txtList, false, outputFile);
+                            break;
 
-                    sw.Close();
-                    fs.Close();*/
+                        default:
+                        Texts.SaveText.OldMethod(txts.txtList, false, false, outputFile);
+                            break;
+                    }
 
                     txts.txtList.Clear();
                     txts = null;

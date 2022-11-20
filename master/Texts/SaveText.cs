@@ -78,14 +78,7 @@ namespace TTG_Tools.Texts
                             tmpString = tmpString.Replace("\t", "\\t");
                         }
 
-                        if (isUnicode && (MainMenu.settings.unicodeSettings == 1))
-                        {
-                            tmpVal = Encoding.UTF8.GetBytes(tmpString);
-                            tmpVal = Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(1252), tmpVal);
-                            tmpVal = Encoding.Convert(Encoding.GetEncoding(1252), Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmpVal);
-                            tmpVal = Encoding.Convert(Encoding.GetEncoding(MainMenu.settings.ASCII_N), Encoding.UTF8, tmpVal);
-                            tmpString = Encoding.UTF8.GetString(tmpVal);
-                        }
+                        tmpString = isUnicode && MainMenu.settings.unicodeSettings == 1 ? Methods.ConvertString(tmpString, true) : tmpString;
 
                         tw.Write(tmpString);
                     }
@@ -101,6 +94,57 @@ namespace TTG_Tools.Texts
             {
                 if (fs != null) fs.Close();
                 if (tw != null) tw.Close();
+            }
+        }
+
+        public static void NewMethod(List<CommonText> txt, bool isUnicode, string outputPath)
+        {
+            if(File.Exists(outputPath)) File.Delete(outputPath);
+
+            FileStream fs = new FileStream(outputPath, FileMode.CreateNew);
+            StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
+
+            try
+            {
+                string tmpString = "";
+
+                for(int i = 0; i < txt.Count; i++)
+                {
+                    tmpString = "langid=" + txt[i].strNumber + "\r\n";
+                    sw.Write(tmpString);
+                    
+                    tmpString = "actor=" + txt[i].actorName + "\r\n";
+                    sw.Write(tmpString);
+                    
+                    tmpString = "speechOriginal=" + txt[i].actorSpeechOriginal;
+                    if (tmpString.Contains("\r")) tmpString = tmpString.Replace("\r", "\\r");
+                    if (tmpString.Contains("\n")) tmpString = tmpString.Replace("\n", "\\n");
+                    if (tmpString.Contains("\t")) tmpString = tmpString.Replace("\t", "\\t");
+                    tmpString += "\r\n";
+
+                    tmpString = isUnicode && MainMenu.settings.unicodeSettings == 1 ? Methods.ConvertString(tmpString, true) : tmpString;
+                    sw.Write(tmpString);
+
+                    tmpString = "speechTranslation=" + txt[i].actorSpeechTranslation;
+                    if (tmpString.Contains("\r")) tmpString = tmpString.Replace("\r", "\\r");
+                    if (tmpString.Contains("\n")) tmpString = tmpString.Replace("\n", "\\n");
+                    if (tmpString.Contains("\t")) tmpString = tmpString.Replace("\t", "\\t");
+                    tmpString += "\r\n";
+
+                    tmpString = isUnicode && MainMenu.settings.unicodeSettings == 1 ? Methods.ConvertString(tmpString, true) : tmpString;
+                    sw.Write(tmpString);
+
+                    tmpString = "flags=" + txt[i].flags + "\r\n\r\n";
+                    sw.Write(tmpString);
+                }
+
+                sw.Close();
+                fs.Close();
+            }
+            catch
+            {
+                if (sw != null) sw.Close();
+                if (fs != null) fs.Close();
             }
         }
     }

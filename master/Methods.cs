@@ -38,6 +38,17 @@ namespace TTG_Tools
             return mip;
         }
 
+        public static string ConvertString(string str, bool exportString)
+        {
+            byte[] tmpVal = Encoding.UTF8.GetBytes(str);
+            tmpVal = exportString ? Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(1252), tmpVal) : Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmpVal);
+            tmpVal = exportString ? Encoding.Convert(Encoding.GetEncoding(1252), Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmpVal) : Encoding.Convert(Encoding.GetEncoding(MainMenu.settings.ASCII_N), Encoding.GetEncoding(1252), tmpVal);
+            tmpVal = exportString ? Encoding.Convert(Encoding.GetEncoding(MainMenu.settings.ASCII_N), Encoding.UTF8, tmpVal) : Encoding.Convert(Encoding.GetEncoding(1252), Encoding.UTF8, tmpVal);
+            str = Encoding.UTF8.GetString(tmpVal);
+
+            return str;
+        }
+
         public static void getSizeAndKratnost(int width, int height, int code, ref int ddsContentLength, ref int kratnost)
         {
             uint w, h = 0;
