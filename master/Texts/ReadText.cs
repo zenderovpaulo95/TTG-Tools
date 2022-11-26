@@ -62,7 +62,7 @@ namespace TTG_Tools.Texts
                                 tmpTxt.isBothSpeeches = true;
                                 tmpTxt.actorName = txts[lastListIndex].actorName;
                                 tmpTxt.actorSpeechOriginal = txts[lastListIndex].actorSpeechOriginal;
-                                tmpTxt.actorSpeechTranslation = txts[lastListIndex].actorSpeechTranslation;
+                                tmpTxt.actorSpeechTranslation = "";
                                 tmpTxt.flags = txts[lastListIndex].flags;
                                 txts[lastListIndex] = tmpTxt;
                             }
@@ -74,9 +74,9 @@ namespace TTG_Tools.Texts
                                 tmpTxt.actorName = tmpString.Substring(numPos, tmpString.Length - numPos);
                                 tmpTxt.actorSpeechOriginal = "";
                                 tmpTxt.actorSpeechTranslation = "";
-                                tmpTxt.flags = "000";
+                                tmpTxt.flags = "";
 
-                                txts.Add(tmpTxt);
+                                if(!txts[lastListIndex].isBothSpeeches) txts.Add(tmpTxt);
 
                                 hasNumber = true;
                                 prevNum = curNum;
@@ -84,17 +84,55 @@ namespace TTG_Tools.Texts
                             }
                             catch
                             {
-                                System.Windows.Forms.MessageBox.Show("Error in string " + tmpString, "Error");
+                                System.Windows.Forms.MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
                                 if (sr != null) sr.Close();
                                 if (fs != null) fs.Close();
 
                                 return null;
                             }
                         }
+                        else
+                        {
+                            tmpTxt.strNumber = txts[lastListIndex].strNumber;
+                            tmpTxt.isBothSpeeches = txts[lastListIndex].isBothSpeeches;
+                            tmpTxt.actorName = txts[lastListIndex].actorName;
+                            tmpTxt.actorSpeechOriginal = txts[lastListIndex].actorSpeechOriginal;
+                            tmpTxt.actorSpeechTranslation = txts[lastListIndex].actorSpeechTranslation;
+                            tmpTxt.flags = txts[lastListIndex].flags;
+
+                            if (!txts[lastListIndex].isBothSpeeches)
+                            {
+                                tmpTxt.actorSpeechOriginal += "\r\n" + tmpString;
+                                tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechOriginal;
+                            }
+                            else
+                            {
+                                tmpTxt.actorSpeechTranslation += "\r\n" + tmpString;
+                            }
+
+                            txts[lastListIndex] = tmpTxt;
+                        }
                     }
                     else
                     {
+                        tmpTxt.strNumber = txts[lastListIndex].strNumber;
+                        tmpTxt.isBothSpeeches = txts[lastListIndex].isBothSpeeches;
+                        tmpTxt.actorName = txts[lastListIndex].actorName;
+                        tmpTxt.actorSpeechOriginal = txts[lastListIndex].actorSpeechOriginal;
+                        tmpTxt.actorSpeechTranslation = txts[lastListIndex].actorSpeechTranslation;
+                        tmpTxt.flags = txts[lastListIndex].flags;
 
+                        if (!txts[lastListIndex].isBothSpeeches)
+                        {
+                            tmpTxt.actorSpeechOriginal += "\r\n" + tmpString;
+                            tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechOriginal;
+                        }
+                        else
+                        {
+                            tmpTxt.actorSpeechTranslation += "\r\n" + tmpString;
+                        }
+
+                        txts[lastListIndex] = tmpTxt;
                     }
                 }
 
@@ -120,6 +158,56 @@ namespace TTG_Tools.Texts
 
             try
             {
+                string tmpString = "";
+                string[] tmpStrs;
+                CommonText tmpTxt;
+
+                while(!sr.EndOfStream)
+                {
+                    tmpString = sr.ReadLine();
+                    tmpStrs = tmpString.Split('\t');
+
+                    if((tmpStrs.Length) > 0 && ((tmpStrs.Length == 3) || (tmpStrs.Length == 4)))
+                    {
+                        try
+                        {
+                            tmpTxt.strNumber = Convert.ToUInt32(tmpStrs[0]);
+                            tmpTxt.isBothSpeeches = tmpStrs.Length == 4;
+                            tmpTxt.actorName = tmpStrs[1];
+                            tmpTxt.actorSpeechOriginal = tmpStrs[2];
+                            tmpTxt.actorSpeechTranslation = tmpStrs.Length == 4 ? tmpStrs[3] : tmpTxt.actorSpeechOriginal;
+                            tmpTxt.flags = "";
+
+                            if (tmpTxt.actorSpeechOriginal.Contains("\\r")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\r", "\r");
+                            if (tmpTxt.actorSpeechOriginal.Contains("\n")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\n", "\n");
+                            if (tmpTxt.actorSpeechOriginal.Contains("\t")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\t", "\t");
+
+                            if (tmpTxt.actorSpeechTranslation.Contains("\\r")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\r", "\r");
+                            if (tmpTxt.actorSpeechTranslation.Contains("\n")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\n", "\n");
+                            if (tmpTxt.actorSpeechTranslation.Contains("\t")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\t", "\t");
+
+                            txts.Add(tmpTxt);
+                        }
+                        catch
+                        {
+                            System.Windows.Forms.MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
+
+                            if (sr != null) sr.Close();
+                            if (fs != null) fs.Close();
+
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
+
+                        if (sr != null) sr.Close();
+                        if (fs != null) fs.Close();
+
+                        return null;
+                    }
+                }
 
                 sr.Close();
                 fs.Close();
