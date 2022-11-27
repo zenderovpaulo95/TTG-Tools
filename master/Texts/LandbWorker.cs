@@ -147,6 +147,50 @@ namespace TTG_Tools.Texts
             return landb;
         }
 
+        private static int CheckNumbers(List<CommonText> txts, LandbClass landb)
+        {
+            int result = -1;
+            int countLangres = 0;
+            int countStrings = 0;
+
+            for(int i = 0; i < landb.landbCount; i++)
+            {
+                for(int j = 0; j < txts.Count; j++)
+                {
+                    if (landb.landbs[i].anmID == txts[j].strNumber) countLangres++;
+                    if (landb.landbs[i].stringNumber == txts[i].strNumber) countStrings++;
+                }
+            }
+
+            if (countLangres < countStrings) result = 0;
+            else if (countLangres > countStrings) result = 1;
+
+            return result;
+        }
+
+        private static int GetIndex(LandbClass landb, uint searchNum)
+        {
+            for(int i = 0; i < landb.landbCount; i++)
+            {
+                if (landb.landbs[i].anmID == searchNum) return i;
+            }
+
+            return 0;
+        }
+
+        private static LandbClass ReplaceStrings(LandbClass landb, List<CommonText> commonTexts, int type)
+        {
+            for(int i = 0; i < landb.landbCount; i++)
+            {
+                if (MainMenu.settings.importingOfName) landb.landbs[i].actorName = type == 1 ? commonTexts[GetIndex(landb, landb.landbs[i].anmID)].actorName : commonTexts[(int)landb.landbs[i].stringNumber - 1].actorName;
+                landb.landbs[i].actorSpeech = type == 1 ? commonTexts[GetIndex(landb, landb.landbs[i].anmID)].actorSpeechTranslation : commonTexts[(int)landb.landbs[i].stringNumber - 1].actorSpeechTranslation;
+
+                if (landb.isUnicode && MainMenu.settings.unicodeSettings == 1) landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, false);
+            }
+
+            return landb;
+        }
+
         public static string DoWork(string InputFile, string TxtFile, bool extract)
         {
             string result = "";
@@ -248,8 +292,19 @@ namespace TTG_Tools.Texts
                 else
                 {
                     ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
-
                     txts.txtList = ReadText.GetStrings(TxtFile);
+
+                    if (txts.txtList.Count < landbs.landbCount)
+                    {
+                        FileInfo txtFI = new FileInfo(TxtFile);
+                        return "Not enough strings in " + txtFI.Name + " for " + fi.Name + " file.";
+                    }
+
+                    int type = CheckNumbers(txts.txtList, landbs);
+
+                    if (type == -1) return "I don't know which type of number strings select in " + fi.Name + " file.";
+
+                    landbs = ReplaceStrings(landbs, txts.txtList, type);
                 }
             }
             catch

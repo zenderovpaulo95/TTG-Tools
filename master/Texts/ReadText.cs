@@ -380,16 +380,49 @@ namespace TTG_Tools.Texts
                         tmpTxt.actorSpeechOriginal = strings[i].actorSpeechOriginal.Substring(2, strings[i].actorSpeechOriginal.Length - 2);
                         tmpTxt.actorSpeechTranslation = strings[i].actorSpeechTranslation.Substring(2, strings[i].actorSpeechTranslation.Length - 2);
 
+                        if (tmpTxt.actorSpeechOriginal.Contains("\r\n")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\r\n", "\n");
+                        if (tmpTxt.actorSpeechTranslation.Contains("\r\n")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\r\n", "\n");
+
                         strings[i] = tmpTxt;
                     }
                     break;
 
                 case 1:
                     strings = TsvTextMode(FilePath);
+
+                    for(int i = 0; i < strings.Count; i++)
+                    {
+                        CommonText tmpTxt = strings[i];
+
+                        if (tmpTxt.actorSpeechTranslation.Contains("\\t")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\t", "\t");
+                        if (tmpTxt.actorSpeechTranslation.Contains("\\r")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\r", "\r");
+                        if (tmpTxt.actorSpeechTranslation.Contains("\\n")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\n", "\n");
+
+                        if (tmpTxt.actorSpeechOriginal.Contains("\\t")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\t", "\t");
+                        if (tmpTxt.actorSpeechOriginal.Contains("\\r")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\r", "\r");
+                        if (tmpTxt.actorSpeechOriginal.Contains("\\n")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\n", "\n");
+
+                        strings[i] = tmpTxt;
+                    }
                     break;
 
                 case 2:
                     strings = NewTextMode(FilePath);
+
+                    for (int i = 0; i < strings.Count; i++)
+                    {
+                        CommonText tmpTxt = strings[i];
+
+                        if (tmpTxt.actorSpeechTranslation.Contains("\\t")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\t", "\t");
+                        if (tmpTxt.actorSpeechTranslation.Contains("\\r")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\r", "\r");
+                        if (tmpTxt.actorSpeechTranslation.Contains("\\n")) tmpTxt.actorSpeechTranslation = tmpTxt.actorSpeechTranslation.Replace("\\n", "\n");
+
+                        if (tmpTxt.actorSpeechOriginal.Contains("\\t")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\t", "\t");
+                        if (tmpTxt.actorSpeechOriginal.Contains("\\r")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\r", "\r");
+                        if (tmpTxt.actorSpeechOriginal.Contains("\\n")) tmpTxt.actorSpeechOriginal = tmpTxt.actorSpeechOriginal.Replace("\\n", "\n");
+
+                        strings[i] = tmpTxt;
+                    }
                     break;
             }
 
