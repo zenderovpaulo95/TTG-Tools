@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using TTG_Tools.ClassesStructs.Text;
+using System.Windows.Forms;
 
 namespace TTG_Tools.Texts
 {
@@ -19,7 +18,7 @@ namespace TTG_Tools.Texts
             string[] strs = File.ReadAllLines(fi.FullName, Encoding.UTF8);
             if(strs.Length >= 5)
             {
-                if ((strs[0].IndexOf("langid=") == 0) && (strs[0].IndexOf("actor=") == 0) && (strs[0].IndexOf("speechOriginal=") == 0) && (strs[0].IndexOf("speechTranslation=") == 0) && (strs[0].IndexOf("flags=") == 0))
+                if ((strs[0].IndexOf("langid=") == 0) && (strs[1].IndexOf("actor=") == 0) && (strs[2].IndexOf("speechOriginal=") == 0) && (strs[3].IndexOf("speechTranslation=") == 0) && (strs[4].IndexOf("flags=") == 0))
                 {
                     return 2;
                 }
@@ -76,7 +75,7 @@ namespace TTG_Tools.Texts
                                 tmpTxt.actorSpeechTranslation = "";
                                 tmpTxt.flags = "";
 
-                                if(!txts[lastListIndex].isBothSpeeches) txts.Add(tmpTxt);
+                                if (!tmpTxt.isBothSpeeches) txts.Add(tmpTxt);
 
                                 hasNumber = true;
                                 prevNum = curNum;
@@ -84,7 +83,7 @@ namespace TTG_Tools.Texts
                             }
                             catch
                             {
-                                System.Windows.Forms.MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
+                                MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
                                 if (sr != null) sr.Close();
                                 if (fs != null) fs.Close();
 
@@ -111,6 +110,8 @@ namespace TTG_Tools.Texts
                             }
 
                             txts[lastListIndex] = tmpTxt;
+
+                            hasNumber = false;
                         }
                     }
                     else
@@ -133,6 +134,8 @@ namespace TTG_Tools.Texts
                         }
 
                         txts[lastListIndex] = tmpTxt;
+
+                        hasNumber = false;
                     }
                 }
 
@@ -190,7 +193,7 @@ namespace TTG_Tools.Texts
                         }
                         catch
                         {
-                            System.Windows.Forms.MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
+                            MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
 
                             if (sr != null) sr.Close();
                             if (fs != null) fs.Close();
@@ -200,7 +203,7 @@ namespace TTG_Tools.Texts
                     }
                     else
                     {
-                        System.Windows.Forms.MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
+                        MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
 
                         if (sr != null) sr.Close();
                         if (fs != null) fs.Close();
@@ -231,14 +234,129 @@ namespace TTG_Tools.Texts
 
             try
             {
+                string tmpString = "";
+                CommonText tmpTxt;
+
+                while (!sr.EndOfStream)
+                {
+                    tmpTxt.strNumber = 0;
+                    tmpTxt.isBothSpeeches = true;
+                    tmpTxt.actorName = "";
+                    tmpTxt.actorSpeechOriginal = "";
+                    tmpTxt.actorSpeechTranslation = "";
+                    tmpTxt.flags = "";
+
+                    for(int i = 0; i < 5; i++)
+                    {
+                        tmpString = sr.ReadLine();
+
+                        switch(i)
+                        {
+                            case 0:
+                                if (tmpString.IndexOf("langid=") != 0) throw new Exception("Error in string " + tmpString + ".");
+                                try
+                                {
+                                    tmpString = tmpString.Substring(7, tmpString.Length - 7);
+                                    tmpTxt.strNumber = Convert.ToUInt32(tmpString);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("Something wrong with file\r\n" + FilePath);
+
+                                    if (sr != null) sr.Close();
+                                    if (fs != null) fs.Close();
+
+                                    return null;
+                                }
+                                break;
+
+                            case 1:
+                                if (tmpString.IndexOf("actor=") != 0) throw new Exception("Error in string " + tmpString + ".");
+
+                                try
+                                {
+                                    tmpTxt.actorName = tmpString.Substring(6, tmpString.Length - 6);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("Something wrong with file\r\n" + FilePath);
+
+                                    if (sr != null) sr.Close();
+                                    if (fs != null) fs.Close();
+
+                                    return null;
+                                }
+                                break;
+
+                            case 2:
+                                if (tmpString.IndexOf("speechOriginal=") != 0) throw new Exception("Error in string " + tmpString + ".");
+
+                                try
+                                {
+                                    tmpTxt.actorSpeechOriginal = tmpString.Substring(15, tmpString.Length - 15);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("Something wrong with file\r\n" + FilePath);
+
+                                    if (sr != null) sr.Close();
+                                    if (fs != null) fs.Close();
+
+                                    return null;
+                                }
+                                break;
+
+                            case 3:
+                                if (tmpString.IndexOf("speechTranslation=") != 0) throw new Exception("Error in string " + tmpString + ".");
+
+                                try
+                                {
+                                    tmpTxt.actorSpeechTranslation = tmpString.Substring(18, tmpString.Length - 18);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("Something wrong with file\r\n" + FilePath);
+
+                                    if (sr != null) sr.Close();
+                                    if (fs != null) fs.Close();
+
+                                    return null;
+                                }
+                                break;
+
+                            case 4:
+                                if (tmpString.IndexOf("flags=") != 0) throw new Exception("Error in string " + tmpString + ".");
+
+                                try
+                                {
+                                    tmpTxt.flags = tmpString.Substring(6, tmpString.Length - 6);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("Something wrong with file\r\n" + FilePath);
+
+                                    if (sr != null) sr.Close();
+                                    if (fs != null) fs.Close();
+
+                                    return null;
+                                }
+                                break;
+                        }
+                    }
+
+                    txts.Add(tmpTxt);
+                    tmpString = sr.ReadLine();
+                }
 
                 sr.Close();
                 fs.Close();
 
                 return txts;
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message, "Error");
+
                 if (sr != null) sr.Close();
                 if (fs != null) fs.Close();
 
@@ -255,6 +373,15 @@ namespace TTG_Tools.Texts
             {
                 case 0:
                     strings = OldTextMode(FilePath);
+
+                    for (int i = 0; i < strings.Count; i++)
+                    {
+                        CommonText tmpTxt = strings[i];
+                        tmpTxt.actorSpeechOriginal = strings[i].actorSpeechOriginal.Substring(2, strings[i].actorSpeechOriginal.Length - 2);
+                        tmpTxt.actorSpeechTranslation = strings[i].actorSpeechTranslation.Substring(2, strings[i].actorSpeechTranslation.Length - 2);
+
+                        strings[i] = tmpTxt;
+                    }
                     break;
 
                 case 1:

@@ -411,6 +411,8 @@ namespace TTG_Tools
 
             bool[] show = { false, false, false, false };
 
+            string result = "";
+
             List<string> destination = new List<string>();
             destination.Add(".d3dtx");
             destination.Add(".d3dtx");
@@ -465,39 +467,40 @@ namespace TTG_Tools
                                     switch (destinationForExport)
                                     {
                                         case ".d3dtx":
-                                            {
-                                            //ImportDDSinD3DTX(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
-                                            string result = TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, false, FullEncrypt, ref encKey, version);
+                                        {
+                                            result = TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, false, FullEncrypt, ref encKey, version);
                                             ReportForWork(result);
                                             show[0] = true;    
                                                 break;
-                                            }
+                                        }
                                         case ".landb":
-                                            {
-                                                //ImportTXTinLANDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
+                                        {
+                                            //ImportTXTinLANDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
+                                            result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false);
+                                            ReportForWork(result);
                                             show[1] = true;
                                                 break;
-                                            }
+                                        }
                                         case ".langdb":
-                                            {
+                                        {
                                                 ImportTXTinLANGDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
                                             show[2] = true;
                                                 break;
-                                            }
+                                        }
                                         case ".prop":
-                                            {
+                                        {
                                             ImportTXTinPROP(inputFiles[i], fileDestination[j]);
-                                                //ImportTXTinPROP(inputFiles, fileDestination, i, j, pathOutput, ref correct_work);
                                             show[3] = true;
                                                 break;
-                                            }
+                                        }
                                         default:
-                                            {
+                                        {
                                                 MessageBox.Show("Error in Switch!");
                                                 break;
-                                            }
+                                        }
                                     }
-                                    if (correct_work)//если файл импортирован был хорошо, то удаляем
+
+                                    if (correct_work) //If file imported correct then we can delete file if it set in settings form
                                     {
                                         countCorrectWork++;
                                         if (deleteFromInputImported)
@@ -507,8 +510,8 @@ namespace TTG_Tools
                                     }
                                 }
                             }
-                            if (deleteFromInputSource && countCorrectWork == countOfAllFiles)//если все файлы были импортированы правильно, то удаляем при необходимости файл
-                            {
+                            if (deleteFromInputSource && countCorrectWork == countOfAllFiles)//if all files were imported correctly, then delete the file if necessary
+                        {
                                 Methods.DeleteCurrentFile(inputFiles[i].FullName);
                             }
                         }
@@ -1244,7 +1247,7 @@ namespace TTG_Tools
                                     }
                                 case ".landb":
                                     //ExtractLandbFile(inputFiles, i, versionOfGame);
-                                    message = Texts.LandbWorker.DoWork(inputFiles[i].FullName, true);
+                                    message = Texts.LandbWorker.DoWork(inputFiles[i].FullName, "", true);
                                     ReportForWork(message);
                                     extractedFormat[2] = 2;
                                     break;

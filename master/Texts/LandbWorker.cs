@@ -147,7 +147,7 @@ namespace TTG_Tools.Texts
             return landb;
         }
 
-        public static string DoWork(string InputFile, bool extract)
+        public static string DoWork(string InputFile, string TxtFile, bool extract)
         {
             string result = "";
 
@@ -247,7 +247,9 @@ namespace TTG_Tools.Texts
                 }
                 else
                 {
+                    ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
 
+                    txts.txtList = ReadText.GetStrings(TxtFile);
                 }
             }
             catch
