@@ -21,6 +21,7 @@ namespace TTG_Tools.ClassesStructs.Text
     {
         public bool isBlockLength;
         public int blockLength;
+        public int newBlockLength;
         public int langdbCount;
 
         public langdb[] langdbs;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,23 +57,15 @@ namespace TTG_Tools.ClassesStructs.Text
         public int someValue2;
 
         public int blockLength;
+        public int newBlockLength;
         public int landbCount;
 
         public DlogLandbs[] landbs;
 
+        public int commonBlockLen;
+        public byte[] block;
+
         public DlogLastLandbData lastLandbData;
-        public DlogSomeDataAfterLandb someDataAfterLandb;
-    }
-
-    public struct DlogSomeDataAfterLandb
-    {
-        public int commonBlockSize;
-
-        public int firstBlockSize;
-        public byte[] firstBlock;
-
-        public int secondBlockSize;
-        public byte[] secondBlock;
     }
 
     public struct DlogLastLandbData //16 bytes of some data
@@ -99,6 +92,7 @@ namespace TTG_Tools.ClassesStructs.Text
         public ulong longUnknown2;
         public int someValue3;
         public int langdbBLockSize;
+        public int newLangdbBlockSize;
 
         public DlogLandb landb;
 

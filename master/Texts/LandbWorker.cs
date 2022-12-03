@@ -20,6 +20,10 @@ namespace TTG_Tools.Texts
                 landb.hasMetaLangresName = hasCRC64Langres;
                 landb.isUnicode = isUnicode;
 
+                landb.newBlockLength = 0;
+                landb.newLandbFileSize = 0;
+                landb.newLandbLastFileSize = 0;
+
                 if(landb.isNewFormat)
                 {
                     var pos = br.BaseStream.Position;
@@ -30,12 +34,19 @@ namespace TTG_Tools.Texts
                 }
 
                 landb.blockSize1 = br.ReadInt32();
+                landb.newLandbFileSize += 4;
                 landb.someValue1 = br.ReadInt32();
+                landb.newLandbFileSize += 4;
                 landb.blockSize2 = br.ReadInt32();
+                landb.newLandbFileSize += 4;
                 landb.someValue2 = br.ReadInt32();
+                landb.newLandbFileSize += 4;
 
                 landb.blockLength = br.ReadInt32();
+                landb.newLandbFileSize += 4;
                 landb.landbCount = br.ReadInt32();
+                landb.newLandbFileSize += 4;
+                landb.newBlockLength = 8;
 
                 landb.landbs = new Landb[landb.landbCount];
                 landb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[landb.landbCount];
@@ -46,66 +57,140 @@ namespace TTG_Tools.Texts
                 {
                     landb.landbs[i].stringNumber = (uint)(i + 1);
                     landb.landbs[i].wavID = br.ReadUInt32();
-                    if (landb.hasMetaLangresName) landb.landbs[i].crc64Langres = br.ReadUInt64();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
+                    if (landb.hasMetaLangresName)
+                    {
+                        landb.landbs[i].crc64Langres = br.ReadUInt64();
+                        landb.newLandbFileSize += 8;
+                        landb.newBlockLength += 8;
+                    }
                     landb.landbs[i].anmID = br.ReadUInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
                     landb.landbs[i].zero1 = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
 
                     landb.landbs[i].blockAnmNameSize = br.ReadInt32();
-                    if(landb.hasMetaLangresName)
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
+                    if (landb.hasMetaLangresName)
                     {
                         tmp = br.ReadBytes(8);
+                        landb.newLandbFileSize += 8;
+                        landb.newBlockLength += 8;
+
                         landb.landbs[i].anmNameSize = 8;
+
                         landb.landbs[i].anmName = BitConverter.ToString(tmp);
                     }
                     else
                     {
                         landb.landbs[i].anmNameSize = br.ReadInt32();
+                        landb.newLandbFileSize += 4;
+                        landb.newBlockLength += 4;
+
                         tmp = br.ReadBytes(landb.landbs[i].anmNameSize);
+                        landb.newLandbFileSize += landb.landbs[i].anmNameSize;
+                        landb.newBlockLength += landb.landbs[i].anmNameSize;
+
                         landb.landbs[i].anmName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
                     }
 
                     landb.landbs[i].blockWavNameSize = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
                     if (landb.hasMetaLangresName)
                     {
                         tmp = br.ReadBytes(8);
+                        landb.newLandbFileSize += 8;
+                        landb.newBlockLength += 8;
+
                         landb.landbs[i].wavNameSize = 8;
                         landb.landbs[i].wavName = BitConverter.ToString(tmp);
                     }
                     else
                     {
                         landb.landbs[i].wavNameSize = br.ReadInt32();
+                        landb.newLandbFileSize += 4;
+                        landb.newBlockLength += 4;
+
                         tmp = br.ReadBytes(landb.landbs[i].wavNameSize);
+                        landb.newLandbFileSize += landb.landbs[i].wavNameSize;
+                        landb.newBlockLength += landb.landbs[i].wavNameSize;
+
                         landb.landbs[i].wavName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
                     }
 
                     landb.landbs[i].blockUnknownNameSize = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
                     landb.landbs[i].unknownNameSize = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
                     tmp = br.ReadBytes(landb.landbs[i].unknownNameSize);
+                    landb.newLandbFileSize += landb.landbs[i].unknownNameSize;
+                    landb.newBlockLength += landb.landbs[i].unknownNameSize;
+
                     landb.landbs[i].unknownName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                     landb.landbs[i].zero2 = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
 
                     landb.landbs[i].blockLangresSize = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
                     landb.landbs[i].blockActorNameSize = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
+                    //Don't calculate new size with actor name!
                     landb.landbs[i].actorNameSize = br.ReadInt32();
                     tmp = br.ReadBytes(landb.landbs[i].actorNameSize);
                     landb.landbs[i].actorName = landb.isUnicode ? Encoding.UTF8.GetString(tmp) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                     landb.landbs[i].blockActorSpeechSize = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
                     landb.landbs[i].actorSpeechSize = br.ReadInt32();
                     tmp = br.ReadBytes(landb.landbs[i].actorSpeechSize);
                     landb.landbs[i].actorSpeech = landb.isUnicode ? Encoding.UTF8.GetString(tmp) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
-                    landb.landbs[i].blockSize = br.ReadInt32();
-                    landb.landbs[i].someValue = br.ReadInt32();
+                    //Don't calculate actor speech's size!
 
-                    if(landb.isUnicode)
+                    landb.landbs[i].blockSize = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
+                    landb.landbs[i].someValue = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
+                    if (landb.isUnicode)
                     {
                         landb.landbs[i].blockSizeUni = br.ReadInt32();
+                        landb.newLandbFileSize += 4;
+                        landb.newBlockLength += 4;
+
                         landb.landbs[i].someDataUni = br.ReadBytes(landb.landbs[i].blockSizeUni - 4);
+                        landb.newLandbFileSize += landb.landbs[i].someDataUni.Length;
+                        landb.newBlockLength += landb.landbs[i].someDataUni.Length;
                     }
 
                     landb.landbs[i].flags = br.ReadInt32();
+                    landb.newLandbFileSize += 4;
+                    landb.newBlockLength += 4;
+
                     tmp = Encoding.ASCII.GetBytes(Convert.ToString(landb.landbs[i].flags, 2));
 
                     landb.flags[i] = new ClassesStructs.FlagsClass.LangdbFlagClass();
@@ -126,18 +211,17 @@ namespace TTG_Tools.Texts
                     tmp = null;
                 }
 
-                landb.someAfterData = new SomeDataAfterLandb();
-                landb.someAfterData.commonBlockSize = br.ReadInt32();
-                landb.someAfterData.firstBlockSize = br.ReadInt32();
-                landb.someAfterData.firstBlock = br.ReadBytes(landb.someAfterData.firstBlockSize - 4);
-                landb.someAfterData.secondBlockSize = br.ReadInt32();
-                landb.someAfterData.secondBlock = br.ReadBytes(landb.someAfterData.secondBlockSize - 4);
+                landb.commonSomeDataLen = br.ReadInt32();
+                landb.someData = br.ReadBytes(landb.commonSomeDataLen - 4);
+                landb.newLandbFileSize += landb.commonSomeDataLen;
 
                 landb.lastLandbData = new LastLandbData();
                 landb.lastLandbData.Unknown1 = br.ReadInt32();
                 landb.lastLandbData.Unknown2 = br.ReadInt32();
                 landb.lastLandbData.Unknown3 = br.ReadInt32();
                 landb.lastLandbData.Unknown4 = br.ReadInt32();
+
+                landb.newLandbFileSize += 16;
             }
             catch
             {
@@ -228,7 +312,7 @@ namespace TTG_Tools.Texts
                    classes[i] = BitConverter.ToString(tmp);
                    if(classes[i] == "B0-9F-D8-63-34-02-4F-00") hasCRC64Langres = true;
                    if(classes[i] == "53-DC-A5-33-DB-D6-DC-7E") isUnicode = true;
-                   tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
+                   tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files)
                 }
 
                 LandbClass landbs = GetStringsFromLandb(br, hasCRC64Langres, newFormat, isUnicode);

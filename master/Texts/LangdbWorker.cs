@@ -24,6 +24,7 @@ namespace TTG_Tools.Texts
                 if (checkSize == checkBlockLength)
                 {
                     langdb.blockLength = checkBlockLength;
+                    langdb.newBlockLength = 8;
                     langdb.isBlockLength = true;
                     langdb.langdbCount = br.ReadInt32();
                 }
@@ -35,26 +36,46 @@ namespace TTG_Tools.Texts
                 }
 
                 langdb.langdbs = new langdb[langdb.langdbCount];
-                //if (hasFlags) langdb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[langdb.langdbCount];
+
                 langdb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[langdb.langdbCount];
 
                 for (int i = 0; i < langdb.langdbCount; i++)
                 {
                     langdb.langdbs[i].stringNumber = (uint)(i + 1);
                     langdb.langdbs[i].anmID = br.ReadUInt32();
+                    langdb.newBlockLength += 4;
+
                     langdb.langdbs[i].voxID = br.ReadUInt32();
+                    langdb.newBlockLength += 4;
 
                     int blockSize = -1;
 
-                    if (langdb.isBlockLength) blockSize = br.ReadInt32();
+                    if (langdb.isBlockLength)
+                    {
+                        blockSize = br.ReadInt32();
+                        langdb.newBlockLength += 4;
+                    }
+
                     int stringLength = br.ReadInt32();
+                    langdb.newBlockLength += 4;
+
+                    //Don't calculate actor name's length
                     byte[] tmp = br.ReadBytes(stringLength);
                     langdb.langdbs[i].actorName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
-                    if (langdb.isBlockLength) blockSize = br.ReadInt32();
+                    if (langdb.isBlockLength)
+                    {
+                        blockSize = br.ReadInt32();
+                        langdb.newBlockLength += 4;
+                    }
+
                     stringLength = br.ReadInt32();
+                    langdb.newBlockLength += 4;
+
+                    //Don't calculate actor speech's length
                     tmp = br.ReadBytes(stringLength);
                     langdb.langdbs[i].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+
                     if ((langdb.langdbs[i].actorSpeech.IndexOf('\n') >= 0)
                         || (langdb.langdbs[i].actorSpeech.IndexOf("\r\n") >= 0))
                     {
@@ -62,23 +83,38 @@ namespace TTG_Tools.Texts
                         else langdb.langdbs[i].actorSpeech = langdb.langdbs[i].actorSpeech.Replace("\n", "\\n");
                     }
 
-                    if (langdb.isBlockLength) blockSize = br.ReadInt32();
+                    if (langdb.isBlockLength)
+                    {
+                        blockSize = br.ReadInt32();
+                        langdb.newBlockLength += 4;
+                    }
+
                     stringLength = br.ReadInt32();
+                    langdb.newBlockLength += 4;
+
                     tmp = br.ReadBytes(stringLength);
                     langdb.langdbs[i].anmFile = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    langdb.newBlockLength += stringLength;
 
-                    if (langdb.isBlockLength) blockSize = br.ReadInt32();
+                    if (langdb.isBlockLength)
+                    {
+                        blockSize = br.ReadInt32();
+                        langdb.newBlockLength += 4;
+                    }
+
                     stringLength = br.ReadInt32();
+                    langdb.newBlockLength += 4;
+
                     tmp = br.ReadBytes(stringLength);
                     langdb.langdbs[i].voxFile = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
+                    langdb.newBlockLength += stringLength;
 
-                    /*if (hasFlags)
-                    {*/
                     langdb.flags[i] = new ClassesStructs.FlagsClass.LangdbFlagClass();
                     langdb.flags[i].flags = br.ReadBytes(3);
-                    //}
+                    langdb.newBlockLength += 3;
 
                     langdb.langdbs[i].zero = br.ReadInt32();
+                    langdb.newBlockLength += 4;
                 }
 
                 return langdb;

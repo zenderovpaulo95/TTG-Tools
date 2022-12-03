@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using TTG_Tools.ClassesStructs.Text;
 using TTG_Tools.InEngineWords;
+using System.Windows.Forms.VisualStyles;
 
 namespace TTG_Tools.Texts
 {
@@ -33,17 +34,25 @@ namespace TTG_Tools.Texts
                 dlog.longUnknown2 = br.ReadUInt64();
                 dlog.someValue3 = br.ReadInt32();
                 dlog.langdbBLockSize = br.ReadInt32();
+                dlog.newLangdbBlockSize = 4;
 
                 dlog.landb = new DlogLandb();
 
                 dlog.landb.blockSize1 = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
                 dlog.landb.someValue1 = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
 
                 dlog.landb.blockSize2 = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
                 dlog.landb.someValue2 = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
 
                 dlog.landb.blockLength = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
                 dlog.landb.landbCount = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
+                dlog.landb.newBlockLength = 8;
 
                 dlog.landb.landbs = new DlogLandbs[dlog.landb.landbCount];
 
@@ -51,21 +60,50 @@ namespace TTG_Tools.Texts
                 {
                     dlog.landb.landbs[i].stringNumber = ((uint)i + 1);
                     dlog.landb.landbs[i].anmID = br.ReadUInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
+
                     dlog.landb.landbs[i].wavID = br.ReadUInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
+
                     dlog.landb.landbs[i].zero = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
 
                     dlog.landb.landbs[i].blockAnmNameSize = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
+
                     dlog.landb.landbs[i].anmNameSize = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
+
                     tmp = br.ReadBytes(dlog.landb.landbs[i].anmNameSize);
+                    dlog.newLangdbBlockSize += dlog.landb.landbs[i].anmNameSize;
+                    dlog.landb.newBlockLength += dlog.landb.landbs[i].anmNameSize;
                     dlog.landb.landbs[i].anmName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                     dlog.landb.landbs[i].blockWavNameSize = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
+
                     dlog.landb.landbs[i].wavNameSize = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
+
                     tmp = br.ReadBytes(dlog.landb.landbs[i].wavNameSize);
+                    dlog.newLangdbBlockSize += dlog.landb.landbs[i].wavNameSize;
+                    dlog.landb.newBlockLength += dlog.landb.landbs[i].wavNameSize;
                     dlog.landb.landbs[i].wavName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                     dlog.landb.landbs[i].blockLangresSize = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
+
                     dlog.landb.landbs[i].langresStrsCount = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
 
                     if ((dlog.landb.landbs[i].blockLangresSize > 8) && (dlog.landb.landbs[i].langresStrsCount > 0))
                     {
@@ -74,36 +112,72 @@ namespace TTG_Tools.Texts
                         for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
                         {
                             dlog.landb.landbs[i].lang[j].blockActorNameSize = br.ReadInt32();
+                            dlog.newLangdbBlockSize += 4;
+                            dlog.landb.newBlockLength += 4;
+
                             dlog.landb.landbs[i].lang[j].actorNameSize = br.ReadInt32();
+                            dlog.newLangdbBlockSize += 4;
+                            dlog.landb.newBlockLength += 4;
+
                             tmp = br.ReadBytes(dlog.landb.landbs[i].lang[j].actorNameSize);
+                            //Don't calculate actor name's size!
                             dlog.landb.landbs[i].lang[j].actorName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                             dlog.landb.landbs[i].lang[j].blockActorSpeechSize = br.ReadInt32();
+                            dlog.newLangdbBlockSize += 4;
+                            dlog.landb.newBlockLength += 4;
+
                             dlog.landb.landbs[i].lang[j].actorSpeechSize = br.ReadInt32();
+                            dlog.newLangdbBlockSize += 4;
+                            dlog.landb.newBlockLength += 4;
+
                             tmp = br.ReadBytes(dlog.landb.landbs[i].lang[j].actorSpeechSize);
+                            //And don't caclulate actor speech's size!
                             dlog.landb.landbs[i].lang[j].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                             dlog.landb.landbs[i].lang[j].someValue1 = br.ReadInt32();
+                            dlog.newLangdbBlockSize += 4;
+                            dlog.landb.newBlockLength += 4;
+
                             dlog.landb.landbs[i].lang[j].someValue2 = br.ReadInt32();
+                            dlog.newLangdbBlockSize += 4;
+                            dlog.landb.newBlockLength += 4;
                         }
                     }
 
                     dlog.landb.landbs[i].someValue3 = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
+
                     dlog.landb.landbs[i].someValue4 = br.ReadInt32();
+                    dlog.newLangdbBlockSize += 4;
+                    dlog.landb.newBlockLength += 4;
                 }
 
-                dlog.landb.someDataAfterLandb = new DlogSomeDataAfterLandb();
-                dlog.landb.someDataAfterLandb.commonBlockSize = br.ReadInt32();
-                dlog.landb.someDataAfterLandb.firstBlockSize = br.ReadInt32();
-                dlog.landb.someDataAfterLandb.firstBlock = br.ReadBytes(dlog.landb.someDataAfterLandb.firstBlockSize - 4);
-                dlog.landb.someDataAfterLandb.secondBlockSize = br.ReadInt32();
-                dlog.landb.someDataAfterLandb.secondBlock = br.ReadBytes(dlog.landb.someDataAfterLandb.secondBlockSize - 4);
+                dlog.landb.commonBlockLen = br.ReadInt32();
+                dlog.newLangdbBlockSize += dlog.landb.commonBlockLen;
+                dlog.landb.newBlockLength += dlog.landb.commonBlockLen;
+                dlog.landb.block = br.ReadBytes(dlog.landb.commonBlockLen - 4);
 
                 dlog.landb.lastLandbData = new DlogLastLandbData();
                 dlog.landb.lastLandbData.Unknown1 = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
+                dlog.landb.newBlockLength += 4;
+
                 dlog.landb.lastLandbData.Unknown2 = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
+                dlog.landb.newBlockLength += 4;
+
                 dlog.landb.lastLandbData.Unknown3 = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
+                dlog.landb.newBlockLength += 4;
+
                 dlog.landb.lastLandbData.Unknown4 = br.ReadInt32();
+                dlog.newLangdbBlockSize += 4;
+                dlog.landb.newBlockLength += 4;
+
+                long tmpPos = br.BaseStream.Position;
+                dlog.someDlogData = br.ReadBytes((int)(br.BaseStream.Length - tmpPos));
 
                 return dlog;
             }

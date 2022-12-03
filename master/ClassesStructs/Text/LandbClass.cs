@@ -48,17 +48,6 @@ namespace TTG_Tools.ClassesStructs.Text
         public int flags;
     }
 
-    public struct SomeDataAfterLandb
-    {
-        public int commonBlockSize;
-
-        public int firstBlockSize;
-        public byte[] firstBlock;
-
-        public int secondBlockSize;
-        public byte[] secondBlock;
-    }
-
     public struct LastLandbData //16 bytes of some data
     {
         public int Unknown1;
@@ -70,7 +59,10 @@ namespace TTG_Tools.ClassesStructs.Text
     public class LandbClass
     {
         public int landbFileSize; //For 5VSM and 6VSM formats
+        public int newLandbFileSize; //Recount file sizes
         public int landbLastFileSize; //Last block after list landb
+        public int newLandbLastFileSize; //Recount last block after list landb
+
         //public bool isBlockLength; Maybe I'll remove that
         public int blockSize1;
         public int someValue1;
@@ -78,6 +70,7 @@ namespace TTG_Tools.ClassesStructs.Text
         public int someValue2;
 
         public int blockLength;
+        public int newBlockLength; //for recount
         public int landbCount;
 
         public bool isNewFormat;
@@ -86,8 +79,8 @@ namespace TTG_Tools.ClassesStructs.Text
 
         public Landb[] landbs;
         public FlagsClass.LangdbFlagClass[] flags;
-        //public byte[] unknownData;
-        public SomeDataAfterLandb someAfterData;
+        public int commonSomeDataLen;
+        public byte[] someData;
         public LastLandbData lastLandbData;
     }
 }
