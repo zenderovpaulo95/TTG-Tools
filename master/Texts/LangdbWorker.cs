@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using TTG_Tools.ClassesStructs.Text;
 using System.IO;
+using System.Windows.Forms.VisualStyles;
 
 namespace TTG_Tools.Texts
 {
     public class LangdbWorker
     {
-        public static LangdbClass GetStringsFromLangdb(BinaryReader br, bool hasFlags)
+        private static LangdbClass GetStringsFromLangdb(BinaryReader br, bool hasFlags)
         {
             try
             {
@@ -76,13 +77,6 @@ namespace TTG_Tools.Texts
                     tmp = br.ReadBytes(stringLength);
                     langdb.langdbs[i].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
-                    if ((langdb.langdbs[i].actorSpeech.IndexOf('\n') >= 0)
-                        || (langdb.langdbs[i].actorSpeech.IndexOf("\r\n") >= 0))
-                    {
-                        if (langdb.langdbs[i].actorSpeech.IndexOf("\r\n") >= 0) langdb.langdbs[i].actorSpeech = langdb.langdbs[i].actorSpeech.Replace("\r\n", "\\r\\n");
-                        else langdb.langdbs[i].actorSpeech = langdb.langdbs[i].actorSpeech.Replace("\n", "\\n");
-                    }
-
                     if (langdb.isBlockLength)
                     {
                         blockSize = br.ReadInt32();
@@ -125,7 +119,179 @@ namespace TTG_Tools.Texts
             }
         }
 
-        public static string DoWork(string InputFile, bool extract, bool FullEncrypt, ref byte[] EncKey, int version)
+        private static int RebuildLangdb(BinaryReader br, string outputFile, LangdbClass langdb)
+        {
+            if (File.Exists(outputFile)) File.Delete(outputFile);
+            FileStream fs = new FileStream(outputFile, FileMode.CreateNew);
+            BinaryWriter bw = new BinaryWriter(fs);
+
+            try
+            {
+                byte[] header = br.ReadBytes(4);
+                bw.Write(header);
+
+                int count = br.ReadInt32();
+                bw.Write(count);
+
+                byte[] tmp = br.ReadBytes(8);
+                br.BaseStream.Seek(8, SeekOrigin.Begin);
+
+                if (BitConverter.ToString(tmp) == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(0, InEngineWords.ClassStructsNames.languagedatabaseClass.ToLower()))))
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        tmp = br.ReadBytes(8);
+                        bw.Write(tmp);
+
+                        tmp = br.ReadBytes(4);
+                        bw.Write(tmp);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        int len = br.ReadInt32();
+                        bw.Write(len);
+
+                        tmp = br.ReadBytes(len);
+                        bw.Write(tmp);
+
+                        tmp = br.ReadBytes(4);
+                        bw.Write(tmp);
+                    }
+                }
+
+                var pos = br.BaseStream.Position;
+
+                if(langdb.isBlockLength)
+                {
+                    bw.Write(langdb.blockLength);
+                }
+
+                bw.Write(langdb.langdbCount);
+
+                for(int i = 0; i < langdb.langdbCount; i++)
+                {
+                    bw.Write(langdb.langdbs[i].anmID);
+                    bw.Write(langdb.langdbs[i].voxID);
+
+                    byte[] tmpActorName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(langdb.langdbs[i].actorName);
+                    int actorNameLen = tmpActorName.Length;
+                    int actorNameBlockLen = actorNameLen + 8;
+
+                    byte[] tmpActorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(langdb.langdbs[i].actorSpeech);
+                    int actorSpeechLen = tmpActorSpeech.Length;
+                    int actorSpeechBlockLen = tmpActorSpeech.Length + 8;
+
+                    if (langdb.isBlockLength)
+                    {
+                        bw.Write(actorNameBlockLen);
+                    }
+                    
+                    bw.Write(actorNameLen);
+                    bw.Write(tmpActorName);
+                    langdb.newBlockLength += tmpActorName.Length;
+
+                    if(langdb.isBlockLength)
+                    {
+                        bw.Write(actorSpeechBlockLen);
+                    }
+
+                    bw.Write(actorSpeechLen);
+                    bw.Write(tmpActorSpeech);
+                    langdb.newBlockLength += tmpActorSpeech.Length;
+
+                    int blockVoxLen = 0, blockAnmLen = 0;
+                    int voxLen = 0, anmLen = 0;
+
+                    tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(langdb.langdbs[i].anmFile);
+                    anmLen = tmp.Length;
+                    blockAnmLen = anmLen + 8;
+
+                    if(langdb.isBlockLength)
+                    {
+                        bw.Write(blockAnmLen);
+                    }
+
+                    bw.Write(anmLen);
+                    bw.Write(tmp);
+
+                    tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(langdb.langdbs[i].voxFile);
+                    voxLen = tmp.Length;
+                    blockVoxLen = voxLen + 8;
+
+                    if (langdb.isBlockLength)
+                    {
+                        bw.Write(blockVoxLen);
+                    }
+
+                    bw.Write(voxLen);
+                    bw.Write(tmp);
+
+                    bw.Write(langdb.flags[i].flags);
+                    bw.Write(langdb.langdbs[i].zero);
+                }
+
+                bw.BaseStream.Seek(pos, SeekOrigin.Begin);
+                bw.Write(langdb.newBlockLength);
+
+                bw.Close();
+                fs.Close();
+
+                return 0;
+            }
+            catch
+            {
+                if (bw != null) bw.Close();
+                if (fs != null) fs.Close();
+                return -1;
+            }
+        }
+
+        private static int GetIndex(LangdbClass langdb, uint searchNum)
+        {
+            for (int i = 0; i < langdb.langdbCount; i++)
+            {
+                if (langdb.langdbs[i].anmID == searchNum) return i;
+            }
+
+            return 0;
+        }
+
+        private static LangdbClass ReplaceStrings(LangdbClass langdb, List<CommonText> commonTexts, int type)
+        {
+            for (int i = 0; i < langdb.langdbCount; i++)
+            {
+                if (MainMenu.settings.importingOfName) langdb.langdbs[i].actorName = type == 1 ? commonTexts[GetIndex(langdb, langdb.langdbs[i].anmID)].actorName : commonTexts[(int)langdb.langdbs[i].stringNumber - 1].actorName;
+                langdb.langdbs[i].actorSpeech = type == 1 ? commonTexts[GetIndex(langdb, langdb.langdbs[i].anmID)].actorSpeechTranslation : commonTexts[(int)langdb.langdbs[i].stringNumber - 1].actorSpeechTranslation;
+            }
+
+            return langdb;
+        }
+
+        private static int CheckNumbers(List<CommonText> txts, LangdbClass langdb)
+        {
+            int result = -1;
+            int countLangres = 0;
+            int countStrings = 0;
+
+            for (int i = 0; i < langdb.langdbCount; i++)
+            {
+                for (int j = 0; j < txts.Count; j++)
+                {
+                    if (langdb.langdbs[i].anmID == txts[j].strNumber) countLangres++;
+                    if (langdb.langdbs[i].stringNumber == txts[i].strNumber) countStrings++;
+                }
+            }
+
+            if (countLangres < countStrings) result = 0;
+            else if (countLangres > countStrings) result = 1;
+
+            return result;
+        }
+
+        public static string DoWork(string InputFile, string txtFile, bool extract, bool FullEncrypt, ref byte[] EncKey, int version)
         {
             string result = "";
 
@@ -157,7 +323,7 @@ namespace TTG_Tools.Texts
                         byte[] tmp = br.ReadBytes(8);
                         classes[i] = BitConverter.ToString(tmp);
                         if (classes[i].ToLower() == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(checkCRC64, InEngineWords.ClassStructsNames.flagsClass.ToLower())))) hasFlags = true;
-                        tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
+                        tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files)
                     }
                 }
                 else
@@ -168,15 +334,13 @@ namespace TTG_Tools.Texts
                         byte[] tmp = br.ReadBytes(len);
                         classes[i] = Encoding.ASCII.GetString(tmp);
                         if (classes[i].ToLower() == "class flags") hasFlags = true;
-                        tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files
+                        tmp = br.ReadBytes(4); //Some values (in oldest games I found some values in *.vers files)
                     }
                 }
 
                 LangdbClass langdbs = GetStringsFromLangdb(br, hasFlags);
                 br.Close();
                 ms.Close();
-
-                buffer = null;
 
                 if (langdbs == null)
                 {
@@ -232,8 +396,41 @@ namespace TTG_Tools.Texts
                 }
                 else
                 {
+                    ClassesStructs.Text.CommonTextClass txt = new CommonTextClass();
+                    txt.txtList = ReadText.GetStrings(txtFile);
 
+                    if(txt.txtList.Count < langdbs.langdbCount)
+                    {
+                        FileInfo txtFI = new FileInfo(txtFile);
+                        return "Not enough strings in " + txtFI.Name + " for " + fi.Name + " file.";
+                    }
+
+                    int type = CheckNumbers(txt.txtList, langdbs);
+                    if (type == -1) return "I don't know which type of number strings select for " + fi.Name + " file.";
+
+                    langdbs = ReplaceStrings(langdbs, txt.txtList, type);
+
+                    ms = new MemoryStream(buffer);
+                    br = new BinaryReader(ms);
+
+                    string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name;
+
+                    int rebuildResult = RebuildLangdb(br, outputFile, langdbs);
+
+                    result = "File " + fi.Name + " successfully imported.";
+
+                    if (rebuildResult == -1)
+                    {
+                        result = "Unknown error while rebuild file " + fi.Name;
+                    }
+
+                    br.Close();
+                    ms.Close();
+
+                    langdbs = null;
                 }
+
+                buffer = null;
             }
             catch
             {

@@ -475,7 +475,6 @@ namespace TTG_Tools
                                         }
                                         case ".landb":
                                         {
-                                            //ImportTXTinLANDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
                                             result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false);
                                             ReportForWork(result);
                                             show[1] = true;
@@ -483,7 +482,9 @@ namespace TTG_Tools
                                         }
                                         case ".langdb":
                                         {
-                                                ImportTXTinLANGDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
+                                            //ImportTXTinLANGDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
+                                            result = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, FullEncrypt, ref encKey, version);
+                                            ReportForWork(result);
                                             show[2] = true;
                                                 break;
                                         }
@@ -1229,7 +1230,7 @@ namespace TTG_Tools
                             {
                                 case ".langdb":
                                     {
-                                        message = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, true, false, ref encKey, 2);
+                                        message = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, "", true, false, ref encKey, 2);
                                         ReportForWork(message);
                                         /*int lenghtOfExtension = inputFiles[i].Extension.Length;
                                         string fileName = inputFiles[i].Name.Remove(inputFiles[i].Name.Length - lenghtOfExtension, lenghtOfExtension) + ".txt";

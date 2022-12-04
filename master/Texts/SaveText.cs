@@ -18,7 +18,6 @@ namespace TTG_Tools.Texts
             try
             {
                 string tmpString = "";
-                byte[] tmpVal = null;
 
                 for (int i = 0; i < txt.Count; i++)
                 {

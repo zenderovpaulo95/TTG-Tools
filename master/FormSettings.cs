@@ -115,6 +115,7 @@ namespace TTG_Tools
             }
             else
             {
+                MainMenu.settings.unicodeSettings = 1;
                 rbNonNormalUnicode2.Enabled = true;
                 rbNormalUnicode.Enabled = true;
             }

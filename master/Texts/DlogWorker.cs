@@ -187,6 +187,27 @@ namespace TTG_Tools.Texts
             }
         }
 
+        private static int CheckNumbers(List<CommonText> txts, DlogClass dlog)
+        {
+            int result = -1;
+            int countLangres = 0;
+            int countStrings = 0;
+
+            for (int i = 0; i < dlog.landb.landbCount; i++)
+            {
+                for (int j = 0; j < txts.Count; j++)
+                {
+                    if (dlog.landb.landbs[i].anmID == txts[j].strNumber) countLangres++;
+                    if (dlog.landb.landbs[i].stringNumber == txts[i].strNumber) countStrings++;
+                }
+            }
+
+            if (countLangres < countStrings) result = 0;
+            else if (countLangres > countStrings) result = 1;
+
+            return result;
+        }
+
         public static string DoWork(string InputFile, bool extract)
         {
             string result = "";

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TTG_Tools.ClassesStructs.Text;
 using System.IO;
+using System.Windows.Forms.VisualStyles;
 
 namespace TTG_Tools.Texts
 {
@@ -66,6 +67,7 @@ namespace TTG_Tools.Texts
                         landb.newLandbFileSize += 8;
                         landb.newBlockLength += 8;
                     }
+
                     landb.landbs[i].anmID = br.ReadUInt32();
                     landb.newLandbFileSize += 4;
                     landb.newBlockLength += 4;
@@ -167,7 +169,6 @@ namespace TTG_Tools.Texts
                     landb.landbs[i].actorSpeech = landb.isUnicode ? Encoding.UTF8.GetString(tmp) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
                     //Don't calculate actor speech's size!
-
                     landb.landbs[i].blockSize = br.ReadInt32();
                     landb.newLandbFileSize += 4;
                     landb.newBlockLength += 4;
@@ -220,8 +221,9 @@ namespace TTG_Tools.Texts
                 landb.lastLandbData.Unknown2 = br.ReadInt32();
                 landb.lastLandbData.Unknown3 = br.ReadInt32();
                 landb.lastLandbData.Unknown4 = br.ReadInt32();
-
                 landb.newLandbFileSize += 16;
+
+                if (landb.isNewFormat) landb.lastNewBlockData = br.ReadBytes(landb.landbLastFileSize);
             }
             catch
             {
@@ -229,6 +231,178 @@ namespace TTG_Tools.Texts
             }
 
             return landb;
+        }
+
+        private static int RebuildLandb(BinaryReader br, string outputFile, LandbClass landb)
+        {
+            if (File.Exists(outputFile)) File.Delete(outputFile);
+
+            FileStream fs = new FileStream(outputFile, FileMode.CreateNew);
+            BinaryWriter bw = new BinaryWriter(fs);
+
+            try
+            {
+                byte[] header = br.ReadBytes(4);
+                bw.Write(header);
+
+                byte[] tmp;
+
+                if (landb.isNewFormat)
+                {
+                    tmp = br.ReadBytes(4);
+                    bw.Write(landb.newBlockLength);
+
+                    tmp = br.ReadBytes(4);
+                    bw.Write(landb.landbLastFileSize);
+
+                    tmp = br.ReadBytes(4);
+                    bw.Write(tmp);
+                }
+
+                int count = br.ReadInt32();
+                bw.Write(count);
+
+                for(int i = 0; i < count; i++)
+                {
+                    tmp = br.ReadBytes(8);
+                    bw.Write(tmp);
+
+                    tmp = br.ReadBytes(4);
+                    bw.Write(tmp);
+                }
+
+                bw.Write(landb.blockSize1);
+                bw.Write(landb.someValue1);
+
+                bw.Write(landb.blockSize2);
+                bw.Write(landb.someValue2);
+
+                var pos = bw.BaseStream.Position;
+
+                bw.Write(landb.newBlockLength);
+                bw.Write(landb.landbCount);
+
+                for(int i = 0; i < landb.landbCount; i++)
+                {
+                    bw.Write(landb.landbs[i].wavID);
+
+                    if(landb.hasMetaLangresName)
+                    {
+                        bw.Write(landb.landbs[i].crc64Langres);
+                    }
+
+                    bw.Write(landb.landbs[i].anmID);
+                    bw.Write(landb.landbs[i].zero1);
+
+                    bw.Write(landb.landbs[i].blockAnmNameSize);
+
+                    if (landb.hasMetaLangresName)
+                    {
+                        string[] tmpStr = landb.landbs[i].anmName.Split('-');
+                        tmp = new byte[tmpStr.Length];
+
+                        for(int t = 0; t < tmp.Length; t++)
+                        {
+                            tmp[t] = Convert.ToByte(tmpStr[t], 16);
+                        }
+                    }
+                    else
+                    {
+                        bw.Write(landb.landbs[i].anmNameSize);
+                        tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].anmName);
+                    }
+
+                    bw.Write(tmp);
+
+                    bw.Write(landb.landbs[i].blockWavNameSize);
+
+                    if (landb.hasMetaLangresName)
+                    {
+                        string[] tmpStr = landb.landbs[i].wavName.Split('-');
+                        tmp = new byte[tmpStr.Length];
+
+                        for (int t = 0; t < tmp.Length; t++)
+                        {
+                            tmp[t] = Convert.ToByte(tmpStr[t], 16);
+                        }
+                    }
+                    else
+                    {
+                        bw.Write(landb.landbs[i].wavNameSize);
+                        tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].wavName);
+                    }
+
+                    bw.Write(tmp);
+
+                    bw.Write(landb.landbs[i].blockUnknownNameSize);
+                    bw.Write(landb.landbs[i].unknownNameSize);
+
+                    tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].unknownName);
+                    bw.Write(tmp);
+
+                    bw.Write(landb.landbs[i].zero2);
+
+                    byte[] tmpActorName = landb.isUnicode ? Encoding.UTF8.GetBytes(landb.landbs[i].actorName) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].actorName);
+                    landb.landbs[i].actorNameSize = tmpActorName.Length;
+                    landb.landbs[i].blockActorNameSize = landb.landbs[i].actorNameSize + 8;
+                    landb.newBlockLength += 4 + landb.landbs[i].actorNameSize;
+                    landb.newLandbFileSize += 4 + landb.landbs[i].actorNameSize;
+
+                    byte[] tmpActorSpeech = landb.isUnicode ? Encoding.UTF8.GetBytes(landb.landbs[i].actorSpeech) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].actorSpeech);
+                    landb.landbs[i].actorSpeechSize = tmpActorSpeech.Length;
+                    landb.landbs[i].blockActorSpeechSize = landb.landbs[i].actorSpeechSize + 8;
+                    landb.newBlockLength += 4 + landb.landbs[i].actorSpeechSize;
+                    landb.newLandbFileSize += 4 + landb.landbs[i].actorSpeechSize;
+
+                    landb.landbs[i].blockLangresSize = 4 + landb.landbs[i].blockActorNameSize + landb.landbs[i].blockActorSpeechSize + landb.landbs[i].blockSize;
+
+                    bw.Write(landb.landbs[i].blockLangresSize);
+                    bw.Write(landb.landbs[i].blockActorNameSize);
+                    bw.Write(landb.landbs[i].actorNameSize);
+                    bw.Write(tmpActorName);
+                    bw.Write(landb.landbs[i].blockActorSpeechSize);
+                    bw.Write(landb.landbs[i].actorSpeechSize);
+                    bw.Write(tmpActorSpeech);
+
+                    bw.Write(landb.landbs[i].blockSize);
+                    bw.Write(landb.landbs[i].someValue);
+
+                    if(landb.isUnicode)
+                    {
+                        bw.Write(landb.landbs[i].blockSizeUni);
+                        bw.Write(landb.landbs[i].someDataUni);
+                    }
+
+                    bw.Write(landb.landbs[i].flags);
+                }
+
+                bw.Write(landb.commonSomeDataLen);
+                bw.Write(landb.someData);
+
+                bw.Write(landb.lastLandbData.Unknown1);
+                bw.Write(landb.lastLandbData.Unknown2);
+                bw.Write(landb.lastLandbData.Unknown3);
+                bw.Write(landb.lastLandbData.Unknown4);
+
+                if (landb.isNewFormat) bw.Write(landb.lastNewBlockData);
+
+                if (landb.isNewFormat)
+                {
+                    bw.BaseStream.Seek(4, SeekOrigin.Begin);
+                    bw.Write(landb.newLandbFileSize);
+                }
+
+                bw.BaseStream.Seek(pos, SeekOrigin.Begin);
+                bw.Write(landb.newBlockLength);
+
+                return 0;
+            }
+            catch
+            {
+                if (bw != null) bw.Close();
+                if (fs != null) fs.Close();
+                return -1;
+            }
         }
 
         private static int CheckNumbers(List<CommonText> txts, LandbClass landb)
@@ -319,8 +493,6 @@ namespace TTG_Tools.Texts
                 br.Close();
                 ms.Close();
 
-                buffer = null;
-
                 if (landbs == null)
                 {
                     return "File " + fi.Name + ": unknown error.";
@@ -386,10 +558,31 @@ namespace TTG_Tools.Texts
 
                     int type = CheckNumbers(txts.txtList, landbs);
 
-                    if (type == -1) return "I don't know which type of number strings select in " + fi.Name + " file.";
+                    if (type == -1) return "I don't know which type of number strings select for " + fi.Name + " file.";
 
                     landbs = ReplaceStrings(landbs, txts.txtList, type);
+
+                    ms = new MemoryStream(buffer);
+                    br = new BinaryReader(ms);
+
+                    string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name;
+
+                    int rebuildResult = RebuildLandb(br, outputFile, landbs);
+                    
+                    br.Close();
+                    ms.Close();
+
+                    result = "File " + fi.Name + " successfully imported.";
+
+                    if(rebuildResult == -1)
+                    {
+                        result = "Unknown error while rebuild file " + fi.Name;
+                    }
+
+                    landbs = null;
                 }
+
+                buffer = null;
             }
             catch
             {

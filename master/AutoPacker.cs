@@ -85,7 +85,7 @@ namespace TTG_Tools
             }
 
             if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
-            else MainMenu.settings.unicodeSettings = 2;
+            else MainMenu.settings.unicodeSettings = 1;
             
             EncVersion = 2;
             if (comboBox2.SelectedIndex == 1) EncVersion = 7;

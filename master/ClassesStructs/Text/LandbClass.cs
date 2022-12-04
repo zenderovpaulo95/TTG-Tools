@@ -82,5 +82,6 @@ namespace TTG_Tools.ClassesStructs.Text
         public int commonSomeDataLen;
         public byte[] someData;
         public LastLandbData lastLandbData;
+        public byte[] lastNewBlockData; //For games since The Wolf among us
     }
 }
