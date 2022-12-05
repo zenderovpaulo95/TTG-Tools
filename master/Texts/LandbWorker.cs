@@ -416,7 +416,7 @@ namespace TTG_Tools.Texts
                 for(int j = 0; j < txts.Count; j++)
                 {
                     if (landb.landbs[i].anmID == txts[j].strNumber) countLangres++;
-                    if (landb.landbs[i].stringNumber == txts[i].strNumber) countStrings++;
+                    if (landb.landbs[i].stringNumber == txts[j].strNumber) countStrings++;
                 }
             }
 
@@ -426,11 +426,12 @@ namespace TTG_Tools.Texts
             return result;
         }
 
-        private static int GetIndex(LandbClass landb, uint searchNum)
+        private static int GetIndex(LandbClass landb, uint searchNum, int type)
         {
             for(int i = 0; i < landb.landbCount; i++)
             {
-                if (landb.landbs[i].anmID == searchNum) return i;
+                if ((type == 1) && (landb.landbs[i].anmID == searchNum)) return i;
+                else if((type == 0) && (landb.landbs[i].stringNumber == searchNum)) return i;
             }
 
             return 0;
@@ -440,8 +441,8 @@ namespace TTG_Tools.Texts
         {
             for(int i = 0; i < landb.landbCount; i++)
             {
-                if (MainMenu.settings.importingOfName) landb.landbs[i].actorName = type == 1 ? commonTexts[GetIndex(landb, landb.landbs[i].anmID)].actorName : commonTexts[(int)landb.landbs[i].stringNumber - 1].actorName;
-                landb.landbs[i].actorSpeech = type == 1 ? commonTexts[GetIndex(landb, landb.landbs[i].anmID)].actorSpeechTranslation : commonTexts[(int)landb.landbs[i].stringNumber - 1].actorSpeechTranslation;
+                if (MainMenu.settings.importingOfName) landb.landbs[i].actorName = type == 1 ? commonTexts[GetIndex(landb, landb.landbs[i].anmID, type)].actorName : commonTexts[GetIndex(landb, landb.landbs[i].stringNumber, type)].actorName;
+                landb.landbs[i].actorSpeech = type == 1 ? commonTexts[GetIndex(landb, landb.landbs[i].anmID, type)].actorSpeechTranslation : commonTexts[GetIndex(landb, landb.landbs[i].stringNumber, type)].actorSpeechTranslation;
 
                 if (landb.isUnicode && MainMenu.settings.unicodeSettings == 1) landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, false);
             }

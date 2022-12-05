@@ -368,17 +368,23 @@ namespace TTG_Tools.Texts
             return result;
         }
 
+        private static int GetIndex(List<CommonText> text, uint strNum)
+        {
+            for(int i = 0; i < text.Count; i++)
+            {
+                if(text[i].strNumber == strNum) return i;
+            }
+            return 0;
+        }
+
         private static DlogClass ReplaceStrings(DlogClass dlog, List<CommonText> commonTexts)
         {
             for (int i = 0; i < dlog.landb.landbCount; i++)
             {
-                if (dlog.landb.landbs[i].langresStrsCount > 0) 
+                for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
                 {
-                    for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++) 
-                    {
-                        if (MainMenu.settings.importingOfName) dlog.landb.landbs[i].lang[j].actorName = commonTexts[(int)dlog.landb.landbs[i].lang[j].stringNumber - 1].actorName;
-                        //dlog.landb.landbs[i].lang[j].actorSpeech = commonTexts[stringNumber - 1].actorSpeechTranslation;
-                    }
+                    if (MainMenu.settings.importingOfName) dlog.landb.landbs[i].lang[j].actorName = commonTexts[GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber)].actorName;
+                    dlog.landb.landbs[i].lang[j].actorSpeech = commonTexts[GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber)].actorSpeechTranslation;
                 }
             }
 
