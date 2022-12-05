@@ -33,7 +33,7 @@ namespace TTG_Tools.Texts
                 dlog.someValue2 = br.ReadInt32();
                 dlog.longUnknown2 = br.ReadUInt64();
                 dlog.someValue3 = br.ReadInt32();
-                dlog.langdbBLockSize = br.ReadInt32();
+                dlog.langdbBlockSize = br.ReadInt32();
                 dlog.newLangdbBlockSize = 4;
 
                 dlog.landb = new DlogLandb();
@@ -56,9 +56,10 @@ namespace TTG_Tools.Texts
 
                 dlog.landb.landbs = new DlogLandbs[dlog.landb.landbCount];
 
+                uint c = 1;
+
                 for (int i = 0; i < dlog.landb.landbCount; i++)
                 {
-                    dlog.landb.landbs[i].stringNumber = ((uint)i + 1);
                     dlog.landb.landbs[i].anmID = br.ReadUInt32();
                     dlog.newLangdbBlockSize += 4;
                     dlog.landb.newBlockLength += 4;
@@ -110,7 +111,8 @@ namespace TTG_Tools.Texts
                         dlog.landb.landbs[i].lang = new LangresDB[dlog.landb.landbs[i].langresStrsCount];
 
                         for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
-                        {
+                        {                            
+                            dlog.landb.landbs[i].lang[j].stringNumber = c;
                             dlog.landb.landbs[i].lang[j].blockActorNameSize = br.ReadInt32();
                             dlog.newLangdbBlockSize += 4;
                             dlog.landb.newBlockLength += 4;
@@ -142,6 +144,8 @@ namespace TTG_Tools.Texts
                             dlog.landb.landbs[i].lang[j].someValue2 = br.ReadInt32();
                             dlog.newLangdbBlockSize += 4;
                             dlog.landb.newBlockLength += 4;
+
+                            c++;
                         }
                     }
 
@@ -187,6 +191,159 @@ namespace TTG_Tools.Texts
             }
         }
 
+        private static int RebuildDlog(BinaryReader br, string outputFile, DlogClass dlog)
+        {
+            if (File.Exists(outputFile)) File.Delete(outputFile);
+            FileStream fs = new FileStream(outputFile, FileMode.CreateNew);
+            BinaryWriter bw = new BinaryWriter(fs);
+
+            try
+            {
+                byte[] header = br.ReadBytes(4);
+                bw.Write(header);
+
+                int count = br.ReadInt32();
+                bw.Write(count);
+
+                byte[] tmp;
+
+                for(int i = 0; i < count; i++)
+                {
+                    tmp = br.ReadBytes(8);
+                    bw.Write(tmp);
+                    tmp = br.ReadBytes(4);
+                    bw.Write(tmp);
+                }
+
+                bw.Write(dlog.unknown1);
+                bw.Write(dlog.unknown2);
+
+                bw.Write(dlog.longUnknown1);
+                bw.Write(dlog.zero);
+                bw.Write(dlog.blockSize);
+                bw.Write(dlog.block);
+                bw.Write(dlog.blockFileNameSize);
+                bw.Write(dlog.fileNameSize);
+                
+                tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(dlog.dlogFileName);
+
+                bw.Write(tmp);
+
+                bw.Write(dlog.someValue1);
+                bw.Write(dlog.someValue2);
+                bw.Write(dlog.longUnknown2);
+                bw.Write(dlog.someValue3);
+
+                var landbFilePos = bw.BaseStream.Position;
+
+                bw.Write(dlog.langdbBlockSize);
+
+                bw.Write(dlog.landb.blockSize1);
+                bw.Write(dlog.landb.someValue1);
+                bw.Write(dlog.landb.blockSize2);
+                bw.Write(dlog.landb.someValue2);
+
+                var blockSizePose = bw.BaseStream.Position;
+
+                bw.Write(dlog.landb.blockLength);
+                bw.Write(dlog.landb.landbCount);
+
+                for(int i = 0; i < dlog.landb.landbCount; i++)
+                {
+                    bw.Write(dlog.landb.landbs[i].anmID);
+                    bw.Write(dlog.landb.landbs[i].wavID);
+                    bw.Write(dlog.landb.landbs[i].zero);
+
+                    bw.Write(dlog.landb.landbs[i].blockAnmNameSize);
+                    bw.Write(dlog.landb.landbs[i].anmNameSize);
+
+                    tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(dlog.landb.landbs[i].anmName);
+                    bw.Write(tmp);
+
+                    bw.Write(dlog.landb.landbs[i].blockWavNameSize);
+                    bw.Write(dlog.landb.landbs[i].wavNameSize);
+
+                    tmp = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(dlog.landb.landbs[i].wavName);
+                    bw.Write(tmp);
+
+                    var langresPos = bw.BaseStream.Position;
+
+                    bw.Write(dlog.landb.landbs[i].blockLangresSize);
+                    bw.Write(dlog.landb.landbs[i].langresStrsCount);
+
+                    dlog.landb.landbs[i].blockLangresSize = 8;
+
+                    for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
+                    {
+                        byte[] tmpActorName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(dlog.landb.landbs[i].lang[j].actorName);
+                        byte[] tmpActorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(dlog.landb.landbs[i].lang[j].actorSpeech);
+
+                        dlog.landb.landbs[i].lang[j].actorNameSize = tmpActorName.Length;
+                        dlog.landb.landbs[i].lang[j].blockActorNameSize = tmpActorName.Length + 8;
+                        dlog.landb.landbs[i].blockLangresSize += dlog.landb.landbs[i].lang[j].blockActorNameSize;
+
+                        dlog.landb.landbs[i].lang[j].actorSpeechSize = tmpActorSpeech.Length;
+                        dlog.landb.landbs[i].lang[j].blockActorSpeechSize = tmpActorSpeech.Length + 8;
+                        dlog.landb.landbs[i].blockLangresSize += dlog.landb.landbs[i].lang[j].blockActorSpeechSize;
+
+                        bw.Write(dlog.landb.landbs[i].lang[j].blockActorNameSize);
+                        bw.Write(dlog.landb.landbs[i].lang[j].actorNameSize);
+                        bw.Write(tmpActorName);
+
+                        bw.Write(dlog.landb.landbs[i].lang[j].blockActorSpeechSize);
+                        bw.Write(dlog.landb.landbs[i].lang[j].actorSpeechSize);
+                        bw.Write(tmpActorSpeech);
+
+                        bw.Write(dlog.landb.landbs[i].lang[j].someValue1);
+                        bw.Write(dlog.landb.landbs[i].lang[j].someValue2);
+
+                        dlog.landb.landbs[i].blockLangresSize += 8;
+                    }
+
+                    bw.Write(dlog.landb.landbs[i].someValue3);
+                    bw.Write(dlog.landb.landbs[i].someValue4);
+
+                    var tmpPos = bw.BaseStream.Position;
+
+                    bw.BaseStream.Seek(langresPos, SeekOrigin.Begin);
+                    bw.Write(dlog.landb.landbs[i].blockLangresSize);
+
+                    bw.BaseStream.Seek(tmpPos, SeekOrigin.Begin);
+
+                    dlog.newLangdbBlockSize += dlog.landb.landbs[i].blockLangresSize;
+                    dlog.landb.newBlockLength += dlog.landb.landbs[i].blockLangresSize;
+                }
+
+                bw.Write(dlog.landb.commonBlockLen);
+                bw.Write(dlog.landb.block);
+
+                bw.Write(dlog.landb.lastLandbData.Unknown1);
+                bw.Write(dlog.landb.lastLandbData.Unknown2);
+                bw.Write(dlog.landb.lastLandbData.Unknown3);
+                bw.Write(dlog.landb.lastLandbData.Unknown4);
+
+                bw.Write(dlog.someDlogData);
+
+                bw.BaseStream.Seek(landbFilePos, SeekOrigin.Begin);
+                bw.Write(dlog.langdbBlockSize);
+
+                bw.BaseStream.Seek(blockSizePose, SeekOrigin.Begin);
+                bw.Write(dlog.landb.blockLength);
+
+                bw.Close();
+                fs.Close();
+
+                return 0;
+            }
+            catch
+            {
+                if (bw != null) bw.Close();
+                if (fs != null) fs.Close();
+
+                return -1;
+            }
+        }
+
         private static int CheckNumbers(List<CommonText> txts, DlogClass dlog)
         {
             int result = -1;
@@ -195,10 +352,13 @@ namespace TTG_Tools.Texts
 
             for (int i = 0; i < dlog.landb.landbCount; i++)
             {
-                for (int j = 0; j < txts.Count; j++)
+                for (int k = 0; k < dlog.landb.landbs[i].langresStrsCount; k++) 
                 {
-                    if (dlog.landb.landbs[i].anmID == txts[j].strNumber) countLangres++;
-                    if (dlog.landb.landbs[i].stringNumber == txts[i].strNumber) countStrings++;
+                    for (int j = 0; j < txts.Count; j++)
+                    {
+                        if (dlog.landb.landbs[i].anmID == txts[j].strNumber) countLangres++;
+                        else if (dlog.landb.landbs[i].lang[k].stringNumber == txts[j].strNumber) countStrings++;
+                    }
                 }
             }
 
@@ -208,7 +368,24 @@ namespace TTG_Tools.Texts
             return result;
         }
 
-        public static string DoWork(string InputFile, bool extract)
+        private static DlogClass ReplaceStrings(DlogClass dlog, List<CommonText> commonTexts)
+        {
+            for (int i = 0; i < dlog.landb.landbCount; i++)
+            {
+                if (dlog.landb.landbs[i].langresStrsCount > 0) 
+                {
+                    for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++) 
+                    {
+                        if (MainMenu.settings.importingOfName) dlog.landb.landbs[i].lang[j].actorName = commonTexts[(int)dlog.landb.landbs[i].lang[j].stringNumber - 1].actorName;
+                        //dlog.landb.landbs[i].lang[j].actorSpeech = commonTexts[stringNumber - 1].actorSpeechTranslation;
+                    }
+                }
+            }
+
+            return dlog;
+        }
+
+        public static string DoWork(string InputFile, string TxtFile, bool extract)
         {
             string result = "";
 
@@ -266,28 +443,22 @@ namespace TTG_Tools.Texts
                     ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
 
                     txts.txtList = new List<CommonText>();
-                    uint c = 1;
 
                     for (int i = 0; i < dlog.landb.landbCount; i++)
                     {
                         ClassesStructs.Text.CommonText txt;
 
                         txt.isBothSpeeches = true;
-                        txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : c;
 
                         for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
                         {
-                            if(dlog.landb.landbs[i].langresStrsCount > 1)
-                            {
-                                txt.strNumber = MainMenu.settings.exportRealID ? dlog.landb.landbs[i].anmID : c;
-                            }
+                            txt.strNumber = dlog.landb.landbs[i].lang[j].stringNumber;
                             txt.actorName = dlog.landb.landbs[i].lang[j].actorName;
                             txt.actorSpeechOriginal = dlog.landb.landbs[i].lang[j].actorSpeech;
                             txt.actorSpeechTranslation = dlog.landb.landbs[i].lang[j].actorSpeech;
                             txt.flags = "000"; //default will be 000
 
                             txts.txtList.Add(txt);
-                            c++;
                         }
                     }
 
@@ -314,7 +485,47 @@ namespace TTG_Tools.Texts
                 }
                 else
                 {
+                    ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
+                    txts.txtList = ReadText.GetStrings(TxtFile);
 
+                    if (txts.txtList.Count < dlog.landb.landbCount)
+                    {
+                        FileInfo txtFI = new FileInfo(TxtFile);
+                        return "Not enough strings in " + txtFI.Name + " for " + fi.Name + " file.";
+                    }
+
+                    int type = CheckNumbers(txts.txtList, dlog);
+
+                    switch(type)
+                    {
+                        case -1:
+                            return "I don't know which type of number strings select for " + fi.Name + " file.";
+
+                        case 1:
+                            return "Error in " + fi.Name + ": Please replace strings without langres numbers! You can disable export real ID and extract strings again.";
+                    }
+
+                    dlog = ReplaceStrings(dlog, txts.txtList);
+
+                    ms = new MemoryStream(buffer);
+                    br = new BinaryReader(ms);
+
+                    string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name;
+
+                    int rebuildResult = RebuildDlog(br, outputFile, dlog);
+
+                    br.Close();
+                    ms.Close();
+
+                    result = "File " + fi.Name + " successfully imported.";
+
+                    if (rebuildResult == -1)
+                    {
+                        result = "Unknown error while rebuild file " + fi.Name;
+                    }
+
+                    dlog = null;
+                    buffer = null;
                 }
             }
             catch

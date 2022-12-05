@@ -11,6 +11,7 @@ namespace TTG_Tools.ClassesStructs.Text
 
     public struct LangresDB
     {
+        public uint stringNumber;
         public int blockActorNameSize;
         public int actorNameSize;
         public string actorName;
@@ -25,7 +26,6 @@ namespace TTG_Tools.ClassesStructs.Text
 
     public struct DlogLandbs
     {
-        public uint stringNumber; //Current string number
         public uint anmID;
         public uint wavID;
         public int zero;
@@ -91,7 +91,7 @@ namespace TTG_Tools.ClassesStructs.Text
         public int someValue2;
         public ulong longUnknown2;
         public int someValue3;
-        public int langdbBLockSize;
+        public int langdbBlockSize;
         public int newLangdbBlockSize;
 
         public DlogLandb landb;
