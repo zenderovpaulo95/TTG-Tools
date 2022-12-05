@@ -432,45 +432,6 @@ namespace TTG_Tools
             catch { }
         }
 
-        /*public static bool MakePause()
-        {
-            int start = GetTime() + 2500;
-            int i = 0;
-            while (start > GetTime())
-            {
-                i++;
-            }
-            return true;
-        }*/
-
-        /*static int GetTime()
-        {
-            DateTime time = DateTime.Now;
-            return (((time.Hour * 60 + time.Minute) * 60 + time.Second) * 1000 + time.Millisecond);
-        }*/
-
-        /*public static int FindStartOfBinarySomething(byte[] array, int offset, byte[] something)
-        {
-            int poz = offset;
-            byte[] tmp = new byte[something.Length];
-
-            while(BitConverter.ToString(tmp) != BitConverter.ToString(something))
-            {
-                tmp = new byte[something.Length];
-                Array.Copy(array, poz, tmp, 0, tmp.Length);
-                poz++;
-
-                if(poz + something.Length + 1 > array.Length)
-                {
-                    break;
-                }
-            }
-
-            poz--;
-
-            return poz;
-        }*/
-
         public static int FindStartOfStringSomething(byte[] array, int offset, string string_something)
         {
             int poz = offset;
