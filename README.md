@@ -9,7 +9,7 @@ Special thanks to:
 - aluigi for source code of ttarchext;
 - Taylor Hornby for C# source code of Blowfish encryption
 
-This tool have to make easier translations for games from Telltale.
+This tool have to make easier translations for games from Telltale and Skunkape games.
 It supports some games (at least I tested only these games):
 - Telltale Texas Hold'em
 - Bone: Out from Boneville

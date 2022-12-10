@@ -281,15 +281,6 @@ namespace TTG_Tools
             SetProcessWorkingSetSize(System.Diagnostics.Process.GetCurrentProcess().Handle, -1, -1);
         }
 
-        private void buttonTextCollector_Click(object sender, EventArgs e)
-        {
-            if (Application.OpenForms.OfType<TextCollector>().Count() == 0)
-            {
-                Form txtcol = new TextCollector();
-                txtcol.Show();
-            }
-        }
-
         private void MainMenu_Resize(object sender, EventArgs e)
         {
             if (FormWindowState.Minimized == WindowState)
@@ -339,162 +330,6 @@ namespace TTG_Tools
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            string curLine = string.Empty;
-            List<Glossariy_for_Credits> glossariy = new List<Glossariy_for_Credits>();
-            try
-            {
-                string path = "glossariy_for_credit.txt";
-                StreamReader sr = new StreamReader(path, System.Text.ASCIIEncoding.GetEncoding(MainMenu.settings.ASCII_N));
-
-                string origStr = string.Empty;
-                string translStr = string.Empty;
-                string emptyLine = string.Empty;
-
-                while ((curLine = sr.ReadLine()) != null)
-                {
-                    if (origStr == string.Empty)
-                    {
-                        origStr = curLine;
-                    }
-                    else if (translStr == string.Empty)
-                    {
-                        translStr = curLine;
-                    }
-                    else
-                    {
-                        glossariy.Add(new Glossariy_for_Credits(origStr, translStr));
-                        origStr = string.Empty;
-                        translStr = string.Empty;
-                    }
-                }
-
-                if (origStr != string.Empty && translStr != string.Empty)
-                {
-                    glossariy.Add(new Glossariy_for_Credits(origStr, translStr));
-                    origStr = string.Empty;
-                    translStr = string.Empty;
-                }
-            }
-            catch
-            { MessageBox.Show("Glossary has errors in txt file!"); }
-
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Subtitles file (*.txt)|*.txt";
-            ofd.RestoreDirectory = true;
-            ofd.Title = "Open titles file";
-            ofd.DereferenceLinks = false;
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                StreamReader strReader = new StreamReader(ofd.FileName, System.Text.ASCIIEncoding.GetEncoding(MainMenu.settings.ASCII_N));
-                List<string> credits = new List<string>();
-                while ((curLine = strReader.ReadLine()) != null)
-                {
-                    credits.Add(curLine);
-                }
-                strReader.Close();
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = "Subtitles file (*.txt)|*.txt";
-                sfd.RestoreDirectory = true;
-                sfd.Title = "Save converted subtitles file";
-                sfd.DereferenceLinks = false;
-                if (sfd.ShowDialog() == DialogResult.OK)
-                {
-                    Methods.DeleteCurrentFile(sfd.FileName);
-                    FileStream fWriter = new FileStream(sfd.FileName, FileMode.Create);
-                    string strTemp;
-                    foreach (string str in credits)
-                    {
-                        strTemp = str;
-                        CheckGlossariy(ref strTemp, glossariy);
-                        TextCollector.SaveString(fWriter, strTemp + "\r\n", MainMenu.settings.ASCII_N);
-                    }
-                    fWriter.Close();
-                }
-            }
-        }
-        public bool CheckGlossariy(ref string str, List<Glossariy_for_Credits> glossariy)
-        {
-            for (int i = 0; i < glossariy.Count(); i++)
-            {
-                if (glossariy[i].originalName == str)
-                {
-                    str = glossariy[i].translatedName;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog obd = new FolderBrowserDialog();
-            if (obd.ShowDialog() == DialogResult.OK)
-            {
-                DirectoryInfo di = new DirectoryInfo(obd.SelectedPath);
-                FileInfo[] fi = di.GetFiles("*.txt");
-                for (int i = 0; i < fi.Count(); i++)
-                {
-                    StreamReader sr = new StreamReader(fi[i].FullName, ASCIIEncoding.GetEncoding(MainMenu.settings.ASCII_N));
-                    List<string> file = new List<string>();
-
-                    string curLine;
-                    while ((curLine = sr.ReadLine()) != null)
-                    {
-                        if (curLine != "")
-                        {
-                            file.Add(curLine);
-                        }
-                    }
-                    sr.Close();
-                    FileStream fs = new FileStream(fi[i].FullName, FileMode.Create);
-                    foreach (string s in file)
-                    {
-                        TextCollector.SaveString(fs, s + "\r\n", MainMenu.settings.ASCII_N);
-                    }
-                    fs.Close();
-                }
-            }
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            MessageBox.Show("Please select a folder with DDS files.");
-            if (fbd.ShowDialog() == DialogResult.OK)
-            {
-                DirectoryInfo di = new DirectoryInfo(fbd.SelectedPath);
-                FileInfo[] fi = di.GetFiles("*.dds");
-                FolderBrowserDialog fbd3 = new FolderBrowserDialog();
-                fbd3.SelectedPath = fbd.SelectedPath;
-                MessageBox.Show("Please select an EMPTY folder to replace found DDS textures.");
-                if (fbd3.ShowDialog() == DialogResult.OK)
-                {
-                    FolderBrowserDialog fbd2 = new FolderBrowserDialog();
-                    fbd2.SelectedPath = fbd3.SelectedPath;
-                    MessageBox.Show("Please select a folder both D3DTX & DDS textures from game.");
-                    if (fbd2.ShowDialog() == DialogResult.OK)
-                    {
-                        for (int i = 0; i < fi.Count(); i++)
-                        {
-                            string name = fi[i].Name.Split('.')[0] + ".d3dtx";
-                            if (File.Exists(fbd2.SelectedPath + '\\' + name))
-                            {
-                                File.Copy(fi[i].FullName, fbd3.SelectedPath + '\\' + fi[i].Name);
-                                File.Copy(fbd2.SelectedPath + '\\' + name, fbd3.SelectedPath + '\\' + name);
-                                if (File.Exists(fbd2.SelectedPath + '\\' + fi[i].Name))
-                                {
-
-                                } File.Copy(fbd2.SelectedPath + '\\' + fi[i].Name, fbd3.SelectedPath + '\\' + fi[i].Name + ".old.dds");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         private void button5_Click(object sender, EventArgs e)
         {
             if (Application.OpenForms.OfType<ArchivePacker>().Count() == 0)
@@ -502,10 +337,6 @@ namespace TTG_Tools
                 Form archiveForm = new ArchivePacker();
                 archiveForm.Show();
             }
-        }
-
-        private void arcUnpackerBtn_Click(object sender, EventArgs e)
-        {
         }
     }
 }

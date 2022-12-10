@@ -798,6 +798,7 @@ namespace TTG_Tools
             if (MainMenu.settings.inputDirPath != "") textBox1.Text = MainMenu.settings.inputDirPath;
             if (MainMenu.settings.archivePath != "") textBox2.Text = MainMenu.settings.archivePath;
 
+            textBox3.Enabled = MainMenu.settings.customKey;
             int encKeyIndex = MainMenu.settings.versionArchiveIndex;
             if (MainMenu.settings.archiveFormat == 0) ttarchRB.Checked = true;
             else ttarch2RB.Checked = true;
@@ -957,6 +958,7 @@ namespace TTG_Tools
         private void CheckCustomKey_CheckedChanged(object sender, EventArgs e)
         {
             MainMenu.settings.customKey = CheckCustomKey.Checked;
+            textBox3.Enabled = MainMenu.settings.customKey;
             Settings.SaveConfig(MainMenu.settings);
 
             if ((MainMenu.settings.customKey == true) &&

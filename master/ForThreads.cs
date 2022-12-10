@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.IO;
 using System.Windows.Forms;
 
@@ -11,170 +10,15 @@ namespace TTG_Tools
     public delegate void ProgressHandler(int progress);
     public delegate void ReportHandler(string report);
     public delegate void GlossaryAdd(string orText, string trText);
-    public delegate void RefAllText(List<TextEditor.AllText> allText);
-    public delegate void RefAllText2(List<TextEditor.AllText> allText2);
 
     public class ForThreads
     {
         public event ProgressHandler Progress;
         public event ReportHandler ReportForWork;
-        public event RefAllText BackAllText;
-        public event RefAllText2 BackAllText2;
 
-
-        public void CreateExportingTXTfromAllTextN(ref List<TextEditor.AllText> allText)
-        {
-            for (int i = 0; i < allText.Count; i++)
-            {
-                if (allText[i].exported == false && allText[i].isChecked == false)
-                {
-                    allText[i].exported = true;
-                    for (int j = 0; j < allText.Count; j++)
-                    {
-                        if (!MainMenu.settings.exportRealID)
-                        {
-                            if (TextCollector.IsStringsSame(allText[i].orText, allText[j].orText, false) && allText[j].exported == false)
-                            {
-                                allText[j].exported = true;
-                                allText.Insert(i + 1, allText[j]);
-                                allText[i + 1].exported = true;
-                                allText.RemoveAt(j + 1);
-                            }
-                        }
-                        else
-                        {
-                            if ((allText[i].realID == allText[j].realID) && allText[j].exported == false)
-                            {
-                                allText[j].exported = true;
-                                allText.Insert(i + 1, allText[j]);
-                                allText[i + 1].exported = true;
-                                allText.RemoveAt(j + 1);
-                            }
-                        }
-                    }
-                }
-                allText[i].isChecked = true;
-                Progress(i);
-            }
-        }
-
-        public void CreateExportingTXTfromAllText(object inputList)
-        {
-            List<TextEditor.AllText> allText = inputList as List<TextEditor.AllText>;
-            CreateExportingTXTfromAllTextN(ref allText);
-            BackAllText(allText);
-        }
-
-        public void CreateExportingTXTfromAllText2(object inputList)
-        {
-
-            List<TextEditor.AllText> allText2 = inputList as List<TextEditor.AllText>;
-            CreateExportingTXTfromAllTextN(ref allText2);
-            BackAllText2(allText2);
-        }
-
-        public void CreateGlossaryFromFirstAndSecondAllText(object TwoList)
-        {
-            //потом передавать мега-класс, содержащий всё это 
-            List<List<TextEditor.AllText>> twoAllText = TwoList as List<List<TextEditor.AllText>>;
-            List<TextEditor.AllText> firstText = twoAllText[0];
-            List<TextEditor.AllText> secondText = twoAllText[1];
-            List<TextEditor.Glossary> glossary = new List<TextEditor.Glossary>();
-
-            for (int i = 0; i < firstText.Count; i++)
-            {
-                if (firstText[i].orText.IndexOf('–') > -1) firstText[i].orText = firstText[i].orText.Replace('–', '-');
-                if (firstText[i].orText.IndexOf('—') > -1) firstText[i].orText = firstText[i].orText.Replace('—', '-');
-                if (firstText[i].orText.IndexOf('―') > -1) firstText[i].orText = firstText[i].orText.Replace('―', '-');
-                if (firstText[i].orText.IndexOf('‗') > -1) firstText[i].orText = firstText[i].orText.Replace('‗', '_');
-                if (firstText[i].orText.IndexOf('‘') > -1) firstText[i].orText = firstText[i].orText.Replace('‘', '\'');
-                if (firstText[i].orText.IndexOf('’') > -1) firstText[i].orText = firstText[i].orText.Replace('’', '\'');
-                if (firstText[i].orText.IndexOf('‚') > -1) firstText[i].orText = firstText[i].orText.Replace('‚', ',');
-                if (firstText[i].orText.IndexOf('‛') > -1) firstText[i].orText = firstText[i].orText.Replace('‛', '\'');
-                if (firstText[i].orText.IndexOf('“') > -1) firstText[i].orText = firstText[i].orText.Replace('“', '\"');
-                if (firstText[i].orText.IndexOf('”') > -1) firstText[i].orText = firstText[i].orText.Replace('”', '\"');
-                if (firstText[i].orText.IndexOf('„') > -1) firstText[i].orText = firstText[i].orText.Replace('„', '\"');
-                if (firstText[i].orText.IndexOf('…') > -1) firstText[i].orText = firstText[i].orText.Replace("…", "...");
-                if (firstText[i].orText.IndexOf('′') > -1) firstText[i].orText = firstText[i].orText.Replace('′', '\'');
-                if (firstText[i].orText.IndexOf('″') > -1) firstText[i].orText = firstText[i].orText.Replace('″', '\"');
-
-                for (int j = 0; j < secondText.Count; j++)
-                {
-                    if (secondText[j].orText.IndexOf('–') > -1) secondText[j].orText = secondText[j].orText.Replace('–', '-');
-                    if (secondText[j].orText.IndexOf('—') > -1) secondText[j].orText = secondText[j].orText.Replace('—', '-');
-                    if (secondText[j].orText.IndexOf('―') > -1) secondText[j].orText = secondText[j].orText.Replace('―', '-');
-                    if (secondText[j].orText.IndexOf('‗') > -1) secondText[j].orText = secondText[j].orText.Replace('‗', '_');
-                    if (secondText[j].orText.IndexOf('‘') > -1) secondText[j].orText = secondText[j].orText.Replace('‘', '\'');
-                    if (secondText[j].orText.IndexOf('’') > -1) secondText[j].orText = secondText[j].orText.Replace('’', '\'');
-                    if (secondText[j].orText.IndexOf('‚') > -1) secondText[j].orText = secondText[j].orText.Replace('‚', ',');
-                    if (secondText[j].orText.IndexOf('‛') > -1) secondText[j].orText = secondText[j].orText.Replace('‛', '\'');
-                    if (secondText[j].orText.IndexOf('“') > -1) secondText[j].orText = secondText[j].orText.Replace('“', '\"');
-                    if (secondText[j].orText.IndexOf('”') > -1) secondText[j].orText = secondText[j].orText.Replace('”', '\"');
-                    if (secondText[j].orText.IndexOf('„') > -1) secondText[j].orText = secondText[j].orText.Replace('„', '\"');
-                    if (secondText[j].orText.IndexOf('…') > -1) secondText[j].orText = secondText[j].orText.Replace("…", "...");
-                    if (secondText[j].orText.IndexOf('′') > -1) secondText[j].orText = secondText[j].orText.Replace('′', '\'');
-                    if (secondText[j].orText.IndexOf('″') > -1) secondText[j].orText = secondText[j].orText.Replace('″', '\"');
-
-                    if ((firstText[i].orText != "" || firstText[i].orText != string.Empty) && firstText[i].orText == secondText[j].orText)
-                    {
-                        if (IsStringExist(secondText[j].orText, glossary) == false)
-                        {
-                            glossary.Add(new TextEditor.Glossary(firstText[i].orText, firstText[i].trText, false, false));
-                        }
-                    }
-                }
-                Progress(i);
-            }
-            FileStream ExportStream = new FileStream("txt.txt", FileMode.OpenOrCreate);
-            for (int i = 0; i < glossary.Count; i++)
-            {
-                TextCollector.SaveString(ExportStream, glossary[i].orText + "\r\n", MainMenu.settings.ASCII_N);
-                TextCollector.SaveString(ExportStream, glossary[i].trText + "\r\n\r\n", MainMenu.settings.ASCII_N);
-            }
-            ExportStream.Close();
-
-
-            for (int i = 0; i < secondText.Count; i++)
-            {
-                int q = IsStringinGlossary(glossary, secondText[i].orText, secondText[i].trText);
-                if (q >= 0)
-                {
-                    secondText[i].trText = glossary[q].trText;
-                }
-            }
-            BackAllText2(secondText);
-        }
-
-        public int IsStringinGlossary(List<TextEditor.Glossary> glossary, string orText, string trText)
-        {
-
-            for (int e = 0; e < glossary.Count; e++)
-            {
-                if (glossary[e].orText == orText && glossary[e].trText != trText)
-                {
-                    //System.Windows.Forms.MessageBox.Show(glossary[e].trText+"\r\n"+trText);
-                    return e;
-                }
-            }
-            return -1;
-        }
-
-        public bool IsStringExist(string str, List<TextEditor.Glossary> glossary)
-        {
-            for (int e = 0; e < glossary.Count; e++)
-            {
-                if (glossary[e].orText == str)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        //Импорт
+        //Import files
         public void DoImportEncoding(object parametres)
         {
-
             List<string> param = parametres as List<string>;
             string versionOfGame = param[0];
             string encrypt = param[1];
