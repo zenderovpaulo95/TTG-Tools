@@ -45,7 +45,7 @@ namespace TTG_Tools.Texts
 
                     if (isDoubledFile)
                     {
-                        tmpString += MainMenu.settings.tsvFormat ? "\t" : "\r\n";
+                        tmpString = MainMenu.settings.tsvFormat ? "\t" : "\r\n";
                         tw.Write(tmpString);
 
                         if(!MainMenu.settings.tsvFormat)
