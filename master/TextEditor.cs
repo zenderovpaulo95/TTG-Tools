@@ -19,10 +19,6 @@ namespace TTG_Tools
             InitializeComponent();
         }
 
-        //Some common variables
-        private static List<CommonText> originalTxts = null;
-        private static List<CommonText> translatedTxts = null;
-
         //For main progress bar
         void ProcessorProgress(int progress)
         {
@@ -112,6 +108,8 @@ namespace TTG_Tools
             mergeSingleRB.Checked = true;
             replaceSingleRB.Checked = true;
             sortOriginalRB.Checked = true;
+            txtOldMethodRB.Checked = true;
+            txtSeveralOldMethodRB.Checked = true;
         }
 
         private void mergeSingleRB_CheckedChanged(object sender, EventArgs e)
@@ -304,6 +302,60 @@ namespace TTG_Tools
             MainMenu.settings.tsvFormat = tmpTSVFormat;
         }
 
+        private List<CommonText> MergeStrings(string originalPath, string translatePath)
+        {
+            List<CommonText> orStrings = Texts.ReadText.GetStrings(originalPath);
+            List<CommonText> trStrings = Texts.ReadText.GetStrings(translatePath);
+
+            progressBar1.Maximum = orStrings.Count - 1;
+
+            for (int i = 0; i < orStrings.Count; i++)
+            {
+                CommonText tmpTxt;
+                tmpTxt.isBothSpeeches = orStrings[i].isBothSpeeches;
+                tmpTxt.strNumber = orStrings[i].strNumber;
+                tmpTxt.actorName = orStrings[i].actorName;
+                tmpTxt.actorSpeechOriginal = orStrings[i].actorSpeechOriginal;
+                tmpTxt.actorSpeechTranslation = orStrings[i].actorSpeechTranslation;
+                tmpTxt.flags = orStrings[i].flags;
+
+                for (int j = 0; j < trStrings.Count; j++)
+                {
+                    if ((orStrings[i].strNumber == trStrings[j].strNumber)
+                        && (orStrings[i].actorName == trStrings[j].actorName))
+                    {
+                        tmpTxt.actorSpeechTranslation = trStrings[j].actorSpeechTranslation;
+                        break;
+                    }
+                }
+
+                orStrings[i] = tmpTxt;
+
+                ProcessorProgress(i);
+            }
+
+            if (sortStrsCB.Checked)
+            {
+                CommonTextClass tmp = new CommonTextClass();
+                tmp.txtList = orStrings;
+
+                tmp = Methods.SortString(tmp);
+
+                orStrings = new List<CommonText>();
+
+                for (int i = 0; i < tmp.txtList.Count; i++)
+                {
+                    orStrings.Add(tmp.txtList[i]);
+                }
+
+                tmp.txtList.Clear();
+            }
+
+            trStrings.Clear();
+
+            return orStrings;
+        }
+
         private void mergeBtn_Click(object sender, EventArgs e)
         {
             string originalPath = firstFilePath.Text;
@@ -313,68 +365,53 @@ namespace TTG_Tools
             if(mergeSingleRB.Checked && File.Exists(originalPath)
                 && File.Exists(translatePath) && Directory.Exists(readyPath))
             {
-                originalTxts = Texts.ReadText.GetStrings(originalPath);
-                translatedTxts = Texts.ReadText.GetStrings(translatePath);
-
-                progressBar1.Maximum = originalTxts.Count - 1;
                 bool tmpTSV = MainMenu.settings.tsvFormat;
 
-                for(int i = 0; i < originalTxts.Count; i++)
-                {
-                    CommonText tmpTxt;
-                    tmpTxt.isBothSpeeches = originalTxts[i].isBothSpeeches;
-                    tmpTxt.strNumber = originalTxts[i].strNumber;
-                    tmpTxt.actorName = originalTxts[i].actorName;
-                    tmpTxt.actorSpeechOriginal = originalTxts[i].actorSpeechOriginal;
-                    tmpTxt.actorSpeechTranslation = originalTxts[i].actorSpeechTranslation;
-                    tmpTxt.flags = originalTxts[i].flags;
-
-                    for (int j = 0; j < translatedTxts.Count; j++)
-                    {
-                        if ((originalTxts[i].strNumber == translatedTxts[j].strNumber)
-                            && (originalTxts[i].actorName == translatedTxts[j].actorName))
-                        {
-                            tmpTxt.actorSpeechTranslation = translatedTxts[j].actorSpeechTranslation;
-                            break;
-                        }
-                    }
-
-                    originalTxts[i] = tmpTxt;
-
-                    ProcessorProgress(i);
-                }
-
-                if (sortStrsCB.Checked)
-                {
-                    CommonTextClass tmp = new CommonTextClass();
-                    tmp.txtList = originalTxts;
-
-                    tmp = Methods.SortString(tmp);
-
-                    originalTxts = new List<CommonText>();
-                    
-                    for(int i = 0; i < tmp.txtList.Count; i++)
-                    {
-                        originalTxts.Add(tmp.txtList[i]);
-                    }
-
-                    tmp.txtList.Clear();
-                }
-
-                translatedTxts.Clear();
+                List<CommonText> result = MergeStrings(originalPath, translatePath);
 
                 FileInfo fi = new FileInfo(originalPath);
                 MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
                 string newPath = readyPath + "\\" + fi.Name.Remove(fi.Name.Length - fi.Extension.Length, fi.Extension.Length) + "_merged" + fi.Extension;
 
-                Texts.SaveText.OldMethod(originalTxts, true, false, newPath);
+                if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(result, false, newPath);
+                else Texts.SaveText.OldMethod(result, true, false, newPath);
 
                 MainMenu.settings.tsvFormat = tmpTSV;
             }
             else if(mergeSeveralRB.Checked && Directory.Exists(originalPath)
                 && Directory.Exists(translatePath))
             {
+                DirectoryInfo originalDI = new DirectoryInfo(originalPath);
+                DirectoryInfo translateDI = new DirectoryInfo(translatePath);
 
+                FileInfo[] originalFI = originalDI.GetFiles("*.*", SearchOption.AllDirectories);
+                FileInfo[] translateFI = translateDI.GetFiles("*.*", SearchOption.AllDirectories);
+
+                progressBar2.Maximum = originalFI.Length - 1;
+
+                for(int i = 0; i < originalFI.Length; i++)
+                {
+                    for(int j = 0; j < translateFI.Length; j++)
+                    {
+                        if (translateFI[j].Name.IndexOf(originalFI[i].Name.Remove(originalFI[i].Name.Length - originalFI[i].Extension.Length, originalFI[i].Extension.Length)) == 0)
+                        {
+                            bool tmpTSV = MainMenu.settings.tsvFormat;
+
+                            List<CommonText> result = MergeStrings(originalFI[i].FullName, translateFI[j].FullName);
+
+                            FileInfo fi = new FileInfo(originalFI[i].FullName);
+                            MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+                            string newPath = readyPath + "\\" + fi.Name.Remove(fi.Name.Length - fi.Extension.Length, fi.Extension.Length) + "_merged" + fi.Extension;
+
+                            if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(result, false, newPath);
+                            else Texts.SaveText.OldMethod(result, true, false, newPath);
+
+                            MainMenu.settings.tsvFormat = tmpTSV;
+                        }
+                    }
+
+                    ProcessorProgress2(i);
+                }
             }
         }
 
@@ -417,9 +454,9 @@ namespace TTG_Tools
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    originalTxts = CheckNonTranslateStrs(ofd.FileName);
+                    List<CommonText> result = CheckNonTranslateStrs(ofd.FileName);
 
-                    if (originalTxts.Count > 0)
+                    if (result.Count > 0)
                     {
                         SaveFileDialog sfd = new SaveFileDialog();
                         sfd.Title = "Save file with non-translated string";
@@ -432,7 +469,7 @@ namespace TTG_Tools
                             bool tmpTSV = MainMenu.settings.tsvFormat;
                             MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
 
-                            Texts.SaveText.OldMethod(originalTxts, false, false, fi.FullName);
+                            Texts.SaveText.OldMethod(result, false, false, fi.FullName);
 
                             MainMenu.settings.tsvFormat = tmpTSV;
                         }
@@ -457,9 +494,9 @@ namespace TTG_Tools
                     {
                         if (fi[i].Extension.ToLower() == ".txt" || fi[i].Extension.ToLower() == ".tsv")
                         {
-                            originalTxts = CheckNonTranslateStrs(fi[i].FullName);
+                            List<CommonText> result = CheckNonTranslateStrs(fi[i].FullName);
 
-                            if (originalTxts.Count > 0)
+                            if (result.Count > 0)
                             {
                                 FileInfo tmpFi = new FileInfo(fi[i].FullName);
 
@@ -468,7 +505,7 @@ namespace TTG_Tools
 
                                 string tmpFilePath = fbd2.SelectedPath + "\\" + tmpFi.Name;
 
-                                Texts.SaveText.OldMethod(originalTxts, false, false, tmpFilePath);
+                                Texts.SaveText.OldMethod(result, false, false, tmpFilePath);
                                 MainMenu.settings.tsvFormat = tmpTSV;
                             }
                         }

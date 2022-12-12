@@ -41,6 +41,10 @@
             this.mergeSingleRB = new System.Windows.Forms.RadioButton();
             this.tabPagesControl = new System.Windows.Forms.TabControl();
             this.mergeTextTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.txtNewMethodRB = new System.Windows.Forms.RadioButton();
+            this.txtOldMethodRB = new System.Windows.Forms.RadioButton();
+            this.checkNonTranslatedStrsBtn = new System.Windows.Forms.Button();
             this.sortStrsCB = new System.Windows.Forms.CheckBox();
             this.checkDuplicatedStrsBtn = new System.Windows.Forms.Button();
             this.mergeBtn = new System.Windows.Forms.Button();
@@ -48,6 +52,7 @@
             this.secondFilePath = new System.Windows.Forms.TextBox();
             this.secondFileBtn = new System.Windows.Forms.Button();
             this.replaceTextTabPage = new System.Windows.Forms.TabPage();
+            this.button5 = new System.Windows.Forms.Button();
             this.sortDoubledCB = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.sortTranslatedRB = new System.Windows.Forms.RadioButton();
@@ -67,14 +72,17 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
-            this.checkNonTranslatedStrsBtn = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.txtSeveralOldMethodRB = new System.Windows.Forms.RadioButton();
+            this.txtSeveralNewMethodRB = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.tabPagesControl.SuspendLayout();
             this.mergeTextTabPage.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.replaceTextTabPage.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // progressBar1
@@ -183,6 +191,7 @@
             // mergeTextTabPage
             // 
             this.mergeTextTabPage.BackColor = System.Drawing.Color.Transparent;
+            this.mergeTextTabPage.Controls.Add(this.groupBox4);
             this.mergeTextTabPage.Controls.Add(this.checkNonTranslatedStrsBtn);
             this.mergeTextTabPage.Controls.Add(this.sortStrsCB);
             this.mergeTextTabPage.Controls.Add(this.checkDuplicatedStrsBtn);
@@ -204,10 +213,53 @@
             this.mergeTextTabPage.TabIndex = 0;
             this.mergeTextTabPage.Text = "Merge texts";
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.txtNewMethodRB);
+            this.groupBox4.Controls.Add(this.txtOldMethodRB);
+            this.groupBox4.Location = new System.Drawing.Point(597, 100);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(122, 69);
+            this.groupBox4.TabIndex = 24;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Save txt file with";
+            // 
+            // txtNewMethodRB
+            // 
+            this.txtNewMethodRB.AutoSize = true;
+            this.txtNewMethodRB.Location = new System.Drawing.Point(18, 44);
+            this.txtNewMethodRB.Name = "txtNewMethodRB";
+            this.txtNewMethodRB.Size = new System.Drawing.Size(85, 17);
+            this.txtNewMethodRB.TabIndex = 1;
+            this.txtNewMethodRB.TabStop = true;
+            this.txtNewMethodRB.Text = "New method";
+            this.txtNewMethodRB.UseVisualStyleBackColor = true;
+            // 
+            // txtOldMethodRB
+            // 
+            this.txtOldMethodRB.AutoSize = true;
+            this.txtOldMethodRB.Location = new System.Drawing.Point(18, 20);
+            this.txtOldMethodRB.Name = "txtOldMethodRB";
+            this.txtOldMethodRB.Size = new System.Drawing.Size(79, 17);
+            this.txtOldMethodRB.TabIndex = 0;
+            this.txtOldMethodRB.TabStop = true;
+            this.txtOldMethodRB.Text = "Old method";
+            this.txtOldMethodRB.UseVisualStyleBackColor = true;
+            // 
+            // checkNonTranslatedStrsBtn
+            // 
+            this.checkNonTranslatedStrsBtn.Location = new System.Drawing.Point(290, 132);
+            this.checkNonTranslatedStrsBtn.Name = "checkNonTranslatedStrsBtn";
+            this.checkNonTranslatedStrsBtn.Size = new System.Drawing.Size(159, 44);
+            this.checkNonTranslatedStrsBtn.TabIndex = 23;
+            this.checkNonTranslatedStrsBtn.Text = "Check non-translated strings";
+            this.checkNonTranslatedStrsBtn.UseVisualStyleBackColor = true;
+            this.checkNonTranslatedStrsBtn.Click += new System.EventHandler(this.button4_Click);
+            // 
             // sortStrsCB
             // 
             this.sortStrsCB.AutoSize = true;
-            this.sortStrsCB.Location = new System.Drawing.Point(537, 147);
+            this.sortStrsCB.Location = new System.Drawing.Point(455, 136);
             this.sortStrsCB.Name = "sortStrsCB";
             this.sortStrsCB.Size = new System.Drawing.Size(130, 17);
             this.sortStrsCB.TabIndex = 21;
@@ -263,6 +315,7 @@
             // replaceTextTabPage
             // 
             this.replaceTextTabPage.BackColor = System.Drawing.Color.Transparent;
+            this.replaceTextTabPage.Controls.Add(this.groupBox5);
             this.replaceTextTabPage.Controls.Add(this.button5);
             this.replaceTextTabPage.Controls.Add(this.sortDoubledCB);
             this.replaceTextTabPage.Controls.Add(this.groupBox3);
@@ -285,10 +338,19 @@
             this.replaceTextTabPage.TabIndex = 1;
             this.replaceTextTabPage.Text = "Replace texts";
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(265, 131);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(146, 36);
+            this.button5.TabIndex = 14;
+            this.button5.Text = "Check non-translated strings";
+            this.button5.UseVisualStyleBackColor = true;
+            // 
             // sortDoubledCB
             // 
             this.sortDoubledCB.AutoSize = true;
-            this.sortDoubledCB.Location = new System.Drawing.Point(461, 142);
+            this.sortDoubledCB.Location = new System.Drawing.Point(437, 121);
             this.sortDoubledCB.Name = "sortDoubledCB";
             this.sortDoubledCB.Size = new System.Drawing.Size(130, 17);
             this.sortDoubledCB.TabIndex = 13;
@@ -330,7 +392,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(188, 132);
+            this.button2.Location = new System.Drawing.Point(154, 131);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(105, 36);
             this.button2.TabIndex = 11;
@@ -339,7 +401,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(33, 131);
+            this.button1.Location = new System.Drawing.Point(12, 131);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(136, 36);
             this.button1.TabIndex = 10;
@@ -464,24 +526,38 @@
             this.progressBar2.Size = new System.Drawing.Size(709, 23);
             this.progressBar2.TabIndex = 17;
             // 
-            // checkNonTranslatedStrsBtn
+            // groupBox5
             // 
-            this.checkNonTranslatedStrsBtn.Location = new System.Drawing.Point(290, 132);
-            this.checkNonTranslatedStrsBtn.Name = "checkNonTranslatedStrsBtn";
-            this.checkNonTranslatedStrsBtn.Size = new System.Drawing.Size(159, 44);
-            this.checkNonTranslatedStrsBtn.TabIndex = 23;
-            this.checkNonTranslatedStrsBtn.Text = "Check non-translated strings";
-            this.checkNonTranslatedStrsBtn.UseVisualStyleBackColor = true;
-            this.checkNonTranslatedStrsBtn.Click += new System.EventHandler(this.button4_Click);
+            this.groupBox5.Controls.Add(this.txtSeveralNewMethodRB);
+            this.groupBox5.Controls.Add(this.txtSeveralOldMethodRB);
+            this.groupBox5.Location = new System.Drawing.Point(418, 139);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(174, 43);
+            this.groupBox5.TabIndex = 15;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Save txt file with";
             // 
-            // button5
+            // txtSeveralOldMethodRB
             // 
-            this.button5.Location = new System.Drawing.Point(309, 131);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(146, 39);
-            this.button5.TabIndex = 14;
-            this.button5.Text = "Check non-translated strings";
-            this.button5.UseVisualStyleBackColor = true;
+            this.txtSeveralOldMethodRB.AutoSize = true;
+            this.txtSeveralOldMethodRB.Location = new System.Drawing.Point(8, 16);
+            this.txtSeveralOldMethodRB.Name = "txtSeveralOldMethodRB";
+            this.txtSeveralOldMethodRB.Size = new System.Drawing.Size(79, 17);
+            this.txtSeveralOldMethodRB.TabIndex = 0;
+            this.txtSeveralOldMethodRB.TabStop = true;
+            this.txtSeveralOldMethodRB.Text = "Old method";
+            this.txtSeveralOldMethodRB.UseVisualStyleBackColor = true;
+            // 
+            // txtSeveralNewMethodRB
+            // 
+            this.txtSeveralNewMethodRB.AutoSize = true;
+            this.txtSeveralNewMethodRB.Location = new System.Drawing.Point(87, 15);
+            this.txtSeveralNewMethodRB.Name = "txtSeveralNewMethodRB";
+            this.txtSeveralNewMethodRB.Size = new System.Drawing.Size(85, 17);
+            this.txtSeveralNewMethodRB.TabIndex = 1;
+            this.txtSeveralNewMethodRB.TabStop = true;
+            this.txtSeveralNewMethodRB.Text = "New method";
+            this.txtSeveralNewMethodRB.UseVisualStyleBackColor = true;
             // 
             // TextEditor
             // 
@@ -502,12 +578,16 @@
             this.tabPagesControl.ResumeLayout(false);
             this.mergeTextTabPage.ResumeLayout(false);
             this.mergeTextTabPage.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.replaceTextTabPage.ResumeLayout(false);
             this.replaceTextTabPage.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -553,5 +633,11 @@
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.Button checkNonTranslatedStrsBtn;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.RadioButton txtNewMethodRB;
+        private System.Windows.Forms.RadioButton txtOldMethodRB;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.RadioButton txtSeveralNewMethodRB;
+        private System.Windows.Forms.RadioButton txtSeveralOldMethodRB;
     }
 }
