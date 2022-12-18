@@ -30,31 +30,11 @@ namespace TTG_Tools
             else { return inputPath; }
         }
 
-        private void buttonInputFolder_Click(object sender, EventArgs e)
-        {
-            textBoxInputFolder.Text = SetFolder(textBoxInputFolder.Text);
-        }
-
-        private void buttonOutputFolder_Click(object sender, EventArgs e)
-        {
-            textBoxOutputFolder.Text = SetFolder(textBoxOutputFolder.Text);
-        }
-
-        private void buttonTempFolder_Click(object sender, EventArgs e)
-        {
-        }
-
         private void buttonSaveSettings_Click(object sender, EventArgs e)
         {
             MainMenu.settings.ASCII_N = (int)numericUpDownASCII.Value;
-            MainMenu.settings.deleteD3DTXafterImport = checkBoxD3DTX_after_import.Checked;
-            MainMenu.settings.deleteDDSafterImport = checkBoxDDS_after_import.Checked;
             MainMenu.settings.pathForInputFolder = textBoxInputFolder.Text;
             MainMenu.settings.pathForOutputFolder = textBoxOutputFolder.Text;
-            MainMenu.settings.importingOfName = checkBoxImportingOfNames.Checked;
-            MainMenu.settings.sortSameString = checkBoxSortStrings.Checked;
-            MainMenu.settings.exportRealID = checkBoxExportRealID.Checked;
-            MainMenu.settings.clearMessages = clearMessagesCB.Checked;
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
 
@@ -121,20 +101,9 @@ namespace TTG_Tools
             }
         }
 
-        private void buttonPathForTtarchext_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void FormSettings_Load(object sender, EventArgs e)
         {
             numericUpDownASCII.Value = MainMenu.settings.ASCII_N;
-            checkBoxD3DTX_after_import.Checked = MainMenu.settings.deleteD3DTXafterImport;
-            checkBoxDDS_after_import.Checked = MainMenu.settings.deleteDDSafterImport;
-            checkBoxImportingOfNames.Checked = MainMenu.settings.importingOfName;
-            checkBoxSortStrings.Checked = MainMenu.settings.sortSameString;
-            checkBoxExportRealID.Checked = MainMenu.settings.exportRealID;
-            clearMessagesCB.Checked = MainMenu.settings.clearMessages;
             textBoxInputFolder.Text = MainMenu.settings.pathForInputFolder;
             textBoxOutputFolder.Text = MainMenu.settings.pathForOutputFolder;
 
@@ -151,6 +120,16 @@ namespace TTG_Tools
                     rbNormalUnicode.Checked = true;
                     break;
             }
+        }
+
+        private void buttonInputFolder_Click(object sender, EventArgs e)
+        {
+            textBoxInputFolder.Text = SetFolder(textBoxInputFolder.Text);
+        }
+
+        private void buttonOutputFolder_Click(object sender, EventArgs e)
+        {
+            textBoxOutputFolder.Text = SetFolder(textBoxOutputFolder.Text);
         }
     }
 }

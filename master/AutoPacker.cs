@@ -18,7 +18,6 @@ namespace TTG_Tools
 
         public static FileInfo[] fi;
         public static FileInfo[] fi_temp;
-        //public static List<TextureWorker.Texture_format> tex_format = new List<TextureWorker.Texture_format>(); //Список с форматами текстур
 
         public static int numKey;
         public static int selected_index;
@@ -1832,15 +1831,6 @@ namespace TTG_Tools
             comboBox1.SelectedIndex = MainMenu.settings.encKeyIndex;
             comboBox2.SelectedIndex = MainMenu.settings.versionEnc;
             checkUnicode.Checked = (MainMenu.settings.unicodeSettings == 0);
-            if (MainMenu.settings.tsvFormat)
-            {
-                tsvFilesRB.Checked = true;
-            }
-            else
-            {
-                if (!MainMenu.settings.tsvFormat && MainMenu.settings.newTxtFormat) newTxtFormatRB.Checked = true;
-                else txtFilesRB.Checked = true;
-            }
             checkEncDDS.Checked = MainMenu.settings.encDDSonly;
             checkIOS.Checked = MainMenu.settings.iOSsupport;
             checkEncLangdb.Checked = MainMenu.settings.encLangdb;
@@ -1948,36 +1938,16 @@ namespace TTG_Tools
             }
         }
 
-        private void tsvFilesRB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (tsvFilesRB.Checked)
-            {
-                MainMenu.settings.tsvFormat = true;
-                Settings.SaveConfig(MainMenu.settings);
-            }
-        }
-
-        private void txtFilesRB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (txtFilesRB.Checked)
-            {
-                MainMenu.settings.tsvFormat = false;
-                Settings.SaveConfig(MainMenu.settings);
-            }
-        }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             MainMenu.settings.swizzleNintendoSwitch = checkBox1.Checked;
             Settings.SaveConfig(MainMenu.settings);
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MainMenu.settings.newTxtFormat = newTxtFormatRB.Checked;
-
-            if (MainMenu.settings.newTxtFormat) MainMenu.settings.tsvFormat = false;
-            Settings.SaveConfig(MainMenu.settings);
+            AutoDePackerSettings settingsForm = new AutoDePackerSettings();
+            settingsForm.Show(this);
         }
     }
 }
