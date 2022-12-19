@@ -64,20 +64,16 @@
             this.checkNonTranslatedStrsBtn = new System.Windows.Forms.Button();
             this.checkDuplicatedStrsBtn = new System.Windows.Forms.Button();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.howToUseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.tabPagesControl.SuspendLayout();
             this.mergeTextTabPage.SuspendLayout();
             this.replaceTextTabPage.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(31, 268);
+            this.progressBar1.Location = new System.Drawing.Point(31, 244);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(709, 23);
             this.progressBar1.TabIndex = 8;
@@ -138,7 +134,7 @@
             // 
             this.groupBox1.Controls.Add(this.severalFilesRB);
             this.groupBox1.Controls.Add(this.singleFileRB);
-            this.groupBox1.Location = new System.Drawing.Point(618, 59);
+            this.groupBox1.Location = new System.Drawing.Point(618, 35);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(122, 77);
             this.groupBox1.TabIndex = 15;
@@ -172,7 +168,7 @@
             // 
             this.tabPagesControl.Controls.Add(this.mergeTextTabPage);
             this.tabPagesControl.Controls.Add(this.replaceTextTabPage);
-            this.tabPagesControl.Location = new System.Drawing.Point(15, 37);
+            this.tabPagesControl.Location = new System.Drawing.Point(15, 13);
             this.tabPagesControl.Name = "tabPagesControl";
             this.tabPagesControl.SelectedIndex = 0;
             this.tabPagesControl.Size = new System.Drawing.Size(590, 185);
@@ -369,7 +365,7 @@
             // 
             this.groupBox4.Controls.Add(this.txtNewMethodRB);
             this.groupBox4.Controls.Add(this.txtOldMethodRB);
-            this.groupBox4.Location = new System.Drawing.Point(618, 153);
+            this.groupBox4.Location = new System.Drawing.Point(618, 129);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(122, 69);
             this.groupBox4.TabIndex = 24;
@@ -400,7 +396,7 @@
             // 
             // checkNonTranslatedStrsBtn
             // 
-            this.checkNonTranslatedStrsBtn.Location = new System.Drawing.Point(393, 228);
+            this.checkNonTranslatedStrsBtn.Location = new System.Drawing.Point(393, 204);
             this.checkNonTranslatedStrsBtn.Name = "checkNonTranslatedStrsBtn";
             this.checkNonTranslatedStrsBtn.Size = new System.Drawing.Size(159, 23);
             this.checkNonTranslatedStrsBtn.TabIndex = 23;
@@ -410,7 +406,7 @@
             // 
             // checkDuplicatedStrsBtn
             // 
-            this.checkDuplicatedStrsBtn.Location = new System.Drawing.Point(68, 228);
+            this.checkDuplicatedStrsBtn.Location = new System.Drawing.Point(68, 204);
             this.checkDuplicatedStrsBtn.Name = "checkDuplicatedStrsBtn";
             this.checkDuplicatedStrsBtn.Size = new System.Drawing.Size(231, 23);
             this.checkDuplicatedStrsBtn.TabIndex = 20;
@@ -420,40 +416,16 @@
             // 
             // progressBar2
             // 
-            this.progressBar2.Location = new System.Drawing.Point(31, 306);
+            this.progressBar2.Location = new System.Drawing.Point(31, 282);
             this.progressBar2.Name = "progressBar2";
             this.progressBar2.Size = new System.Drawing.Size(709, 23);
             this.progressBar2.TabIndex = 17;
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.helpToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(766, 24);
-            this.menuStrip1.TabIndex = 25;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.howToUseToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
-            // howToUseToolStripMenuItem
-            // 
-            this.howToUseToolStripMenuItem.Name = "howToUseToolStripMenuItem";
-            this.howToUseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.howToUseToolStripMenuItem.Text = "How to use";
             // 
             // TextEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(766, 338);
+            this.ClientSize = new System.Drawing.Size(766, 320);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.progressBar2);
             this.Controls.Add(this.checkNonTranslatedStrsBtn);
@@ -461,10 +433,8 @@
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.checkDuplicatedStrsBtn);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "TextEditor";
             this.Text = "Text editor";
@@ -478,10 +448,7 @@
             this.replaceTextTabPage.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -521,8 +488,5 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RadioButton txtNewMethodRB;
         private System.Windows.Forms.RadioButton txtOldMethodRB;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem howToUseToolStripMenuItem;
     }
 }

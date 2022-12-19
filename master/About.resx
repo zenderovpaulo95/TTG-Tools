@@ -121,6 +121,7 @@
     <value>TTG Tools 
 by Den Em (Е.Д.В.)
 moded by pashok6798 (from Den Em's agreement)
+Source code on Github: https://github.com/pashok6798/TTG_Tools
 Source code on GitFlic: https://gitflic.ru/project/pashok6798/ttg-tools
 Check all releases here: https://github.com/pashok6798/TTG_Tools/releases
 or here: https://gitflic.ru/project/pashok6798/ttg-tools/release
@@ -134,10 +135,21 @@ Special thanks to:
 
 List of supported games:
 Tales of Monkey Island, Sam and Max: Season Two, Wallace and Gromit's Grand Adventures, CSI: Deadly Intent, Sam and Max: The Devil's Playhouse, Puzzle Agent, CSI: Fatal Conspiracy, Poker Night at the Inventory, Back to the Future: The Game, Strong Bad, Hector: The Badge of Carnage, Puzzle Agent 2, Jurassic Park: The Game, The Walking Dead, Poker Night 2, Wolf Among Us, The Walking Dead Season Two, Tales from the Borderlands, Game of Thrones, Minecraft: Story Mode (Seasons one and two), Walking Dead: Michonne, Batman (Seasons one and two), The Walking Dead: The Final Season, The Walking Dead : The Telltale Definitive Series, Sam &amp; Max Save the World Remastered, Sam &amp; Max Beyond Time and Space Remastered.
-Maybe some games doesn't work. Please contact with me if you will have problems.
+Maybe some games doesn't work.
 
 ===
 [Version history]
+v.1.1 (xx.xx.20xx)
+TTG Tools:
++ Change settings form (removed some parameters from settings form and add into Auto(De)Packer form).
+
+Auto(De)Packer:
++ Add support new method export/import files
+
+Text editor:
++ Add support replace strings with tsv, old method txt files and new method txt files.
++ Add check duplicated strings in tsv/txt files.
+
 v.1.0.13 (04.11.2022)
 + TTG Tools:
 Add support Thai ASCII encoding (need set 874 in settings form).
