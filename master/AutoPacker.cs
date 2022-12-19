@@ -16,16 +16,8 @@ namespace TTG_Tools
             InitializeComponent();
         }
 
-        public static string ConvertHexToString(byte[] binContent, int poz, int len_string)
-        {
-            byte[] temp_hex_string = new byte[len_string];
-            Array.Copy(binContent, poz, temp_hex_string, 0, len_string);
-            return ASCIIEncoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(temp_hex_string);
-        }
-
         public static FileInfo[] fi;
         public static FileInfo[] fi_temp;
-        //public static List<TextureWorker.Texture_format> tex_format = new List<TextureWorker.Texture_format>(); //Список с форматами текстур
 
         public static int numKey;
         public static int selected_index;
@@ -85,7 +77,7 @@ namespace TTG_Tools
             }
 
             if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
-            else MainMenu.settings.unicodeSettings = 2;
+            else MainMenu.settings.unicodeSettings = 1;
             
             EncVersion = 2;
             if (comboBox2.SelectedIndex == 1) EncVersion = 7;
@@ -374,369 +366,12 @@ namespace TTG_Tools
 
                     }
                 }
-                if (i + 1 < fi.Count())
-                {
-                    bool work = false;
-                    int offset1 = 0;
-                    int offset2 = 1;
-
-                    if (fi[i].Extension == ".dlog" && fi[i + 1].Extension == ".txt" && GetNameOnly(i) == GetNameOnly(i + 1))
-                    {
-                        offset1 = 0;
-                        offset2 = 1;
-                        work = true;
-                    }
-                    if (fi[i + 1].Extension == ".dlog" && fi[i].Extension == ".txt" && Methods.DeleteCommentary(GetNameOnly(i), "(", ")") == GetNameOnly(i + 1))
-                    {
-                        offset1 = 1;
-                        offset2 = 0;
-                        work = true;
-                    }
-
-                    if (work)
-                    {
-                        List<Langdb> database = new List<Langdb>();
-                        FileStream fs = new FileStream(fi[i + offset1].FullName, FileMode.Open);
-                        byte[] binContent = Methods.ReadFull(fs);
-                        byte version = 0;
-                        ReadDlog(binContent, first_database, database, version);
-                        int size_first = BitConverter.ToInt32(first_database[0].lenght_of_langdb1, 0);
-                        fs.Close();
-                        if (database.Count != 0)
-                        {
-                            List<TextCollector.TXT_collection> all_text = new List<TextCollector.TXT_collection>();
-                            string error = string.Empty;
-                            ImportTXT(fi[i + offset2].FullName, ref all_text, false, MainMenu.settings.ASCII_N, "\r\n", ref error);
-                            for (int q = 0; q < all_text.Count; q++)
-                            {
-                                if(MainMenu.settings.importingOfName)
-                                {
-                                    database[all_text[q].number - 1].name = all_text[q].name;
-                                    database[all_text[q].number - 1].lenght_of_name = BitConverter.GetBytes(database[all_text[q].number - 1].name.Length);
-                                }
-                                if (BitConverter.ToInt32(database[all_text[q].number - 1].lenght_of_textblok, 0) != 8)
-                                {
-                                    database[all_text[q].number - 1].text = all_text[q].text.Replace("\r\n", "\n");
-                                    database[all_text[q].number - 1].lenght_of_text = BitConverter.GetBytes(database[all_text[q].number - 1].text.Length);
-                                }
-                            }
-                            Methods.DeleteCurrentFile(MainMenu.settings.pathForOutputFolder + "\\" + fi[i + offset1].Name.ToString());
-                            CreateDlog(first_database, database, 0, (MainMenu.settings.pathForOutputFolder + "\\" + fi[i + offset1].Name.ToString()));
-                            listBox1.Items.Add("File " + fi[i + offset2].Name + " imported in " + fi[i + offset1].Name);
-                        }
-                        else
-                        {
-                            listBox1.Items.Add("File " + fi[i + offset1].Name + " is EMPTY!");
-                        }
-                        i++;
-                        work = false;
-                    }
-                }
-            }
-        }
-
-        public static List<TextCollector.TXT_collection> ImportTSV(string path, ref List<TextCollector.TXT_collection> txt_collection, string enter, ref string error)
-        {
-            string[] strings = File.ReadAllLines(path);
-            for (int k = 0; k < strings.Length; k++)
-            {
-                string[] temp_strings = strings[k].Split('\t');
-                if (MainMenu.settings.exportRealID)
-                {
-                    txt_collection.Add(new TextCollector.TXT_collection(k + 1, Convert.ToUInt32(temp_strings[0]), temp_strings[1], temp_strings[2], false));
-                }
-                else txt_collection.Add(new TextCollector.TXT_collection(Convert.ToInt32(temp_strings[0]), 0, temp_strings[1], temp_strings[2], false));
-            }
-
-            if (txt_collection.Count > 0)
-            {
-                for (int l = 0; l < txt_collection.Count; l++)
-                {
-                    txt_collection[l].text = txt_collection[l].text.Replace("\\n", "\n");
-                }
-            }
-
-            return txt_collection;
-        }
-
-        public static List<TextCollector.TXT_collection> ImportTXT(string path, ref List<TextCollector.TXT_collection> txt_collection, bool to_translite, int ASCII, string enter, ref string error)
-        {
-            //StreamReader sr = new StreamReader(path, System.Text.ASCIIEncoding.GetEncoding(ASCII));
-            //StreamReader sr = new StreamReader(path, System.Text.UnicodeEncoding.GetEncoding(ASCII));
-            string[] texts = File.ReadAllLines(path);
-
-            //string curLine;
-            Int64 pos_str = 0;
-            string name = "";
-            bool number_find = false;
-            int n_str = -1;
-            int counter = 1;
-            bool need_count = false;
-            //int number_of_next_list = 0;
-
-            for (int i = 0; i < texts.Length; i++)
-            {
-                if (texts[i].IndexOf(")") > -1 && number_find == false)
-                {
-                    if ((Methods.IsNumeric(texts[i].Substring(0, texts[i].IndexOf(")")))))
-                    {
-                        pos_str = Convert.ToInt64(texts[i].Substring(0, texts[i].IndexOf(")")));
-                        try
-                        {
-                            string[] s;
-                            s = texts[i].Split(')');
-                            if (s.Count() > 1)
-                            {
-                                //Remove useless spaces (тут отрезаем тупые пробелы между скобкой)
-                                name = "";
-                                string[] temp = s[1].Split(' ');
-                                foreach (string s_temp in temp)
-                                {
-                                    if (s_temp != string.Empty)
-                                    {
-                                        if (name == string.Empty)
-                                        { name += s_temp; }
-                                        else
-                                        { name += " " + s_temp; }
-                                    }
-                                }
-                                //name = s[1]; 
-                            }
-                            else
-                            { name = ""; }
-                            //name = curLine.Substring(curLine.IndexOf(")"), (curLine.Length - curLine.IndexOf(")") - 1));
-                            if (MainMenu.settings.exportRealID)
-                            {
-                                txt_collection.Add(new TextCollector.TXT_collection(counter, (UInt32)pos_str, name, "", false));
-                                if(need_count)
-                                {
-                                    counter++;
-                                    need_count = false;
-                                }
-                                else
-                                {
-                                    need_count = true;
-                                }
-                            }
-                            else
-                            {
-                                txt_collection.Add(new TextCollector.TXT_collection((Int32)pos_str, 0, name, "", false));
-                            }
-                            //number_of_next_list++;
-                            number_find = true;
-                            n_str++;
-                            //counter++;
-                        }
-                        catch
-                        {
-                            MessageBox.Show("Error in string: " + texts[i] + "\r\n", "Error!");
-                            error = "Error in string: " + texts[i];
-                            break;
-                        }
-                    }
-                    else
-                        {
-                            txt_collection[n_str].text += enter + texts[i];
-                            number_find = false;
-                        }
-                    }
-                    else
-                    {
-                        txt_collection[n_str].text += enter + texts[i];
-                        number_find = false;
-                    }
-            }
-
-                for (int i = 0; i < txt_collection.Count; i++)
-                {
-                    if (txt_collection[i].text.Length > 0)
-                    {
-                        txt_collection[i].text = txt_collection[i].text.Substring(enter.Length, txt_collection[i].text.Length - enter.Length);
-                    }
-                }
-            return txt_collection;
-        }
-
-        public static void ReadLangdb(byte[] binContent, langdb[] database, byte version)
-        {
-            List<langdb> db = new List<langdb>();
-            {
-                number = 0;
-                int poz = 0;
-                if (version == 0)
-                {
-                    database[0].head = new byte[95];
-                    Array.Copy(binContent, poz, database[0].head, 0, 95);
-                    poz = 95;
-                }
-                if (version == 1)
-                {
-                    database[0].head = new byte[52];
-                    Array.Copy(binContent, poz, database[0].head, 0, 52);
-                    poz = 52;
-                }
-                if (version == 2)
-                {
-                    database[0].head = new byte[48];
-                    Array.Copy(binContent, poz, database[0].head, 0, 48);
-                    poz = 48;
-                }
-                if (version == 3)//test
-                {
-                    database[0].head = new byte[1];
-                    Array.Copy(binContent, poz, database[0].head, 0, 0);
-                    poz = 0;
-                }
-                if(version == 4) //Temporary fix for some old langdb files
-                {
-                    database[0].head = new byte[76];
-                    Array.Copy(binContent, poz, database[0].head, 0, 76);
-                    poz = 76;
-                }
-                while (poz < binContent.Length)
-                {
-                    //8 байт неизвестного происхождения
-                    database[number].hz_data = new byte[8];
-                    Array.Copy(binContent, poz, database[number].hz_data, 0, 8);
-                    database[number].realID = new byte[4];
-                    Array.Copy(database[number].hz_data, 0, database[number].realID, 0, 4);
-                    poz += 8;
-                    //4 байта длинны имени
-                    //в первых двух (0 и 1) версиях пропускаем дублирование длинны! 
-                    if (version <= 1 || version == 4)
-                    {
-                        poz += 4;
-                    }
-                    database[number].lenght_of_name = new byte[4];
-                    Array.Copy(binContent, poz, database[number].lenght_of_name, 0, 4);
-                    poz += 4;
-                    //получаем имя
-                    int len_name = BitConverter.ToInt32(database[number].lenght_of_name, 0);
-                        database[number].name = ConvertHexToString(binContent, poz, len_name);
-                        poz += len_name;
-                        //получаем 4 байта длины текста не забывая о 0 и 1 версии
-                        if (version <= 1 || version == 4)
-                        {
-                            poz += 4;
-                        }
-                        database[number].lenght_of_text = new byte[4];
-                        Array.Copy(binContent, poz, database[number].lenght_of_text, 0, 4);
-                        poz += 4;
-                        //получаем текст
-                        int len_text = BitConverter.ToInt32(database[number].lenght_of_text, 0);
-                        database[number].text = ConvertHexToString(binContent, poz, len_text);
-                        poz += len_text;
-                        //получаем 4 байта длины анимации не забывая о 0 и 1 версии
-                        if (version <= 1 || version == 4)
-                        {
-                            poz += 4;
-                        }
-                        database[number].lenght_of_animation = new byte[4];
-                        Array.Copy(binContent, poz, database[number].lenght_of_animation, 0, 4);
-                        poz += 4;
-                        //получаем анимацию
-                        int len_animation = BitConverter.ToInt32(database[number].lenght_of_animation, 0);
-                        database[number].animation = ConvertHexToString(binContent, poz, len_animation);
-                        poz += len_animation;
-                        //получаем 4 байта длины озвучки не забывая о 0 и 1 версии
-                        if (version <= 1 || version == 4)
-                        {
-                            poz += 4;
-                        }
-                        database[number].lenght_of_waw = new byte[4];
-                        Array.Copy(binContent, poz, database[number].lenght_of_waw, 0, 4);
-                        poz += 4;
-                        //получаем озвучки
-                        int len_waw = BitConverter.ToInt32(database[number].lenght_of_waw, 0);
-                        database[number].waw = ConvertHexToString(binContent, poz, len_waw);
-                        poz += len_waw;
-                        //получаем магические байты
-                        database[number].magic_bytes = new byte[7];
-                        Array.Copy(binContent, poz, database[number].magic_bytes, 0, 7);
-                        poz += 7;
-                        number++;
-                    }
-                number--;
-                //langdb db = new langdb[number];
-                
-            }
-        }
-
-
-        public static void CreateLangdb(langdb[] database, byte version, string path)
-        {
-            //проверяем наличие файла, удаляем его и создаем пустой
-            FileStream MyFileStream;
-
-            if (System.IO.File.Exists(path) == true)
-            {
-                System.IO.File.Delete(path);
-            }
-            MyFileStream = new FileStream(path, FileMode.OpenOrCreate);
-            //записываем заголовок
-            int numb = 0;
-            MyFileStream.Write(database[0].head, 0, database[0].head.Length);
-            //записываем всё остальное
-            while (numb <= number)
-            {
-                //сохраняем хз байты =)
-                MyFileStream.Write(database[numb].hz_data, 0, database[numb].hz_data.Length);
-                //имя
-                SaveStringInfo(MyFileStream, database[numb].name, version);
-                //текст
-                SaveStringInfo(MyFileStream, database[numb].text, version);
-                //анимация
-                SaveStringInfo(MyFileStream, database[numb].animation, version);
-                //озвучка
-                SaveStringInfo(MyFileStream, database[numb].waw, version);
-                //магические байты
-                MyFileStream.Write(database[numb].magic_bytes, 0, database[numb].magic_bytes.Length);
-                //счетчик++
-                numb++;
-            }
-            //закрываем поток
-            MyFileStream.Close();
-        }
-
-        public static void SaveStringInfo(FileStream MyFileStream, string data, byte version)
-        {
-            byte[] b = BitConverter.GetBytes(data.Length);
-            if (version <= 1 || version == 4) //FIX THAT LATER
-            {
-                MyFileStream.Write(BitConverter.GetBytes(data.Length + 8), 0, 4);
-            }
-            MyFileStream.Write(b, 0, 4);
-            if (data.Length > 0)
-            {
-                byte[] hex_data = (byte[])ASCIIEncoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(data);
-                MyFileStream.Write(hex_data, 0, hex_data.Length);
             }
         }
 
         public static string GetNameOnly(int i)
         {
             return fi[i].Name.Substring(0, (fi[i].Name.Length - fi[i].Extension.Length));
-        }
-
-        public static void ExportDDSfromD3DTX(FileInfo[] inputFiles, int i, string pathOutput, string fileName)
-        {
-
-            //try
-            {
-                FileStream fs = new FileStream(inputFiles[i].FullName, FileMode.Open);
-                byte[] binContent = Methods.ReadFull(fs);
-                fs.Close();
-
-                Methods.DeleteCurrentFile(pathOutput + "\\" + fileName);
-
-
-                //listBox1.Items.Add("File " + inputFiles[i].Name + " exported in " + fileName);//ReportForWork("File " + inputFiles[i].Name + " exported in " + fileName);
-
-            }
-            //catch
-            //{
-            //    ReportForWork("Expoort from file: " + inputFiles[i].Name + " is incorrect!");
-            //}
         }
 
         private void buttonDecrypt_Click(object sender, EventArgs e)
@@ -998,46 +633,6 @@ namespace TTG_Tools
                     fs.Close();
                     listBox1.Items.Add("File " + fi[i].Name + " decrypted.");
                 }
-                else if(fi[i].Extension == ".prop")
-                {
-                    FileStream fs = new FileStream(fi[i].FullName, FileMode.Open);
-                    byte[] binContent = Methods.ReadFull(fs);
-                    fs.Close();
-
-                    try
-                    {
-                        List<Prop> proplist = new List<Prop>();
-                        byte[] header = null, countOfBlock = null, lengthAllText = null;
-                        int type = -1;
-                        //ReadProp(binContent, proplist, ref header, ref countOfBlock, ref lengthAllText, ref type);
-
-                        if(proplist.Count > 0)
-                        {
-                            string text_path = MainMenu.settings.pathForOutputFolder + "\\" + Methods.GetNameOfFileOnly(fi[i].Name, ".prop") + ".txt";
-
-                            if (File.Exists(text_path)) File.Delete(text_path);
-
-                            FileStream fws = new FileStream(text_path, FileMode.CreateNew);
-                            StreamWriter sw = new StreamWriter(fws);
-
-                            for(int j = 0; j < proplist.Count; j++)
-                            {
-                                if (proplist[j].text.Contains("\n") && !proplist[j].text.Contains("\r\n")) proplist[j].text = proplist[j].text.Replace("\n", "\r\n");
-                                sw.Write((j + 1) + ")\r\n" + proplist[j].text);
-                                if (j + 1 < proplist.Count) sw.Write("\r\n");
-                            }
-
-                            sw.Close();
-                            fws.Close();
-
-                            listBox1.Items.Add("File " + fi[i].Name + " exported in " + Methods.GetNameOfFileOnly(fi[i].Name, ".prop") + ".txt");
-                        }
-                    }
-                    catch
-                    {
-                        listBox1.Items.Add("Unknown error.");
-                    }
-                }
             }
 
             if (debug != null)
@@ -1048,7 +643,8 @@ namespace TTG_Tools
                 listBox1.Items.Add("Bugs have been written in file " + MainMenu.settings.pathForOutputFolder + "\\Баги.txt");
             }
         }
-        public static void ReadDlog(byte[] binContent, dlog[] first_database, List<Langdb> database, byte version)
+
+        /*public static void ReadDlog(byte[] binContent, dlog[] first_database, List<Langdb> database, byte version)
         {
             {
                 int number = 0;
@@ -1329,7 +925,6 @@ namespace TTG_Tools
                                 {
                                     lenghtForHeaderForVersion = 108;
                                     len_magic = 12;
-                                    if (MainMenu.settings.unicodeSettings != 1) UnicodeSupport = 1;
                                     break;
                                 }
                             case 10:
@@ -1785,29 +1380,7 @@ namespace TTG_Tools
                 }
             }
             //catch { }
-        }
-
-        public class chapterOfDDS
-        {
-            public byte[] number_of_chapter;
-            public byte[] one;
-            public byte[] lenght_of_chapter;
-            public byte[] kratnost;
-            public byte[] content_chapter;
-            public byte[] hz;
-
-            public chapterOfDDS() { }
-            public chapterOfDDS(byte[] number_of_chapter, byte[] one, byte[] lenght_of_chapter, byte[] kratnost, byte[] content_chapter, byte[] hz)
-            {
-                this.number_of_chapter = number_of_chapter;
-                this.one = one;
-                this.lenght_of_chapter = lenght_of_chapter;
-                this.kratnost = kratnost;
-                this.content_chapter = content_chapter;
-                this.hz = hz;
-            }
-
-        }
+        }*/
 
         public class Prop
         {
@@ -1861,7 +1434,7 @@ namespace TTG_Tools
             }
         }
 
-        public static void CreateDlog(dlog[] first_database, List<Langdb> database, byte version, string path)
+        /*public static void CreateDlog(dlog[] first_database, List<Langdb> database, byte version, string path)
         {
             //проверяем наличие файла, удаляем его и создаем пустой
             FileStream MyFileStream;
@@ -2181,7 +1754,7 @@ namespace TTG_Tools
             }
             //закрываем поток
             MyFileStream.Close();
-        }
+        }*/
 
         public static Int32 GetSizeOfByteMassiv(byte[] str)
         {
@@ -2258,11 +1831,6 @@ namespace TTG_Tools
             comboBox1.SelectedIndex = MainMenu.settings.encKeyIndex;
             comboBox2.SelectedIndex = MainMenu.settings.versionEnc;
             checkUnicode.Checked = (MainMenu.settings.unicodeSettings == 0);
-            if (MainMenu.settings.tsvFormat)
-            {
-                tsvFilesRB.Checked = true;
-            }
-            else txtFilesRB.Checked = true;
             checkEncDDS.Checked = MainMenu.settings.encDDSonly;
             checkIOS.Checked = MainMenu.settings.iOSsupport;
             checkEncLangdb.Checked = MainMenu.settings.encLangdb;
@@ -2370,28 +1938,16 @@ namespace TTG_Tools
             }
         }
 
-        private void tsvFilesRB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (tsvFilesRB.Checked)
-            {
-                MainMenu.settings.tsvFormat = true;
-                Settings.SaveConfig(MainMenu.settings);
-            }
-        }
-
-        private void txtFilesRB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (txtFilesRB.Checked)
-            {
-                MainMenu.settings.tsvFormat = false;
-                Settings.SaveConfig(MainMenu.settings);
-            }
-        }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             MainMenu.settings.swizzleNintendoSwitch = checkBox1.Checked;
             Settings.SaveConfig(MainMenu.settings);
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AutoDePackerSettings settingsForm = new AutoDePackerSettings();
+            settingsForm.Show(this);
         }
     }
 }

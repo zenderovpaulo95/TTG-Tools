@@ -21,5 +21,12 @@
             public byte[] someData;
             public SomeClassData() { }
         }
+
+        public class LangdbFlagClass
+        {
+            public byte[] flags;
+
+            public LangdbFlagClass() { }
+        }
     }
 }

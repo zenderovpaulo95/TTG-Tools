@@ -48,6 +48,7 @@ namespace TTG_Tools
         private int _archiveFormat;
         private int _versionArchiveIndex;
         private bool _swizzleNintendoSwitch;
+        private bool _newTxtFormat;
 
         [XmlAttribute("pathForInputFolder")]
         public string pathForInputFolder
@@ -414,6 +415,19 @@ namespace TTG_Tools
             }
         }
 
+        [XmlAttribute("newTxtFormat")]
+        public bool newTxtFormat
+        {
+            get
+            {
+                return _newTxtFormat;
+            }
+            set
+            {
+                _newTxtFormat = value;
+            }
+        }
+
         public Settings(
             string _pathForInputFolder,
             string _pathForOutputFolder,
@@ -442,7 +456,8 @@ namespace TTG_Tools
             int _archiveFormat,
             int _versionArchiveIndex,
             bool _swizzleNintendoSwitch,
-            bool _clearMessages)
+            bool _clearMessages,
+            bool newTxtFormat)
         {
             this.ASCII_N = _ASCII_N;
             this.pathForInputFolder = _pathForInputFolder;
@@ -472,6 +487,7 @@ namespace TTG_Tools
             this.versionArchiveIndex = _versionArchiveIndex;
             this.swizzleNintendoSwitch = _swizzleNintendoSwitch;
             this.clearMessages = _clearMessages;
+            this.newTxtFormat = newTxtFormat;
         }
 
         public Settings()

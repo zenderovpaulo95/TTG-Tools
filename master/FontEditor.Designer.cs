@@ -232,7 +232,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1020, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1004, 24);
             this.menuStrip1.TabIndex = 24;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -252,7 +252,7 @@
             this.openToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -261,7 +261,7 @@
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -269,14 +269,14 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save As ...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -418,7 +418,7 @@
             this.dataGridViewWithCoord.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridViewWithCoord.Name = "dataGridViewWithCoord";
             this.dataGridViewWithCoord.RowHeadersWidth = 51;
-            this.dataGridViewWithCoord.Size = new System.Drawing.Size(995, 377);
+            this.dataGridViewWithCoord.Size = new System.Drawing.Size(979, 377);
             this.dataGridViewWithCoord.TabIndex = 27;
             this.dataGridViewWithCoord.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridViewWithCoord_CellBeginEdit);
             this.dataGridViewWithCoord.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewWithCoord_CellEndEdit);
@@ -657,7 +657,7 @@
             // 
             this.ninSwizzleCheckBox.AutoSize = true;
             this.ninSwizzleCheckBox.Location = new System.Drawing.Point(862, 47);
-            this.ninSwizzleCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ninSwizzleCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.ninSwizzleCheckBox.Name = "ninSwizzleCheckBox";
             this.ninSwizzleCheckBox.Size = new System.Drawing.Size(142, 17);
             this.ninSwizzleCheckBox.TabIndex = 30;
@@ -669,7 +669,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 519);
+            this.ClientSize = new System.Drawing.Size(1004, 519);
             this.Controls.Add(this.ninSwizzleCheckBox);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.dataGridViewWithCoord);

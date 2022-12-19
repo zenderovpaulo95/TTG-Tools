@@ -32,17 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSettings));
             this.numericUpDownASCII = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.clearMessagesCB = new System.Windows.Forms.CheckBox();
-            this.checkBoxSortStrings = new System.Windows.Forms.CheckBox();
-            this.checkBoxExportRealID = new System.Windows.Forms.CheckBox();
-            this.checkBoxImportingOfNames = new System.Windows.Forms.CheckBox();
-            this.textBoxOutputFolder = new System.Windows.Forms.TextBox();
-            this.textBoxInputFolder = new System.Windows.Forms.TextBox();
-            this.buttonOutputFolder = new System.Windows.Forms.Button();
-            this.buttonInputFolder = new System.Windows.Forms.Button();
-            this.checkBoxDDS_after_import = new System.Windows.Forms.CheckBox();
-            this.checkBoxD3DTX_after_import = new System.Windows.Forms.CheckBox();
             this.buttonSaveSettings = new System.Windows.Forms.Button();
             this.buttonExitSettingsForm = new System.Windows.Forms.Button();
             this.buttonApplyAndExitSettings = new System.Windows.Forms.Button();
@@ -52,9 +41,14 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip2 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip3 = new System.Windows.Forms.ToolTip(this.components);
+            this.textBoxOutputFolder = new System.Windows.Forms.TextBox();
+            this.textBoxInputFolder = new System.Windows.Forms.TextBox();
+            this.buttonOutputFolder = new System.Windows.Forms.Button();
+            this.buttonInputFolder = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownASCII)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // numericUpDownASCII
@@ -87,136 +81,9 @@
             this.label1.TabIndex = 6;
             this.label1.Text = "ASCII";
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.clearMessagesCB);
-            this.groupBox1.Controls.Add(this.checkBoxSortStrings);
-            this.groupBox1.Controls.Add(this.checkBoxExportRealID);
-            this.groupBox1.Controls.Add(this.checkBoxImportingOfNames);
-            this.groupBox1.Controls.Add(this.textBoxOutputFolder);
-            this.groupBox1.Controls.Add(this.textBoxInputFolder);
-            this.groupBox1.Controls.Add(this.buttonOutputFolder);
-            this.groupBox1.Controls.Add(this.buttonInputFolder);
-            this.groupBox1.Controls.Add(this.checkBoxDDS_after_import);
-            this.groupBox1.Controls.Add(this.checkBoxD3DTX_after_import);
-            this.groupBox1.Location = new System.Drawing.Point(13, 33);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(452, 158);
-            this.groupBox1.TabIndex = 8;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Auto(De)Packer";
-            // 
-            // clearMessagesCB
-            // 
-            this.clearMessagesCB.AutoSize = true;
-            this.clearMessagesCB.Location = new System.Drawing.Point(246, 131);
-            this.clearMessagesCB.Margin = new System.Windows.Forms.Padding(2);
-            this.clearMessagesCB.Name = "clearMessagesCB";
-            this.clearMessagesCB.Size = new System.Drawing.Size(193, 17);
-            this.clearMessagesCB.TabIndex = 7;
-            this.clearMessagesCB.Text = "Clear messages in Auto (De)Packer";
-            this.clearMessagesCB.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxSortStrings
-            // 
-            this.checkBoxSortStrings.AutoSize = true;
-            this.checkBoxSortStrings.Location = new System.Drawing.Point(246, 104);
-            this.checkBoxSortStrings.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBoxSortStrings.Name = "checkBoxSortStrings";
-            this.checkBoxSortStrings.Size = new System.Drawing.Size(78, 17);
-            this.checkBoxSortStrings.TabIndex = 4;
-            this.checkBoxSortStrings.Text = "Sort strings";
-            this.checkBoxSortStrings.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxExportRealID
-            // 
-            this.checkBoxExportRealID.AutoSize = true;
-            this.checkBoxExportRealID.Location = new System.Drawing.Point(12, 76);
-            this.checkBoxExportRealID.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBoxExportRealID.Name = "checkBoxExportRealID";
-            this.checkBoxExportRealID.Size = new System.Drawing.Size(229, 17);
-            this.checkBoxExportRealID.TabIndex = 3;
-            this.checkBoxExportRealID.Text = "Use a real ID of text in LANDB, LANGDB...";
-            this.checkBoxExportRealID.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxImportingOfNames
-            // 
-            this.checkBoxImportingOfNames.AutoSize = true;
-            this.checkBoxImportingOfNames.Location = new System.Drawing.Point(246, 76);
-            this.checkBoxImportingOfNames.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBoxImportingOfNames.Name = "checkBoxImportingOfNames";
-            this.checkBoxImportingOfNames.Size = new System.Drawing.Size(116, 17);
-            this.checkBoxImportingOfNames.TabIndex = 3;
-            this.checkBoxImportingOfNames.Text = "Import actor names";
-            this.checkBoxImportingOfNames.UseVisualStyleBackColor = true;
-            // 
-            // textBoxOutputFolder
-            // 
-            this.textBoxOutputFolder.Location = new System.Drawing.Point(8, 50);
-            this.textBoxOutputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxOutputFolder.Name = "textBoxOutputFolder";
-            this.textBoxOutputFolder.ReadOnly = true;
-            this.textBoxOutputFolder.Size = new System.Drawing.Size(317, 20);
-            this.textBoxOutputFolder.TabIndex = 2;
-            // 
-            // textBoxInputFolder
-            // 
-            this.textBoxInputFolder.Location = new System.Drawing.Point(8, 21);
-            this.textBoxInputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxInputFolder.Name = "textBoxInputFolder";
-            this.textBoxInputFolder.ReadOnly = true;
-            this.textBoxInputFolder.Size = new System.Drawing.Size(317, 20);
-            this.textBoxInputFolder.TabIndex = 2;
-            // 
-            // buttonOutputFolder
-            // 
-            this.buttonOutputFolder.Location = new System.Drawing.Point(332, 48);
-            this.buttonOutputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.buttonOutputFolder.Name = "buttonOutputFolder";
-            this.buttonOutputFolder.Size = new System.Drawing.Size(90, 23);
-            this.buttonOutputFolder.TabIndex = 1;
-            this.buttonOutputFolder.Text = "Output Folder";
-            this.buttonOutputFolder.UseVisualStyleBackColor = true;
-            this.buttonOutputFolder.Click += new System.EventHandler(this.buttonOutputFolder_Click);
-            // 
-            // buttonInputFolder
-            // 
-            this.buttonInputFolder.Location = new System.Drawing.Point(332, 19);
-            this.buttonInputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.buttonInputFolder.Name = "buttonInputFolder";
-            this.buttonInputFolder.Size = new System.Drawing.Size(90, 23);
-            this.buttonInputFolder.TabIndex = 1;
-            this.buttonInputFolder.Text = "Input Folder";
-            this.buttonInputFolder.UseVisualStyleBackColor = true;
-            this.buttonInputFolder.Click += new System.EventHandler(this.buttonInputFolder_Click);
-            // 
-            // checkBoxDDS_after_import
-            // 
-            this.checkBoxDDS_after_import.AutoSize = true;
-            this.checkBoxDDS_after_import.Location = new System.Drawing.Point(12, 132);
-            this.checkBoxDDS_after_import.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxDDS_after_import.Name = "checkBoxDDS_after_import";
-            this.checkBoxDDS_after_import.Size = new System.Drawing.Size(138, 17);
-            this.checkBoxDDS_after_import.TabIndex = 0;
-            this.checkBoxDDS_after_import.Text = "Delete DDS after import";
-            this.checkBoxDDS_after_import.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxD3DTX_after_import
-            // 
-            this.checkBoxD3DTX_after_import.AutoSize = true;
-            this.checkBoxD3DTX_after_import.Location = new System.Drawing.Point(12, 104);
-            this.checkBoxD3DTX_after_import.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBoxD3DTX_after_import.Name = "checkBoxD3DTX_after_import";
-            this.checkBoxD3DTX_after_import.Size = new System.Drawing.Size(151, 17);
-            this.checkBoxD3DTX_after_import.TabIndex = 0;
-            this.checkBoxD3DTX_after_import.Text = "Delete D3DTX after import";
-            this.checkBoxD3DTX_after_import.UseVisualStyleBackColor = true;
-            // 
             // buttonSaveSettings
             // 
-            this.buttonSaveSettings.Location = new System.Drawing.Point(187, 291);
+            this.buttonSaveSettings.Location = new System.Drawing.Point(180, 233);
             this.buttonSaveSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonSaveSettings.Name = "buttonSaveSettings";
             this.buttonSaveSettings.Size = new System.Drawing.Size(136, 23);
@@ -227,7 +94,7 @@
             // 
             // buttonExitSettingsForm
             // 
-            this.buttonExitSettingsForm.Location = new System.Drawing.Point(343, 291);
+            this.buttonExitSettingsForm.Location = new System.Drawing.Point(333, 233);
             this.buttonExitSettingsForm.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonExitSettingsForm.Name = "buttonExitSettingsForm";
             this.buttonExitSettingsForm.Size = new System.Drawing.Size(88, 23);
@@ -238,7 +105,7 @@
             // 
             // buttonApplyAndExitSettings
             // 
-            this.buttonApplyAndExitSettings.Location = new System.Drawing.Point(34, 291);
+            this.buttonApplyAndExitSettings.Location = new System.Drawing.Point(36, 233);
             this.buttonApplyAndExitSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonApplyAndExitSettings.Name = "buttonApplyAndExitSettings";
             this.buttonApplyAndExitSettings.Size = new System.Drawing.Size(136, 23);
@@ -251,7 +118,7 @@
             // 
             this.groupBox2.Controls.Add(this.rbNonNormalUnicode2);
             this.groupBox2.Controls.Add(this.rbNormalUnicode);
-            this.groupBox2.Location = new System.Drawing.Point(56, 206);
+            this.groupBox2.Location = new System.Drawing.Point(56, 42);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
@@ -288,16 +155,69 @@
         "f your symbols.");
             this.rbNormalUnicode.UseVisualStyleBackColor = true;
             // 
+            // textBoxOutputFolder
+            // 
+            this.textBoxOutputFolder.Location = new System.Drawing.Point(7, 58);
+            this.textBoxOutputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.textBoxOutputFolder.Name = "textBoxOutputFolder";
+            this.textBoxOutputFolder.ReadOnly = true;
+            this.textBoxOutputFolder.Size = new System.Drawing.Size(317, 20);
+            this.textBoxOutputFolder.TabIndex = 28;
+            // 
+            // textBoxInputFolder
+            // 
+            this.textBoxInputFolder.Location = new System.Drawing.Point(7, 29);
+            this.textBoxInputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.textBoxInputFolder.Name = "textBoxInputFolder";
+            this.textBoxInputFolder.ReadOnly = true;
+            this.textBoxInputFolder.Size = new System.Drawing.Size(317, 20);
+            this.textBoxInputFolder.TabIndex = 29;
+            // 
+            // buttonOutputFolder
+            // 
+            this.buttonOutputFolder.Location = new System.Drawing.Point(331, 56);
+            this.buttonOutputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonOutputFolder.Name = "buttonOutputFolder";
+            this.buttonOutputFolder.Size = new System.Drawing.Size(90, 23);
+            this.buttonOutputFolder.TabIndex = 26;
+            this.buttonOutputFolder.Text = "Output Folder";
+            this.buttonOutputFolder.UseVisualStyleBackColor = true;
+            this.buttonOutputFolder.Click += new System.EventHandler(this.buttonOutputFolder_Click);
+            // 
+            // buttonInputFolder
+            // 
+            this.buttonInputFolder.Location = new System.Drawing.Point(331, 27);
+            this.buttonInputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonInputFolder.Name = "buttonInputFolder";
+            this.buttonInputFolder.Size = new System.Drawing.Size(90, 23);
+            this.buttonInputFolder.TabIndex = 27;
+            this.buttonInputFolder.Text = "Input Folder";
+            this.buttonInputFolder.UseVisualStyleBackColor = true;
+            this.buttonInputFolder.Click += new System.EventHandler(this.buttonInputFolder_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.textBoxOutputFolder);
+            this.groupBox1.Controls.Add(this.textBoxInputFolder);
+            this.groupBox1.Controls.Add(this.buttonInputFolder);
+            this.groupBox1.Controls.Add(this.buttonOutputFolder);
+            this.groupBox1.Location = new System.Drawing.Point(19, 120);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(427, 100);
+            this.groupBox1.TabIndex = 30;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Auto(De)Packer file paths:";
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(475, 329);
+            this.ClientSize = new System.Drawing.Size(475, 273);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonApplyAndExitSettings);
             this.Controls.Add(this.buttonExitSettingsForm);
             this.Controls.Add(this.buttonSaveSettings);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.numericUpDownASCII);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -308,10 +228,10 @@
             this.Text = "Settings";
             this.Load += new System.EventHandler(this.FormSettings_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownASCII)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -321,25 +241,19 @@
 
         private System.Windows.Forms.NumericUpDown numericUpDownASCII;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button buttonInputFolder;
-        private System.Windows.Forms.CheckBox checkBoxDDS_after_import;
-        private System.Windows.Forms.CheckBox checkBoxD3DTX_after_import;
-        private System.Windows.Forms.Button buttonOutputFolder;
-        private System.Windows.Forms.TextBox textBoxOutputFolder;
-        private System.Windows.Forms.TextBox textBoxInputFolder;
         private System.Windows.Forms.Button buttonSaveSettings;
         private System.Windows.Forms.Button buttonExitSettingsForm;
         private System.Windows.Forms.Button buttonApplyAndExitSettings;
-        private System.Windows.Forms.CheckBox checkBoxImportingOfNames;
-        private System.Windows.Forms.CheckBox checkBoxSortStrings;
-        private System.Windows.Forms.CheckBox checkBoxExportRealID;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton rbNormalUnicode;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolTip toolTip2;
         private System.Windows.Forms.ToolTip toolTip3;
         private System.Windows.Forms.RadioButton rbNonNormalUnicode2;
-        private System.Windows.Forms.CheckBox clearMessagesCB;
+        private System.Windows.Forms.TextBox textBoxOutputFolder;
+        private System.Windows.Forms.TextBox textBoxInputFolder;
+        private System.Windows.Forms.Button buttonOutputFolder;
+        private System.Windows.Forms.Button buttonInputFolder;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }

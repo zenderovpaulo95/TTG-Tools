@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TTG_Tools</RootNamespace>
     <AssemblyName>TTG Tools</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>ttgtool.ico</ApplicationIcon>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -86,6 +86,12 @@
     <Compile Include="ArchivePacker.Designer.cs">
       <DependentUpon>ArchivePacker.cs</DependentUpon>
     </Compile>
+    <Compile Include="AutoDePackerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AutoDePackerSettings.Designer.cs">
+      <DependentUpon>AutoDePackerSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="AutoPacker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,13 +101,10 @@
     <Compile Include="blowfish.cs" />
     <Compile Include="ClassesStructs\FlagsClass.cs" />
     <Compile Include="ClassesStructs\PropertyClass.cs" />
+    <Compile Include="ClassesStructs\Text\DlogClass.cs" />
+    <Compile Include="ClassesStructs\Text\LandbClass.cs" />
+    <Compile Include="ClassesStructs\Text\LangdbClass.cs" />
     <Compile Include="CRCs.cs" />
-    <Compile Include="EncryptionVariants.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="EncryptionVariants.Designer.cs">
-      <DependentUpon>EncryptionVariants.cs</DependentUpon>
-    </Compile>
     <Compile Include="ClassesStructs\FontClass.cs" />
     <Compile Include="ClassesStructs\TextureClass.cs" />
     <Compile Include="Graphics\DDS\Caps.cs" />
@@ -109,6 +112,8 @@
     <Compile Include="Graphics\DDS\Decompress.cs" />
     <Compile Include="Graphics\DDS\Flags.cs" />
     <Compile Include="Graphics\PVR\pvr.cs" />
+    <Compile Include="InEngineWords\ClassStructsNames.cs" />
+    <Compile Include="InEngineWords\VariableTypes.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ForThreads.cs" />
     <Compile Include="FontEditor.cs">
@@ -140,6 +145,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Graphics\TextureWorker.cs" />
+    <Compile Include="ClassesStructs\Text\CommonTextClass.cs" />
+    <Compile Include="Texts\DlogWorker.cs" />
+    <Compile Include="Texts\LandbWorker.cs" />
+    <Compile Include="Texts\LangdbWorker.cs" />
+    <Compile Include="Texts\ReadText.cs" />
+    <Compile Include="Texts\SaveText.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -147,12 +158,12 @@
     <EmbeddedResource Include="ArchivePacker.resx">
       <DependentUpon>ArchivePacker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AutoDePackerSettings.resx">
+      <DependentUpon>AutoDePackerSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AutoPacker.resx">
       <DependentUpon>AutoPacker.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EncryptionVariants.resx">
-      <DependentUpon>EncryptionVariants.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FontEditor.resx">
       <DependentUpon>FontEditor.cs</DependentUpon>
@@ -169,10 +180,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormSettings.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TextCollector.resx">
-      <DependentUpon>TextCollector.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TextEditor.resx">
@@ -194,12 +201,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="TextCollector.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TextCollector.Designer.cs">
-      <DependentUpon>TextCollector.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

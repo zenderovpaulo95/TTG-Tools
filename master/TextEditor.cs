@@ -4,227 +4,22 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using TTG_Tools.Texts;
+using TTG_Tools.ClassesStructs.Text;
+using System.Text.RegularExpressions;
+using System.Reflection;
+using System.Security.Cryptography;
 
 namespace TTG_Tools
 {
     public partial class TextEditor : Form
     {
-        public class AllText
-        {
-            public int number;
-            public uint realID;
-            public string orName;
-            public string orText;
-            public string trName;
-            public string trText;
-            public bool exported;
-            public bool isChecked;
-            public AllText() { }
-            public AllText(int _number, uint _realID, string _orName, string _orText, string _trName, string _trText, bool _exported, bool _isChecked)
-            {
-                this.number = _number;
-                this.realID = _realID;
-                this.orName = _orName;
-                this.orText = _orText;
-                this.trName = _trName;
-                this.trText = _trText;
-                this.isChecked = _isChecked;
-                this.exported = _exported;
-            }
-        }
-
-        public class Glossary
-        {
-            public string orText;
-            public string trText;
-            public bool exported;
-            public bool isChecked;
-            public Glossary() { }
-            public Glossary(string _orText, string _trText, bool _exported, bool _isChecked)
-            {
-                this.trText = _trText;
-                this.orText = _orText;
-                this.isChecked = _isChecked;
-                this.exported = _exported;
-            }
-        }
-
         public TextEditor()
         {
             InitializeComponent();
         }
 
-        public static List<AllText> allText = new List<AllText>();
-        public static List<AllText> allText2 = new List<AllText>();
-        public static List<Glossary> glossary = new List<Glossary>();
-        public static string file = "";
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofdOrig = new OpenFileDialog();
-            ofdOrig.Filter = "txt files (*.txt)|*.txt";
-            ofdOrig.Title = "Set Original file!";
-            allText = new List<AllText>();
-            if (ofdOrig.ShowDialog() == DialogResult.OK)
-            {
-                textBox1.Text = ofdOrig.FileName.ToString();
-                ImportTXTByOneFile(ofdOrig.FileName, ref allText, MainMenu.settings.ASCII_N, true);
-                button2_Click(sender, e);
-            }
-        }
-
-
-
-        public static List<AllText> ImportTXTByOneFile(string path, ref List<AllText> allText, int ASCII, bool isEnglish)
-        {
-            StreamReader sr = new StreamReader(path, System.Text.ASCIIEncoding.GetEncoding(ASCII));
-            List<TextCollector.TXT_collection> tempText = new List<TextCollector.TXT_collection>();
-            string error = string.Empty;
-            AutoPacker.ImportTXT(path, ref tempText, false, MainMenu.settings.ASCII_N, "\r\n", ref error);
-
-            for (int q = 0; q < tempText.Count; q++)
-            {
-                int number = tempText[q].number - 1;
-                if (MainMenu.settings.exportRealID) number = (int)tempText[q].realId;
-                //int isStringExist = IsNumberOfStringExist(tempText[q].number - 1, allText);
-                int isStringExist = IsNumberOfStringExist(number, allText);
-                if (isEnglish)
-                {
-                    if (isStringExist != -1)
-                    {
-                        allText[isStringExist].orName = tempText[q].name;
-                        allText[isStringExist].orText = tempText[q].text;
-                    }
-                    else
-                    {
-                        allText.Add(new AllText(tempText[q].number - 1, tempText[q].realId, tempText[q].name, tempText[q].text, "", "", false, false));
-                    }
-                }
-                else
-                {
-                    if (isStringExist != -1)
-                    {
-                        allText[isStringExist].trName = tempText[q].name;
-                        allText[isStringExist].trText = tempText[q].text;
-                    }
-                    else //если строки нет когда она потеряна или начат импорт с переведенного файла
-                    {
-                        if(!MainMenu.settings.exportRealID) allText.Add(new AllText(tempText[q].number - 1, tempText[q].realId, "", "", tempText[q].name, tempText[q].text, false, false));
-                    }
-                }
-                //text_temp[all_text[q].number - 1].text = all_text[q].text.Replace("\r\n", "\n");
-
-            }
-            return allText;
-        }
-        public static List<AllText> ImportTXTFromConvertedFile(string path, ref List<AllText> allText, int ASCII)
-        {
-            StreamReader sr = new StreamReader(path, System.Text.ASCIIEncoding.GetEncoding(ASCII));
-            List<TextCollector.TXT_collection> tempText = new List<TextCollector.TXT_collection>();
-            string error = string.Empty;
-            AutoPacker.ImportTXT(path, ref tempText, false, MainMenu.settings.ASCII_N, "\r\n", ref error);
-
-            for (int q = 0; q < tempText.Count; q++)
-            {
-                int isStringExist = IsNumberOfStringExist(tempText[q].number - 1, allText);
-
-                if (isStringExist != -1)
-                {
-                    allText[isStringExist].trName = tempText[q].name;
-                    allText[isStringExist].trText = tempText[q].text;
-                }
-                else
-                {
-                    allText.Add(new AllText(tempText[q].number - 1, (uint)tempText[q].number, tempText[q].name, tempText[q].text, "", "", false, false));
-                }
-
-            }
-            return allText;
-        }
-
-        public static int IsNumberOfStringExist(int posStr, List<AllText> allText)
-        {
-            int b = -1;
-            try
-            {
-                allText.Count();
-
-                for (int i = 0; i < allText.Count(); i++)
-                {
-                    int number = allText[i].number;
-
-                    if (MainMenu.settings.exportRealID) number = (int)allText[i].realID;
-                    //if (allText[i].number == posStr)
-                    if (number == posStr)
-                    {
-                        b = i;
-                        break;
-                    }
-                }
-                return b;
-            }
-            catch
-            { return -1; }
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            allText.Clear();
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "txt files (*.txt)|*.txt";
-            ofd.Title = "Set file!";
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                textBox3.Text = ofd.FileName.ToString();
-                try
-                {
-                    ImportTXTFromConvertedFile(ofd.FileName, ref allText, MainMenu.settings.ASCII_N);
-                    button7.Enabled = true;
-                }
-                catch
-                {
-                    MessageBox.Show("Error in file" + ofd.FileName);
-                }
-
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofdOrig = new OpenFileDialog();
-            ofdOrig.Filter = "txt files (*.txt)|*.txt";
-            ofdOrig.Title = "Set Original file!";
-            if (ofdOrig.ShowDialog() == DialogResult.OK)
-            {
-                textBox2.Text = ofdOrig.FileName.ToString();
-                ImportTXTByOneFile(ofdOrig.FileName, ref allText, MainMenu.settings.ASCII_N, false);
-                file = ofdOrig.SafeFileName;
-                button5_Click(sender, e);
-            }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < allText.Count(); i++)
-            {
-                if ((allText[i].trText == "" && allText[i].trName == "") || (allText[i].trText == "" || allText[i].trName == ""))
-                {
-                    allText[i].trName = allText[i].orName;
-                    allText[i].trText = allText[i].orText;
-                }
-            }
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var process = new ForThreads();
-            process.Progress += ProcessorProgress;
-            process.BackAllText += RefAllText;
-            var thread = new Thread(new ParameterizedThreadStart(process.CreateExportingTXTfromAllText));
-            progressBar1.Maximum = allText.Count - 1;
-            thread.Start(allText);
-        }
-
+        //For main progress bar
         void ProcessorProgress(int progress)
         {
             if (progressBar1.InvokeRequired)
@@ -237,290 +32,639 @@ namespace TTG_Tools
             }
         }
 
-        void RefAllText(List<AllText> allTextNew)
+        //For second progress bar (if user works with several files)
+        void ProcessorProgress2(int progress)
         {
-            allText = new List<AllText>(allTextNew);
-        }
-
-        void RefAllText2(List<AllText> allTextNew2)
-        {
-            allText2 = new List<AllText>(allTextNew2);
-        }
-
-        public static void SaveFile(string path, List<AllText> allText)
-        {
-            FileStream ExportStream = new FileStream(path, FileMode.Create);
-            for (int i = 0; i < allText.Count; i++)
+            if (progressBar2.InvokeRequired)
             {
-                if(MainMenu.settings.exportRealID) TextCollector.SaveString(ExportStream, ((allText[i].realID) + ") " + allText[i].orName + "\r\n"), MainMenu.settings.ASCII_N);
-                else TextCollector.SaveString(ExportStream, ((allText[i].number + 1) + ") " + allText[i].orName + "\r\n"), MainMenu.settings.ASCII_N);
-                TextCollector.SaveString(ExportStream, (allText[i].orText + "\r\n"), MainMenu.settings.ASCII_N);
-                if (MainMenu.settings.exportRealID) TextCollector.SaveString(ExportStream, ((allText[i].realID) + ") " + allText[i].trName + "\r\n"), MainMenu.settings.ASCII_N);
-                else TextCollector.SaveString(ExportStream, ((allText[i].number + 1) + ") " + allText[i].trName + "\r\n"), MainMenu.settings.ASCII_N);
-                TextCollector.SaveString(ExportStream, (allText[i].trText + "\r\n"), MainMenu.settings.ASCII_N);
+                progressBar2.Invoke(new ProgressHandler(ProcessorProgress2), progress);
             }
-            ExportStream.Close();
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            List<List<AllText>> text = new List<List<AllText>>();
-            text.Add(allText);
-            text.Add(allText2);
-            var process = new ForThreads();
-            process.Progress += ProcessorProgress;
-            process.BackAllText2 += RefAllText2;
-            var thread = new Thread(new ParameterizedThreadStart(process.CreateGlossaryFromFirstAndSecondAllText));
-            progressBar1.Maximum = allText.Count - 1;
-            thread.Start(text);
-        }
-
-
-        private void button7_Click(object sender, EventArgs e)
-        {
-            allText2.Clear();
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "txt files (*.txt)|*.txt";
-            ofd.Title = "Set file!";
-            if (ofd.ShowDialog() == DialogResult.OK)
+            else
             {
-                textBox4.Text = ofd.FileName.ToString();
-                file = ofd.SafeFileName;
-                ImportTXTFromConvertedFile(ofd.FileName, ref allText2, MainMenu.settings.ASCII_N);
+                progressBar2.Value = progress;
+            }
+        }
+
+        private void firstFileBtn_Click(object sender, EventArgs e)
+        {
+            if (singleFileRB.Checked)
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+                ofd.FilterIndex = 0;
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    firstFilePath.Text = ofd.FileName;
+                }
+            }
+            else
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                if(fbd.ShowDialog() == DialogResult.OK)
+                {
+                    firstFilePath.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void secondFileBtn_Click(object sender, EventArgs e)
+        {
+            if (singleFileRB.Checked)
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+                ofd.FilterIndex = 0;
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    secondFilePath.Text = ofd.FileName;
+                }
+            }
+            else
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                if(fbd.ShowDialog() == DialogResult.OK)
+                {
+                    secondFilePath.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void readyFileBtn_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                readyFilePath.Text = fbd.SelectedPath;
             }
         }
 
         private void TextEditor_Load(object sender, EventArgs e)
         {
-            button7.Enabled = false;
-            button11.Visible = false;
+            singleFileRB.Checked = true;
+            txtOldMethodRB.Checked = true;
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void mergeSingleRB_CheckedChanged(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "txt files (*.txt)|*.txt";
-            sfd.FileName = file;
-            if (sfd.ShowDialog() == DialogResult.OK)
+            progressBar2.Enabled = severalFilesRB.Checked;
+            progressBar2.Visible = severalFilesRB.Checked;
+        }
+
+        private void firstDoubledFileBtn_Click(object sender, EventArgs e)
+        {
+            if (singleFileRB.Checked)
             {
-                SaveFile(sfd.FileName, allText);
-            }
-        }
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
 
-        private void button9_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "txt files (*.txt)|*.txt";
-            sfd.FileName = file;
-
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                SaveFile(sfd.FileName, allText2);
-            }
-        }
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-            var process = new ForThreads();
-            process.Progress += ProcessorProgress;
-            process.BackAllText2 += RefAllText2;
-            var thread = new Thread(new ParameterizedThreadStart(process.CreateExportingTXTfromAllText2));
-            progressBar1.Maximum = allText2.Count - 1;
-            thread.Start(allText2);
-        }
-
-        private void button11_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog fbdeng = new FolderBrowserDialog();
-            fbdeng.SelectedPath = @"D:\translation\SnM\Season 3\texteng";
-            if (fbdeng.ShowDialog() == DialogResult.OK)
-            {
-                FolderBrowserDialog fbdrus = new FolderBrowserDialog();
-                fbdrus.SelectedPath = @"D:\translation\SnM\Season 3\textrus";
-                if (fbdrus.ShowDialog() == DialogResult.OK)
+                if(ofd.ShowDialog() == DialogResult.OK)
                 {
-                    DirectoryInfo direng = new DirectoryInfo(fbdeng.SelectedPath);
-                    FileInfo[] inputFileseng = direng.GetFiles();
-                    for (int i = 0; i < inputFileseng.Count(); i++)
-                    {
-                        string onlyNameImporting = inputFileseng[i].Name.Split('(')[0];
-                        DirectoryInfo dirrus = new DirectoryInfo(fbdrus.SelectedPath);
-                        FileInfo[] inputFiles = dirrus.GetFiles(onlyNameImporting + ".txt");
-                        if (inputFiles.Count() == 1)
-                        {
-                            allText = new List<AllText>();
+                    firstDoubledFilePath.Text = ofd.FileName;
+                }
+            }
+            else
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-                            ImportTXTByOneFile(inputFileseng[i].FullName, ref allText, MainMenu.settings.ASCII_N, true);
-                            int c = allText.Count();
-                            ImportTXTByOneFile(inputFiles[0].FullName, ref allText, MainMenu.settings.ASCII_N, false);
-                            if (c != allText.Count())
-                            { MessageBox.Show(onlyNameImporting); }
-                            //ForThreads.CreateExportingTXTfromAllTextN(ref allText);
-
-                            SaveFile(@"D:\translation\SnM\Season 3\text2\" + inputFileseng[i].Name, allText);
-                        }
-                        else
-                        {
-                            //MessageBox.Show(onlyNameImporting);
-                        }
-                    }
+                if(fbd.ShowDialog() == DialogResult.OK)
+                {
+                    firstDoubledFilePath.Text = fbd.SelectedPath;
                 }
             }
         }
 
-        private void button12_Click(object sender, EventArgs e)
+        private void secondDoubledFileBtn_Click(object sender, EventArgs e)
         {
-            allText.Clear();
-            OpenFileDialog ofd = new OpenFileDialog();
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "txt files (*.txt) | *.txt";
-            ofd.Filter = "txt files (*.txt) | *.txt";
-            ofd.Title = "Set file!";
-
-            string str = "";
-
-            if (ofd.ShowDialog() == DialogResult.OK)
+            if (singleFileRB.Checked)
             {
-                textBox3.Text = ofd.FileName.ToString();
-                try
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    ImportTXTFromConvertedFile(ofd.FileName, ref allText, MainMenu.settings.ASCII_N);
-                    
-                    if(allText.Count > 0)
+                    secondDoubledFilePath.Text = ofd.FileName;
+                }
+            }
+            else
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    secondDoubledFilePath.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void readyDoubledFileBtn_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                readyDoubledFilePath.Text = fbd.SelectedPath;
+            }
+        }
+
+        private List<CommonText> CheckStrings(string checkPath)
+        {
+            List<CommonText> checkTxts;
+            checkTxts = Texts.ReadText.GetStrings(checkPath);
+            List<CommonText> duplicatedStrs = new List<CommonText>();
+
+            if ((checkTxts != null) && (checkTxts.Count > 0))
+            {
+                string firstString = "", secondString = "";
+                string firstActorName = "", secondActorName = "";
+                bool hasDuplicate;
+
+                progressBar1.Maximum = checkTxts.Count - 1;
+
+                for (int i = 0; i < checkTxts.Count; i++)
+                {
+                    hasDuplicate = false;
+                    firstString = checkTxts[i].actorSpeechOriginal;
+                    firstString = Methods.DeleteCommentary(firstString, "[", "]");
+                    firstString = Methods.DeleteCommentary(firstString, "{", "}");
+                    firstString = System.Text.RegularExpressions.Regex.Replace(firstString, @"[^\w]", "");
+
+                    firstActorName = checkTxts[i].actorName;
+
+                    for (int j = i + 1; j < checkTxts.Count; j++)
                     {
-                        for(int i = 0; i < allText.Count; i++)
+                        secondString = checkTxts[j].actorSpeechOriginal;
+                        secondString = Methods.DeleteCommentary(secondString, "[", "]");
+                        secondString = Methods.DeleteCommentary(secondString, "{", "}");
+                        secondString = System.Text.RegularExpressions.Regex.Replace(secondString, @"[^\w]", "");
+
+                        secondActorName = checkTxts[j].actorName;
+
+                        if ((firstString.ToLower() == secondString.ToLower()) && (firstString != "")
+                            && (firstActorName.ToUpper() == secondActorName.ToUpper()))
                         {
-                            if (allText[i].orText.IndexOf('–') > -1) allText[i].orText = allText[i].orText.Replace('–', '-');
-                            if (allText[i].orText.IndexOf('—') > -1) allText[i].orText = allText[i].orText.Replace('—', '-');
-                            if (allText[i].orText.IndexOf('―') > -1) allText[i].orText = allText[i].orText.Replace('―', '-');
-                            if (allText[i].orText.IndexOf('‗') > -1) allText[i].orText = allText[i].orText.Replace('‗', '_');
-                            if (allText[i].orText.IndexOf('‘') > -1) allText[i].orText = allText[i].orText.Replace('‘', '\'');
-                            if (allText[i].orText.IndexOf('’') > -1) allText[i].orText = allText[i].orText.Replace('’', '\'');
-                            if (allText[i].orText.IndexOf('‚') > -1) allText[i].orText = allText[i].orText.Replace('‚', ',');
-                            if (allText[i].orText.IndexOf('‛') > -1) allText[i].orText = allText[i].orText.Replace('‛', '\'');
-                            if (allText[i].orText.IndexOf('“') > -1) allText[i].orText = allText[i].orText.Replace('“', '\"');
-                            if (allText[i].orText.IndexOf('”') > -1) allText[i].orText = allText[i].orText.Replace('”', '\"');
-                            if (allText[i].orText.IndexOf('„') > -1) allText[i].orText = allText[i].orText.Replace('„', '\"');
-                            if (allText[i].orText.IndexOf('…') > -1) allText[i].orText = allText[i].orText.Replace("…", "...");
-                            if (allText[i].orText.IndexOf('′') > -1) allText[i].orText = allText[i].orText.Replace('′', '\'');
-                            if (allText[i].orText.IndexOf('″') > -1) allText[i].orText = allText[i].orText.Replace('″', '\"');
+                            hasDuplicate = true;
+                            CommonText tmpTxt;
+                            tmpTxt.isBothSpeeches = false;
+                            tmpTxt.strNumber = checkTxts[j].strNumber;
+                            tmpTxt.actorName = checkTxts[j].actorName;
+                            tmpTxt.actorSpeechOriginal = checkTxts[j].actorSpeechOriginal;
+                            tmpTxt.actorSpeechTranslation = checkTxts[j].actorSpeechTranslation;
+                            tmpTxt.flags = checkTxts[j].flags;
 
-                            if (allText[i].trText.IndexOf('–') > -1) allText[i].trText = allText[i].trText.Replace('–', '-');
-                            if (allText[i].trText.IndexOf('—') > -1) allText[i].trText = allText[i].trText.Replace('—', '-');
-                            if (allText[i].trText.IndexOf('―') > -1) allText[i].trText = allText[i].trText.Replace('―', '-');
-                            if (allText[i].trText.IndexOf('‗') > -1) allText[i].trText = allText[i].trText.Replace('‗', '_');
-                            if (allText[i].trText.IndexOf('‘') > -1) allText[i].trText = allText[i].trText.Replace('‘', '\'');
-                            if (allText[i].trText.IndexOf('’') > -1) allText[i].trText = allText[i].trText.Replace('’', '\'');
-                            if (allText[i].trText.IndexOf('‚') > -1) allText[i].trText = allText[i].trText.Replace('‚', ',');
-                            if (allText[i].trText.IndexOf('‛') > -1) allText[i].trText = allText[i].trText.Replace('‛', '\'');
-                            if (allText[i].trText.IndexOf('“') > -1) allText[i].trText = allText[i].trText.Replace('“', '\"');
-                            if (allText[i].trText.IndexOf('”') > -1) allText[i].trText = allText[i].trText.Replace('”', '\"');
-                            if (allText[i].trText.IndexOf('„') > -1) allText[i].trText = allText[i].trText.Replace('„', '\"');
-                            if (allText[i].trText.IndexOf('…') > -1) allText[i].trText = allText[i].trText.Replace("…", "...");
-                            if (allText[i].trText.IndexOf('′') > -1) allText[i].trText = allText[i].trText.Replace('′', '\'');
-                            if (allText[i].trText.IndexOf('″') > -1) allText[i].trText = allText[i].trText.Replace('″', '\"');
+                            duplicatedStrs.Add(tmpTxt);
+                        }
+                    }
 
-                            if (allText[i].orText == allText[i].trText)
+                    if (hasDuplicate)
+                    {
+                        CommonText tmpTxt;
+                        tmpTxt.isBothSpeeches = false;
+                        tmpTxt.strNumber = checkTxts[i].strNumber;
+                        tmpTxt.actorName = checkTxts[i].actorName;
+                        tmpTxt.actorSpeechOriginal = checkTxts[i].actorSpeechOriginal;
+                        tmpTxt.actorSpeechTranslation = checkTxts[i].actorSpeechTranslation;
+                        tmpTxt.flags = checkTxts[i].flags;
+
+                        duplicatedStrs.Add(tmpTxt);
+                    }
+
+                    ProcessorProgress(i);
+                }
+
+                
+                checkTxts.Clear();
+                GC.Collect();
+            }
+
+            return duplicatedStrs;
+        }
+
+        private void checkDuplicatedStrsBtn_Click(object sender, EventArgs e)
+        {
+            bool tmpTSVFormat = MainMenu.settings.tsvFormat;
+            List<CommonText> checkTxts;
+
+            if (singleFileRB.Checked)
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Title = "Select file to check on duplicated strings";
+                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    checkTxts = CheckStrings(ofd.FileName);
+
+                    if (checkTxts.Count > 0)
+                    {
+                        SaveFileDialog sfd = new SaveFileDialog();
+                        sfd.Title = "Save file with duplicated strings";
+                        sfd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+
+                        if (sfd.ShowDialog() == DialogResult.OK)
+                        {
+                            FileInfo fi = new FileInfo(sfd.FileName);
+                            MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+
+                            Texts.SaveText.OldMethod(checkTxts, false, false, sfd.FileName);
+                        }
+                    }
+                }
+            }
+            else if(severalFilesRB.Checked)
+            {
+                FolderBrowserDialog openFBD = new FolderBrowserDialog();
+                openFBD.Description = "Set input directory with needed files";
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                fbd.Description = "Set output directory for founded duplicated strings in file";
+
+                if ((openFBD.ShowDialog() == DialogResult.OK) && (fbd.ShowDialog() == DialogResult.OK))
+                {
+                    DirectoryInfo di = new DirectoryInfo(openFBD.SelectedPath);
+                    FileInfo[] fi = di.GetFiles("*.*", SearchOption.AllDirectories);
+
+                    progressBar2.Maximum = fi.Length - 1;
+
+                    for (int i = 0; i < fi.Length; i++)
+                    {
+                        if (fi[i].Extension.ToLower() == ".tsv" || fi[i].Extension.ToLower() == ".txt")
+                        {
+                            FileInfo tmpFI = new FileInfo(fi[i].FullName);
+                            checkTxts = CheckStrings(fi[i].FullName);
+
+                            Texts.SaveText.OldMethod(checkTxts, false, false, fbd.SelectedPath + "\\" + tmpFI.Name);
+                        }
+
+                        ProcessorProgress2(i);
+                    }
+                }
+            }
+
+            MainMenu.settings.tsvFormat = tmpTSVFormat;
+        }
+
+        private List<CommonText> MergeStrings(string originalPath, string translatePath)
+        {
+            List<CommonText> orStrings = Texts.ReadText.GetStrings(originalPath);
+            List<CommonText> trStrings = Texts.ReadText.GetStrings(translatePath);
+
+            progressBar1.Maximum = orStrings.Count - 1;
+
+            for (int i = 0; i < orStrings.Count; i++)
+            {
+                CommonText tmpTxt;
+                tmpTxt.isBothSpeeches = orStrings[i].isBothSpeeches;
+                tmpTxt.strNumber = orStrings[i].strNumber;
+                tmpTxt.actorName = orStrings[i].actorName;
+                tmpTxt.actorSpeechOriginal = orStrings[i].actorSpeechOriginal;
+                tmpTxt.actorSpeechTranslation = orStrings[i].actorSpeechTranslation;
+                tmpTxt.flags = orStrings[i].flags;
+
+                for (int j = 0; j < trStrings.Count; j++)
+                {
+                    if ((orStrings[i].strNumber == trStrings[j].strNumber)
+                        && (orStrings[i].actorName == trStrings[j].actorName))
+                    {
+                        tmpTxt.actorSpeechTranslation = trStrings[j].actorSpeechTranslation;
+                        break;
+                    }
+                }
+
+                orStrings[i] = tmpTxt;
+
+                ProcessorProgress(i);
+            }
+
+            if (sortStrsCB.Checked)
+            {
+                CommonTextClass tmp = new CommonTextClass();
+                tmp.txtList = orStrings;
+
+                tmp = Methods.SortString(tmp);
+
+                orStrings = new List<CommonText>();
+
+                for (int i = 0; i < tmp.txtList.Count; i++)
+                {
+                    orStrings.Add(tmp.txtList[i]);
+                }
+
+                tmp.txtList.Clear();
+            }
+
+            trStrings.Clear();
+
+            return orStrings;
+        }
+
+        private void mergeBtn_Click(object sender, EventArgs e)
+        {
+            string originalPath = firstFilePath.Text;
+            string translatePath = secondFilePath.Text;
+            string readyPath = readyFilePath.Text;
+
+            if(singleFileRB.Checked && File.Exists(originalPath)
+                && File.Exists(translatePath) && Directory.Exists(readyPath))
+            {
+                bool tmpTSV = MainMenu.settings.tsvFormat;
+
+                List<CommonText> result = MergeStrings(originalPath, translatePath);
+
+                FileInfo fi = new FileInfo(originalPath);
+                MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+                string newPath = readyPath + "\\" + fi.Name.Remove(fi.Name.Length - fi.Extension.Length, fi.Extension.Length) + "_merged" + fi.Extension;
+
+                if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(result, false, newPath);
+                else Texts.SaveText.OldMethod(result, true, false, newPath);
+
+                MainMenu.settings.tsvFormat = tmpTSV;
+            }
+            else if(severalFilesRB.Checked && Directory.Exists(originalPath)
+                && Directory.Exists(translatePath))
+            {
+                DirectoryInfo originalDI = new DirectoryInfo(originalPath);
+                DirectoryInfo translateDI = new DirectoryInfo(translatePath);
+
+                FileInfo[] originalFI = originalDI.GetFiles("*.*", SearchOption.AllDirectories);
+                FileInfo[] translateFI = translateDI.GetFiles("*.*", SearchOption.AllDirectories);
+
+                progressBar2.Maximum = originalFI.Length - 1;
+
+                for(int i = 0; i < originalFI.Length; i++)
+                {
+                    for(int j = 0; j < translateFI.Length; j++)
+                    {
+                        if (translateFI[j].Name.IndexOf(originalFI[i].Name.Remove(originalFI[i].Name.Length - originalFI[i].Extension.Length, originalFI[i].Extension.Length)) == 0)
+                        {
+                            bool tmpTSV = MainMenu.settings.tsvFormat;
+
+                            List<CommonText> result = MergeStrings(originalFI[i].FullName, translateFI[j].FullName);
+
+                            FileInfo fi = new FileInfo(originalFI[i].FullName);
+                            MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+                            string newPath = readyPath + "\\" + fi.Name.Remove(fi.Name.Length - fi.Extension.Length, fi.Extension.Length) + "_merged" + fi.Extension;
+
+                            if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(result, false, newPath);
+                            else Texts.SaveText.OldMethod(result, true, false, newPath);
+
+                            MainMenu.settings.tsvFormat = tmpTSV;
+                        }
+                    }
+
+                    ProcessorProgress2(i);
+                }
+            }
+        }
+
+        private List<CommonText> CheckNonTranslateStrs(string filePath)
+        {
+            List<CommonText> checkTxt = Texts.ReadText.GetStrings(filePath);
+            CommonText tmpTxts;
+            List<CommonText> nonTranslate = new List<CommonText>();
+
+            progressBar1.Maximum = checkTxt.Count - 1;
+
+            for (int i = 0; i < checkTxt.Count; i++)
+            {
+                if ((checkTxt[i].actorSpeechOriginal == checkTxt[i].actorSpeechTranslation) && checkTxt[i].isBothSpeeches)
+                {
+                    tmpTxts.isBothSpeeches = checkTxt[i].isBothSpeeches;
+                    tmpTxts.strNumber = checkTxt[i].strNumber;
+                    tmpTxts.actorName = checkTxt[i].actorName;
+                    tmpTxts.actorSpeechOriginal = checkTxt[i].actorSpeechOriginal;
+                    tmpTxts.actorSpeechTranslation = checkTxt[i].actorSpeechTranslation;
+                    tmpTxts.flags = checkTxt[i].flags;
+
+                    nonTranslate.Add(tmpTxts);
+                }
+
+                ProcessorProgress(i);
+            }
+
+            return nonTranslate;
+        }
+
+        //Check non-translated strings button in merge tab
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (singleFileRB.Checked)
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Title = "Set original + translated file for check non-translated strings";
+                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    List<CommonText> result = CheckNonTranslateStrs(ofd.FileName);
+
+                    if (result.Count > 0)
+                    {
+                        SaveFileDialog sfd = new SaveFileDialog();
+                        sfd.Title = "Save file with non-translated string";
+                        sfd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+
+                        if (sfd.ShowDialog() == DialogResult.OK)
+                        {
+                            FileInfo fi = new FileInfo(sfd.FileName);
+
+                            bool tmpTSV = MainMenu.settings.tsvFormat;
+                            MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+
+                            Texts.SaveText.OldMethod(result, false, false, fi.FullName);
+
+                            MainMenu.settings.tsvFormat = tmpTSV;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                fbd.Description = "Select folder path with files to check";
+
+                FolderBrowserDialog fbd2 = new FolderBrowserDialog();
+                fbd2.Description = "Set folder for non-translated strings in files";
+
+                if ((fbd.ShowDialog() == DialogResult.OK) && (fbd2.ShowDialog() == DialogResult.OK))
+                {
+                    DirectoryInfo di = new DirectoryInfo(fbd.SelectedPath);
+                    FileInfo[] fi = di.GetFiles("*.*", SearchOption.AllDirectories);
+                    progressBar2.Maximum = fi.Length - 1;
+
+                    for (int i = 0; i < fi.Length; i++)
+                    {
+                        if (fi[i].Extension.ToLower() == ".txt" || fi[i].Extension.ToLower() == ".tsv")
+                        {
+                            List<CommonText> result = CheckNonTranslateStrs(fi[i].FullName);
+
+                            if (result.Count > 0)
                             {
-                                if (MainMenu.settings.exportRealID) str += allText[i].realID;
-                                else str += allText[i].number;
-                                str += ") " + allText[i].orName + "\r\n" + allText[i].orText + "\r\n";
+                                FileInfo tmpFi = new FileInfo(fi[i].FullName);
 
-                                if (MainMenu.settings.exportRealID) str += allText[i].realID;
-                                else str += allText[i].number;
-                                str += ") " + allText[i].trName + "\r\n" + allText[i].trText + "\r\n";
+                                bool tmpTSV = MainMenu.settings.tsvFormat;
+                                MainMenu.settings.tsvFormat = tmpFi.Extension.ToLower() == ".tsv";
+
+                                string tmpFilePath = fbd2.SelectedPath + "\\" + tmpFi.Name;
+
+                                Texts.SaveText.OldMethod(result, false, false, tmpFilePath);
+                                MainMenu.settings.tsvFormat = tmpTSV;
                             }
                         }
+
+                        ProcessorProgress2(i);
                     }
-
-                    if(str != "")
-                    {
-                        sfd.FileName = ofd.FileName;
-                        if(sfd.ShowDialog() == DialogResult.OK)
-                        {
-                            File.WriteAllText(sfd.FileName, str);
-
-                            MessageBox.Show("Done");
-                        }
-
-                        str = "";
-                    }
-
-                    //button7.Enabled = true;
                 }
-                catch
-                {
-                    MessageBox.Show("Error in file" + ofd.FileName);
-                }
-
             }
         }
 
-        private void button13_Click(object sender, EventArgs e)
+        private List<CommonText> SortByOriginalStrs(List<CommonText> originalStrs, List<CommonText> translatedStrs)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "txt files (*.txt) | *.txt";
+            List<CommonText> sortedStrs = new List<CommonText>();
+            CommonText tmpText;
 
-            if(ofd.ShowDialog() == DialogResult.OK)
+            string firstString = "", secondString = "";
+            string firstActor = "", secondActor = "";
+
+            progressBar1.Maximum = originalStrs.Count - 1;
+
+            for (int i = 0; i < originalStrs.Count; i++)
             {
-                string path = ofd.FileName;
-                textBox1.Text = path;
-                textBox3.Text = path;
-                allText = new List<AllText>();
+                firstActor = originalStrs[i].actorName.ToUpper();
+                firstString = originalStrs[i].actorSpeechOriginal.ToLower();
+                firstString = Methods.DeleteCommentary(firstString, "{", "}");
+                firstString = Methods.DeleteCommentary(firstString, "[", "]");
+                firstString = Regex.Replace(firstString, @"[^\w]", "");
 
-                ImportTXTFromConvertedFile(path, ref allText, MainMenu.settings.ASCII_N);
-
-                List<AllText> duplicates = new List<AllText>();
-
-                for(int i = 0; i < allText.Count; i++)
+                for (int j = 0; j < translatedStrs.Count; j++)
                 {
-                    if (allText[i].exported == false && allText[i].isChecked == false)
-                    {
-                        allText[i].exported = true;
-                        for (int j = 0; j < allText.Count; j++)
-                        {
-                            if (TextCollector.IsStringsSame(allText[i].orText, allText[j].orText, false) && allText[j].exported == false)
-                            {
-                                allText[j].exported = true;
-                                allText.Insert(i + 1, allText[j]);
-                                allText[i + 1].exported = true;
-                                duplicates.Add(allText[i]);
-                                duplicates.Add(allText[j]);
-                                allText.RemoveAt(j + 1);
-                            }
-                        }
-                    }
+                    secondActor = translatedStrs[j].actorName.ToUpper();
+                    secondString = translatedStrs[j].actorSpeechOriginal.ToLower();
+                    secondString = Methods.DeleteCommentary(secondString, "{", "}");
+                    secondString = Methods.DeleteCommentary(secondString, "[", "]");
+                    secondString = Regex.Replace(secondString, @"[^\w]", "");
 
-                    allText[i].isChecked = true;
+                    if((firstActor == secondActor) && (firstString == secondString))
+                    {
+                        tmpText.isBothSpeeches = true;
+                        tmpText.actorName = originalStrs[i].actorName;
+                        tmpText.actorSpeechOriginal = originalStrs[i].actorSpeechOriginal;
+                        tmpText.actorSpeechTranslation = translatedStrs[j].actorSpeechTranslation;
+                        tmpText.flags = translatedStrs[j].flags;
+                        tmpText.strNumber = originalStrs[i].strNumber;
+
+                        sortedStrs.Add(tmpText);
+                        translatedStrs.RemoveAt(j);
+                        break;
+                    }
                 }
 
-                if(duplicates.Count > 0)
+                ProcessorProgress(i);
+            }
+
+            return sortedStrs;
+        }
+
+        private void replaceDuplicatedStringsBtn_Click(object sender, EventArgs e)
+        {
+            string firstDuplicatedPath = firstDoubledFilePath.Text;
+            string secondDuplicatedPath = secondDoubledFilePath.Text;
+            string readyDuplicatedPath = readyDoubledFilePath.Text;
+
+            if(singleFileRB.Checked && File.Exists(firstDuplicatedPath) && File.Exists(secondDuplicatedPath))
+            { 
+                List<CommonText> firstStrs = Texts.ReadText.GetStrings(firstDuplicatedPath);
+                List<CommonText> secondStrs = Texts.ReadText.GetStrings(secondDuplicatedPath);
+
+                List<CommonText> readyStrs = SortByOriginalStrs(firstStrs, secondStrs);
+
+                if (sortDoubledCB.Checked)
                 {
-                    SaveFileDialog sfd = new SaveFileDialog();
-                    sfd.Filter = "txt file (*.txt) | *.txt";
-                    FileInfo fi = new FileInfo(path);
-                    sfd.FileName = fi.Name.Remove(fi.Name.Length - 4, 4) + "_dup.txt";
-                    duplicates = duplicates.GroupBy(x => x.number).Select(g => g.First()).ToList();
+                    CommonTextClass tmpTxt = new CommonTextClass();
+                    tmpTxt.txtList = new List<CommonText>();
 
-                    if(sfd.ShowDialog() == DialogResult.OK)
+                    for(int i = 0; i < readyStrs.Count; i++)
                     {
-                        if(File.Exists(sfd.FileName)) File.Delete(sfd.FileName);
-                        FileStream fws = new FileStream(sfd.FileName, FileMode.CreateNew);
-                        StreamWriter sw = new StreamWriter(fws);
+                        tmpTxt.txtList.Add(readyStrs[i]);
+                    }
 
-                        foreach(AllText dup in duplicates)
+                    tmpTxt = Methods.SortString(tmpTxt);
+
+                    readyStrs = new List<CommonText>();
+
+                    for(int i = 0; i < tmpTxt.txtList.Count; i++)
+                    {
+                        readyStrs.Add(tmpTxt.txtList[i]);
+                    }
+
+                    tmpTxt = null;
+                }
+
+                if(readyStrs.Count > 0)
+                {
+                    FileInfo fi = new FileInfo(firstDuplicatedPath);
+                    MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+                    string newPath = readyDuplicatedPath + "\\" + fi.Name.Remove(fi.Name.Length - fi.Extension.Length, fi.Extension.Length) + "_replaced" + fi.Extension;
+
+                    if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(readyStrs, false, newPath);
+                    else Texts.SaveText.OldMethod(readyStrs, true, false, newPath);
+                }
+            }
+            else if(severalFilesRB.Checked && Directory.Exists(firstDuplicatedPath) && Directory.Exists(secondDuplicatedPath))
+            {
+                DirectoryInfo firstDI = new DirectoryInfo(firstDuplicatedPath);
+                DirectoryInfo secondDI = new DirectoryInfo(secondDuplicatedPath);
+                FileInfo[] firstFI = firstDI.GetFiles("*.*", SearchOption.AllDirectories);
+                FileInfo[] secondFI = secondDI.GetFiles("*.*", SearchOption.AllDirectories);
+
+                for (int f = 0; f < firstFI.Length; f++)
+                {
+                    List<CommonText> firstStrs = Texts.ReadText.GetStrings(firstDuplicatedPath);
+                    List<CommonText> secondStrs = Texts.ReadText.GetStrings(secondDuplicatedPath);
+
+                    List<CommonText> readyStrs = SortByOriginalStrs(firstStrs, secondStrs);
+
+                    if (sortDoubledCB.Checked)
+                    {
+                        CommonTextClass tmpTxt = new CommonTextClass();
+                        tmpTxt.txtList = new List<CommonText>();
+
+                        for (int i = 0; i < readyStrs.Count; i++)
                         {
-                            sw.WriteLine(dup.number + ") " + dup.orName);
-                            sw.WriteLine(dup.orText);
-                            sw.WriteLine(dup.number + ") " + dup.trName);
-                            sw.WriteLine(dup.trText);
+                            tmpTxt.txtList.Add(readyStrs[i]);
                         }
 
-                        sw.Close();
-                        fws.Close();
+                        tmpTxt = Methods.SortString(tmpTxt);
+
+                        readyStrs = new List<CommonText>();
+
+                        for (int i = 0; i < tmpTxt.txtList.Count; i++)
+                        {
+                            readyStrs.Add(tmpTxt.txtList[i]);
+                        }
+
+                        tmpTxt = null;
+                    }
+
+                    if (readyStrs.Count > 0)
+                    {
+                        FileInfo fi = new FileInfo(firstDuplicatedPath);
+                        MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+                        string newPath = readyDuplicatedPath + "\\" + fi.Name.Remove(fi.Name.Length - fi.Extension.Length, fi.Extension.Length) + "_replaced" + fi.Extension;
+
+                        if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(readyStrs, false, newPath);
+                        else Texts.SaveText.OldMethod(readyStrs, true, false, newPath);
                     }
                 }
             }
+        }
+
+        private void tabPagesControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            groupBox1.Text = tabPagesControl.SelectedIndex == 0 ? "Merge" : "Replace";
         }
     }
 }
