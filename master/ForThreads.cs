@@ -99,18 +99,17 @@ namespace TTG_Tools
                                             show[0] = true;    
                                                 break;
                                         case ".landb":
-                                            result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false);
+                                            result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, encKey, version);
                                             ReportForWork(result);
                                             show[1] = true;
                                                 break;
                                         case ".langdb":
-                                            //ImportTXTinLANGDB(inputFiles, fileDestination, i, j, pathOutput, ref correct_work, versionOfGame);
                                             result = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, FullEncrypt, ref encKey, version);
                                             ReportForWork(result);
                                             show[2] = true;
                                                 break;
                                         case ".dlog":
-                                            result = Texts.DlogWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false);
+                                            result = Texts.DlogWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, ref encKey, ref version);
                                             ReportForWork(result);
                                             show[3] = true;
                                                 break;
@@ -636,13 +635,13 @@ namespace TTG_Tools
                                         break;
 
                                 case ".landb":
-                                    message = Texts.LandbWorker.DoWork(inputFiles[i].FullName, "", true);
+                                    message = Texts.LandbWorker.DoWork(inputFiles[i].FullName, "", true, encKey, version);
                                     ReportForWork(message);
                                     extractedFormat[2] = 2;
                                        break;
 
                                 case ".dlog":
-                                    message = Texts.DlogWorker.DoWork(inputFiles[i].FullName, "", true);
+                                    message = Texts.DlogWorker.DoWork(inputFiles[i].FullName, "", true, ref encKey, ref version);
                                     //ExtractDlogFile(inputFiles, i);
                                     ReportForWork(message);
                                     extractedFormat[3] = 3;

@@ -93,7 +93,7 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox1.Size = new System.Drawing.Size(760, 368);
+            this.listBox1.Size = new System.Drawing.Size(801, 368);
             this.listBox1.TabIndex = 2;
             // 
             // buttonDecrypt
@@ -117,7 +117,7 @@
             this.groupBox1.Controls.Add(this.comboBox2);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.checkEncLangdb);
-            this.groupBox1.Location = new System.Drawing.Point(356, 35);
+            this.groupBox1.Location = new System.Drawing.Point(368, 35);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
@@ -130,7 +130,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(250, 17);
+            this.checkBox1.Location = new System.Drawing.Point(250, 42);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(2);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(142, 17);
@@ -142,7 +142,7 @@
             // checkIOS
             // 
             this.checkIOS.AutoSize = true;
-            this.checkIOS.Location = new System.Drawing.Point(250, 38);
+            this.checkIOS.Location = new System.Drawing.Point(250, 63);
             this.checkIOS.Margin = new System.Windows.Forms.Padding(2);
             this.checkIOS.Name = "checkIOS";
             this.checkIOS.Size = new System.Drawing.Size(121, 17);
@@ -178,7 +178,7 @@
             // checkUnicode
             // 
             this.checkUnicode.AutoSize = true;
-            this.checkUnicode.Location = new System.Drawing.Point(250, 61);
+            this.checkUnicode.Location = new System.Drawing.Point(250, 86);
             this.checkUnicode.Margin = new System.Windows.Forms.Padding(2);
             this.checkUnicode.Name = "checkUnicode";
             this.checkUnicode.Size = new System.Drawing.Size(132, 17);
@@ -216,9 +216,9 @@
             this.checkEncLangdb.Location = new System.Drawing.Point(8, 15);
             this.checkEncLangdb.Margin = new System.Windows.Forms.Padding(2);
             this.checkEncLangdb.Name = "checkEncLangdb";
-            this.checkEncLangdb.Size = new System.Drawing.Size(238, 17);
+            this.checkEncLangdb.Size = new System.Drawing.Size(263, 17);
             this.checkEncLangdb.TabIndex = 7;
-            this.checkEncLangdb.Text = "Encrypt langdb/d3dtx (fully encrypt d3dtx file)";
+            this.checkEncLangdb.Text = "Encrypt langdb/dlog/d3dtx (fully encrypt d3dtx file)";
             this.checkEncLangdb.UseVisualStyleBackColor = true;
             this.checkEncLangdb.CheckedChanged += new System.EventHandler(this.checkEncLangdb_CheckedChanged);
             // 
@@ -259,7 +259,7 @@
             this.settingsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(780, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(821, 24);
             this.menuStrip1.TabIndex = 15;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -274,7 +274,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(780, 556);
+            this.ClientSize = new System.Drawing.Size(821, 556);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.checkCustomKey);
             this.Controls.Add(this.label1);

@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.IO;
+using System.Security;
 
 namespace TTG_Tools
 {
@@ -292,22 +293,22 @@ namespace TTG_Tools
                         if (TypeFile == "texture") DDSstart = FindStartOfStringSomething(bytes, 4, ".d3dtx") + 6;
                         else DDSstart = FindStartOfStringSomething(bytes, 4, ".tga") + 4;
 
-                            int DDSPos = meta_find_encrypted(bytes, "DDS ", DDSstart, KeyEnc, version);
+                        int DDSPos = meta_find_encrypted(bytes, "DDS ", DDSstart, KeyEnc, version);
 
-                            if ((DDSPos != -1) && (DDSPos < (bytes.Length - 100)))
-                            {
-                                byte[] tempHeader = new byte[2048];
-                                if (tempHeader.Length > bytes.Length - DDSPos) tempHeader = new byte[bytes.Length - DDSPos];
+                        if ((DDSPos != -1) && (DDSPos < (bytes.Length - 100)))
+                        {
+                           byte[] tempHeader = new byte[2048];
+                           if (tempHeader.Length > bytes.Length - DDSPos) tempHeader = new byte[bytes.Length - DDSPos];
 
-                                Array.Copy(bytes, DDSPos, tempHeader, 0, tempHeader.Length);
-                                BlowFishCS.BlowFish decHeader = new BlowFishCS.BlowFish(KeyEnc, version);
-                                tempHeader = decHeader.Crypt_ECB(tempHeader, version, true);
-                                Array.Copy(tempHeader, 0, bytes, DDSPos, tempHeader.Length);
-                                DDSstart = DDSPos;
+                           Array.Copy(bytes, DDSPos, tempHeader, 0, tempHeader.Length);
+                           BlowFishCS.BlowFish decHeader = new BlowFishCS.BlowFish(KeyEnc, version);
+                           tempHeader = decHeader.Crypt_ECB(tempHeader, version, true);
+                           Array.Copy(tempHeader, 0, bytes, DDSPos, tempHeader.Length);
+                           DDSstart = DDSPos;
 
-                                result = "File successfully decrypted.";
-                                return result;
-                            }
+                           result = "File successfully decrypted.";
+                           return result;
+                        }
                     }
                     catch
                     {
@@ -324,48 +325,45 @@ namespace TTG_Tools
 
                         for (int i = 0; i < MainMenu.gamelist.Count; i++)
                         {
-                                int DDSPos = meta_find_encrypted(bytes, "DDS ", DDSstart, MainMenu.gamelist[i].key, 2);
+                            int DDSPos2 = meta_find_encrypted(bytes, "DDS ", DDSstart, MainMenu.gamelist[i].key, 2);
 
-                                if ((DDSPos != -1) && (DDSPos < (bytes.Length - 100)))
-                                {
-                                    byte[] tempHeader = new byte[2048];
-                                    if (tempHeader.Length > bytes.Length - DDSPos) tempHeader = new byte[bytes.Length - DDSPos];
+                            if ((DDSPos2 != -1) && (DDSPos2 < (bytes.Length - 100)))
+                            {
+                                byte[] tempHeader = new byte[2048];
+                                if (tempHeader.Length > bytes.Length - DDSPos2) tempHeader = new byte[bytes.Length - DDSPos2];
 
-                                    Array.Copy(bytes, DDSPos, tempHeader, 0, tempHeader.Length);
-                                    BlowFishCS.BlowFish decHeader = new BlowFishCS.BlowFish(MainMenu.gamelist[i].key, 2);
-                                    tempHeader = decHeader.Crypt_ECB(tempHeader, 2, true);
-                                    Array.Copy(tempHeader, 0, bytes, DDSPos, tempHeader.Length);
-                                    DDSstart = DDSPos;
+                                Array.Copy(bytes, DDSPos2, tempHeader, 0, tempHeader.Length);
+                                BlowFishCS.BlowFish decHeader = new BlowFishCS.BlowFish(MainMenu.gamelist[i].key, 2);
+                                tempHeader = decHeader.Crypt_ECB(tempHeader, 2, true);
+                                Array.Copy(tempHeader, 0, bytes, DDSPos2, tempHeader.Length);
+                                DDSstart = DDSPos2;
 
-                                    result = "Decryption key: " + MainMenu.gamelist[i].gamename + ". Blowfish type: old (versions 2-6)";
-                                    KeyEnc = MainMenu.gamelist[i].key;
+                                result = "Decryption key: " + MainMenu.gamelist[i].gamename + ". Blowfish type: old (versions 2-6)";
+                                KeyEnc = MainMenu.gamelist[i].key;
+                                version = 2;
 
-                                    break;
-                                }
-
+                                break;
                             }
 
-                            if (DDSstart == -1)
+                            int DDSPos7 = meta_find_encrypted(bytes, "DDS ", DDSstart, MainMenu.gamelist[i].key, 7);
+
+                            if ((DDSPos7 != -1) && (DDSPos7 < (bytes.Length - 100)))
                             {
-                                for (int i = 0; i < MainMenu.gamelist.Count; i++)
-                                {
-                                    int DDSPos = meta_find_encrypted(bytes, "DDS ", DDSstart, MainMenu.gamelist[i].key, 7);
+                                byte[] tempHeader = new byte[2048];
+                                if (tempHeader.Length > bytes.Length - DDSPos7) tempHeader = new byte[bytes.Length - DDSPos7];
 
-                                    if ((DDSPos != -1) && (DDSPos < (bytes.Length - 100)))
-                                    {
-                                        byte[] tempHeader = new byte[2048];
-                                        if (tempHeader.Length > bytes.Length - DDSPos) tempHeader = new byte[bytes.Length - DDSPos];
+                                Array.Copy(bytes, DDSPos7, tempHeader, 0, tempHeader.Length);
+                                BlowFishCS.BlowFish decHeader = new BlowFishCS.BlowFish(MainMenu.gamelist[i].key, 7);
+                                tempHeader = decHeader.Crypt_ECB(tempHeader, 7, true);
+                                Array.Copy(tempHeader, 0, bytes, DDSPos7, tempHeader.Length);
+                                DDSstart = DDSPos7;
 
-                                        Array.Copy(bytes, DDSPos, tempHeader, 0, tempHeader.Length);
-                                        BlowFishCS.BlowFish decHeader = new BlowFishCS.BlowFish(MainMenu.gamelist[i].key, 7);
-                                        tempHeader = decHeader.Crypt_ECB(tempHeader, 7, true);
-                                        Array.Copy(tempHeader, 0, bytes, DDSPos, tempHeader.Length);
-                                        DDSstart = DDSPos;
+                                result = "Decryption key: " + MainMenu.gamelist[i].gamename + ". Blowfish type: new (versions 7-9)";
+                                KeyEnc = MainMenu.gamelist[i].key;
+                                version = 7;
 
-                                        result = "Decryption key: " + MainMenu.gamelist[i].gamename + ". Blowfish type: new (versions 7-9)";
-                                        KeyEnc = MainMenu.gamelist[i].key;
-                                    }
-                                }
+                                break;
+                            }
                         }
                     }
                 }
@@ -401,21 +399,7 @@ namespace TTG_Tools
                 byte[] temp_hex_string = new byte[len_string];
                 Array.Copy(array, poz, temp_hex_string, 0, len_string);
 
-                /*for (int i = 0; i < temp_hex_string.Length; i++)
-                {
-                    if (temp_hex_string[i] == 0x00 && i == temp_hex_string.Length - 1)
-                    {
-                        UnicodeNum = 1;//Unicode = false;
-                    }
-                    else if (temp_hex_string[i] == 0x00 && i <= temp_hex_string.Length - 1)
-                    {
-                        UnicodeNum = MainMenu.settings.unicodeSettings;
-                        break;
-                    }
-                }*/
-
                 string result;
-                //if (MainMenu.settings.unicodeSettings != 1) result = UnicodeEncoding.UTF8.GetString(temp_hex_string);
                 if (UnicodeNum != 1) result = UnicodeEncoding.UTF8.GetString(temp_hex_string);
                 else result = ASCIIEncoding.GetEncoding(ASCII_N).GetString(temp_hex_string);
                 return result;
@@ -488,18 +472,18 @@ namespace TTG_Tools
             return luaContent;
         }
 
-        public static int meta_find_encrypted(byte[] binContent, string NeedData, int pos, byte[] DecKey, int version) //Для поиска в зашифрованных данных (обычно для поиска текстур)
+        //Search some data in textures
+        private static int meta_find_encrypted(byte[] binContent, string NeedData, int pos, byte[] DecKey, int version)
         {
-            int bufsz = 128; //Размер буфера по умолчанию
+            int bufsz = 128; //Default buffer size
             int result = 0;
-            int Max_scan_size = 2048; //Проверка только определённого участка
+            int Max_scan_size = 2048; //Check dds block
 
             bool IsFinding = true;
             
             BlowFishCS.BlowFish decBuf = new BlowFishCS.BlowFish(DecKey, version);
 
-
-            if (pos > binContent.Length - 4) pos = 4; //Начинать поиск после заголовка файла
+            if (pos > binContent.Length - 4) pos = 4; //Set check pos after header if pos more than file size
 
             while (IsFinding)
             {
@@ -517,31 +501,138 @@ namespace TTG_Tools
 
                 byte[] checkBuffer = decBuf.Crypt_ECB(buffer, version, true);
 
-                    int bfPos = 0; //Позиция в blowfish
-                    while (Methods.ConvertHexToString(checkBuffer, bfPos, NeedData.Length, MainMenu.settings.ASCII_N, 1) != NeedData)
+                int bfPos = 0; //position at blowfished block
+                while (Methods.ConvertHexToString(checkBuffer, bfPos, NeedData.Length, MainMenu.settings.ASCII_N, 1) != NeedData)
+                {
+                    bfPos++;
+                    if (Methods.ConvertHexToString(checkBuffer, bfPos, NeedData.Length, MainMenu.settings.ASCII_N, 1) == NeedData)
                     {
-                        bfPos++;
-                        if (Methods.ConvertHexToString(checkBuffer, bfPos, NeedData.Length, MainMenu.settings.ASCII_N, 1) == NeedData)
-                        {
-                            result = bfPos + pos - 1;
-                            IsFinding = false;
-                        }
-                        if ((bfPos + NeedData.Length + 1) > checkBuffer.Length)
-                        {
-                            break;
-                        }
+                       result = bfPos + pos - 1;
+                       IsFinding = false;
                     }
-
                 
-
-                    if ((pos >= binContent.Length) || (Max_scan_size < 0))
+                    if ((bfPos + NeedData.Length + 1) > checkBuffer.Length)
                     {
-                        result = -1;
-                        IsFinding = false;
+                       break;
                     }
+                }
+
+                if ((pos >= binContent.Length) || (Max_scan_size < 0))
+                {
+                   result = -1;
+                   IsFinding = false;
+                }
             }
 
             return result;
+        }
+
+        public static string FindLangresDecryptKey(byte[] file, ref byte[] key, ref int version)
+        {
+            string result = null;
+            
+            if(FindStartOfStringSomething(file, 8, "class") == 12)
+            {
+                return "OK";
+            }
+            byte[] tmp = new byte[4];
+            Array.Copy(file, 4, tmp, 0, tmp.Length);
+
+            if((BitConverter.ToInt32(tmp, 0) > 0) || (((BitConverter.ToInt32(tmp, 0) * 12) + 8) < file.Length))
+            {
+                byte[] check;
+                int checkPos = 8;
+
+                for(int i = 0; i < BitConverter.ToInt32(tmp, 0); i++)
+                {
+                    if (checkPos + 12 >= file.Length) break;
+                    check = new byte[8];
+                    Array.Copy(file, checkPos, check, 0, check.Length);
+                    checkPos += 12;
+
+                    if((BitConverter.ToUInt64(check, 0) == CRCs.CRC64(0, InEngineWords.ClassStructsNames.languagedatabaseClass.ToLower()))
+                        || (BitConverter.ToUInt64(check, 0) == CRCs.CRC64(0, InEngineWords.ClassStructsNames.languagedbClass.ToLower())))
+                    {
+                        return "OK";
+                    }
+                }
+            }
+
+            byte[] tmpFile = new byte[file.Length];
+            Array.Copy(file, 0, tmpFile, 0, tmpFile.Length);
+
+            for(int i = 0; i < MainMenu.gamelist.Count; i++)
+            {
+                int checkVer2 = meta_find_langres_crypt(ref tmpFile, MainMenu.gamelist[i].key, 2);
+                int checkVer7 = meta_find_langres_crypt(ref tmpFile, MainMenu.gamelist[i].key, 7);
+
+                if((checkVer2 != -1) || (checkVer7 != -1))
+                {
+                    result = "Encryption key " + MainMenu.gamelist[i].gamename + ". Version ";
+                    key = MainMenu.gamelist[i].key;
+                    version = checkVer2 != -1 ? 2 : 7;
+                    result += checkVer2 != -1 ? "(2-6)." : "(7-9).";
+
+                    Array.Copy(tmpFile, 0, file, 0, tmpFile.Length);
+
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        private static int meta_find_langres_crypt(ref byte[] file, byte[] key, int version_archive)
+        {
+            int result = -1;
+
+            try
+            {
+                byte[] tmpFile = new byte[file.Length];
+                Array.Copy(file, 0, tmpFile, 0, tmpFile.Length);
+
+                if (meta_crypt(tmpFile, key, version_archive, true) == 1)
+                {
+                    byte[] tmp = new byte[4];
+                    Array.Copy(tmpFile, 4, tmp, 0, tmp.Length);
+                    int count = BitConverter.ToInt32(tmp, 0);
+
+                    if ((count > 0) && (count * 12) < tmpFile.Length)
+                    {
+                        int tmpPos = 8;
+
+                        for (int i = 0; i < count; i++)
+                        {
+                            tmp = new byte[8];
+                            Array.Copy(tmpFile, tmpPos, tmp, 0, tmp.Length);
+                            tmpPos += 12;
+
+                            if ((BitConverter.ToUInt64(tmp, 0) == CRCs.CRC64(0, InEngineWords.ClassStructsNames.languagedatabaseClass.ToLower()))
+                                || (BitConverter.ToUInt64(tmp, 0) == CRCs.CRC64(0, InEngineWords.ClassStructsNames.languagedbClass.ToLower())))
+                            {
+                                file = new byte[tmpFile.Length];
+                                Array.Copy(tmpFile, 0, file, 0, file.Length);
+
+                                return 1;
+                            }
+                        }
+
+                        if (FindStartOfStringSomething(tmpFile, 8, "class") == 12)
+                        {
+                            file = new byte[tmpFile.Length];
+                            Array.Copy(tmpFile, 0, file, 0, file.Length);
+
+                            result = 1;
+                        }
+                    }
+                }
+
+                return result;
+            }
+            catch
+            {
+                return -1;
+            }
         }
 
         public static int meta_crypt(byte[] file, byte[] key, int version_archive, bool decrypt)

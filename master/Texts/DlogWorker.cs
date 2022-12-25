@@ -7,6 +7,7 @@ using System.IO;
 using TTG_Tools.ClassesStructs.Text;
 using TTG_Tools.InEngineWords;
 using System.Windows.Forms.VisualStyles;
+using System.Security.Cryptography;
 
 namespace TTG_Tools.Texts
 {
@@ -391,7 +392,7 @@ namespace TTG_Tools.Texts
             return dlog;
         }
 
-        public static string DoWork(string InputFile, string TxtFile, bool extract)
+        public static string DoWork(string InputFile, string TxtFile, bool extract, ref byte[] EncKey, ref int version)
         {
             string result = "";
 
@@ -401,9 +402,32 @@ namespace TTG_Tools.Texts
             MemoryStream ms = new MemoryStream(buffer);
             BinaryReader br = new BinaryReader(ms);
 
+            string additionalMessage = "";
+
             try
             {
                 byte[] header = br.ReadBytes(4);
+
+                if (Encoding.ASCII.GetString(header) != "ERTM") //Supposed this dlog file encrypted
+                {
+                    //First trying decrypt probably encrypted dlog
+                    try
+                    {
+                        string info = Methods.FindLangresDecryptKey(buffer, ref EncKey, ref version);
+
+                        if ((info != null) && (info != "OK"))
+                        {
+                            additionalMessage = "Dlog file was encrypted, but I decrypted. " + info;
+                        }
+                    }
+                    catch
+                    {
+                        result = "Maybe that LANGDB file encrypted. Try to decrypt first: " + fi.Name;
+
+                        return result;
+                    }
+                }
+
                 int count = br.ReadInt32();
 
                 byte[] tmp;
@@ -494,12 +518,6 @@ namespace TTG_Tools.Texts
                     ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
                     txts.txtList = ReadText.GetStrings(TxtFile);
 
-                    if (txts.txtList.Count < dlog.landb.landbCount)
-                    {
-                        FileInfo txtFI = new FileInfo(TxtFile);
-                        return "Not enough strings in " + txtFI.Name + " for " + fi.Name + " file.";
-                    }
-
                     int type = CheckNumbers(txts.txtList, dlog);
 
                     switch(type)
@@ -532,6 +550,38 @@ namespace TTG_Tools.Texts
 
                     dlog = null;
                     buffer = null;
+
+                    if ((EncKey != null) || MainMenu.settings.encLangdb)
+                    {
+                        buffer = File.ReadAllBytes(outputFile);
+
+                        if ((EncKey != null) && !MainMenu.settings.encLangdb)
+                        {
+                            if (Methods.meta_crypt(buffer, EncKey, version, false) != 0)
+                            {
+                                File.WriteAllBytes(outputFile, buffer);
+                                result += " Successfull encrypted back!";
+                            }
+                        }
+                        else if (MainMenu.settings.encLangdb)
+                        {
+                            byte[] key = new byte[MainMenu.gamelist[MainMenu.settings.encKeyIndex].key.Length];
+                            Array.Copy(MainMenu.gamelist[MainMenu.settings.encKeyIndex].key, 0, key, 0, key.Length);
+
+                            if (MainMenu.settings.customKey)
+                            {
+                                key = Methods.stringToKey(MainMenu.settings.encCustomKey);
+                            }
+
+                            version = MainMenu.settings.versionEnc == 0 ? 2 : 7;
+
+                            if (Methods.meta_crypt(buffer, key, version, false) != 0)
+                            {
+                                File.WriteAllBytes(outputFile, buffer);
+                                result += " Successfull encrypted!";
+                            }
+                        }
+                    }
                 }
             }
             catch

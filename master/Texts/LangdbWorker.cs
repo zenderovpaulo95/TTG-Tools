@@ -305,9 +305,32 @@ namespace TTG_Tools.Texts
             MemoryStream ms = new MemoryStream(buffer);
             BinaryReader br = new BinaryReader(ms);
 
+            string additionalMessage = "";
+
             try
             {
                 byte[] checkHeader = br.ReadBytes(4);
+
+                if (Encoding.ASCII.GetString(checkHeader) != "ERTM") //Supposed this langdb file encrypted
+                {
+                    //First trying decrypt probably encrypted langdb
+                    try
+                    {
+                        string info = Methods.FindLangresDecryptKey(buffer, ref EncKey, ref version);
+
+                        if ((info != null) && (info != "OK"))
+                        {
+                            additionalMessage = "Langdb file was encrypted, but I decrypted. " + info;
+                        }
+                    }
+                    catch
+                    {
+                        result = "Maybe that LANGDB file encrypted. Try to decrypt first: " + fi.Name;
+
+                        return result;
+                    }
+                }
+
                 int countBlocks = br.ReadInt32();
 
                 string[] classes = new string[countBlocks];
@@ -432,6 +455,38 @@ namespace TTG_Tools.Texts
                     ms.Close();
 
                     langdbs = null;
+
+                    if ((EncKey != null) || MainMenu.settings.encLangdb)
+                    {
+                        buffer = File.ReadAllBytes(outputFile);
+
+                        if ((EncKey != null) && !MainMenu.settings.encLangdb)
+                        {
+                            if (Methods.meta_crypt(buffer, EncKey, version, false) != 0)
+                            {
+                                File.WriteAllBytes(outputFile, buffer);
+                                result += " Successfull encrypted back!";
+                            }
+                        }
+                        else if (MainMenu.settings.encLangdb)
+                        {
+                            byte[] key = new byte[MainMenu.gamelist[MainMenu.settings.encKeyIndex].key.Length];
+                            Array.Copy(MainMenu.gamelist[MainMenu.settings.encKeyIndex].key, 0, key, 0, key.Length);
+
+                            if(MainMenu.settings.customKey)
+                            {
+                                key = Methods.stringToKey(MainMenu.settings.encCustomKey);
+                            }
+
+                            version = MainMenu.settings.versionEnc == 0 ? 2 : 7;
+                            
+                            if (Methods.meta_crypt(buffer, key, version, false) != 0)
+                            {
+                                File.WriteAllBytes(outputFile, buffer);
+                                result += " Successfull encrypted!";
+                            }
+                        }
+                    }
                 }
 
                 buffer = null;

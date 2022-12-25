@@ -171,7 +171,7 @@
             this.tabPagesControl.Location = new System.Drawing.Point(15, 13);
             this.tabPagesControl.Name = "tabPagesControl";
             this.tabPagesControl.SelectedIndex = 0;
-            this.tabPagesControl.Size = new System.Drawing.Size(590, 185);
+            this.tabPagesControl.Size = new System.Drawing.Size(597, 185);
             this.tabPagesControl.TabIndex = 16;
             this.tabPagesControl.SelectedIndexChanged += new System.EventHandler(this.tabPagesControl_SelectedIndexChanged);
             // 
@@ -192,14 +192,14 @@
             this.mergeTextTabPage.Location = new System.Drawing.Point(4, 22);
             this.mergeTextTabPage.Name = "mergeTextTabPage";
             this.mergeTextTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.mergeTextTabPage.Size = new System.Drawing.Size(582, 159);
+            this.mergeTextTabPage.Size = new System.Drawing.Size(589, 159);
             this.mergeTextTabPage.TabIndex = 0;
             this.mergeTextTabPage.Text = "Merge texts";
             // 
             // sortStrsCB
             // 
             this.sortStrsCB.AutoSize = true;
-            this.sortStrsCB.Location = new System.Drawing.Point(326, 130);
+            this.sortStrsCB.Location = new System.Drawing.Point(318, 130);
             this.sortStrsCB.Name = "sortStrsCB";
             this.sortStrsCB.Size = new System.Drawing.Size(130, 17);
             this.sortStrsCB.TabIndex = 21;
@@ -259,14 +259,14 @@
             this.replaceTextTabPage.Location = new System.Drawing.Point(4, 22);
             this.replaceTextTabPage.Name = "replaceTextTabPage";
             this.replaceTextTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.replaceTextTabPage.Size = new System.Drawing.Size(582, 159);
+            this.replaceTextTabPage.Size = new System.Drawing.Size(589, 159);
             this.replaceTextTabPage.TabIndex = 1;
             this.replaceTextTabPage.Text = "Replace texts";
             // 
             // sortDoubledCB
             // 
             this.sortDoubledCB.AutoSize = true;
-            this.sortDoubledCB.Location = new System.Drawing.Point(159, 128);
+            this.sortDoubledCB.Location = new System.Drawing.Point(180, 128);
             this.sortDoubledCB.Name = "sortDoubledCB";
             this.sortDoubledCB.Size = new System.Drawing.Size(130, 17);
             this.sortDoubledCB.TabIndex = 13;
@@ -396,9 +396,9 @@
             // 
             // checkNonTranslatedStrsBtn
             // 
-            this.checkNonTranslatedStrsBtn.Location = new System.Drawing.Point(393, 204);
+            this.checkNonTranslatedStrsBtn.Location = new System.Drawing.Point(348, 204);
             this.checkNonTranslatedStrsBtn.Name = "checkNonTranslatedStrsBtn";
-            this.checkNonTranslatedStrsBtn.Size = new System.Drawing.Size(159, 23);
+            this.checkNonTranslatedStrsBtn.Size = new System.Drawing.Size(241, 23);
             this.checkNonTranslatedStrsBtn.TabIndex = 23;
             this.checkNonTranslatedStrsBtn.Text = "Check non-translated strings";
             this.checkNonTranslatedStrsBtn.UseVisualStyleBackColor = true;

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TTG_Tools.ClassesStructs.Text;
 using System.IO;
 using System.Windows.Forms.VisualStyles;
+using System.Security.Cryptography;
 
 namespace TTG_Tools.Texts
 {
@@ -450,7 +451,7 @@ namespace TTG_Tools.Texts
             return landb;
         }
 
-        public static string DoWork(string InputFile, string TxtFile, bool extract)
+        public static string DoWork(string InputFile, string TxtFile, bool extract, byte[] EncKey, int version)
         {
             string result = "";
 
@@ -468,6 +469,7 @@ namespace TTG_Tools.Texts
                 bool hasCRC64Langres = false;
                 bool isUnicode = false;
                 int pos = 4;
+                string additionalMessage = "";
 
                 if ((Encoding.ASCII.GetString(checkHeader) == "5VSM") || (Encoding.ASCII.GetString(checkHeader) == "6VSM"))
                 {
@@ -545,6 +547,7 @@ namespace TTG_Tools.Texts
                     txts = null;
 
                     result = fi.Name + " successfully extracted.";
+                    if (additionalMessage != "") result += " " + additionalMessage;
                 }
                 else
                 {
