@@ -38,7 +38,6 @@ namespace TTG_Tools
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
 
-            //MainMenu.settings.unicodeSupport = checkUnicode.Checked;
             if (((MainMenu.settings.pathForInputFolder != "") && (Directory.Exists(MainMenu.settings.pathForInputFolder)))
                 && ((MainMenu.settings.pathForOutputFolder != "") && (Directory.Exists(MainMenu.settings.pathForOutputFolder))))
             {
