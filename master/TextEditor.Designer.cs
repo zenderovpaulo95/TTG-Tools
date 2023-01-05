@@ -400,7 +400,7 @@
             this.checkNonTranslatedStrsBtn.Name = "checkNonTranslatedStrsBtn";
             this.checkNonTranslatedStrsBtn.Size = new System.Drawing.Size(241, 23);
             this.checkNonTranslatedStrsBtn.TabIndex = 23;
-            this.checkNonTranslatedStrsBtn.Text = "Check non-translated strings";
+            this.checkNonTranslatedStrsBtn.Text = "Check non-translated strings in or + tr file";
             this.checkNonTranslatedStrsBtn.UseVisualStyleBackColor = true;
             this.checkNonTranslatedStrsBtn.Click += new System.EventHandler(this.button4_Click);
             // 

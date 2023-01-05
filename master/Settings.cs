@@ -17,7 +17,6 @@ namespace TTG_Tools
             xmlW.Close();
         }
 
-
         private string _pathForInputFolder;
         private string _pathForOutputFolder;
         private int _ASCII_N;
@@ -62,6 +61,7 @@ namespace TTG_Tools
                 _pathForInputFolder = value;
             }
         }
+
         [XmlAttribute("pathForOutputFolder")]
         public string pathForOutputFolder
         {
@@ -167,7 +167,6 @@ namespace TTG_Tools
         }
 
         [XmlAttribute("unicodeMode")]
-
         public int unicodeSettings
         {
             get
