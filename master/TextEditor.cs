@@ -249,42 +249,35 @@ namespace TTG_Tools
             bool tmpTSVFormat = MainMenu.settings.tsvFormat;
             List<CommonText> checkTxts;
 
+            string filePath = firstPath.Text;
+            string readyFilePath = readyPath.Text;
+
             if (singleFileRB.Checked)
             {
-                OpenFileDialog ofd = new OpenFileDialog();
-                ofd.Title = "Select file to check on duplicated strings";
-                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
-
-                if (ofd.ShowDialog() == DialogResult.OK)
+                if (File.Exists(filePath) && (readyFilePath != ""))
                 {
-                    checkTxts = CheckStrings(ofd.FileName);
+                    checkTxts = CheckStrings(filePath);
 
                     if (checkTxts.Count > 0)
                     {
-                        SaveFileDialog sfd = new SaveFileDialog();
-                        sfd.Title = "Save file with duplicated strings";
-                        sfd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+                        FileInfo fi = new FileInfo(readyFilePath);
+                        MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
 
-                        if (sfd.ShowDialog() == DialogResult.OK)
-                        {
-                            FileInfo fi = new FileInfo(sfd.FileName);
-                            MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+                        Texts.SaveText.OldMethod(checkTxts, false, false, readyFilePath);
 
-                            Texts.SaveText.OldMethod(checkTxts, false, false, sfd.FileName);
-                        }
+                        MessageBox.Show("File successfully saved!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Please check paths.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else if(severalFilesRB.Checked)
             {
-                FolderBrowserDialog openFBD = new FolderBrowserDialog();
-                openFBD.Description = "Set input directory with needed files";
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
-                fbd.Description = "Set output directory for founded duplicated strings in file";
-
-                if ((openFBD.ShowDialog() == DialogResult.OK) && (fbd.ShowDialog() == DialogResult.OK))
+                if (Directory.Exists(filePath) && Directory.Exists(readyFilePath))
                 {
-                    DirectoryInfo di = new DirectoryInfo(openFBD.SelectedPath);
+                    DirectoryInfo di = new DirectoryInfo(filePath);
                     FileInfo[] fi = di.GetFiles("*.*", SearchOption.AllDirectories);
 
                     progressBar2.Maximum = fi.Length - 1;
@@ -296,11 +289,15 @@ namespace TTG_Tools
                             FileInfo tmpFI = new FileInfo(fi[i].FullName);
                             checkTxts = CheckStrings(fi[i].FullName);
 
-                            Texts.SaveText.OldMethod(checkTxts, false, false, fbd.SelectedPath + "\\" + tmpFI.Name);
+                            Texts.SaveText.OldMethod(checkTxts, false, false, readyFilePath + "\\" + tmpFI.Name);
                         }
 
                         ProcessorProgress2(i);
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Please check paths.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
@@ -451,47 +448,39 @@ namespace TTG_Tools
         //Check non-translated strings button in merge tab
         private void button4_Click(object sender, EventArgs e)
         {
+            string filePath = firstPath.Text;
+            string readyPath = readyFilePath.Text;
+
             if (singleFileRB.Checked)
             {
-                OpenFileDialog ofd = new OpenFileDialog();
-                ofd.Title = "Set original + translated file for check non-translated strings";
-                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
-
-                if (ofd.ShowDialog() == DialogResult.OK)
+                if (File.Exists(filePath) && (readyPath != ""))
                 {
-                    List<CommonText> result = CheckNonTranslateStrs(ofd.FileName);
+                    List<CommonText> result = CheckNonTranslateStrs(filePath);
 
                     if (result.Count > 0)
                     {
-                        SaveFileDialog sfd = new SaveFileDialog();
-                        sfd.Title = "Save file with non-translated string";
-                        sfd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+                        FileInfo fi = new FileInfo(readyPath);
 
-                        if (sfd.ShowDialog() == DialogResult.OK)
-                        {
-                            FileInfo fi = new FileInfo(sfd.FileName);
+                        bool tmpTSV = MainMenu.settings.tsvFormat;
+                        MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
 
-                            bool tmpTSV = MainMenu.settings.tsvFormat;
-                            MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
+                        Texts.SaveText.OldMethod(result, false, false, fi.FullName);
 
-                            Texts.SaveText.OldMethod(result, false, false, fi.FullName);
+                        MainMenu.settings.tsvFormat = tmpTSV;
 
-                            MainMenu.settings.tsvFormat = tmpTSV;
-                        }
+                        MessageBox.Show("File successfully saved!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Please check paths.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
-                fbd.Description = "Select folder path with files to check";
-
-                FolderBrowserDialog fbd2 = new FolderBrowserDialog();
-                fbd2.Description = "Set folder for non-translated strings in files";
-
-                if ((fbd.ShowDialog() == DialogResult.OK) && (fbd2.ShowDialog() == DialogResult.OK))
+                if (Directory.Exists(filePath) && Directory.Exists(readyPath))
                 {
-                    DirectoryInfo di = new DirectoryInfo(fbd.SelectedPath);
+                    DirectoryInfo di = new DirectoryInfo(filePath);
                     FileInfo[] fi = di.GetFiles("*.*", SearchOption.AllDirectories);
                     progressBar2.Maximum = fi.Length - 1;
 
@@ -508,7 +497,7 @@ namespace TTG_Tools
                                 bool tmpTSV = MainMenu.settings.tsvFormat;
                                 MainMenu.settings.tsvFormat = tmpFi.Extension.ToLower() == ".tsv";
 
-                                string tmpFilePath = fbd2.SelectedPath + "\\" + tmpFi.Name;
+                                string tmpFilePath = readyPath + "\\" + tmpFi.Name;
 
                                 Texts.SaveText.OldMethod(result, false, false, tmpFilePath);
                                 MainMenu.settings.tsvFormat = tmpTSV;
@@ -517,6 +506,10 @@ namespace TTG_Tools
 
                         ProcessorProgress2(i);
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Please check paths.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -664,7 +657,68 @@ namespace TTG_Tools
 
         private void tabPagesControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            groupBox1.Text = tabPagesControl.SelectedIndex == 0 ? "Merge" : "Replace";
+            switch(tabPagesControl.SelectedIndex)
+            {
+                case 0:
+                    groupBox1.Text = "Merge";
+                    break;
+
+                case 1:
+                    groupBox1.Text = "Replace";
+                    break;
+
+                case 2:
+                    groupBox1.Text = "Work with";
+                    break;
+            }
+        }
+
+        private void firstBrowseBtn_Click(object sender, EventArgs e)
+        {
+            if (singleFileRB.Checked)
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    firstPath.Text = ofd.FileName;
+                }
+            }
+            else
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                fbd.Description = "Set input directory with needed files";
+
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    firstPath.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void readyBrowseBtn_Click(object sender, EventArgs e)
+        {
+            if (singleFileRB.Checked)
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    readyPath.Text = ofd.FileName;
+                }
+            }
+            else
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                fbd.Description = "Set output directory for founded duplicated strings in file";
+
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    readyPath.Text = fbd.SelectedPath;
+                }
+            }
         }
     }
 }
