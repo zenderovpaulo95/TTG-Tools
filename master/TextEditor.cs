@@ -425,9 +425,20 @@ namespace TTG_Tools
 
             progressBar1.Maximum = checkTxt.Count - 1;
 
+            string originalStr = "", translatedStr = "";
+
             for (int i = 0; i < checkTxt.Count; i++)
             {
-                if ((checkTxt[i].actorSpeechOriginal == checkTxt[i].actorSpeechTranslation) && checkTxt[i].isBothSpeeches)
+                originalStr = Methods.DeleteCommentary(checkTxt[i].actorSpeechOriginal, "{", "}");
+                originalStr = Methods.DeleteCommentary(originalStr, "[", "]");
+                originalStr = Regex.Replace(originalStr, @"[^\w]", "");
+
+                translatedStr = Methods.DeleteCommentary(checkTxt[i].actorSpeechTranslation, "{", "}");
+                translatedStr = Methods.DeleteCommentary(translatedStr, "[", "]");
+                translatedStr = Regex.Replace(translatedStr, @"[^\w]", "");
+
+                if ((originalStr.ToLower() == translatedStr.ToLower()) && checkTxt[i].isBothSpeeches
+                    && (originalStr != ""))
                 {
                     tmpTxts.isBothSpeeches = checkTxt[i].isBothSpeeches;
                     tmpTxts.strNumber = checkTxt[i].strNumber;
@@ -449,17 +460,17 @@ namespace TTG_Tools
         private void button4_Click(object sender, EventArgs e)
         {
             string filePath = firstPath.Text;
-            string readyPath = readyFilePath.Text;
+            string readyCheckedPath = readyPath.Text;
 
             if (singleFileRB.Checked)
             {
-                if (File.Exists(filePath) && (readyPath != ""))
+                if (File.Exists(filePath) && (readyCheckedPath != ""))
                 {
                     List<CommonText> result = CheckNonTranslateStrs(filePath);
 
                     if (result.Count > 0)
                     {
-                        FileInfo fi = new FileInfo(readyPath);
+                        FileInfo fi = new FileInfo(readyCheckedPath);
 
                         bool tmpTSV = MainMenu.settings.tsvFormat;
                         MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
@@ -478,7 +489,7 @@ namespace TTG_Tools
             }
             else
             {
-                if (Directory.Exists(filePath) && Directory.Exists(readyPath))
+                if (Directory.Exists(filePath) && Directory.Exists(readyCheckedPath))
                 {
                     DirectoryInfo di = new DirectoryInfo(filePath);
                     FileInfo[] fi = di.GetFiles("*.*", SearchOption.AllDirectories);
@@ -497,7 +508,7 @@ namespace TTG_Tools
                                 bool tmpTSV = MainMenu.settings.tsvFormat;
                                 MainMenu.settings.tsvFormat = tmpFi.Extension.ToLower() == ".tsv";
 
-                                string tmpFilePath = readyPath + "\\" + tmpFi.Name;
+                                string tmpFilePath = readyCheckedPath + "\\" + tmpFi.Name;
 
                                 Texts.SaveText.OldMethod(result, false, false, tmpFilePath);
                                 MainMenu.settings.tsvFormat = tmpTSV;
