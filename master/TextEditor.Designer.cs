@@ -58,25 +58,26 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.readyBrowseBtn = new System.Windows.Forms.Button();
+            this.readyPath = new System.Windows.Forms.TextBox();
+            this.checkNonTranslatedStrsBtn = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.firstBrowseBtn = new System.Windows.Forms.Button();
+            this.checkDuplicatedStrsBtn = new System.Windows.Forms.Button();
+            this.firstPath = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.txtNewMethodRB = new System.Windows.Forms.RadioButton();
             this.txtOldMethodRB = new System.Windows.Forms.RadioButton();
-            this.checkNonTranslatedStrsBtn = new System.Windows.Forms.Button();
-            this.checkDuplicatedStrsBtn = new System.Windows.Forms.Button();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.label7 = new System.Windows.Forms.Label();
-            this.firstPath = new System.Windows.Forms.TextBox();
-            this.firstBrowseBtn = new System.Windows.Forms.Button();
-            this.readyBrowseBtn = new System.Windows.Forms.Button();
-            this.readyPath = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.compareBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.tabPagesControl.SuspendLayout();
             this.mergeTextTabPage.SuspendLayout();
             this.replaceTextTabPage.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // progressBar1
@@ -219,7 +220,7 @@
             // 
             this.mergeBtn.Location = new System.Drawing.Point(462, 126);
             this.mergeBtn.Name = "mergeBtn";
-            this.mergeBtn.Size = new System.Drawing.Size(88, 23);
+            this.mergeBtn.Size = new System.Drawing.Size(88, 24);
             this.mergeBtn.TabIndex = 19;
             this.mergeBtn.Text = "Merge files";
             this.mergeBtn.UseVisualStyleBackColor = true;
@@ -370,6 +371,97 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "First doubled file:";
             // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.compareBtn);
+            this.tabPage1.Controls.Add(this.readyBrowseBtn);
+            this.tabPage1.Controls.Add(this.readyPath);
+            this.tabPage1.Controls.Add(this.checkNonTranslatedStrsBtn);
+            this.tabPage1.Controls.Add(this.label9);
+            this.tabPage1.Controls.Add(this.firstBrowseBtn);
+            this.tabPage1.Controls.Add(this.checkDuplicatedStrsBtn);
+            this.tabPage1.Controls.Add(this.firstPath);
+            this.tabPage1.Controls.Add(this.label7);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(589, 159);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "Check non-translated strings";
+            // 
+            // readyBrowseBtn
+            // 
+            this.readyBrowseBtn.Location = new System.Drawing.Point(478, 61);
+            this.readyBrowseBtn.Name = "readyBrowseBtn";
+            this.readyBrowseBtn.Size = new System.Drawing.Size(26, 24);
+            this.readyBrowseBtn.TabIndex = 8;
+            this.readyBrowseBtn.Text = "...";
+            this.readyBrowseBtn.UseVisualStyleBackColor = true;
+            this.readyBrowseBtn.Click += new System.EventHandler(this.readyBrowseBtn_Click);
+            // 
+            // readyPath
+            // 
+            this.readyPath.Location = new System.Drawing.Point(78, 64);
+            this.readyPath.Name = "readyPath";
+            this.readyPath.Size = new System.Drawing.Size(385, 20);
+            this.readyPath.TabIndex = 7;
+            // 
+            // checkNonTranslatedStrsBtn
+            // 
+            this.checkNonTranslatedStrsBtn.Location = new System.Drawing.Point(330, 100);
+            this.checkNonTranslatedStrsBtn.Name = "checkNonTranslatedStrsBtn";
+            this.checkNonTranslatedStrsBtn.Size = new System.Drawing.Size(220, 24);
+            this.checkNonTranslatedStrsBtn.TabIndex = 23;
+            this.checkNonTranslatedStrsBtn.Text = "Check non-translated strings in file";
+            this.checkNonTranslatedStrsBtn.UseVisualStyleBackColor = true;
+            this.checkNonTranslatedStrsBtn.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(9, 48);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(152, 13);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "Non-translated strings file path:";
+            // 
+            // firstBrowseBtn
+            // 
+            this.firstBrowseBtn.Location = new System.Drawing.Point(478, 11);
+            this.firstBrowseBtn.Name = "firstBrowseBtn";
+            this.firstBrowseBtn.Size = new System.Drawing.Size(26, 24);
+            this.firstBrowseBtn.TabIndex = 4;
+            this.firstBrowseBtn.Text = "...";
+            this.firstBrowseBtn.UseVisualStyleBackColor = true;
+            this.firstBrowseBtn.Click += new System.EventHandler(this.firstBrowseBtn_Click);
+            // 
+            // checkDuplicatedStrsBtn
+            // 
+            this.checkDuplicatedStrsBtn.Location = new System.Drawing.Point(30, 100);
+            this.checkDuplicatedStrsBtn.Name = "checkDuplicatedStrsBtn";
+            this.checkDuplicatedStrsBtn.Size = new System.Drawing.Size(256, 24);
+            this.checkDuplicatedStrsBtn.TabIndex = 20;
+            this.checkDuplicatedStrsBtn.Text = "Check on duplicated original strings in file";
+            this.checkDuplicatedStrsBtn.UseVisualStyleBackColor = true;
+            this.checkDuplicatedStrsBtn.Click += new System.EventHandler(this.checkDuplicatedStrsBtn_Click);
+            // 
+            // firstPath
+            // 
+            this.firstPath.Location = new System.Drawing.Point(78, 12);
+            this.firstPath.Name = "firstPath";
+            this.firstPath.Size = new System.Drawing.Size(385, 20);
+            this.firstPath.TabIndex = 2;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(27, 15);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(57, 13);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Check file:";
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.txtNewMethodRB);
@@ -403,26 +495,6 @@
             this.txtOldMethodRB.Text = "Old method";
             this.txtOldMethodRB.UseVisualStyleBackColor = true;
             // 
-            // checkNonTranslatedStrsBtn
-            // 
-            this.checkNonTranslatedStrsBtn.Location = new System.Drawing.Point(340, 90);
-            this.checkNonTranslatedStrsBtn.Name = "checkNonTranslatedStrsBtn";
-            this.checkNonTranslatedStrsBtn.Size = new System.Drawing.Size(220, 33);
-            this.checkNonTranslatedStrsBtn.TabIndex = 23;
-            this.checkNonTranslatedStrsBtn.Text = "Check non-translated strings in file";
-            this.checkNonTranslatedStrsBtn.UseVisualStyleBackColor = true;
-            this.checkNonTranslatedStrsBtn.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // checkDuplicatedStrsBtn
-            // 
-            this.checkDuplicatedStrsBtn.Location = new System.Drawing.Point(12, 90);
-            this.checkDuplicatedStrsBtn.Name = "checkDuplicatedStrsBtn";
-            this.checkDuplicatedStrsBtn.Size = new System.Drawing.Size(256, 33);
-            this.checkDuplicatedStrsBtn.TabIndex = 20;
-            this.checkDuplicatedStrsBtn.Text = "Check on duplicated original strings in file";
-            this.checkDuplicatedStrsBtn.UseVisualStyleBackColor = true;
-            this.checkDuplicatedStrsBtn.Click += new System.EventHandler(this.checkDuplicatedStrsBtn_Click);
-            // 
             // progressBar2
             // 
             this.progressBar2.Location = new System.Drawing.Point(31, 282);
@@ -430,75 +502,15 @@
             this.progressBar2.Size = new System.Drawing.Size(709, 23);
             this.progressBar2.TabIndex = 17;
             // 
-            // tabPage1
+            // compareBtn
             // 
-            this.tabPage1.BackColor = System.Drawing.Color.Transparent;
-            this.tabPage1.Controls.Add(this.readyBrowseBtn);
-            this.tabPage1.Controls.Add(this.readyPath);
-            this.tabPage1.Controls.Add(this.checkNonTranslatedStrsBtn);
-            this.tabPage1.Controls.Add(this.label9);
-            this.tabPage1.Controls.Add(this.firstBrowseBtn);
-            this.tabPage1.Controls.Add(this.checkDuplicatedStrsBtn);
-            this.tabPage1.Controls.Add(this.firstPath);
-            this.tabPage1.Controls.Add(this.label7);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(589, 159);
-            this.tabPage1.TabIndex = 2;
-            this.tabPage1.Text = "Check non-translated strings";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(27, 15);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(57, 13);
-            this.label7.TabIndex = 0;
-            this.label7.Text = "Check file:";
-            // 
-            // firstPath
-            // 
-            this.firstPath.Location = new System.Drawing.Point(78, 12);
-            this.firstPath.Name = "firstPath";
-            this.firstPath.Size = new System.Drawing.Size(385, 20);
-            this.firstPath.TabIndex = 2;
-            // 
-            // firstBrowseBtn
-            // 
-            this.firstBrowseBtn.Location = new System.Drawing.Point(478, 11);
-            this.firstBrowseBtn.Name = "firstBrowseBtn";
-            this.firstBrowseBtn.Size = new System.Drawing.Size(26, 21);
-            this.firstBrowseBtn.TabIndex = 4;
-            this.firstBrowseBtn.Text = "...";
-            this.firstBrowseBtn.UseVisualStyleBackColor = true;
-            this.firstBrowseBtn.Click += new System.EventHandler(this.firstBrowseBtn_Click);
-            // 
-            // readyBrowseBtn
-            // 
-            this.readyBrowseBtn.Location = new System.Drawing.Point(478, 61);
-            this.readyBrowseBtn.Name = "readyBrowseBtn";
-            this.readyBrowseBtn.Size = new System.Drawing.Size(26, 21);
-            this.readyBrowseBtn.TabIndex = 8;
-            this.readyBrowseBtn.Text = "...";
-            this.readyBrowseBtn.UseVisualStyleBackColor = true;
-            this.readyBrowseBtn.Click += new System.EventHandler(this.readyBrowseBtn_Click);
-            // 
-            // readyPath
-            // 
-            this.readyPath.Location = new System.Drawing.Point(78, 61);
-            this.readyPath.Name = "readyPath";
-            this.readyPath.Size = new System.Drawing.Size(385, 20);
-            this.readyPath.TabIndex = 7;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(9, 45);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(152, 13);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Non-translated strings file path:";
+            this.compareBtn.Location = new System.Drawing.Point(30, 130);
+            this.compareBtn.Name = "compareBtn";
+            this.compareBtn.Size = new System.Drawing.Size(520, 23);
+            this.compareBtn.TabIndex = 24;
+            this.compareBtn.Text = "Check 2 files after \"check non-translated strings in file\" button";
+            this.compareBtn.UseVisualStyleBackColor = true;
+            this.compareBtn.Click += new System.EventHandler(this.compareBtn_Click);
             // 
             // TextEditor
             // 
@@ -523,10 +535,10 @@
             this.mergeTextTabPage.PerformLayout();
             this.replaceTextTabPage.ResumeLayout(false);
             this.replaceTextTabPage.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -574,5 +586,6 @@
         private System.Windows.Forms.Button firstBrowseBtn;
         private System.Windows.Forms.TextBox firstPath;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button compareBtn;
     }
 }
