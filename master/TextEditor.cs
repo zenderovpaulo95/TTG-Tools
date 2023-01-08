@@ -263,8 +263,7 @@ namespace TTG_Tools
                         FileInfo fi = new FileInfo(readyFilePath);
                         MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
 
-                        if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(checkTxts, false, readyFilePath);
-                        else Texts.SaveText.OldMethod(checkTxts, true, false, readyFilePath);
+                        Texts.SaveText.OldMethod(checkTxts, false, false, readyFilePath);
 
                         MessageBox.Show("File successfully saved!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -290,8 +289,7 @@ namespace TTG_Tools
                             FileInfo tmpFI = new FileInfo(fi[i].FullName);
                             checkTxts = CheckStrings(fi[i].FullName);
 
-                            if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(checkTxts, false, readyFilePath + "\\" + tmpFI.Name);
-                            else Texts.SaveText.OldMethod(checkTxts, true, false, readyFilePath + "\\" + tmpFI.Name);
+                            Texts.SaveText.OldMethod(checkTxts, false, false, readyFilePath + "\\" + tmpFI.Name);
                         }
 
                         ProcessorProgress2(i);
@@ -477,8 +475,7 @@ namespace TTG_Tools
                         bool tmpTSV = MainMenu.settings.tsvFormat;
                         MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
 
-                        if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(result, false, fi.FullName);
-                        else Texts.SaveText.OldMethod(result, true, false, fi.FullName);
+                        Texts.SaveText.OldMethod(result, false, false, fi.FullName);
 
                         MainMenu.settings.tsvFormat = tmpTSV;
 
@@ -513,9 +510,7 @@ namespace TTG_Tools
 
                                 string tmpFilePath = readyCheckedPath + "\\" + tmpFi.Name;
 
-                                if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(result, false, tmpFilePath);
-                                else Texts.SaveText.OldMethod(result, true, false, tmpFilePath);
-
+                                Texts.SaveText.OldMethod(result, false, false, tmpFilePath);
                                 MainMenu.settings.tsvFormat = tmpTSV;
                             }
                         }
@@ -733,88 +728,6 @@ namespace TTG_Tools
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     readyPath.Text = fbd.SelectedPath;
-                }
-            }
-        }
-
-        private void compareBtn_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog firstOFD = new OpenFileDialog();
-            OpenFileDialog secondOFD = new OpenFileDialog();
-            SaveFileDialog SFD = new SaveFileDialog();
-
-            firstOFD.Title = "Set first file with non-translated strings";
-            secondOFD.Title = "Set second file with non-translated strings";
-            SFD.Title = "Set path to save file with difference";
-
-            firstOFD.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
-            secondOFD.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
-            SFD.Filter = "All supported files|*.txt;*.tsv|Text files (*.txt)|*.txt|TSV files (*.tsv)|*.tsv";
-
-            if((firstOFD.ShowDialog() == DialogResult.OK) && (secondOFD.ShowDialog() == DialogResult.OK))
-            {
-                List<CommonText> firstStrs = Texts.ReadText.GetStrings(firstOFD.FileName);
-                List<CommonText> secondStrs = Texts.ReadText.GetStrings(secondOFD.FileName);
-
-                int i = 0;
-                string firstStr = "", secondStr = "";
-                string firstActorName = "", secondActorName = "";
-
-                while(i < firstStrs.Count)
-                {
-                    firstStr = Methods.DeleteCommentary(firstStrs[i].actorSpeechOriginal, "[", "]");
-                    firstStr = Methods.DeleteCommentary(firstStr, "{", "}");
-                    firstStr = Regex.Replace(firstStr, @"[^\w]", "");
-                    firstActorName = firstStrs[i].actorName.ToUpper();
-
-                    for(int j = 0; j < secondStrs.Count; j++)
-                    {
-                        secondStr = Methods.DeleteCommentary(secondStrs[j].actorSpeechOriginal, "[", "]");
-                        secondStr = Methods.DeleteCommentary(secondStr, "{", "}");
-                        secondStr = Regex.Replace(secondStr, @"[^\w]", "");
-                        secondActorName = secondStrs[j].actorName.ToUpper();
-
-                        if((firstStr.ToLower() == secondStr.ToLower()) && (firstActorName == secondActorName))
-                        {
-                            firstStrs.RemoveAt(i);
-                            secondStrs.RemoveAt(j);
-                            i = 0;
-                        }
-                    }
-
-                    i++;
-                }
-
-                if((firstStrs.Count > 0) || (secondStrs.Count > 0))
-                {
-                    SFD.FileName = firstOFD.FileName;
-
-                    if(SFD.ShowDialog() == DialogResult.OK)
-                    {
-                        List<CommonText> newStrs = new List<CommonText>();
-
-                        for(int f = 0; f < firstStrs.Count; f++)
-                        {
-                            newStrs.Add(firstStrs[f]);
-                        }
-
-                        for(int s = 0; s < secondStrs.Count; s++)
-                        {
-                            newStrs.Add(secondStrs[s]);
-                        }
-
-                        FileInfo fi = new FileInfo(SFD.FileName);
-
-                        bool tmpTSV = MainMenu.settings.tsvFormat;
-                        MainMenu.settings.tsvFormat = fi.Extension.ToLower() == ".tsv";
-
-                        if (txtNewMethodRB.Checked && !MainMenu.settings.tsvFormat) Texts.SaveText.NewMethod(newStrs, false, fi.FullName);
-                        else Texts.SaveText.OldMethod(newStrs, false, false, fi.FullName);
-
-                        MainMenu.settings.tsvFormat = tmpTSV;
-
-                        MessageBox.Show("File successfully saved.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
                 }
             }
         }
