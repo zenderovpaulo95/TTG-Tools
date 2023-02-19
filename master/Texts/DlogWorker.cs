@@ -369,23 +369,14 @@ namespace TTG_Tools.Texts
             return result;
         }
 
-        private static int GetIndex(List<CommonText> text, uint strNum)
-        {
-            for(int i = 0; i < text.Count; i++)
-            {
-                if(text[i].strNumber == strNum) return i;
-            }
-            return 0;
-        }
-
         private static DlogClass ReplaceStrings(DlogClass dlog, List<CommonText> commonTexts)
         {
             for (int i = 0; i < dlog.landb.landbCount; i++)
             {
                 for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
                 {
-                    if (MainMenu.settings.importingOfName) dlog.landb.landbs[i].lang[j].actorName = commonTexts[GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber)].actorName;
-                    dlog.landb.landbs[i].lang[j].actorSpeech = commonTexts[GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber)].actorSpeechTranslation;
+                    if (MainMenu.settings.importingOfName) dlog.landb.landbs[i].lang[j].actorName = commonTexts[Methods.GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber)].actorName;
+                    dlog.landb.landbs[i].lang[j].actorSpeech = commonTexts[Methods.GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber)].actorSpeechTranslation;
                 }
             }
 

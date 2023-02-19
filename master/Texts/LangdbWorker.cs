@@ -252,23 +252,27 @@ namespace TTG_Tools.Texts
             }
         }
 
-        private static int GetIndex(LangdbClass langdb, uint searchNum, int type)
-        {
-            for (int i = 0; i < langdb.langdbCount; i++)
-            {
-                if ((type == 1) && (langdb.langdbs[i].anmID == searchNum)) return i;
-                else if ((type == 0) && (langdb.langdbs[i].stringNumber == searchNum)) return i;
-            }
-
-            return 0;
-        }
-
         private static LangdbClass ReplaceStrings(LangdbClass langdb, List<CommonText> commonTexts, int type)
         {
             for (int i = 0; i < langdb.langdbCount; i++)
             {
-                if (MainMenu.settings.importingOfName) langdb.langdbs[i].actorName = type == 1 ? commonTexts[GetIndex(langdb, langdb.langdbs[i].anmID, type)].actorName : commonTexts[GetIndex(langdb, langdb.langdbs[i].stringNumber, type)].actorName;
-                langdb.langdbs[i].actorSpeech = type == 1 ? commonTexts[GetIndex(langdb, langdb.langdbs[i].anmID, type)].actorSpeechTranslation : commonTexts[GetIndex(langdb, langdb.langdbs[i].stringNumber, type)].actorSpeechTranslation;
+                if (MainMenu.settings.importingOfName) langdb.langdbs[i].actorName = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID)].actorName : commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber)].actorName;
+                langdb.langdbs[i].actorSpeech = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID)].actorSpeechTranslation : commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber)].actorSpeechTranslation;
+
+                if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags)
+                {
+                    string tmpFlags = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID)].flags : commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber)].flags;
+
+                    byte[] tmpBytesFlags = Encoding.ASCII.GetBytes(tmpFlags);
+
+                    int count = tmpBytesFlags.Length > 3 ? 3 : tmpBytesFlags.Length;
+
+                    for (int j = 0; j < count; j++)
+                    {
+                        langdb.flags[i].flags[j] = tmpBytesFlags[j];
+                    }
+
+                }
             }
 
             return langdb;

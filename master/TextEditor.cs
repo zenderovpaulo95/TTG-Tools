@@ -816,6 +816,10 @@ namespace TTG_Tools
                         MessageBox.Show("File successfully saved.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
+                else
+                {
+                    MessageBox.Show("No difference in files", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
     }

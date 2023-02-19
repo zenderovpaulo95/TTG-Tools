@@ -193,7 +193,7 @@ namespace TTG_Tools.Texts
                     landb.newLandbFileSize += 4;
                     landb.newBlockLength += 4;
 
-                    tmp = Encoding.ASCII.GetBytes(Convert.ToString(landb.landbs[i].flags, 2));
+                    tmp = Encoding.ASCII.GetBytes(Convert.ToString(landb.landbs[i].flags, 2).PadLeft(8, '0'));
 
                     landb.flags[i] = new ClassesStructs.FlagsClass.LangdbFlagClass();
                     landb.flags[i].flags = new byte[8];
@@ -427,25 +427,23 @@ namespace TTG_Tools.Texts
             return result;
         }
 
-        private static int GetIndex(LandbClass landb, uint searchNum, int type)
-        {
-            for(int i = 0; i < landb.landbCount; i++)
-            {
-                if ((type == 1) && (landb.landbs[i].anmID == searchNum)) return i;
-                else if((type == 0) && (landb.landbs[i].stringNumber == searchNum)) return i;
-            }
-
-            return 0;
-        }
+        
 
         private static LandbClass ReplaceStrings(LandbClass landb, List<CommonText> commonTexts, int type)
         {
             for(int i = 0; i < landb.landbCount; i++)
             {
-                if (MainMenu.settings.importingOfName) landb.landbs[i].actorName = type == 1 ? commonTexts[GetIndex(landb, landb.landbs[i].anmID, type)].actorName : commonTexts[GetIndex(landb, landb.landbs[i].stringNumber, type)].actorName;
-                landb.landbs[i].actorSpeech = type == 1 ? commonTexts[GetIndex(landb, landb.landbs[i].anmID, type)].actorSpeechTranslation : commonTexts[GetIndex(landb, landb.landbs[i].stringNumber, type)].actorSpeechTranslation;
+                if (MainMenu.settings.importingOfName) landb.landbs[i].actorName = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].anmID)].actorName : commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].stringNumber)].actorName;
+                landb.landbs[i].actorSpeech = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].anmID)].actorSpeechTranslation : commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].stringNumber)].actorSpeechTranslation;
 
                 if (landb.isUnicode && MainMenu.settings.unicodeSettings == 1) landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, false);
+
+                if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags)
+                {
+                    string tmpFlags = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].anmID)].flags : commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].stringNumber)].flags;
+
+                    landb.landbs[i].flags = Convert.ToInt32(tmpFlags, 2);
+                }
             }
 
             return landb;

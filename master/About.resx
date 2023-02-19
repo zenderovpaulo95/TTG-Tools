@@ -139,11 +139,12 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
-v.1.1 (xx.xx.2023)
+v.1.1 (19.02.2023)
 - TTG Tools:
 Remove some parameters from settings form and add into Auto(De)Packer form.
 + Auto(De)Packer:
 Add support new method export/import text files
+Add possible change dialog flags in new method export/import text files.
 +Text editor:
 Add support replace strings with tsv, old method txt files and new method txt files.
 Add check duplicated strings in tsv/txt files.

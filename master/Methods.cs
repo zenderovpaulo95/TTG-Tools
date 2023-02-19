@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.IO;
 using System.Security;
+using TTG_Tools.ClassesStructs.Text;
+using System.Collections.Generic;
 
 namespace TTG_Tools
 {
@@ -757,6 +759,16 @@ namespace TTG_Tools
             }
 
             return luaContent;
+        }
+
+        public static int GetIndex(List<CommonText> txts, uint searchNum)
+        {
+            for (int i = 0; i < txts.Count; i++)
+            {
+                if (txts[i].strNumber == searchNum) return i;
+            }
+
+            return 0;
         }
 
         public static ClassesStructs.Text.CommonTextClass SortString(ClassesStructs.Text.CommonTextClass text)

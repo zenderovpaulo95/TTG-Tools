@@ -28,6 +28,10 @@ namespace TTG_Tools
                 else txtFilesRB.Checked = true;
             }
 
+            checkBoxChangeLangFlags.Enabled = MainMenu.settings.newTxtFormat;
+            checkBoxChangeLangFlags.Visible = MainMenu.settings.newTxtFormat;
+            checkBoxChangeLangFlags.Checked = MainMenu.settings.changeLangFlags;
+
             checkBoxSortStrings.Checked = MainMenu.settings.sortSameString;
             clearMessagesCB.Checked = MainMenu.settings.clearMessages;
             checkBoxD3DTX_after_import.Checked = MainMenu.settings.deleteD3DTXafterImport;
@@ -50,6 +54,7 @@ namespace TTG_Tools
             MainMenu.settings.deleteDDSafterImport = checkBoxDDS_after_import.Checked;
             MainMenu.settings.exportRealID = checkBoxExportRealID.Checked;
             MainMenu.settings.importingOfName = checkBoxImportingOfNames.Checked;
+            MainMenu.settings.changeLangFlags = checkBoxChangeLangFlags.Checked;
 
             if (tsvFilesRB.Checked)
             {
@@ -65,6 +70,12 @@ namespace TTG_Tools
             Settings.SaveConfig(MainMenu.settings);
 
             Close();
+        }
+
+        private void newTxtFormatRB_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxChangeLangFlags.Enabled = newTxtFormatRB.Checked;
+            checkBoxChangeLangFlags.Visible = newTxtFormatRB.Checked;
         }
     }
 }

@@ -48,6 +48,7 @@ namespace TTG_Tools
         private int _versionArchiveIndex;
         private bool _swizzleNintendoSwitch;
         private bool _newTxtFormat;
+        private bool _changeLangFlags;
 
         [XmlAttribute("pathForInputFolder")]
         public string pathForInputFolder
@@ -427,6 +428,19 @@ namespace TTG_Tools
             }
         }
 
+        [XmlAttribute("changeLangFlags")]
+        public bool changeLangFlags
+        {
+            get 
+            {
+                return _changeLangFlags;
+            }
+            set 
+            {
+                _changeLangFlags = value;
+            }
+        }
+
         public Settings(
             string _pathForInputFolder,
             string _pathForOutputFolder,
@@ -456,7 +470,8 @@ namespace TTG_Tools
             int _versionArchiveIndex,
             bool _swizzleNintendoSwitch,
             bool _clearMessages,
-            bool newTxtFormat)
+            bool _newTxtFormat, 
+            bool _changeLangFlags)
         {
             this.ASCII_N = _ASCII_N;
             this.pathForInputFolder = _pathForInputFolder;
@@ -486,7 +501,8 @@ namespace TTG_Tools
             this.versionArchiveIndex = _versionArchiveIndex;
             this.swizzleNintendoSwitch = _swizzleNintendoSwitch;
             this.clearMessages = _clearMessages;
-            this.newTxtFormat = newTxtFormat;
+            this.newTxtFormat = _newTxtFormat;
+            this.changeLangFlags = _changeLangFlags;
         }
 
         public Settings()

@@ -44,6 +44,7 @@
             this.buttonInputFolder = new System.Windows.Forms.Button();
             this.okBtn = new System.Windows.Forms.Button();
             this.cancelBtn = new System.Windows.Forms.Button();
+            this.checkBoxChangeLangFlags = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,6 +72,7 @@
             this.newTxtFormatRB.TabStop = true;
             this.newTxtFormatRB.Text = "txt new format";
             this.newTxtFormatRB.UseVisualStyleBackColor = true;
+            this.newTxtFormatRB.CheckedChanged += new System.EventHandler(this.newTxtFormatRB_CheckedChanged);
             // 
             // tsvFilesRB
             // 
@@ -202,7 +204,7 @@
             // 
             // okBtn
             // 
-            this.okBtn.Location = new System.Drawing.Point(216, 218);
+            this.okBtn.Location = new System.Drawing.Point(216, 246);
             this.okBtn.Name = "okBtn";
             this.okBtn.Size = new System.Drawing.Size(75, 23);
             this.okBtn.TabIndex = 26;
@@ -212,7 +214,7 @@
             // 
             // cancelBtn
             // 
-            this.cancelBtn.Location = new System.Drawing.Point(317, 218);
+            this.cancelBtn.Location = new System.Drawing.Point(317, 246);
             this.cancelBtn.Name = "cancelBtn";
             this.cancelBtn.Size = new System.Drawing.Size(75, 23);
             this.cancelBtn.TabIndex = 27;
@@ -220,11 +222,22 @@
             this.cancelBtn.UseVisualStyleBackColor = true;
             this.cancelBtn.Click += new System.EventHandler(this.cancelBtn_Click);
             // 
+            // checkBoxChangeLangFlags
+            // 
+            this.checkBoxChangeLangFlags.AutoSize = true;
+            this.checkBoxChangeLangFlags.Location = new System.Drawing.Point(276, 208);
+            this.checkBoxChangeLangFlags.Name = "checkBoxChangeLangFlags";
+            this.checkBoxChangeLangFlags.Size = new System.Drawing.Size(135, 17);
+            this.checkBoxChangeLangFlags.TabIndex = 28;
+            this.checkBoxChangeLangFlags.Text = "Change language flags";
+            this.checkBoxChangeLangFlags.UseVisualStyleBackColor = true;
+            // 
             // AutoDePackerSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(433, 248);
+            this.ClientSize = new System.Drawing.Size(433, 285);
+            this.Controls.Add(this.checkBoxChangeLangFlags);
             this.Controls.Add(this.cancelBtn);
             this.Controls.Add(this.okBtn);
             this.Controls.Add(this.textBoxOutputFolder);
@@ -267,5 +280,6 @@
         private System.Windows.Forms.Button buttonInputFolder;
         private System.Windows.Forms.Button okBtn;
         private System.Windows.Forms.Button cancelBtn;
+        private System.Windows.Forms.CheckBox checkBoxChangeLangFlags;
     }
 }
