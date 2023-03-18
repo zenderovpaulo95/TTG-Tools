@@ -254,14 +254,24 @@ namespace TTG_Tools.Texts
 
         private static LangdbClass ReplaceStrings(LangdbClass langdb, List<CommonText> commonTexts, int type)
         {
+            int index;
             for (int i = 0; i < langdb.langdbCount; i++)
             {
-                if (MainMenu.settings.importingOfName) langdb.langdbs[i].actorName = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID)].actorName : commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber)].actorName;
-                langdb.langdbs[i].actorSpeech = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID)].actorSpeechTranslation : commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber)].actorSpeechTranslation;
+                index = -1;
 
-                if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags)
+                if (MainMenu.settings.importingOfName)
                 {
-                    string tmpFlags = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID)].flags : commonTexts[Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber)].flags;
+                    index = type == 1 ? Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID) : Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber);
+                    if(index != -1) langdb.langdbs[i].actorName = commonTexts[index].actorName;
+                }
+
+                index = type == 1 ? Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID) : Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber);
+                if (index != -1) langdb.langdbs[i].actorSpeech = commonTexts[index].actorSpeechTranslation;
+
+                if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags
+                    && (index != -1))
+                {
+                    string tmpFlags = commonTexts[index].flags;
 
                     byte[] tmpBytesFlags = Encoding.ASCII.GetBytes(tmpFlags);
 
@@ -401,7 +411,8 @@ namespace TTG_Tools.Texts
                         txt.actorSpeechTranslation = langdbs.langdbs[i].actorSpeech;
                         txt.flags = Encoding.ASCII.GetString(langdbs.flags[i].flags);
 
-                        txts.txtList.Add(txt);
+                        if (((txt.actorSpeechOriginal == "") && !MainMenu.settings.ignoreEmptyStrings)
+                              || (txt.actorSpeechOriginal != "")) txts.txtList.Add(txt);
                     }
 
                     if (MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
@@ -430,11 +441,11 @@ namespace TTG_Tools.Texts
                     ClassesStructs.Text.CommonTextClass txt = new CommonTextClass();
                     txt.txtList = ReadText.GetStrings(txtFile);
 
-                    if(txt.txtList.Count < langdbs.langdbCount)
+                    /*if(txt.txtList.Count < langdbs.langdbCount)
                     {
                         FileInfo txtFI = new FileInfo(txtFile);
                         return "Not enough strings in " + txtFI.Name + " for " + fi.Name + " file.";
-                    }
+                    }*/
 
                     int type = CheckNumbers(txt.txtList, langdbs);
                     if (type == -1) return "I don't know which type of number strings select for " + fi.Name + " file.";

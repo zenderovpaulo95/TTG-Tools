@@ -768,7 +768,7 @@ namespace TTG_Tools
                 if (txts[i].strNumber == searchNum) return i;
             }
 
-            return 0;
+            return -1;
         }
 
         public static ClassesStructs.Text.CommonTextClass SortString(ClassesStructs.Text.CommonTextClass text)

@@ -38,6 +38,7 @@ namespace TTG_Tools
             checkBoxDDS_after_import.Checked = MainMenu.settings.deleteDDSafterImport;
             checkBoxExportRealID.Checked = MainMenu.settings.exportRealID;
             checkBoxImportingOfNames.Checked = MainMenu.settings.importingOfName;
+            cbIgnoreEmptyStrings.Checked = MainMenu.settings.ignoreEmptyStrings;
 
             textBoxInputFolder.Text = MainMenu.settings.pathForInputFolder;
             textBoxOutputFolder.Text = MainMenu.settings.pathForOutputFolder;
@@ -55,6 +56,7 @@ namespace TTG_Tools
             MainMenu.settings.exportRealID = checkBoxExportRealID.Checked;
             MainMenu.settings.importingOfName = checkBoxImportingOfNames.Checked;
             MainMenu.settings.changeLangFlags = checkBoxChangeLangFlags.Checked;
+            MainMenu.settings.ignoreEmptyStrings = cbIgnoreEmptyStrings.Checked;
 
             if (tsvFilesRB.Checked)
             {

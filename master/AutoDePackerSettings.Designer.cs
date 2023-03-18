@@ -45,6 +45,7 @@
             this.okBtn = new System.Windows.Forms.Button();
             this.cancelBtn = new System.Windows.Forms.Button();
             this.checkBoxChangeLangFlags = new System.Windows.Forms.CheckBox();
+            this.cbIgnoreEmptyStrings = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -232,11 +233,22 @@
             this.checkBoxChangeLangFlags.Text = "Change language flags";
             this.checkBoxChangeLangFlags.UseVisualStyleBackColor = true;
             // 
+            // cbIgnoreEmptyStrings
+            // 
+            this.cbIgnoreEmptyStrings.AutoSize = true;
+            this.cbIgnoreEmptyStrings.Location = new System.Drawing.Point(11, 229);
+            this.cbIgnoreEmptyStrings.Name = "cbIgnoreEmptyStrings";
+            this.cbIgnoreEmptyStrings.Size = new System.Drawing.Size(120, 17);
+            this.cbIgnoreEmptyStrings.TabIndex = 29;
+            this.cbIgnoreEmptyStrings.Text = "Ignore empty strings";
+            this.cbIgnoreEmptyStrings.UseVisualStyleBackColor = true;
+            // 
             // AutoDePackerSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(433, 285);
+            this.Controls.Add(this.cbIgnoreEmptyStrings);
             this.Controls.Add(this.checkBoxChangeLangFlags);
             this.Controls.Add(this.cancelBtn);
             this.Controls.Add(this.okBtn);
@@ -281,5 +293,6 @@
         private System.Windows.Forms.Button okBtn;
         private System.Windows.Forms.Button cancelBtn;
         private System.Windows.Forms.CheckBox checkBoxChangeLangFlags;
+        private System.Windows.Forms.CheckBox cbIgnoreEmptyStrings;
     }
 }

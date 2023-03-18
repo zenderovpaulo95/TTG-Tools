@@ -27,6 +27,7 @@ namespace TTG_Tools
         private bool _exportRealID;
         private int _unicodeSettings;
         private bool _clearMessages; //For Auto (De)Packer
+        private bool _ignoreEmptyStrings;
 
         private bool _encLangdb;
         private bool _encDDSonly;
@@ -441,6 +442,19 @@ namespace TTG_Tools
             }
         }
 
+        [XmlAttribute("ignoreEmptyStrings")]
+        public bool ignoreEmptyStrings
+        {
+            get
+            {
+                return _ignoreEmptyStrings;
+            }
+            set
+            {
+                _ignoreEmptyStrings = value;
+            }
+        }
+
         public Settings(
             string _pathForInputFolder,
             string _pathForOutputFolder,
@@ -471,7 +485,8 @@ namespace TTG_Tools
             bool _swizzleNintendoSwitch,
             bool _clearMessages,
             bool _newTxtFormat, 
-            bool _changeLangFlags)
+            bool _changeLangFlags,
+            bool _ignoreEmptyStrings)
         {
             this.ASCII_N = _ASCII_N;
             this.pathForInputFolder = _pathForInputFolder;
@@ -503,6 +518,7 @@ namespace TTG_Tools
             this.clearMessages = _clearMessages;
             this.newTxtFormat = _newTxtFormat;
             this.changeLangFlags = _changeLangFlags;
+            this.ignoreEmptyStrings = _ignoreEmptyStrings;
         }
 
         public Settings()

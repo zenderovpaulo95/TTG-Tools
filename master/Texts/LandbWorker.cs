@@ -431,16 +431,25 @@ namespace TTG_Tools.Texts
 
         private static LandbClass ReplaceStrings(LandbClass landb, List<CommonText> commonTexts, int type)
         {
+            int index;
             for(int i = 0; i < landb.landbCount; i++)
             {
-                if (MainMenu.settings.importingOfName) landb.landbs[i].actorName = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].anmID)].actorName : commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].stringNumber)].actorName;
-                landb.landbs[i].actorSpeech = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].anmID)].actorSpeechTranslation : commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].stringNumber)].actorSpeechTranslation;
+                index = -1;
+                if (MainMenu.settings.importingOfName)
+                {
+                    index = type == 1 ? Methods.GetIndex(commonTexts, landb.landbs[i].anmID) : Methods.GetIndex(commonTexts, landb.landbs[i].stringNumber);
+                    if (index != -1) landb.landbs[i].actorName = commonTexts[index].actorName;
+                }
+                
+                index = type == 1 ? Methods.GetIndex(commonTexts, landb.landbs[i].anmID) : Methods.GetIndex(commonTexts, landb.landbs[i].stringNumber);
+                if (index != -1) landb.landbs[i].actorSpeech = commonTexts[index].actorSpeechTranslation;
 
                 if (landb.isUnicode && MainMenu.settings.unicodeSettings == 1) landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, false);
 
-                if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags)
+                if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags
+                    && (index != -1))
                 {
-                    string tmpFlags = type == 1 ? commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].anmID)].flags : commonTexts[Methods.GetIndex(commonTexts, landb.landbs[i].stringNumber)].flags;
+                    string tmpFlags = commonTexts[index].flags;
 
                     landb.landbs[i].flags = Convert.ToInt32(tmpFlags, 2);
                 }
@@ -522,7 +531,8 @@ namespace TTG_Tools.Texts
                         txt.actorSpeechTranslation = landbs.landbs[i].actorSpeech;
                         txt.flags = Encoding.ASCII.GetString(landbs.flags[i].flags);
 
-                        txts.txtList.Add(txt);
+                        if (((txt.actorSpeechOriginal == "") && !MainMenu.settings.ignoreEmptyStrings)
+                              || (txt.actorSpeechOriginal != "")) txts.txtList.Add(txt);
                     }
 
                     if (MainMenu.settings.sortSameString) txts = Methods.SortString(txts);
@@ -552,11 +562,11 @@ namespace TTG_Tools.Texts
                     ClassesStructs.Text.CommonTextClass txts = new CommonTextClass();
                     txts.txtList = ReadText.GetStrings(TxtFile);
 
-                    if (txts.txtList.Count < landbs.landbCount)
+                    /*if (txts.txtList.Count < landbs.landbCount)
                     {
                         FileInfo txtFI = new FileInfo(TxtFile);
                         return "Not enough strings in " + txtFI.Name + " for " + fi.Name + " file.";
-                    }
+                    }*/
 
                     int type = CheckNumbers(txts.txtList, landbs);
 

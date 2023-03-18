@@ -371,12 +371,20 @@ namespace TTG_Tools.Texts
 
         private static DlogClass ReplaceStrings(DlogClass dlog, List<CommonText> commonTexts)
         {
+            int index = -1;
             for (int i = 0; i < dlog.landb.landbCount; i++)
             {
                 for (int j = 0; j < dlog.landb.landbs[i].langresStrsCount; j++)
                 {
-                    if (MainMenu.settings.importingOfName) dlog.landb.landbs[i].lang[j].actorName = commonTexts[Methods.GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber)].actorName;
-                    dlog.landb.landbs[i].lang[j].actorSpeech = commonTexts[Methods.GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber)].actorSpeechTranslation;
+                    index = -1;
+                    if (MainMenu.settings.importingOfName)
+                    {
+                        index = Methods.GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber);
+                        if(index != -1) dlog.landb.landbs[i].lang[j].actorName = commonTexts[index].actorName;
+                    }
+
+                    index = Methods.GetIndex(commonTexts, dlog.landb.landbs[i].lang[j].stringNumber);
+                    if(index != -1) dlog.landb.landbs[i].lang[j].actorSpeech = commonTexts[index].actorSpeechTranslation;
                 }
             }
 
@@ -479,7 +487,8 @@ namespace TTG_Tools.Texts
                             txt.actorSpeechTranslation = dlog.landb.landbs[i].lang[j].actorSpeech;
                             txt.flags = "000"; //default will be 000
 
-                            txts.txtList.Add(txt);
+                            if(((txt.actorSpeechOriginal == "") && !MainMenu.settings.ignoreEmptyStrings)
+                                || (txt.actorSpeechOriginal != "")) txts.txtList.Add(txt);
                         }
                     }
 
