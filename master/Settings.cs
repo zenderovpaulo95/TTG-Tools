@@ -50,6 +50,8 @@ namespace TTG_Tools
         private bool _swizzleNintendoSwitch;
         private bool _newTxtFormat;
         private bool _changeLangFlags;
+        private bool _customASCIIFlag;
+        private string _customASCIIEncoding;
 
         [XmlAttribute("pathForInputFolder")]
         public string pathForInputFolder

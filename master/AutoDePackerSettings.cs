@@ -32,6 +32,21 @@ namespace TTG_Tools
             checkBoxChangeLangFlags.Visible = MainMenu.settings.newTxtFormat;
             checkBoxChangeLangFlags.Checked = MainMenu.settings.changeLangFlags;
 
+            switch(MainMenu.settings.unicodeSettings)
+            {
+                case 1:
+                    rbNonNormalUnicode2.Checked = true;
+                    break;
+
+                case 2:
+                    rbNewBttF.Checked = true;
+                    break;
+
+                default:
+                    rbNormalUnicode.Checked = true;
+                    break;
+            }
+
             checkBoxSortStrings.Checked = MainMenu.settings.sortSameString;
             clearMessagesCB.Checked = MainMenu.settings.clearMessages;
             checkBoxD3DTX_after_import.Checked = MainMenu.settings.deleteD3DTXafterImport;
@@ -57,6 +72,10 @@ namespace TTG_Tools
             MainMenu.settings.importingOfName = checkBoxImportingOfNames.Checked;
             MainMenu.settings.changeLangFlags = checkBoxChangeLangFlags.Checked;
             MainMenu.settings.ignoreEmptyStrings = cbIgnoreEmptyStrings.Checked;
+
+            if (rbNormalUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
+            else if (rbNonNormalUnicode2.Checked) MainMenu.settings.unicodeSettings = 1;
+            else MainMenu.settings.unicodeSettings = 2;
 
             if (tsvFilesRB.Checked)
             {

@@ -37,6 +37,7 @@ namespace TTG_Tools
             MainMenu.settings.pathForOutputFolder = textBoxOutputFolder.Text;
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
+            else MainMenu.settings.unicodeSettings = 2;
 
             if (((MainMenu.settings.pathForInputFolder != "") && (Directory.Exists(MainMenu.settings.pathForInputFolder)))
                 && ((MainMenu.settings.pathForOutputFolder != "") && (Directory.Exists(MainMenu.settings.pathForOutputFolder))))
@@ -77,13 +78,18 @@ namespace TTG_Tools
             }
             switch (Convert.ToInt32(numericUpDownASCII.Value.ToString()))
             {
-                case 1249:
-                    numericUpDownASCII.Value = 874;
-                    break;
                 case 875:
+                case 1249:
+                    numericUpDownASCII.Value = 932;
+                    break;
+                case 933:
                     numericUpDownASCII.Value = 1250;
                     break;
+                case 931:
+                    numericUpDownASCII.Value = 874;
+                    break;
             }
+
             //Terrible fix for users windows-1252 encoding
             if (Convert.ToInt32(numericUpDownASCII.Value.ToString()) == 1252)
             {
@@ -108,12 +114,11 @@ namespace TTG_Tools
 
             switch (MainMenu.settings.unicodeSettings)
             {
-                case 0:
-                    rbNormalUnicode.Checked = true;
-                    break;
                 case 1:
-                case 2:
                     rbNonNormalUnicode2.Checked = true;
+                    break;
+                case 2:
+                    rbNewBttF.Checked = true;
                     break;
                 default:
                     rbNormalUnicode.Checked = true;

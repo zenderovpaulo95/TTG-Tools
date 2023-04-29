@@ -76,8 +76,8 @@ namespace TTG_Tools
                 return; 
             }
 
-            if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
-            else MainMenu.settings.unicodeSettings = 1;
+            /*if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
+            else MainMenu.settings.unicodeSettings = 1;*/
             
             EncVersion = 2;
             if (comboBox2.SelectedIndex == 1) EncVersion = 7;
@@ -1830,7 +1830,8 @@ namespace TTG_Tools
 
             comboBox1.SelectedIndex = MainMenu.settings.encKeyIndex;
             comboBox2.SelectedIndex = MainMenu.settings.versionEnc;
-            checkUnicode.Checked = (MainMenu.settings.unicodeSettings == 0);
+            labelUnicode.Text = "Unicode is ";
+            labelUnicode.Text += MainMenu.settings.unicodeSettings == 0 ? "set." : "not set.";
             checkEncDDS.Checked = MainMenu.settings.encDDSonly;
             checkIOS.Checked = MainMenu.settings.iOSsupport;
             checkEncLangdb.Checked = MainMenu.settings.encLangdb;
@@ -1846,8 +1847,7 @@ namespace TTG_Tools
             if(MainMenu.settings.ASCII_N == 1252)
             {
                 //Make unvisible that option for users with windows-1252 encoding
-                checkUnicode.Checked = true;
-                checkUnicode.Visible = false;
+                labelUnicode.Visible = false;
             }
         }
 
@@ -1890,13 +1890,6 @@ namespace TTG_Tools
         private void checkIOS_CheckedChanged(object sender, EventArgs e)
         {
             MainMenu.settings.iOSsupport = checkIOS.Checked;
-            Settings.SaveConfig(MainMenu.settings);
-        }
-
-        private void checkUnicode_CheckedChanged(object sender, EventArgs e)
-        {
-            MainMenu.settings.unicodeSettings = 1;
-            if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
             Settings.SaveConfig(MainMenu.settings);
         }
 
@@ -1947,7 +1940,21 @@ namespace TTG_Tools
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AutoDePackerSettings settingsForm = new AutoDePackerSettings();
+            settingsForm.FormClosed += new FormClosedEventHandler(Form_Closed);
             settingsForm.Show(this);
+        }
+
+        private void Form_Closed(object sender, FormClosedEventArgs e)
+        {
+            AutoDePackerSettings settingsForm = (AutoDePackerSettings)sender;
+
+            labelUnicode.Text = "Unicode is ";
+            labelUnicode.Text += MainMenu.settings.unicodeSettings == 0 ? "set." : "not set.";
+        }
+
+        private void SettingsForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

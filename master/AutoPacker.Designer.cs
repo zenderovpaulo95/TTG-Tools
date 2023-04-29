@@ -38,7 +38,6 @@
             this.checkIOS = new System.Windows.Forms.CheckBox();
             this.CheckNewEngine = new System.Windows.Forms.CheckBox();
             this.checkEncDDS = new System.Windows.Forms.CheckBox();
-            this.checkUnicode = new System.Windows.Forms.CheckBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.checkEncLangdb = new System.Windows.Forms.CheckBox();
@@ -47,6 +46,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.labelUnicode = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -109,11 +109,11 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.labelUnicode);
             this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.checkIOS);
             this.groupBox1.Controls.Add(this.CheckNewEngine);
             this.groupBox1.Controls.Add(this.checkEncDDS);
-            this.groupBox1.Controls.Add(this.checkUnicode);
             this.groupBox1.Controls.Add(this.comboBox2);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.checkEncLangdb);
@@ -174,18 +174,6 @@
             this.checkEncDDS.Text = "Encrypt DDS header only";
             this.checkEncDDS.UseVisualStyleBackColor = true;
             this.checkEncDDS.CheckedChanged += new System.EventHandler(this.checkEncDDS_CheckedChanged);
-            // 
-            // checkUnicode
-            // 
-            this.checkUnicode.AutoSize = true;
-            this.checkUnicode.Location = new System.Drawing.Point(250, 86);
-            this.checkUnicode.Margin = new System.Windows.Forms.Padding(2);
-            this.checkUnicode.Name = "checkUnicode";
-            this.checkUnicode.Size = new System.Drawing.Size(132, 17);
-            this.checkUnicode.TabIndex = 11;
-            this.checkUnicode.Text = "Unicode support is on.";
-            this.checkUnicode.UseVisualStyleBackColor = true;
-            this.checkUnicode.CheckedChanged += new System.EventHandler(this.checkUnicode_CheckedChanged);
             // 
             // comboBox2
             // 
@@ -270,6 +258,15 @@
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
+            // labelUnicode
+            // 
+            this.labelUnicode.AutoSize = true;
+            this.labelUnicode.Location = new System.Drawing.Point(247, 90);
+            this.labelUnicode.Name = "labelUnicode";
+            this.labelUnicode.Size = new System.Drawing.Size(35, 13);
+            this.labelUnicode.TabIndex = 16;
+            this.labelUnicode.Text = "label3";
+            // 
             // AutoPacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -312,7 +309,6 @@
         private System.Windows.Forms.CheckBox checkEncLangdb;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox checkUnicode;
         private System.Windows.Forms.CheckBox CheckNewEngine;
         private System.Windows.Forms.CheckBox checkEncDDS;
         private System.Windows.Forms.CheckBox checkCustomKey;
@@ -321,6 +317,7 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.Label labelUnicode;
     }
 }
 

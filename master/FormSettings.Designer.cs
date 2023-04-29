@@ -36,15 +36,16 @@
             this.buttonExitSettingsForm = new System.Windows.Forms.Button();
             this.buttonApplyAndExitSettings = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbNewBttF = new System.Windows.Forms.RadioButton();
             this.rbNonNormalUnicode2 = new System.Windows.Forms.RadioButton();
             this.rbNormalUnicode = new System.Windows.Forms.RadioButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip2 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip3 = new System.Windows.Forms.ToolTip(this.components);
-            this.textBoxOutputFolder = new System.Windows.Forms.TextBox();
-            this.textBoxInputFolder = new System.Windows.Forms.TextBox();
             this.buttonOutputFolder = new System.Windows.Forms.Button();
             this.buttonInputFolder = new System.Windows.Forms.Button();
+            this.textBoxInputFolder = new System.Windows.Forms.TextBox();
+            this.textBoxOutputFolder = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownASCII)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -83,7 +84,7 @@
             // 
             // buttonSaveSettings
             // 
-            this.buttonSaveSettings.Location = new System.Drawing.Point(180, 233);
+            this.buttonSaveSettings.Location = new System.Drawing.Point(180, 275);
             this.buttonSaveSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonSaveSettings.Name = "buttonSaveSettings";
             this.buttonSaveSettings.Size = new System.Drawing.Size(136, 23);
@@ -94,7 +95,7 @@
             // 
             // buttonExitSettingsForm
             // 
-            this.buttonExitSettingsForm.Location = new System.Drawing.Point(333, 233);
+            this.buttonExitSettingsForm.Location = new System.Drawing.Point(333, 275);
             this.buttonExitSettingsForm.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonExitSettingsForm.Name = "buttonExitSettingsForm";
             this.buttonExitSettingsForm.Size = new System.Drawing.Size(88, 23);
@@ -105,7 +106,7 @@
             // 
             // buttonApplyAndExitSettings
             // 
-            this.buttonApplyAndExitSettings.Location = new System.Drawing.Point(36, 233);
+            this.buttonApplyAndExitSettings.Location = new System.Drawing.Point(36, 275);
             this.buttonApplyAndExitSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonApplyAndExitSettings.Name = "buttonApplyAndExitSettings";
             this.buttonApplyAndExitSettings.Size = new System.Drawing.Size(136, 23);
@@ -116,16 +117,28 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.rbNewBttF);
             this.groupBox2.Controls.Add(this.rbNonNormalUnicode2);
             this.groupBox2.Controls.Add(this.rbNormalUnicode);
             this.groupBox2.Location = new System.Drawing.Point(56, 42);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox2.Size = new System.Drawing.Size(354, 73);
+            this.groupBox2.Size = new System.Drawing.Size(354, 97);
             this.groupBox2.TabIndex = 13;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Coding for new games (From \"Tales From the Borderlands\" game)";
+            // 
+            // rbNewBttF
+            // 
+            this.rbNewBttF.AutoSize = true;
+            this.rbNewBttF.Location = new System.Drawing.Point(5, 71);
+            this.rbNewBttF.Name = "rbNewBttF";
+            this.rbNewBttF.Size = new System.Drawing.Size(327, 17);
+            this.rbNewBttF.TabIndex = 3;
+            this.rbNewBttF.TabStop = true;
+            this.rbNewBttF.Text = "ASCII support for Back to the Future Xbox360 and PS4 versions";
+            this.rbNewBttF.UseVisualStyleBackColor = true;
             // 
             // rbNonNormalUnicode2
             // 
@@ -155,24 +168,6 @@
         "f your symbols.");
             this.rbNormalUnicode.UseVisualStyleBackColor = true;
             // 
-            // textBoxOutputFolder
-            // 
-            this.textBoxOutputFolder.Location = new System.Drawing.Point(7, 58);
-            this.textBoxOutputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxOutputFolder.Name = "textBoxOutputFolder";
-            this.textBoxOutputFolder.ReadOnly = true;
-            this.textBoxOutputFolder.Size = new System.Drawing.Size(317, 20);
-            this.textBoxOutputFolder.TabIndex = 28;
-            // 
-            // textBoxInputFolder
-            // 
-            this.textBoxInputFolder.Location = new System.Drawing.Point(7, 29);
-            this.textBoxInputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBoxInputFolder.Name = "textBoxInputFolder";
-            this.textBoxInputFolder.ReadOnly = true;
-            this.textBoxInputFolder.Size = new System.Drawing.Size(317, 20);
-            this.textBoxInputFolder.TabIndex = 29;
-            // 
             // buttonOutputFolder
             // 
             this.buttonOutputFolder.Location = new System.Drawing.Point(331, 56);
@@ -195,13 +190,31 @@
             this.buttonInputFolder.UseVisualStyleBackColor = true;
             this.buttonInputFolder.Click += new System.EventHandler(this.buttonInputFolder_Click);
             // 
+            // textBoxInputFolder
+            // 
+            this.textBoxInputFolder.Location = new System.Drawing.Point(7, 29);
+            this.textBoxInputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.textBoxInputFolder.Name = "textBoxInputFolder";
+            this.textBoxInputFolder.ReadOnly = true;
+            this.textBoxInputFolder.Size = new System.Drawing.Size(317, 20);
+            this.textBoxInputFolder.TabIndex = 29;
+            // 
+            // textBoxOutputFolder
+            // 
+            this.textBoxOutputFolder.Location = new System.Drawing.Point(7, 58);
+            this.textBoxOutputFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.textBoxOutputFolder.Name = "textBoxOutputFolder";
+            this.textBoxOutputFolder.ReadOnly = true;
+            this.textBoxOutputFolder.Size = new System.Drawing.Size(317, 20);
+            this.textBoxOutputFolder.TabIndex = 28;
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.textBoxOutputFolder);
             this.groupBox1.Controls.Add(this.textBoxInputFolder);
             this.groupBox1.Controls.Add(this.buttonInputFolder);
             this.groupBox1.Controls.Add(this.buttonOutputFolder);
-            this.groupBox1.Location = new System.Drawing.Point(19, 120);
+            this.groupBox1.Location = new System.Drawing.Point(19, 162);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(427, 100);
             this.groupBox1.TabIndex = 30;
@@ -212,7 +225,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(475, 273);
+            this.ClientSize = new System.Drawing.Size(475, 316);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonApplyAndExitSettings);
@@ -250,10 +263,11 @@
         private System.Windows.Forms.ToolTip toolTip2;
         private System.Windows.Forms.ToolTip toolTip3;
         private System.Windows.Forms.RadioButton rbNonNormalUnicode2;
-        private System.Windows.Forms.TextBox textBoxOutputFolder;
-        private System.Windows.Forms.TextBox textBoxInputFolder;
+        private System.Windows.Forms.RadioButton rbNewBttF;
         private System.Windows.Forms.Button buttonOutputFolder;
         private System.Windows.Forms.Button buttonInputFolder;
+        private System.Windows.Forms.TextBox textBoxInputFolder;
+        private System.Windows.Forms.TextBox textBoxOutputFolder;
         private System.Windows.Forms.GroupBox groupBox1;
     }
 }

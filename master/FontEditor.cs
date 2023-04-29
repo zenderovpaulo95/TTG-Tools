@@ -354,8 +354,6 @@ namespace TTG_Tools
                         int lenStr;
                         someTexData = false;
 
-                        //version_used = countElements;
-
                         tmp = new byte[8];
                         Array.Copy(binContent, poz, tmp, 0, tmp.Length);
 
@@ -1672,8 +1670,22 @@ namespace TTG_Tools
                         font.glyph.chars[i].TexNum = 0;
                     }
 
+                    bool isUnicodeFnt = false;
+
                     for (int m = 0; m < strings.Length; m++)
                     {
+                        if (strings[m].ToLower().Contains("info face"))
+                        {
+                            string[] splitted = strings[m].Split(new char[] { ' ', '=', '\"', ',' });
+
+                            for (int k = 0; k < splitted.Length; k++)
+                            {
+                                if (splitted[k].ToLower() == "unicode" && splitted[k + 1] != "")
+                                {
+                                    isUnicodeFnt = Convert.ToInt32(splitted[k + 1]) == 1;
+                                }
+                            }
+                        }
                         if (strings[m].ToLower().Contains("common lineheight"))
                         {
                             string[] splitted = strings[m].Split(new char[] { ' ', '=', '\"', ',' });
@@ -1749,6 +1761,17 @@ namespace TTG_Tools
                                         else
                                         {
                                             tmpChar = Convert.ToUInt32(splitted[k + 1]);
+
+                                            if (isUnicodeFnt)
+                                            {
+                                                if(tmpChar == 126)
+                                                {
+                                                    int puase = 1;
+                                                }
+                                                byte[] tmp_ch = BitConverter.GetBytes(Convert.ToUInt32(splitted[k + 1]));
+                                                tmp_ch = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmp_ch);
+                                                tmpChar = BitConverter.ToUInt16(tmp_ch, 0);
+                                            }
                                         }
 
                                         for(int t = 0; t < font.glyph.CharCount; t++)
