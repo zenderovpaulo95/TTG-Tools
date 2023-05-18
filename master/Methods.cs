@@ -51,6 +51,7 @@ namespace TTG_Tools
             return str;
         }
 
+        //For tests
         public static bool isUTF8String(byte[] arr)
         {
             bool result = false;
