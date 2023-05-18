@@ -51,6 +51,48 @@ namespace TTG_Tools
             return str;
         }
 
+        public static bool isUTF8String(byte[] arr)
+        {
+            bool result = false;
+            int i, n;
+            byte c;
+            string tmpStr = "";
+            i = 0;
+
+            while(i < arr.Length)
+            {
+                c = arr[i];
+
+                if ((c & 0xC0) == 0xC0)
+                {
+                    n = 1;
+
+                    int s = i;
+
+                    while(i + n < arr.Length)
+                    {
+                        if ((arr[i + n] & 0xC0) != 0x80) break;
+
+                        n++;
+                    }
+
+                    if((n == 2) && ((c & 0xE0) == 0xC0))
+                    {
+                        result = true;
+                        break;
+                    }
+                    else if((n == 3) && ((c & 0xF0) == 0xE0))
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+                
+                i++;
+            }
+
+            return result;
+        }
         public static void getSizeAndKratnost(int width, int height, int code, ref int ddsContentLength, ref int kratnost)
         {
             uint w, h = 0;
