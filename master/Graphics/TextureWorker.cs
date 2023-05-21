@@ -3,6 +3,7 @@ using System.Text;
 using System.IO;
 using TTG_Tools.Graphics.DDS;
 using TTG_Tools.Graphics.PVR;
+using TTG_Tools.Graphics.Swizzles;
 
 namespace TTG_Tools
 {
@@ -1422,7 +1423,7 @@ namespace TTG_Tools
 
                         for (int i = 0; i < tex.Tex.MipCount; i++)
                         {
-                            tex.Tex.Textures[i].Block = Swizzle.NintendoSwizzle(tex.Tex.Textures[i].Block, w, h, (int)tex.TextureFormat, false);
+                            tex.Tex.Textures[i].Block = NintendoSwitch.NintendoSwizzle(tex.Tex.Textures[i].Block, w, h, (int)tex.TextureFormat, false);
                             bw.Write(tex.Tex.Textures[i].Block);
                             tex.textureSize += (uint)tex.Tex.Textures[i].Block.Length;
 
@@ -1965,7 +1966,7 @@ namespace TTG_Tools
                 {
                     tex.Tex.Textures[i].Block = new byte[tex.Tex.Textures[i].MipSize];
                     Array.Copy(binContent, tmpPoz, tex.Tex.Textures[i].Block, 0, tex.Tex.Textures[i].Block.Length);
-                    tex.Tex.Textures[i].Block = Swizzle.NintendoSwizzle(tex.Tex.Textures[i].Block, w, h, (int)tex.TextureFormat, true);
+                    tex.Tex.Textures[i].Block = NintendoSwitch.NintendoSwizzle(tex.Tex.Textures[i].Block, w, h, (int)tex.TextureFormat, true);
                     tmpPoz += (uint)tex.Tex.Textures[i].MipSize;
 
                     Array.Copy(tex.Tex.Textures[i].Block, 0, tex.Tex.Content, texPoz, tex.Tex.Textures[i].Block.Length);

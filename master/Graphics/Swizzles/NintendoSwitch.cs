@@ -4,9 +4,9 @@
 
 using System;
 
-namespace TTG_Tools
+namespace TTG_Tools.Graphics.Swizzles
 {
-    public class Swizzle
+    public class NintendoSwitch
     {
         private static int[] bpps = { 4, 4, 4, 2, 2, 2, 1, 2, 8, 16, 16, 8, 8, 16, 16 };
         private static int[,] xBases = { { 1, 2, 4, 8, 16 }, { 4, 3, 2, 1, 0 } };

@@ -112,6 +112,8 @@
     <Compile Include="Graphics\DDS\Decompress.cs" />
     <Compile Include="Graphics\DDS\Flags.cs" />
     <Compile Include="Graphics\PVR\pvr.cs" />
+    <Compile Include="Graphics\Swizzles\PS4.cs" />
+    <Compile Include="Graphics\Swizzles\SwizzleUtilities.cs" />
     <Compile Include="InEngineWords\ClassStructsNames.cs" />
     <Compile Include="InEngineWords\VariableTypes.cs" />
     <Compile Include="Settings.cs" />
@@ -128,7 +130,7 @@
     <Compile Include="FormSettings.Designer.cs">
       <DependentUpon>FormSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Graphics\Swizzle.cs" />
+    <Compile Include="Graphics\Swizzles\NintendoSwitch.cs" />
     <Compile Include="TextEditor.cs">
       <SubType>Form</SubType>
     </Compile>

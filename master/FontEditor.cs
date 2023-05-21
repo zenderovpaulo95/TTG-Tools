@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TTG_Tools.ClassesStructs;
+using TTG_Tools.Graphics.Swizzles;
 
 namespace TTG_Tools
 {
@@ -109,7 +110,7 @@ namespace TTG_Tools
                 NewTex.Tex.Textures[i].Block = new byte[NewTex.Tex.Textures[i].MipSize];
 
                 Array.Copy(NewTex.Tex.Content, pos, NewTex.Tex.Textures[i].Block, 0, NewTex.Tex.Textures[i].Block.Length);
-                if (NewTex.platform.platform == 15) NewTex.Tex.Textures[i].Block = Swizzle.NintendoSwizzle(NewTex.Tex.Textures[i].Block, w, h, (int)NewTex.TextureFormat, false);
+                if (NewTex.platform.platform == 15) NewTex.Tex.Textures[i].Block = NintendoSwitch.NintendoSwizzle(NewTex.Tex.Textures[i].Block, w, h, (int)NewTex.TextureFormat, false);
 
                 pos += NewTex.Tex.Textures[i].MipSize;
                 NewTex.Tex.TexSize += (uint)NewTex.Tex.Textures[i].MipSize;
