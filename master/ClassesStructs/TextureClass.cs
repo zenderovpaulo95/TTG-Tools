@@ -114,6 +114,7 @@
                 //2 - PC/Mac
                 //7 - iOS/Android (With PowerVR graphic chip)
                 //9 - PS Vita
+                //11 - PS4
                 //15 - Nintendo Switch
                 public int blockSize; //equals 8 bytes
                 public uint platform;
