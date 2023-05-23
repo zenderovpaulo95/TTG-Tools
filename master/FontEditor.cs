@@ -83,6 +83,7 @@ namespace TTG_Tools
                 NewTex.platform.platform = 2;
 
                 if(MainMenu.settings.swizzleNintendoSwitch) NewTex.platform.platform = 15;
+                if (cbSwizzlePS4.Checked) NewTex.platform.platform = 11;
             }
             else
             {

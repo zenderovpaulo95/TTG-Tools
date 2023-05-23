@@ -1461,10 +1461,9 @@ namespace TTG_Tools
                 }
                 else
                 {
-                    
-                   for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
+                    for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
                    {
-                       bw.Write(tex.Tex.Textures[i].Block);
+                        bw.Write(tex.Tex.Textures[i].Block);
                    }
                 }
             }
