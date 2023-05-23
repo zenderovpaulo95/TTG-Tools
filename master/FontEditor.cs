@@ -521,6 +521,11 @@ namespace TTG_Tools
                                 tmp = new byte[4];
                                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
                             }
+                            else
+                            {
+                                tmp = new byte[4];
+                                Array.Copy(binContent, poz, tmp, 0, tmp.Length);
+                            }
                         }
 
                         if ((BitConverter.ToSingle(tmp, 0) == 0.5)
