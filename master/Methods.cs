@@ -6,6 +6,7 @@ using System.IO;
 using System.Security;
 using TTG_Tools.ClassesStructs.Text;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace TTG_Tools
 {
@@ -55,41 +56,16 @@ namespace TTG_Tools
         public static bool isUTF8String(byte[] arr)
         {
             bool result = false;
-            int i, n;
-            byte c;
-            string tmpStr = "";
-            i = 0;
+            int i = 0;
 
-            while(i < arr.Length)
+            while (i < arr.Length - 4)
             {
-                c = arr[i];
-
-                if ((c & 0xC0) == 0xC0)
-                {
-                    n = 1;
-
-                    int s = i;
-
-                    while(i + n < arr.Length)
-                    {
-                        if ((arr[i + n] & 0xC0) != 0x80) break;
-
-                        n++;
-                    }
-
-                    if((n == 2) && ((c & 0xE0) == 0xC0))
-                    {
-                        result = true;
-                        break;
-                    }
-                    else if((n == 3) && ((c & 0xF0) == 0xE0))
-                    {
-                        result = true;
-                        break;
-                    }
-                }
-                
-                i++;
+                if (arr[i] <= 0x7f) { i++; continue; }
+                if (arr[i] >= 0xc2 && arr[i] < 0xe0 && arr[i + 1] >= 0x80 && arr[i + 1] < 0xc0) { i += 2; result = true; continue; }
+                if (arr[i] >= 0xe0 && arr[i] < 0xf0 && arr[i + 1] >= 0x80 && arr[i + 1] < 0xc0 && arr[i + 2] >= 0x80 && arr[i + 2] < 0xc0) { i += 3; result = true; continue; }
+                if (arr[i] >= 0xf0 && arr[i] < 0xf5 && arr[i + 1] >= 0x80 && arr[i + 1] < 0xc0 && arr[i + 2] >= 0x80 && arr[i + 2] < 0xc0 && arr[i + 3] >= 0x80 && arr[i + 3] < 0xc0) { i += 4; result = true; continue; }
+                result = false;
+                break;
             }
 
             return result;

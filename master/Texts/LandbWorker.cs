@@ -178,6 +178,13 @@ namespace TTG_Tools.Texts
                         //landb.landbs[i].actorSpeech = Methods.isUTF8String(tmp) ? Encoding.UTF8.GetString(tmp) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
                         landb.landbs[i].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
+                        if(!landb.landbs[i].actorName.Contains("\"") && Methods.isUTF8String(tmp))
+                        {
+                            landb.landbs[i].actorSpeech = Encoding.UTF8.GetString(tmp);
+                            landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, true);
+                            landb.landbs[i].actorSpeech += "(utf8c)";
+                        }
+
                         if(landb.landbs[i].actorName.Contains("\""))
                         {
                             landb.landbs[i].actorSpeech = Encoding.UTF8.GetString(tmp);
