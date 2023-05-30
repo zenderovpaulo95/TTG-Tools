@@ -78,7 +78,13 @@ namespace TTG_Tools
 
             /*if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
             else MainMenu.settings.unicodeSettings = 1;*/
-            
+
+            //TEMPORARY SOLUTION! NEED REMOVE THAT JUNK!!!!
+            MainMenu.PS4Swizzle = checkBox2.Checked;
+
+            if (checkBox2.Checked && MainMenu.settings.swizzleNintendoSwitch) MainMenu.settings.swizzleNintendoSwitch = false;
+            else MainMenu.PS4Swizzle = false;
+
             EncVersion = 2;
             if (comboBox2.SelectedIndex == 1) EncVersion = 7;
 

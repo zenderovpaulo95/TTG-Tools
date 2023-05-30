@@ -13,6 +13,7 @@ namespace TTG_Tools
     public partial class MainMenu : Form
     {
         public static Settings settings = new Settings("", "", 1251, false, false, false, true, false, 0, false, false, false, false, false, false, 0, 0, "", "", "", false, false, false, false, 0, 0, false, false, false, false, false);
+        public static bool PS4Swizzle = false; //Temporary solution
 
         [DllImport("kernel32.dll")]
         public static extern void SetProcessWorkingSetSize(IntPtr hWnd, int i, int j);

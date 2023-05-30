@@ -178,17 +178,11 @@ namespace TTG_Tools.Texts
                         //landb.landbs[i].actorSpeech = Methods.isUTF8String(tmp) ? Encoding.UTF8.GetString(tmp) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
                         landb.landbs[i].actorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
 
-                        if(!landb.landbs[i].actorName.Contains("\"") && Methods.isUTF8String(tmp))
+                        if(Methods.isUTF8String(tmp))
                         {
                             landb.landbs[i].actorSpeech = Encoding.UTF8.GetString(tmp);
                             landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, true);
                             landb.landbs[i].actorSpeech += "(utf8c)";
-                        }
-
-                        if(landb.landbs[i].actorName.Contains("\""))
-                        {
-                            landb.landbs[i].actorSpeech = Encoding.UTF8.GetString(tmp);
-                            landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, true);
                         }
                     }
 
@@ -376,7 +370,7 @@ namespace TTG_Tools.Texts
                     byte[] tmpActorSpeech = landb.isUnicode ? Encoding.UTF8.GetBytes(landb.landbs[i].actorSpeech) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].actorSpeech);
                     if (landb.isUnicode && (MainMenu.settings.unicodeSettings == 2))
                     {
-                        tmpActorSpeech = landb.landbs[i].actorName.Contains("\"") ? Encoding.UTF8.GetBytes(landb.landbs[i].actorSpeech) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].actorSpeech);
+                        //tmpActorSpeech = landb.landbs[i].actorName.Contains("\"") ? Encoding.UTF8.GetBytes(landb.landbs[i].actorSpeech) : Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].actorSpeech);
 
                         if ((landb.landbs[i].actorSpeech.IndexOf("(utf8)") > 0) && (landb.landbs[i].actorSpeech.IndexOf("(utf8)") == landb.landbs[i].actorSpeech.Length - 6))
                         {
@@ -484,10 +478,10 @@ namespace TTG_Tools.Texts
                 if (index != -1) landb.landbs[i].actorSpeech = commonTexts[index].actorSpeechTranslation;
 
                 if (landb.isUnicode && MainMenu.settings.unicodeSettings == 1) landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, false);
-                if(landb.isUnicode && (MainMenu.settings.unicodeSettings == 2) && (landb.landbs[i].actorName.Contains("\""))) 
+                /*if(landb.isUnicode && (MainMenu.settings.unicodeSettings == 2) && (landb.landbs[i].actorName.Contains("\""))) 
                 {
                     landb.landbs[i].actorSpeech = Methods.ConvertString(landb.landbs[i].actorSpeech, false);
-                }
+                }*/
 
                 if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags
                     && (index != -1))

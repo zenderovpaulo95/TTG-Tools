@@ -34,6 +34,7 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.buttonDecrypt = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.labelUnicode = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkIOS = new System.Windows.Forms.CheckBox();
             this.CheckNewEngine = new System.Windows.Forms.CheckBox();
@@ -46,7 +47,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.labelUnicode = new System.Windows.Forms.Label();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -109,6 +110,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBox2);
             this.groupBox1.Controls.Add(this.labelUnicode);
             this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.checkIOS);
@@ -126,6 +128,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Some functions";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // labelUnicode
+            // 
+            this.labelUnicode.AutoSize = true;
+            this.labelUnicode.Location = new System.Drawing.Point(247, 90);
+            this.labelUnicode.Name = "labelUnicode";
+            this.labelUnicode.Size = new System.Drawing.Size(35, 13);
+            this.labelUnicode.TabIndex = 16;
+            this.labelUnicode.Text = "label3";
             // 
             // checkBox1
             // 
@@ -258,14 +269,16 @@
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
-            // labelUnicode
+            // checkBox2
             // 
-            this.labelUnicode.AutoSize = true;
-            this.labelUnicode.Location = new System.Drawing.Point(247, 90);
-            this.labelUnicode.Name = "labelUnicode";
-            this.labelUnicode.Size = new System.Drawing.Size(35, 13);
-            this.labelUnicode.TabIndex = 16;
-            this.labelUnicode.Text = "label3";
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(275, 15);
+            this.checkBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(84, 17);
+            this.checkBox2.TabIndex = 17;
+            this.checkBox2.Text = "Swizzle PS4";
+            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // AutoPacker
             // 
@@ -318,6 +331,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.Label labelUnicode;
+        private System.Windows.Forms.CheckBox checkBox2;
     }
 }
 

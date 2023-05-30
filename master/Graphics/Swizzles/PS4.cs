@@ -3,6 +3,7 @@
  ***************************************************************/
 
 using System;
+using System.Reflection.Emit;
 
 namespace TTG_Tools.Graphics.Swizzles
 {
@@ -27,11 +28,11 @@ namespace TTG_Tools.Graphics.Swizzles
             var widthTexelsAligned = (widthTexels + 7) / 8;
             var dataIndex = 0;
 
-            for(int y = 0; y < heightTexelsAligned; ++y)
+            for (int y = 0; y < heightTexelsAligned; ++y)
             {
-                for(int x = 0; x < widthTexelsAligned; ++x)
+                for (int x = 0; x < widthTexelsAligned; ++x)
                 {
-                    for(int t = 0; t < 64; ++t)
+                    for (int t = 0; t < 64; ++t)
                     {
                         int pixelIndex = SwizzleUtilities.Morton(t, 8, 8);
                         int num8 = pixelIndex / 8;
@@ -39,7 +40,7 @@ namespace TTG_Tools.Graphics.Swizzles
                         var yOffset = (y * 8) + num8;
                         var xOffset = (x * 8) + num9;
 
-                        if((xOffset < widthTexels) && (yOffset < heightTexels))
+                        if ((xOffset < widthTexels) && (yOffset < heightTexels))
                         {
                             var destPixelIndex = yOffset * widthTexels + xOffset;
                             int destIndex = blockSize * destPixelIndex;
