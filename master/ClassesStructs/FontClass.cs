@@ -56,6 +56,7 @@
                 public bool hasScaleValue; //Use since Hector games
                 public bool NewFormat;
                 public bool hasOneFloatValue; //Stupid fix for newest Telltale's games
+                public bool hasLineHeight;
 
                 public string FontName;
                 public float halfValue; //Shows in some fonts
@@ -64,6 +65,7 @@
                 public float NewSomeValue; //Since Game of Thrones if 0x31 byte
                 public byte[] feedFace; //some data from WD: Michonne
                 public float BaseSize; //Common char size in text line
+                public float lineHeight; //For Back to the Future for consoles PS4 and Xbox360
                 public int BlockTexSize; //Size of block Textures
                 public int TexCount; //Count textures
                 public byte LastZero; //Something zero value byte after textures header

@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TTG_Tools.ClassesStructs;
+using TTG_Tools.Graphics.Swizzles;
 
 namespace TTG_Tools
 {
@@ -82,6 +83,7 @@ namespace TTG_Tools
                 NewTex.platform.platform = 2;
 
                 if(MainMenu.settings.swizzleNintendoSwitch) NewTex.platform.platform = 15;
+                if (cbSwizzlePS4.Checked) NewTex.platform.platform = 11;
             }
             else
             {
@@ -101,6 +103,8 @@ namespace TTG_Tools
 
             NewTex.Tex.TexSize = 0;
 
+            int blockSize = NewTex.TextureFormat == 0x40 || NewTex.TextureFormat == 0x43 ? 8 : 16;
+
             for (int i = 0; i < NewTex.Tex.MipCount; i++)
             {
                 NewTex.Tex.Textures[i].CurrentMip = i;
@@ -109,7 +113,18 @@ namespace TTG_Tools
                 NewTex.Tex.Textures[i].Block = new byte[NewTex.Tex.Textures[i].MipSize];
 
                 Array.Copy(NewTex.Tex.Content, pos, NewTex.Tex.Textures[i].Block, 0, NewTex.Tex.Textures[i].Block.Length);
-                if (NewTex.platform.platform == 15) NewTex.Tex.Textures[i].Block = Swizzle.NintendoSwizzle(NewTex.Tex.Textures[i].Block, w, h, (int)NewTex.TextureFormat, false);
+                switch(NewTex.platform.platform)
+                {
+                    case 11:
+                        if (NewTex.Tex.Textures[i].Block.Length < blockSize) blockSize = NewTex.Tex.Textures[i].Block.Length;
+                        NewTex.Tex.Textures[i].Block = PS4.Swizzle(NewTex.Tex.Textures[i].Block, w, h, blockSize);
+                        break;
+
+                    case 15:
+                        NewTex.Tex.Textures[i].Block = NintendoSwitch.NintendoSwizzle(NewTex.Tex.Textures[i].Block, w, h, (int)NewTex.TextureFormat, false);
+                        break;
+                } 
+
 
                 pos += NewTex.Tex.Textures[i].MipSize;
                 NewTex.Tex.TexSize += (uint)NewTex.Tex.Textures[i].MipSize;
@@ -469,7 +484,9 @@ namespace TTG_Tools
                         tmp = new byte[4];
                         Array.Copy(binContent, poz, tmp, 0, tmp.Length);
                         font.halfValue = 0.0f;
+                        font.lineHeight = 0.0f;
                         font.feedFace = null;
+                        font.hasLineHeight = false;
 
                         if(BitConverter.ToString(tmp) == "CE-FA-ED-FE")
                         {
@@ -478,6 +495,37 @@ namespace TTG_Tools
                             poz += 4;
                             tmp = new byte[4];
                             Array.Copy(binContent, poz, tmp, 0, tmp.Length);
+                        }
+
+                        if (font.hasScaleValue && Encoding.ASCII.GetString(header) == "5VSM")
+                        {
+                            //Check for Back to the Future for PS4
+
+                            int tmpPos = poz;
+                            tmp = new byte[4];
+                            Array.Copy(binContent, tmpPos + 12, tmp, 0, tmp.Length);
+                            int checkBlockSize = BitConverter.ToInt32(tmp, 0);
+
+                            tmp = new byte[4];
+                            Array.Copy(binContent, tmpPos + 16, tmp, 0, tmp.Length);
+                            int checkCharCount = BitConverter.ToInt32(tmp, 0);
+
+                            if ((checkCharCount * (4 * 12)) + 8 == checkBlockSize)
+                            {
+                                font.hasLineHeight = true;
+                                tmp = new byte[4];
+                                Array.Copy(binContent, poz, tmp, 0, tmp.Length);
+                                poz += 4;
+                                font.lineHeight = BitConverter.ToSingle(tmp, 0);
+
+                                tmp = new byte[4];
+                                Array.Copy(binContent, poz, tmp, 0, tmp.Length);
+                            }
+                            else
+                            {
+                                tmp = new byte[4];
+                                Array.Copy(binContent, poz, tmp, 0, tmp.Length);
+                            }
                         }
 
                         if ((BitConverter.ToSingle(tmp, 0) == 0.5)
@@ -745,7 +793,8 @@ namespace TTG_Tools
                         rbKerning.Enabled = font.NewFormat;
                         rbNoKerning.Enabled = font.NewFormat;
                         edited = false;
-                        Form.ActiveForm.Text = "Font Editor. Opened file " + FileName;
+                        FileInfo fi = new FileInfo(FileName);
+                        Form.ActiveForm.Text = "Font Editor. Opened file " + fi.Name;
 
                     }
             catch(Exception ex)
@@ -853,6 +902,13 @@ namespace TTG_Tools
             if(font.feedFace != null)
             {
                 bw.Write(font.feedFace);
+                font.headerSize += 4;
+            }
+
+            if(Encoding.ASCII.GetString(check_header) == "5VSM"
+                && font.hasLineHeight)
+            {
+                bw.Write(font.lineHeight);
                 font.headerSize += 4;
             }
 
@@ -1514,6 +1570,10 @@ namespace TTG_Tools
                                             || (Encoding.ASCII.GetString(check_header) == "6VSM"))
                                         {
                                             font.NewSomeValue = Convert.ToSingle(splitted[k + 1]);
+                                        }
+                                        if(Encoding.ASCII.GetString(check_header) == "5VSM" && font.hasLineHeight)
+                                        {
+                                            font.lineHeight = Convert.ToSingle(splitted[k + 1]);
                                         }
                                             break;
 

@@ -3,6 +3,7 @@ using System.Text;
 using System.IO;
 using TTG_Tools.Graphics.DDS;
 using TTG_Tools.Graphics.PVR;
+using TTG_Tools.Graphics.Swizzles;
 
 namespace TTG_Tools
 {
@@ -1422,7 +1423,7 @@ namespace TTG_Tools
 
                         for (int i = 0; i < tex.Tex.MipCount; i++)
                         {
-                            tex.Tex.Textures[i].Block = Swizzle.NintendoSwizzle(tex.Tex.Textures[i].Block, w, h, (int)tex.TextureFormat, false);
+                            tex.Tex.Textures[i].Block = NintendoSwitch.NintendoSwizzle(tex.Tex.Textures[i].Block, w, h, (int)tex.TextureFormat, false);
                             bw.Write(tex.Tex.Textures[i].Block);
                             tex.textureSize += (uint)tex.Tex.Textures[i].Block.Length;
 
@@ -1432,8 +1433,22 @@ namespace TTG_Tools
                     }
                     else
                     {
+                        int w = tex.Width;
+                        int h = tex.Height;
+
+                        int blockSize = tex.TextureFormat == 0x40 || tex.TextureFormat == 0x43 ? 8 : 16;
+
                         for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
                         {
+                            if(tex.platform.platform == 11)
+                            {
+                                if (tex.Tex.Textures[i].Block.Length < blockSize) blockSize = tex.Tex.Textures[i].Block.Length;
+                                tex.Tex.Textures[i].Block = PS4.Swizzle(tex.Tex.Textures[i].Block, w, h, blockSize);
+
+                                if (w > 1) w /= 2;
+                                if (h > 1) h /= 2;
+                            }
+
                             bw.Write(tex.Tex.Textures[i].Block);
                             tex.textureSize += (uint)tex.Tex.Textures[i].Block.Length;
                         }
@@ -1446,10 +1461,9 @@ namespace TTG_Tools
                 }
                 else
                 {
-                    
-                   for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
+                    for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
                    {
-                       bw.Write(tex.Tex.Textures[i].Block);
+                        bw.Write(tex.Tex.Textures[i].Block);
                    }
                 }
             }
@@ -1965,7 +1979,7 @@ namespace TTG_Tools
                 {
                     tex.Tex.Textures[i].Block = new byte[tex.Tex.Textures[i].MipSize];
                     Array.Copy(binContent, tmpPoz, tex.Tex.Textures[i].Block, 0, tex.Tex.Textures[i].Block.Length);
-                    tex.Tex.Textures[i].Block = Swizzle.NintendoSwizzle(tex.Tex.Textures[i].Block, w, h, (int)tex.TextureFormat, true);
+                    tex.Tex.Textures[i].Block = NintendoSwitch.NintendoSwizzle(tex.Tex.Textures[i].Block, w, h, (int)tex.TextureFormat, true);
                     tmpPoz += (uint)tex.Tex.Textures[i].MipSize;
 
                     Array.Copy(tex.Tex.Textures[i].Block, 0, tex.Tex.Content, texPoz, tex.Tex.Textures[i].Block.Length);
@@ -1977,12 +1991,26 @@ namespace TTG_Tools
             }
             else
             {
+                int w = tex.Width;
+                int h = tex.Height;
+
+                int blockSize = tex.TextureFormat == 0x40 || tex.TextureFormat == 0x43 ? 8 : 16;
+
                 for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
                 {
                     texPoz -= tex.Tex.Textures[i].MipSize;
                     tex.Tex.Textures[i].Block = new byte[tex.Tex.Textures[i].MipSize];
                     Array.Copy(binContent, tmpPoz, tex.Tex.Textures[i].Block, 0, tex.Tex.Textures[i].Block.Length);
                     tmpPoz += (uint)tex.Tex.Textures[i].MipSize;
+
+                    if (tex.platform.platform == 11)
+                    {
+                        if (tex.Tex.Textures[i].Block.Length < blockSize) blockSize = tex.Tex.Textures[i].Block.Length;
+                        tex.Tex.Textures[i].Block = PS4.Unswizzle(tex.Tex.Textures[i].Block, w, h, blockSize);
+
+                        if (w > 1) w /= 2;
+                        if (h > 1) h /= 2;
+                    }
 
                     Array.Copy(tex.Tex.Textures[i].Block, 0, tex.Tex.Content, texPoz, tex.Tex.Textures[i].Block.Length);
                 }
