@@ -35,7 +35,6 @@
             this.buttonDecrypt = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelUnicode = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkIOS = new System.Windows.Forms.CheckBox();
             this.CheckNewEngine = new System.Windows.Forms.CheckBox();
             this.checkEncDDS = new System.Windows.Forms.CheckBox();
@@ -47,9 +46,13 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
+            this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
+            this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -89,12 +92,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(10, 171);
+            this.listBox1.Location = new System.Drawing.Point(10, 184);
             this.listBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox1.Size = new System.Drawing.Size(801, 368);
+            this.listBox1.Size = new System.Drawing.Size(801, 407);
             this.listBox1.TabIndex = 2;
             // 
             // buttonDecrypt
@@ -110,9 +113,8 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.checkBox2);
+            this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Controls.Add(this.labelUnicode);
-            this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.checkIOS);
             this.groupBox1.Controls.Add(this.CheckNewEngine);
             this.groupBox1.Controls.Add(this.checkEncDDS);
@@ -123,7 +125,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Size = new System.Drawing.Size(413, 114);
+            this.groupBox1.Size = new System.Drawing.Size(442, 140);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Some functions";
@@ -132,28 +134,16 @@
             // labelUnicode
             // 
             this.labelUnicode.AutoSize = true;
-            this.labelUnicode.Location = new System.Drawing.Point(247, 90);
+            this.labelUnicode.Location = new System.Drawing.Point(212, 107);
             this.labelUnicode.Name = "labelUnicode";
             this.labelUnicode.Size = new System.Drawing.Size(35, 13);
             this.labelUnicode.TabIndex = 16;
             this.labelUnicode.Text = "label3";
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(250, 42);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(142, 17);
-            this.checkBox1.TabIndex = 15;
-            this.checkBox1.Text = "Swizzle Nintendo Switch";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
             // checkIOS
             // 
             this.checkIOS.AutoSize = true;
-            this.checkIOS.Location = new System.Drawing.Point(250, 63);
+            this.checkIOS.Location = new System.Drawing.Point(8, 107);
             this.checkIOS.Margin = new System.Windows.Forms.Padding(2);
             this.checkIOS.Name = "checkIOS";
             this.checkIOS.Size = new System.Drawing.Size(121, 17);
@@ -269,22 +259,59 @@
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
-            // checkBox2
+            // groupBox2
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(275, 15);
-            this.checkBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(84, 17);
-            this.checkBox2.TabIndex = 17;
-            this.checkBox2.Text = "Swizzle PS4";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.groupBox2.Controls.Add(this.rbSwitchSwizzle);
+            this.groupBox2.Controls.Add(this.rbPS4Swizzle);
+            this.groupBox2.Controls.Add(this.rbNoSwizzle);
+            this.groupBox2.Location = new System.Drawing.Point(276, 15);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(126, 88);
+            this.groupBox2.TabIndex = 17;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Swizzle methods";
+            // 
+            // rbNoSwizzle
+            // 
+            this.rbNoSwizzle.AutoSize = true;
+            this.rbNoSwizzle.Location = new System.Drawing.Point(16, 20);
+            this.rbNoSwizzle.Name = "rbNoSwizzle";
+            this.rbNoSwizzle.Size = new System.Drawing.Size(51, 17);
+            this.rbNoSwizzle.TabIndex = 0;
+            this.rbNoSwizzle.TabStop = true;
+            this.rbNoSwizzle.Text = "None";
+            this.rbNoSwizzle.UseVisualStyleBackColor = true;
+            this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
+            // 
+            // rbPS4Swizzle
+            // 
+            this.rbPS4Swizzle.AutoSize = true;
+            this.rbPS4Swizzle.Location = new System.Drawing.Point(16, 44);
+            this.rbPS4Swizzle.Name = "rbPS4Swizzle";
+            this.rbPS4Swizzle.Size = new System.Drawing.Size(45, 17);
+            this.rbPS4Swizzle.TabIndex = 1;
+            this.rbPS4Swizzle.TabStop = true;
+            this.rbPS4Swizzle.Text = "PS4";
+            this.rbPS4Swizzle.UseVisualStyleBackColor = true;
+            this.rbPS4Swizzle.CheckedChanged += new System.EventHandler(this.rbPS4Swizzle_CheckedChanged);
+            // 
+            // rbSwitchSwizzle
+            // 
+            this.rbSwitchSwizzle.AutoSize = true;
+            this.rbSwitchSwizzle.Location = new System.Drawing.Point(16, 65);
+            this.rbSwitchSwizzle.Name = "rbSwitchSwizzle";
+            this.rbSwitchSwizzle.Size = new System.Drawing.Size(103, 17);
+            this.rbSwitchSwizzle.TabIndex = 2;
+            this.rbSwitchSwizzle.TabStop = true;
+            this.rbSwitchSwizzle.Text = "Nintendo Switch";
+            this.rbSwitchSwizzle.UseVisualStyleBackColor = true;
+            this.rbSwitchSwizzle.CheckedChanged += new System.EventHandler(this.rbSwitchSwizzle_CheckedChanged);
             // 
             // AutoPacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(821, 556);
+            this.ClientSize = new System.Drawing.Size(821, 612);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.checkCustomKey);
             this.Controls.Add(this.label1);
@@ -306,6 +333,8 @@
             this.groupBox1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -327,11 +356,13 @@
         private System.Windows.Forms.CheckBox checkCustomKey;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.CheckBox checkIOS;
-        private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.Label labelUnicode;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton rbSwitchSwizzle;
+        private System.Windows.Forms.RadioButton rbPS4Swizzle;
+        private System.Windows.Forms.RadioButton rbNoSwizzle;
     }
 }
 

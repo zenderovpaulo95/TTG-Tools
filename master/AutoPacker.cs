@@ -79,12 +79,6 @@ namespace TTG_Tools
             /*if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
             else MainMenu.settings.unicodeSettings = 1;*/
 
-            //TEMPORARY SOLUTION! NEED REMOVE THAT JUNK!!!!
-            MainMenu.PS4Swizzle = checkBox2.Checked;
-
-            if (checkBox2.Checked && MainMenu.settings.swizzleNintendoSwitch) MainMenu.settings.swizzleNintendoSwitch = false;
-            else MainMenu.PS4Swizzle = false;
-
             EncVersion = 2;
             if (comboBox2.SelectedIndex == 1) EncVersion = 7;
 
@@ -1842,7 +1836,13 @@ namespace TTG_Tools
             checkIOS.Checked = MainMenu.settings.iOSsupport;
             checkEncLangdb.Checked = MainMenu.settings.encLangdb;
             CheckNewEngine.Checked = MainMenu.settings.encNewLua;
-            checkBox1.Checked = MainMenu.settings.swizzleNintendoSwitch;
+
+            if (MainMenu.settings.swizzlePS4 || MainMenu.settings.swizzleNintendoSwitch)
+            {
+                if (MainMenu.settings.swizzleNintendoSwitch) rbSwitchSwizzle.Checked = true;
+                else rbPS4Swizzle.Checked = true;
+            }
+            else rbNoSwizzle.Checked = true;
 
             if (MainMenu.settings.customKey && Methods.stringToKey(MainMenu.settings.encCustomKey) != null)
             {
@@ -1937,12 +1937,6 @@ namespace TTG_Tools
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            MainMenu.settings.swizzleNintendoSwitch = checkBox1.Checked;
-            Settings.SaveConfig(MainMenu.settings);
-        }
-
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AutoDePackerSettings settingsForm = new AutoDePackerSettings();
@@ -1961,6 +1955,36 @@ namespace TTG_Tools
         private void SettingsForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        private void rbNoSwizzle_CheckedChanged(object sender, EventArgs e)
+        {
+            if(rbNoSwizzle.Checked)
+            {
+                MainMenu.settings.swizzleNintendoSwitch = false;
+                MainMenu.settings.swizzlePS4 = false;
+                Settings.SaveConfig(MainMenu.settings);
+            }
+        }
+
+        private void rbPS4Swizzle_CheckedChanged(object sender, EventArgs e)
+        {
+            if(rbPS4Swizzle.Checked)
+            {
+                MainMenu.settings.swizzlePS4 = true;
+                MainMenu.settings.swizzleNintendoSwitch = false;
+                Settings.SaveConfig(MainMenu.settings);
+            }
+        }
+
+        private void rbSwitchSwizzle_CheckedChanged(object sender, EventArgs e)
+        {
+            if(rbSwitchSwizzle.Checked)
+            {
+                MainMenu.settings.swizzleNintendoSwitch = true;
+                MainMenu.settings.swizzlePS4 = false;
+                Settings.SaveConfig(MainMenu.settings);
+            }
         }
     }
 }

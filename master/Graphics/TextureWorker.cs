@@ -596,7 +596,7 @@ namespace TTG_Tools
             }
         }
 
-        private static byte[] GenPvrHeader(int width, int height, int mip, uint format, bool NewFormat)
+        private static byte[] GenPvrHeader(int width, int height, int mip, uint format, uint ArrayMembers, uint Faces, bool NewFormat)
         {
             MemoryStream ms = new MemoryStream();
             BinaryWriter bw = new BinaryWriter(ms);
@@ -727,10 +727,10 @@ namespace TTG_Tools
                 head.Depth = 1; //Set default 1
                 bw.Write(head.Depth);
 
-                head.Surface = 1; //Default 1
+                head.Surface = ArrayMembers > 1 ? ArrayMembers : 1; //Default 1
                 bw.Write(head.Surface);
 
-                head.Face = 1; //Default 1
+                head.Face = Faces > 1 ? Faces : 1; //Default 1
                 bw.Write(head.Face);
 
                 head.Mip = mip == 0 ? 1 : (uint)mip;
@@ -1015,8 +1015,10 @@ namespace TTG_Tools
                 {
                     result = "File " + fi.Name + " successfully extracted. ";
 
-                    if (File.Exists(OutputDir + "\\" + fi.Name.Replace(".d3dtx", ".dds"))) File.Delete(OutputDir + "\\" + fi.Name.Replace(".d3dtx", ".dds"));
-                    File.WriteAllBytes(OutputDir + "\\" + fi.Name.Replace(".d3dtx", ".dds"), tex.Tex.Content);
+                    string format = tex.isPVR ? ".pvr" : ".dds";
+
+                    if (File.Exists(OutputDir + "\\" + fi.Name.Replace(".d3dtx", format))) File.Delete(OutputDir + "\\" + fi.Name.Replace(".d3dtx", format));
+                    File.WriteAllBytes(OutputDir + "\\" + fi.Name.Replace(".d3dtx", format), tex.Tex.Content);
 
                     if (additionalMessage != null) result += additionalMessage;
 
@@ -1085,7 +1087,7 @@ namespace TTG_Tools
                     else
                     {
                         if (MainMenu.settings.swizzleNintendoSwitch) tex.platform.platform = 15;
-                        if (MainMenu.PS4Swizzle) tex.platform.platform = 11;
+                        if (MainMenu.settings.swizzlePS4) tex.platform.platform = 11;
 
                         for(mode = 2; mode < 4; mode++)
                         {
@@ -1645,7 +1647,7 @@ namespace TTG_Tools
                 switch (tex.isIOS)
                 {
                     case true:
-                        byte[] header = GenPvrHeader(tex.Width, tex.Height, tex.Mip, tex.mobTexFormat, false);
+                        byte[] header = GenPvrHeader(tex.Width, tex.Height, tex.Mip, tex.mobTexFormat, 0, 0, false);
 
                         if (header == null) return null;
 
@@ -1839,7 +1841,11 @@ namespace TTG_Tools
                 tex.ArrayMembers = BitConverter.ToInt32(tmp, 0);
                 poz += 4;
 
-                if (tex.Faces > 1 || tex.ArrayMembers > 1) return null; //Need think about it!
+                /*if (tex.Faces > 1 || tex.ArrayMembers > 1)
+                {
+                    return null; //Need think about it!
+                }*/
+                if (tex.Faces > 1) return null;
             }
 
             tmp = new byte[4];
@@ -1946,9 +1952,12 @@ namespace TTG_Tools
 
             string format = "";
 
-            byte[] header = (tex.platform.platform == 7 || tex.platform.platform == 9) ? GenPvrHeader(tex.Width, tex.Height, tex.Mip, (uint)tex.TextureFormat, true) : GenHeader(tex.TextureFormat, tex.Width, tex.Height, tex.Tex.TexSize, tex.Faces, tex.ArrayMembers, tex.Mip, ref format);
+            uint ArrayMembers = tex.ArrayMembers > 1 ? (uint)tex.ArrayMembers : 0;
+            uint Faces = tex.Faces > 1 ? (uint)tex.Faces : 0;
 
-            tex.isPVR = (tex.platform.platform == 7 || tex.platform.platform == 9);
+            byte[] header = (tex.platform.platform == 7 || tex.platform.platform == 9) || (tex.ArrayMembers > 1) ? GenPvrHeader(tex.Width, tex.Height, tex.Mip, (uint)tex.TextureFormat, ArrayMembers, Faces, true) : GenHeader(tex.TextureFormat, tex.Width, tex.Height, tex.Tex.TexSize, tex.Faces, tex.ArrayMembers, tex.Mip, ref format);
+
+            tex.isPVR = (tex.platform.platform == 7 || tex.platform.platform == 9) || (tex.ArrayMembers > 1);
 
             if (header == null)
             {
@@ -1957,7 +1966,6 @@ namespace TTG_Tools
 
             AdditionalInfo = "Texture format: " + format + ". Mip count: " + Convert.ToString(tex.Mip);
 
-            //if(checkHeader == "6VSM" && tex.SomeValue == 9)
             if (((checkHeader == "6VSM") || (checkHeader == "5VSM")) && tex.SomeValue >= 8)
             {
                 AdditionalInfo += ". Faces: " + Convert.ToString(tex.Faces) + ". Array members: " + Convert.ToString(tex.ArrayMembers);
@@ -1969,10 +1977,6 @@ namespace TTG_Tools
 
             uint tmpPoz = (uint)poz;
             if (texFontPoz != 0) tmpPoz = texFontPoz;
-
-            //for(int i = tex.Mip - 1; i >= 0; i--)
-
-            //NEED TO THINK ABOUT COPY TEXTURES WITH ARRAYS
 
             if(tex.platform.platform == 15) //For Nintendo Switch
             {
@@ -1995,14 +1999,35 @@ namespace TTG_Tools
             }
             else
             {
-                for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
+                if (tex.ArrayMembers > 1)
                 {
-                    texPoz -= tex.Tex.Textures[i].MipSize;
-                    tex.Tex.Textures[i].Block = new byte[tex.Tex.Textures[i].MipSize];
-                    Array.Copy(binContent, tmpPoz, tex.Tex.Textures[i].Block, 0, tex.Tex.Textures[i].Block.Length);
-                    tmpPoz += (uint)tex.Tex.Textures[i].MipSize;
+                    int c = tex.Tex.MipCount - 1;
 
-                    Array.Copy(tex.Tex.Textures[i].Block, 0, tex.Tex.Content, texPoz, tex.Tex.Textures[i].Block.Length);
+                    for(int i = tex.Mip - 1; i >= 0; i--)
+                    {
+                        for(int j = 0; j < tex.ArrayMembers; j++)
+                        {
+                            texPoz -= tex.Tex.Textures[c].MipSize;
+                            tex.Tex.Textures[c].Block = new byte[tex.Tex.Textures[c].MipSize];
+                            Array.Copy(binContent, tmpPoz, tex.Tex.Textures[c].Block, 0, tex.Tex.Textures[c].Block.Length);
+                            tmpPoz += (uint)tex.Tex.Textures[c].MipSize;
+
+                            Array.Copy(tex.Tex.Textures[c].Block, 0, tex.Tex.Content, texPoz, tex.Tex.Textures[c].Block.Length);
+                            c--;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
+                    {
+                        texPoz -= tex.Tex.Textures[i].MipSize;
+                        tex.Tex.Textures[i].Block = new byte[tex.Tex.Textures[i].MipSize];
+                        Array.Copy(binContent, tmpPoz, tex.Tex.Textures[i].Block, 0, tex.Tex.Textures[i].Block.Length);
+                        tmpPoz += (uint)tex.Tex.Textures[i].MipSize;
+
+                        Array.Copy(tex.Tex.Textures[i].Block, 0, tex.Tex.Content, texPoz, tex.Tex.Textures[i].Block.Length);
+                    }
                 }
 
                 if (tex.platform.platform == 11)

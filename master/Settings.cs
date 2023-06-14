@@ -50,8 +50,7 @@ namespace TTG_Tools
         private bool _swizzleNintendoSwitch;
         private bool _newTxtFormat;
         private bool _changeLangFlags;
-        private bool _customASCIIFlag;
-        private string _customASCIIEncoding;
+        private bool _swizzlePS4;
 
         [XmlAttribute("pathForInputFolder")]
         public string pathForInputFolder
@@ -457,6 +456,19 @@ namespace TTG_Tools
             }
         }
 
+        [XmlAttribute("swizzlePS4")]
+        public bool swizzlePS4
+        {
+            get
+            {
+                return _swizzlePS4;
+            }
+            set
+            {
+                _swizzlePS4 = value;
+            }
+        }
+
         public Settings(
             string _pathForInputFolder,
             string _pathForOutputFolder,
@@ -488,7 +500,8 @@ namespace TTG_Tools
             bool _clearMessages,
             bool _newTxtFormat, 
             bool _changeLangFlags,
-            bool _ignoreEmptyStrings)
+            bool _ignoreEmptyStrings,
+            bool _swizzlePS4)
         {
             this.ASCII_N = _ASCII_N;
             this.pathForInputFolder = _pathForInputFolder;
@@ -521,6 +534,7 @@ namespace TTG_Tools
             this.newTxtFormat = _newTxtFormat;
             this.changeLangFlags = _changeLangFlags;
             this.ignoreEmptyStrings = _ignoreEmptyStrings;
+            this.swizzlePS4 = _swizzlePS4;
         }
 
         public Settings()

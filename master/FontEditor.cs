@@ -40,7 +40,16 @@ namespace TTG_Tools
         private void FontEditor_Load(object sender, EventArgs e)
         {
             edited = false; //Tell a program about first launch window form so font is not modified.
-            ninSwizzleCheckBox.Checked = MainMenu.settings.swizzleNintendoSwitch;
+            
+            if(MainMenu.settings.swizzlePS4 || MainMenu.settings.swizzleNintendoSwitch)
+            {
+                if (MainMenu.settings.swizzlePS4) rbPS4Swizzle.Checked = true;
+                else rbSwitchSwizzle.Checked = true;
+            }
+            else
+            {
+                rbNoSwizzle.Checked = true;
+            }
         }
 
         public List<byte[]> head = new List<byte[]>();
@@ -83,7 +92,7 @@ namespace TTG_Tools
                 NewTex.platform.platform = 2;
 
                 if(MainMenu.settings.swizzleNintendoSwitch) NewTex.platform.platform = 15;
-                if (cbSwizzlePS4.Checked) NewTex.platform.platform = 11;
+                if (MainMenu.settings.swizzlePS4) NewTex.platform.platform = 11;
             }
             else
             {
@@ -1926,9 +1935,24 @@ namespace TTG_Tools
             toolStripImportFNT_Click(sender, e);
         }
 
-        private void ninSwizzleCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void rbNoSwizzle_CheckedChanged(object sender, EventArgs e)
         {
-            MainMenu.settings.swizzleNintendoSwitch = ninSwizzleCheckBox.Checked;
+            MainMenu.settings.swizzlePS4 = false;
+            MainMenu.settings.swizzleNintendoSwitch = false;
+            Settings.SaveConfig(MainMenu.settings);
+        }
+
+        private void rbPS4Swizzle_CheckedChanged(object sender, EventArgs e)
+        {
+            MainMenu.settings.swizzlePS4 = true;
+            MainMenu.settings.swizzleNintendoSwitch = true;
+            Settings.SaveConfig(MainMenu.settings);
+        }
+
+        private void rbSwitchSwizzle_CheckedChanged(object sender, EventArgs e)
+        {
+            MainMenu.settings.swizzlePS4 = false;
+            MainMenu.settings.swizzleNintendoSwitch = true;
             Settings.SaveConfig(MainMenu.settings);
         }
     }

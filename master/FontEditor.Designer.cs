@@ -86,8 +86,10 @@
             this.label5 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.ninSwizzleCheckBox = new System.Windows.Forms.CheckBox();
-            this.cbSwizzlePS4 = new System.Windows.Forms.CheckBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
+            this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
+            this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewWithTextures)).BeginInit();
@@ -96,6 +98,7 @@
             this.contextMenuStripExp_imp_Coord.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -654,35 +657,60 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // ninSwizzleCheckBox
+            // groupBox4
             // 
-            this.ninSwizzleCheckBox.AutoSize = true;
-            this.ninSwizzleCheckBox.Location = new System.Drawing.Point(862, 47);
-            this.ninSwizzleCheckBox.Margin = new System.Windows.Forms.Padding(2);
-            this.ninSwizzleCheckBox.Name = "ninSwizzleCheckBox";
-            this.ninSwizzleCheckBox.Size = new System.Drawing.Size(142, 17);
-            this.ninSwizzleCheckBox.TabIndex = 30;
-            this.ninSwizzleCheckBox.Text = "Swizzle Nintendo Switch";
-            this.ninSwizzleCheckBox.UseVisualStyleBackColor = true;
-            this.ninSwizzleCheckBox.CheckedChanged += new System.EventHandler(this.ninSwizzleCheckBox_CheckedChanged);
+            this.groupBox4.Controls.Add(this.rbSwitchSwizzle);
+            this.groupBox4.Controls.Add(this.rbPS4Swizzle);
+            this.groupBox4.Controls.Add(this.rbNoSwizzle);
+            this.groupBox4.Location = new System.Drawing.Point(864, 28);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(127, 100);
+            this.groupBox4.TabIndex = 30;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Swizzle methods";
             // 
-            // cbSwizzlePS4
+            // rbNoSwizzle
             // 
-            this.cbSwizzlePS4.AutoSize = true;
-            this.cbSwizzlePS4.Location = new System.Drawing.Point(864, 76);
-            this.cbSwizzlePS4.Name = "cbSwizzlePS4";
-            this.cbSwizzlePS4.Size = new System.Drawing.Size(84, 17);
-            this.cbSwizzlePS4.TabIndex = 31;
-            this.cbSwizzlePS4.Text = "Swizzle PS4";
-            this.cbSwizzlePS4.UseVisualStyleBackColor = true;
+            this.rbNoSwizzle.AutoSize = true;
+            this.rbNoSwizzle.Location = new System.Drawing.Point(7, 22);
+            this.rbNoSwizzle.Name = "rbNoSwizzle";
+            this.rbNoSwizzle.Size = new System.Drawing.Size(51, 17);
+            this.rbNoSwizzle.TabIndex = 0;
+            this.rbNoSwizzle.TabStop = true;
+            this.rbNoSwizzle.Text = "None";
+            this.rbNoSwizzle.UseVisualStyleBackColor = true;
+            this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
+            // 
+            // rbPS4Swizzle
+            // 
+            this.rbPS4Swizzle.AutoSize = true;
+            this.rbPS4Swizzle.Location = new System.Drawing.Point(7, 48);
+            this.rbPS4Swizzle.Name = "rbPS4Swizzle";
+            this.rbPS4Swizzle.Size = new System.Drawing.Size(45, 17);
+            this.rbPS4Swizzle.TabIndex = 1;
+            this.rbPS4Swizzle.TabStop = true;
+            this.rbPS4Swizzle.Text = "PS4";
+            this.rbPS4Swizzle.UseVisualStyleBackColor = true;
+            this.rbPS4Swizzle.CheckedChanged += new System.EventHandler(this.rbPS4Swizzle_CheckedChanged);
+            // 
+            // rbSwitchSwizzle
+            // 
+            this.rbSwitchSwizzle.AutoSize = true;
+            this.rbSwitchSwizzle.Location = new System.Drawing.Point(7, 74);
+            this.rbSwitchSwizzle.Name = "rbSwitchSwizzle";
+            this.rbSwitchSwizzle.Size = new System.Drawing.Size(103, 17);
+            this.rbSwitchSwizzle.TabIndex = 2;
+            this.rbSwitchSwizzle.TabStop = true;
+            this.rbSwitchSwizzle.Text = "Nintendo Switch";
+            this.rbSwitchSwizzle.UseVisualStyleBackColor = true;
+            this.rbSwitchSwizzle.CheckedChanged += new System.EventHandler(this.rbSwitchSwizzle_CheckedChanged);
             // 
             // FontEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1004, 519);
-            this.Controls.Add(this.cbSwizzlePS4);
-            this.Controls.Add(this.ninSwizzleCheckBox);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.dataGridViewWithCoord);
             this.Controls.Add(this.dataGridViewWithTextures);
@@ -710,6 +738,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -771,7 +801,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
-        private System.Windows.Forms.CheckBox ninSwizzleCheckBox;
-        private System.Windows.Forms.CheckBox cbSwizzlePS4;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.RadioButton rbSwitchSwizzle;
+        private System.Windows.Forms.RadioButton rbPS4Swizzle;
+        private System.Windows.Forms.RadioButton rbNoSwizzle;
     }
 }

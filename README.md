@@ -9,6 +9,7 @@ Special thanks to:
 - aluigi for source code of ttarchext;
 - Taylor Hornby for C# source code of Blowfish encryption
 - gdkchan, Stella/AboodXD for swizzle method of Nintendo Switch
+- daemon1 and tge for PS4 swizzle algorithm
 
 This tool have to make easier translations for games from Telltale and Skunkape games.
 It supports some games (at least I tested only these games):
