@@ -34,6 +34,10 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.buttonDecrypt = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
+            this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
+            this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
             this.labelUnicode = new System.Windows.Forms.Label();
             this.checkIOS = new System.Windows.Forms.CheckBox();
             this.CheckNewEngine = new System.Windows.Forms.CheckBox();
@@ -46,13 +50,9 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
-            this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
-            this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -130,6 +130,54 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Some functions";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.rbSwitchSwizzle);
+            this.groupBox2.Controls.Add(this.rbPS4Swizzle);
+            this.groupBox2.Controls.Add(this.rbNoSwizzle);
+            this.groupBox2.Location = new System.Drawing.Point(276, 15);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(126, 88);
+            this.groupBox2.TabIndex = 17;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Swizzle methods";
+            // 
+            // rbSwitchSwizzle
+            // 
+            this.rbSwitchSwizzle.AutoSize = true;
+            this.rbSwitchSwizzle.Location = new System.Drawing.Point(16, 65);
+            this.rbSwitchSwizzle.Name = "rbSwitchSwizzle";
+            this.rbSwitchSwizzle.Size = new System.Drawing.Size(103, 17);
+            this.rbSwitchSwizzle.TabIndex = 2;
+            this.rbSwitchSwizzle.TabStop = true;
+            this.rbSwitchSwizzle.Text = "Nintendo Switch";
+            this.rbSwitchSwizzle.UseVisualStyleBackColor = true;
+            this.rbSwitchSwizzle.CheckedChanged += new System.EventHandler(this.rbSwitchSwizzle_CheckedChanged);
+            // 
+            // rbPS4Swizzle
+            // 
+            this.rbPS4Swizzle.AutoSize = true;
+            this.rbPS4Swizzle.Location = new System.Drawing.Point(16, 44);
+            this.rbPS4Swizzle.Name = "rbPS4Swizzle";
+            this.rbPS4Swizzle.Size = new System.Drawing.Size(45, 17);
+            this.rbPS4Swizzle.TabIndex = 1;
+            this.rbPS4Swizzle.TabStop = true;
+            this.rbPS4Swizzle.Text = "PS4";
+            this.rbPS4Swizzle.UseVisualStyleBackColor = true;
+            this.rbPS4Swizzle.CheckedChanged += new System.EventHandler(this.rbPS4Swizzle_CheckedChanged);
+            // 
+            // rbNoSwizzle
+            // 
+            this.rbNoSwizzle.AutoSize = true;
+            this.rbNoSwizzle.Location = new System.Drawing.Point(16, 20);
+            this.rbNoSwizzle.Name = "rbNoSwizzle";
+            this.rbNoSwizzle.Size = new System.Drawing.Size(51, 17);
+            this.rbNoSwizzle.TabIndex = 0;
+            this.rbNoSwizzle.TabStop = true;
+            this.rbNoSwizzle.Text = "None";
+            this.rbNoSwizzle.UseVisualStyleBackColor = true;
+            this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
             // 
             // labelUnicode
             // 
@@ -259,54 +307,6 @@
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.rbSwitchSwizzle);
-            this.groupBox2.Controls.Add(this.rbPS4Swizzle);
-            this.groupBox2.Controls.Add(this.rbNoSwizzle);
-            this.groupBox2.Location = new System.Drawing.Point(276, 15);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(126, 88);
-            this.groupBox2.TabIndex = 17;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Swizzle methods";
-            // 
-            // rbNoSwizzle
-            // 
-            this.rbNoSwizzle.AutoSize = true;
-            this.rbNoSwizzle.Location = new System.Drawing.Point(16, 20);
-            this.rbNoSwizzle.Name = "rbNoSwizzle";
-            this.rbNoSwizzle.Size = new System.Drawing.Size(51, 17);
-            this.rbNoSwizzle.TabIndex = 0;
-            this.rbNoSwizzle.TabStop = true;
-            this.rbNoSwizzle.Text = "None";
-            this.rbNoSwizzle.UseVisualStyleBackColor = true;
-            this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
-            // 
-            // rbPS4Swizzle
-            // 
-            this.rbPS4Swizzle.AutoSize = true;
-            this.rbPS4Swizzle.Location = new System.Drawing.Point(16, 44);
-            this.rbPS4Swizzle.Name = "rbPS4Swizzle";
-            this.rbPS4Swizzle.Size = new System.Drawing.Size(45, 17);
-            this.rbPS4Swizzle.TabIndex = 1;
-            this.rbPS4Swizzle.TabStop = true;
-            this.rbPS4Swizzle.Text = "PS4";
-            this.rbPS4Swizzle.UseVisualStyleBackColor = true;
-            this.rbPS4Swizzle.CheckedChanged += new System.EventHandler(this.rbPS4Swizzle_CheckedChanged);
-            // 
-            // rbSwitchSwizzle
-            // 
-            this.rbSwitchSwizzle.AutoSize = true;
-            this.rbSwitchSwizzle.Location = new System.Drawing.Point(16, 65);
-            this.rbSwitchSwizzle.Name = "rbSwitchSwizzle";
-            this.rbSwitchSwizzle.Size = new System.Drawing.Size(103, 17);
-            this.rbSwitchSwizzle.TabIndex = 2;
-            this.rbSwitchSwizzle.TabStop = true;
-            this.rbSwitchSwizzle.Text = "Nintendo Switch";
-            this.rbSwitchSwizzle.UseVisualStyleBackColor = true;
-            this.rbSwitchSwizzle.CheckedChanged += new System.EventHandler(this.rbSwitchSwizzle_CheckedChanged);
-            // 
             // AutoPacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -331,10 +331,10 @@
             this.Load += new System.EventHandler(this.AutoPacker_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

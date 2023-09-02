@@ -52,6 +52,8 @@ namespace TTG_Tools
         private bool _changeLangFlags;
         private bool _swizzlePS4;
 
+        private int _languageIndex;
+
         [XmlAttribute("pathForInputFolder")]
         public string pathForInputFolder
         {
@@ -469,6 +471,19 @@ namespace TTG_Tools
             }
         }
 
+        [XmlAttribute("ASCIILanguageIndex")]
+        public int languageIndex
+        {
+            get
+            {
+                return _languageIndex;
+            }
+            set
+            {
+                _languageIndex = value;
+            }
+        }
+
         public Settings(
             string _pathForInputFolder,
             string _pathForOutputFolder,
@@ -501,7 +516,8 @@ namespace TTG_Tools
             bool _newTxtFormat, 
             bool _changeLangFlags,
             bool _ignoreEmptyStrings,
-            bool _swizzlePS4)
+            bool _swizzlePS4,
+            int _languageIndex)
         {
             this.ASCII_N = _ASCII_N;
             this.pathForInputFolder = _pathForInputFolder;
@@ -535,6 +551,7 @@ namespace TTG_Tools
             this.changeLangFlags = _changeLangFlags;
             this.ignoreEmptyStrings = _ignoreEmptyStrings;
             this.swizzlePS4 = _swizzlePS4;
+            this.languageIndex = _languageIndex;
         }
 
         public Settings()

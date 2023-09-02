@@ -47,6 +47,8 @@
             this.textBoxInputFolder = new System.Windows.Forms.TextBox();
             this.textBoxOutputFolder = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkLanguage = new System.Windows.Forms.CheckBox();
+            this.languageComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownASCII)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -84,7 +86,7 @@
             // 
             // buttonSaveSettings
             // 
-            this.buttonSaveSettings.Location = new System.Drawing.Point(180, 275);
+            this.buttonSaveSettings.Location = new System.Drawing.Point(180, 312);
             this.buttonSaveSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonSaveSettings.Name = "buttonSaveSettings";
             this.buttonSaveSettings.Size = new System.Drawing.Size(136, 23);
@@ -95,7 +97,7 @@
             // 
             // buttonExitSettingsForm
             // 
-            this.buttonExitSettingsForm.Location = new System.Drawing.Point(333, 275);
+            this.buttonExitSettingsForm.Location = new System.Drawing.Point(333, 312);
             this.buttonExitSettingsForm.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonExitSettingsForm.Name = "buttonExitSettingsForm";
             this.buttonExitSettingsForm.Size = new System.Drawing.Size(88, 23);
@@ -106,7 +108,7 @@
             // 
             // buttonApplyAndExitSettings
             // 
-            this.buttonApplyAndExitSettings.Location = new System.Drawing.Point(36, 275);
+            this.buttonApplyAndExitSettings.Location = new System.Drawing.Point(36, 312);
             this.buttonApplyAndExitSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonApplyAndExitSettings.Name = "buttonApplyAndExitSettings";
             this.buttonApplyAndExitSettings.Size = new System.Drawing.Size(136, 23);
@@ -120,7 +122,7 @@
             this.groupBox2.Controls.Add(this.rbNewBttF);
             this.groupBox2.Controls.Add(this.rbNonNormalUnicode2);
             this.groupBox2.Controls.Add(this.rbNormalUnicode);
-            this.groupBox2.Location = new System.Drawing.Point(56, 42);
+            this.groupBox2.Location = new System.Drawing.Point(56, 79);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
@@ -214,18 +216,40 @@
             this.groupBox1.Controls.Add(this.textBoxInputFolder);
             this.groupBox1.Controls.Add(this.buttonInputFolder);
             this.groupBox1.Controls.Add(this.buttonOutputFolder);
-            this.groupBox1.Location = new System.Drawing.Point(19, 162);
+            this.groupBox1.Location = new System.Drawing.Point(19, 199);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(427, 100);
             this.groupBox1.TabIndex = 30;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Auto(De)Packer file paths:";
             // 
+            // checkLanguage
+            // 
+            this.checkLanguage.AutoSize = true;
+            this.checkLanguage.Location = new System.Drawing.Point(19, 47);
+            this.checkLanguage.Name = "checkLanguage";
+            this.checkLanguage.Size = new System.Drawing.Size(222, 17);
+            this.checkLanguage.TabIndex = 31;
+            this.checkLanguage.Text = "I don\'t know ASCII code for my language!";
+            this.checkLanguage.UseVisualStyleBackColor = true;
+            this.checkLanguage.CheckedChanged += new System.EventHandler(this.checkLanguage_CheckedChanged);
+            // 
+            // languageComboBox
+            // 
+            this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.languageComboBox.FormattingEnabled = true;
+            this.languageComboBox.Location = new System.Drawing.Point(247, 45);
+            this.languageComboBox.Name = "languageComboBox";
+            this.languageComboBox.Size = new System.Drawing.Size(199, 21);
+            this.languageComboBox.TabIndex = 32;
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(475, 316);
+            this.ClientSize = new System.Drawing.Size(475, 368);
+            this.Controls.Add(this.languageComboBox);
+            this.Controls.Add(this.checkLanguage);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonApplyAndExitSettings);
@@ -269,5 +293,7 @@
         private System.Windows.Forms.TextBox textBoxInputFolder;
         private System.Windows.Forms.TextBox textBoxOutputFolder;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox checkLanguage;
+        private System.Windows.Forms.ComboBox languageComboBox;
     }
 }

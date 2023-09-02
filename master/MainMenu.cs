@@ -12,11 +12,13 @@ namespace TTG_Tools
 {
     public partial class MainMenu : Form
     {
-        public static Settings settings = new Settings("", "", 1251, false, false, false, true, false, 0, false, false, false, false, false, false, 0, 0, "", "", "", false, false, false, false, 0, 0, false, false, false, false, false, false);
+        public static Settings settings = new Settings("", "", 1251, false, false, false, true, false, 0, false, false, false, false, false, false, 0, 0, "", "", "", false, false, false, false, 0, 0, false, false, false, false, false, false, -1);
 
         [DllImport("kernel32.dll")]
         public static extern void SetProcessWorkingSetSize(IntPtr hWnd, int i, int j);
-        
+
+        public static string[] languagesASCII = { "Albanian (1250)", "Albanian (1252)", "Albanian (1258)", "Arabic", "Basque", "Belarusian", "Bosnian Cyrillic (1251)", "Bulgarian", "Catalan", "Czech", "Danish (1252)", "Danish (1254)", "Danish (1258)", "Dutch", "Estonian (1252)", "Estonian (1257)", "Faroese", "Finnish (1252)", "Finnish (1254)", "Finnish (1258)", "French (1252)", "French (1254)", "French (1258)", "Gagauz", "German (1250)", "German (1252)", "German (1254)", "German (1258)", "Greek", "Hebrew", "Hungarian", "Icelandic", "Irish (1252)", "Irish (1258)", "Italian (1252)", "Italian (1254)", "Latgalian", "Latvian", "Lithuanian", "Luxembourgish (1250)", "Luxembourgish (1252)", "Luxembourgish (1254)", "Luxembourgish (1258)", "Macedonian", "Montenegrin", "Norwegian (1252)", "Norwegian (1254)", "Norwegian (1258)", "Occitan", "Persian", "Polish", "Portuguese (1252)", "Portuguese (1254)", "Romanian (1250)", "Romansh", "Rotokas (1250)", "Rotokas (1251)", "Rotokas (1252)", "Rotokas (1254)", "Russian", "Rusyn", "Serbian Cyrillic (1251)", "Serbo-Crotian", "Slovak", "Slovene (1250)", "Slovene (1252)", "Spanish (1252)", "Spanish (1254)", "Spanish (1258)", "Swahili", "Swedish (1252)", "Swedish (1254)", "Swedish (1258)", "Thai", "Tswana (1252)", "Tswana (1254)", "Tswana (1258)", "Turkish", "Ukranian", "Urdu", "Vietnamese" };
+
         public static List<keysEncryption> gamelist = new List<keysEncryption>(); //Список класса для сборки ключей шифрования
 
         public MainMenu()

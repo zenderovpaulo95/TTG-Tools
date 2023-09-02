@@ -141,6 +141,10 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
+v.1.13.1 (02.09.2023)
++ TTG Tools:
+Add in settings supported language in code pages option if you don't code page of your language
+
 v.1.13 (14.06.2023)
 + TTG Tools:
 Add PS4 swizzle support

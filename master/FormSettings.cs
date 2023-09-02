@@ -39,6 +39,91 @@ namespace TTG_Tools
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
             else MainMenu.settings.unicodeSettings = 2;
 
+            if(MainMenu.settings.ASCII_N == 1252) MainMenu.settings.unicodeSettings = 0;
+
+            MainMenu.settings.languageIndex = -1;
+            if (checkLanguage.Checked)
+            {
+                MainMenu.settings.languageIndex = languageComboBox.SelectedIndex;
+
+                if(languageComboBox.Text.IndexOf("(") > 0)
+                {
+                    int start = languageComboBox.Text.IndexOf("(") + 1;
+                    int end = languageComboBox.Text.IndexOf(")");
+                    string str_num = languageComboBox.Text.Substring(start, end - start);
+                    MainMenu.settings.ASCII_N = Convert.ToInt32(str_num);
+                }
+                else
+                {
+                    switch (languageComboBox.Text)
+                    {
+                        case "Thai":
+                            MainMenu.settings.ASCII_N = 874;
+                            break;
+
+                        case "Czech":
+                        case "Polish":
+                        case "Slovak":
+                        case "Hungarian":
+                        case "Serbo-Crotian":
+                        case "Montenegrin":
+                        case "Gagauz":
+                            MainMenu.settings.ASCII_N = 1250;
+                            break;
+
+                        case "Belarusian":
+                        case "Bulgarian":
+                        case "Macedonian":
+                        case "Russian":
+                        case "Rusyn":
+                        case "Ukranian":
+                            MainMenu.settings.ASCII_N = 1251;
+                            break;
+
+                        case "Basque":
+                        case "Catalan":
+                        case "Faroese":
+                        case "Occitan":
+                        case "Romansh":
+                        case "Swahili":
+                            MainMenu.settings.ASCII_N = 1252;
+                            break;
+
+                        case "Dutch":
+                        case "Greek":
+                            MainMenu.settings.ASCII_N = 1253;
+                            break;
+
+                        case "Turkish":
+                            MainMenu.settings.ASCII_N = 1254;
+                            break;
+
+                        case "Hebrew":
+                            MainMenu.settings.ASCII_N = 1255;
+                            break;
+
+                        case "Arabic":
+                        case "Persian":
+                        case "Urdu":
+                            MainMenu.settings.ASCII_N = 1256;
+                            break;
+
+                        case "Latvian":
+                        case "Lithianian":
+                        case "Latgalian":
+                        case "Icelandic":
+                            MainMenu.settings.ASCII_N = 1257;
+                            break;
+
+                        case "Vietnamese":
+                            MainMenu.settings.ASCII_N = 1258;
+                            break;
+                    }
+                }
+
+                numericUpDownASCII.Value = MainMenu.settings.ASCII_N;
+            }
+
             if (((MainMenu.settings.pathForInputFolder != "") && (Directory.Exists(MainMenu.settings.pathForInputFolder)))
                 && ((MainMenu.settings.pathForOutputFolder != "") && (Directory.Exists(MainMenu.settings.pathForOutputFolder))))
             {
@@ -47,6 +132,7 @@ namespace TTG_Tools
                 if (Program.FirstTime)
                 {
                     MessageBox.Show("Please restart application to confirm settings");
+                    this.Close();
                 }
             }
             else
@@ -58,7 +144,7 @@ namespace TTG_Tools
         private void buttonOkSettings_Click(object sender, EventArgs e)
         {
             buttonSaveSettings_Click(sender, e);
-            this.Close();
+            if(!Program.FirstTime) this.Close();
         }
 
         private void buttonCloseSettingsForm_Click(object sender, EventArgs e)
@@ -68,25 +154,19 @@ namespace TTG_Tools
 
         private void numericUpDownASCII_ValueChanged(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(numericUpDownASCII.Value) < 874)
-            {
-                numericUpDownASCII.Value = 874;
-            }
-            if (Convert.ToInt32(numericUpDownASCII.Value) > 1258)
-            {
-                numericUpDownASCII.Value = 1258;
-            }
             switch (Convert.ToInt32(numericUpDownASCII.Value.ToString()))
             {
-                case 875:
-                case 1249:
-                    numericUpDownASCII.Value = 932;
+                case 873:
+                    numericUpDownASCII.Value = 874;
                     break;
-                case 933:
+                case 875:
                     numericUpDownASCII.Value = 1250;
                     break;
-                case 931:
+                case 1249:
                     numericUpDownASCII.Value = 874;
+                    break;
+                case 1259:
+                    numericUpDownASCII.Value = 1258;
                     break;
             }
 
@@ -94,15 +174,30 @@ namespace TTG_Tools
             if (Convert.ToInt32(numericUpDownASCII.Value.ToString()) == 1252)
             {
                 rbNormalUnicode.Checked = true;
-                MainMenu.settings.unicodeSettings = 0;
                 rbNonNormalUnicode2.Enabled = false;
                 rbNormalUnicode.Enabled = false;
+                rbNewBttF.Enabled = false;
             }
             else
             {
-                MainMenu.settings.unicodeSettings = 1;
                 rbNonNormalUnicode2.Enabled = true;
                 rbNormalUnicode.Enabled = true;
+                rbNewBttF.Enabled = true;
+
+                switch (MainMenu.settings.unicodeSettings)
+                {
+                    case 0:
+                        rbNormalUnicode.Checked = true;
+                        break;
+
+                    case 1:
+                        rbNonNormalUnicode2.Checked = true;
+                        break;
+
+                    case 2:
+                        rbNewBttF.Checked = true;
+                        break;
+                }
             }
         }
 
@@ -111,6 +206,17 @@ namespace TTG_Tools
             numericUpDownASCII.Value = MainMenu.settings.ASCII_N;
             textBoxInputFolder.Text = MainMenu.settings.pathForInputFolder;
             textBoxOutputFolder.Text = MainMenu.settings.pathForOutputFolder;
+
+            buttonSaveSettings.Enabled = !Program.FirstTime;
+
+            foreach(string lang in MainMenu.languagesASCII)
+            {
+                languageComboBox.Items.Add(lang);
+            }
+
+            checkLanguage.Checked = MainMenu.settings.languageIndex != -1;
+            languageComboBox.Enabled = MainMenu.settings.languageIndex != -1;
+            languageComboBox.SelectedIndex = MainMenu.settings.languageIndex != -1 ? languageComboBox.SelectedIndex = MainMenu.settings.languageIndex : 0;
 
             switch (MainMenu.settings.unicodeSettings)
             {
@@ -134,6 +240,12 @@ namespace TTG_Tools
         private void buttonOutputFolder_Click(object sender, EventArgs e)
         {
             textBoxOutputFolder.Text = SetFolder(textBoxOutputFolder.Text);
+        }
+
+        private void checkLanguage_CheckedChanged(object sender, EventArgs e)
+        {
+            languageComboBox.SelectedIndex = 0;
+            languageComboBox.Enabled = checkLanguage.Checked;            
         }
     }
 }
