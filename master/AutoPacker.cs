@@ -378,7 +378,7 @@ namespace TTG_Tools
         {
             if (MainMenu.settings.clearMessages) listBox1.Items.Clear();
 
-            string versionOfGame = " ";//CheckVersionOfGameFromCombobox(comboBox1.SelectedIndex);
+            string versionOfGame = " ";
             numKey = comboBox1.SelectedIndex;
             selected_index = comboBox2.SelectedIndex;
 
