@@ -1823,7 +1823,7 @@ namespace TTG_Tools
 
             for (int i = 0; i < MainMenu.gamelist.Count; i++)
             {
-                comboBox1.Items.Add(i + " " + MainMenu.gamelist[i].gamename);
+                comboBox1.Items.Add(i + ". " + MainMenu.gamelist[i].gamename);
             }
 
             #endregion

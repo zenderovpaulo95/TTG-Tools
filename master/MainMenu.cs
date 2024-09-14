@@ -340,5 +340,14 @@ namespace TTG_Tools
                 archiveForm.Show();
             }
         }
+
+        private void arcUnpackerBtn_Click(object sender, EventArgs e)
+        {
+            if(Application.OpenForms.OfType<ArchiveUnpacker>().Count() == 0)
+            {
+                Form arcUnpackerForm = new ArchiveUnpacker();
+                arcUnpackerForm.Show();
+            }
+        }
     }
 }

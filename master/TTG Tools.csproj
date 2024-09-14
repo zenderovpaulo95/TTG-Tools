@@ -86,6 +86,12 @@
     <Compile Include="ArchivePacker.Designer.cs">
       <DependentUpon>ArchivePacker.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveUnpacker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveUnpacker.Designer.cs">
+      <DependentUpon>ArchiveUnpacker.cs</DependentUpon>
+    </Compile>
     <Compile Include="AutoDePackerSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -160,6 +166,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchivePacker.resx">
       <DependentUpon>ArchivePacker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveUnpacker.resx">
+      <DependentUpon>ArchiveUnpacker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AutoDePackerSettings.resx">
       <DependentUpon>AutoDePackerSettings.cs</DependentUpon>

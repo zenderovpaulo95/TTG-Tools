@@ -38,6 +38,7 @@
             this.textEditorBtn = new System.Windows.Forms.Button();
             this.settingsBtn = new System.Windows.Forms.Button();
             this.archivePackerBtn = new System.Windows.Forms.Button();
+            this.arcUnpackerBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // autopackerBtn
@@ -52,7 +53,7 @@
             // 
             // aboutBtn
             // 
-            this.aboutBtn.Location = new System.Drawing.Point(161, 91);
+            this.aboutBtn.Location = new System.Drawing.Point(78, 129);
             this.aboutBtn.Name = "aboutBtn";
             this.aboutBtn.Size = new System.Drawing.Size(112, 23);
             this.aboutBtn.TabIndex = 1;
@@ -107,11 +108,23 @@
             this.archivePackerBtn.UseVisualStyleBackColor = true;
             this.archivePackerBtn.Click += new System.EventHandler(this.button5_Click);
             // 
+            // arcUnpackerBtn
+            // 
+            this.arcUnpackerBtn.Location = new System.Drawing.Point(159, 91);
+            this.arcUnpackerBtn.Margin = new System.Windows.Forms.Padding(2);
+            this.arcUnpackerBtn.Name = "arcUnpackerBtn";
+            this.arcUnpackerBtn.Size = new System.Drawing.Size(111, 23);
+            this.arcUnpackerBtn.TabIndex = 13;
+            this.arcUnpackerBtn.Text = "Archive unpacker";
+            this.arcUnpackerBtn.UseVisualStyleBackColor = true;
+            this.arcUnpackerBtn.Click += new System.EventHandler(this.arcUnpackerBtn_Click);
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(285, 125);
+            this.ClientSize = new System.Drawing.Size(285, 159);
+            this.Controls.Add(this.arcUnpackerBtn);
             this.Controls.Add(this.archivePackerBtn);
             this.Controls.Add(this.settingsBtn);
             this.Controls.Add(this.textEditorBtn);
@@ -139,5 +152,6 @@
         private System.Windows.Forms.Button textEditorBtn;
         private System.Windows.Forms.Button settingsBtn;
         private System.Windows.Forms.Button archivePackerBtn;
+        private System.Windows.Forms.Button arcUnpackerBtn;
     }
 }
