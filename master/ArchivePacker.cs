@@ -1,9 +1,10 @@
-﻿using System;
+﻿using OodleTools;
+using System;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using zlib;
 
 namespace TTG_Tools
 {
@@ -82,17 +83,36 @@ namespace TTG_Tools
 
         private static byte[] ZlibCompressor(byte[] bytes) //Для старых архивов (с версии 3 по 7)
         {
-            byte[] retBytes;
+            ulong destLen = (ulong)bytes.Length;
+            ulong srcLen = (ulong)bytes.Length;
+            byte[] retBytes = new byte[destLen];
+
             using (MemoryStream outMemoryStream = new MemoryStream())
-            using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream, zlibConst.Z_BEST_COMPRESSION))
-            using (Stream inMemoryStream = new MemoryStream(bytes))
             {
-                CopyStream(inMemoryStream, outZStream);
-                outZStream.finish();
-                retBytes = outMemoryStream.ToArray();
+                using (Joveler.ZLibWrapper.ZLibStream outZStream = new Joveler.ZLibWrapper.ZLibStream(outMemoryStream, Joveler.ZLibWrapper.ZLibMode.Compress, Joveler.ZLibWrapper.ZLibCompLevel.Level7))
+                {
+                    using (Stream inMemoryStream = new MemoryStream(bytes))
+                    {
+
+                        CopyStream(inMemoryStream, outZStream);
+                        outZStream.Flush();
+                        retBytes = outMemoryStream.ToArray();
+                    }
+                }
             }
 
             return retBytes;
+        }
+
+        private static byte[] OodleCompress(byte[] bytes)
+        {
+            byte[] retVal = new byte[bytes.Length];
+            long bufSize = bytes.Length;
+            int compressedSize = OodleTools.Imports.OodleLZ_Compress(OodleTools.OodleFormat.LZHLW, bytes, bufSize, retVal, OodleTools.OodleCompressionLevel.Optimal5, 0, 0, 0);
+            bytes = new byte[compressedSize];
+            Array.Copy(retVal, 0, bytes, 0, bytes.Length);
+            retVal = null;
+            return bytes;
         }
 
         private static byte[] DeflateCompressor(byte[] bytes) //Для старых (версии 8 и 9) и новых архивов
@@ -122,7 +142,7 @@ namespace TTG_Tools
         }
 
 
-        public void builder_ttarch2(string input_folder, string output_path, bool compression, byte[] key, bool encLua, int version_archive, bool newEngine)
+        public void builder_ttarch2(string input_folder, string output_path, bool compression, byte[] key, bool encLua, int version_archive, bool newEngine, int compressAlgorithm)
         {                           
             DirectoryInfo di = new DirectoryInfo(input_folder);
             fi = di.GetFiles("*", SearchOption.AllDirectories);
@@ -299,13 +319,18 @@ namespace TTG_Tools
                 //zCTT - compressed archive with oo2core library
                 //eCTT - encrypted compressed archive with oo2core library
 
-                byte[] compressed_header = { 0x5A, 0x43, 0x54, 0x54 }; //Compressed Заголовок сжатого архива (ZCTT)
+                byte[] compressedHeader = { 0x5A, 0x43, 0x54, 0x54 }; //Compressed archive's header (ZCTT)
 
-                byte[] enc_compressed_header = { 0x45, 0x43, 0x54, 0x54 }; //Заголовок зашифрованного сжатого архива (ECTT)
+                if (compressAlgorithm == 1) compressedHeader[0] = 0x7a; //If oodle algorithm then change Z to z char
+
+                byte[] encCompressedHeader = { 0x45, 0x43, 0x54, 0x54 }; //Encrypted compressed archive's header (ECTT)
+
+                if (compressAlgorithm == 1) encCompressedHeader[0] = 0x65; //If oodle algorithm then change E to e char
 
                 byte[] chunk_size = { 0x00, 0x00, 0x01, 0x00 }; //Write chunk size (64KB)
                 UInt64 chunk_table_size = 8 * blocks_count + 8;
-                offset = chunk_table_size + 4 + 4 + 4;
+                offset = compressAlgorithm == 0 ? chunk_table_size + 4 + 4 + 4 : chunk_table_size + 4 + 4 + 4 + 4;
+
                 byte[] chunk_table = new byte[chunk_table_size];
                 byte[] bin_offset = new byte[8];
                 bin_offset = BitConverter.GetBytes(offset);
@@ -313,10 +338,14 @@ namespace TTG_Tools
                 Array.Copy(bin_offset, 0, chunk_table, (uint)offset_table, 8);
                 offset_table += 8;
 
-                if (MainMenu.settings.encArchive) fs.Write(enc_compressed_header, 0, enc_compressed_header.Length); //If compressed archive encrypts then write encrypted header
-                else fs.Write(compressed_header, 0, 4); //else write compressed header
+                if (MainMenu.settings.encArchive) fs.Write(encCompressedHeader, 0, encCompressedHeader.Length); //If compressed archive encrypts then write encrypted header
+                else fs.Write(compressedHeader, 0, compressedHeader.Length); //else write compressed header
 
-
+                if(compressAlgorithm == 1)
+                {
+                    byte[] val = BitConverter.GetBytes(1);
+                    fs.Write(val, 0, val.Length);
+                }
                 fs.Write(chunk_size, 0, 4);
                 fs.Write(bin_blocks_count, 0, 4);
                 fs.Write(chunk_table, 0, chunk_table.Length);
@@ -330,7 +359,20 @@ namespace TTG_Tools
                 {
                     byte[] temp = new byte[0x10000];
                     temp_fr.Read(temp, 0, temp.Length);
-                    byte[] compressed_block = DeflateCompressor(temp);
+
+                    byte[] compressed_block = new byte[temp.Length];
+
+                    switch (compressAlgorithm)
+                    {
+                        case 0:
+                            compressed_block = DeflateCompressor(temp);
+                            break;
+
+                        case 1:
+                            compressed_block = OodleCompress(temp);
+                            break;
+                    }
+                    
 
                     if (MainMenu.settings.encArchive) //Encrypt compressed block if user select encrypt archive
                     {
@@ -347,7 +389,10 @@ namespace TTG_Tools
                     Progress(i + 1);
                 }
 
-                fs.Seek(12, SeekOrigin.Begin); //Return to chunk table position
+                int off = 12;
+                if (compressAlgorithm == 1) off += 4;
+
+                fs.Seek(off, SeekOrigin.Begin); //Return to chunk table position
                 fs.Write(chunk_table, 0, chunk_table.Length); //and record our data
 
                 temp_fr.Close();
@@ -789,6 +834,10 @@ namespace TTG_Tools
             {
                 comboGameList.Items.Add(i + ". " + MainMenu.gamelist[i].gamename);
             }
+
+            compressionCB.Items.Add("Deflate");
+            compressionCB.Items.Add("Oodle LZ");
+            compressionCB.SelectedIndex = 0;
             
             newEngineLua.Checked = MainMenu.settings.encNewLua;
             checkCompress.Checked = MainMenu.settings.compressArchive;
@@ -929,8 +978,12 @@ namespace TTG_Tools
 
                     if ((MainMenu.settings.archivePath.ToLower().IndexOf(".obb") > 0)) MainMenu.settings.compressArchive = false;
 
+                    int algorithmCompress = 0;
+
+                    if(ttarch2RB.Checked && (versionSelection.SelectedIndex == 1) && (compressionCB.SelectedIndex == 1)) algorithmCompress = 1;
+
                     if (ttarchRB.Checked == true) builder_ttarch(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive);
-                    else builder_ttarch2(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, keyEnc, MainMenu.settings.encryptLuaInArchive, archiveVersion, MainMenu.settings.encNewLua);      
+                    else builder_ttarch2(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, keyEnc, MainMenu.settings.encryptLuaInArchive, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress);
                 }
                 else MessageBox.Show("This folder doesn't exist!", "Error");
                 
@@ -998,6 +1051,9 @@ namespace TTG_Tools
 
         private void versionSelection_SelectedIndexChanged(object sender, EventArgs e)
         {
+            compressionLabel.Visible = ttarch2RB.Checked && versionSelection.SelectedIndex == 1;
+            compressionCB.Visible = ttarch2RB.Checked && versionSelection.SelectedIndex == 1;
+
             MainMenu.settings.versionArchiveIndex = versionSelection.SelectedIndex;
             Settings.SaveConfig(MainMenu.settings);
         }

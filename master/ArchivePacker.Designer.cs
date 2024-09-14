@@ -54,6 +54,8 @@
             this.CheckCustomKey = new System.Windows.Forms.CheckBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.compressionCB = new System.Windows.Forms.ComboBox();
+            this.compressionLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,9 +64,9 @@
             this.groupBox1.Controls.Add(this.ttarch2RB);
             this.groupBox1.Controls.Add(this.ttarchRB);
             this.groupBox1.Location = new System.Drawing.Point(14, 10);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(169, 59);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
@@ -74,7 +76,7 @@
             // 
             this.ttarch2RB.AutoSize = true;
             this.ttarch2RB.Location = new System.Drawing.Point(4, 37);
-            this.ttarch2RB.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ttarch2RB.Margin = new System.Windows.Forms.Padding(2);
             this.ttarch2RB.Name = "ttarch2RB";
             this.ttarch2RB.Size = new System.Drawing.Size(147, 17);
             this.ttarch2RB.TabIndex = 1;
@@ -87,7 +89,7 @@
             // 
             this.ttarchRB.AutoSize = true;
             this.ttarchRB.Location = new System.Drawing.Point(4, 15);
-            this.ttarchRB.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ttarchRB.Margin = new System.Windows.Forms.Padding(2);
             this.ttarchRB.Name = "ttarchRB";
             this.ttarchRB.Size = new System.Drawing.Size(126, 17);
             this.ttarchRB.TabIndex = 0;
@@ -119,7 +121,7 @@
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(104, 86);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(194, 20);
@@ -128,7 +130,7 @@
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(104, 117);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(194, 20);
@@ -137,7 +139,7 @@
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(302, 86);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(24, 19);
             this.button1.TabIndex = 5;
@@ -148,7 +150,7 @@
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(302, 117);
-            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(24, 19);
             this.button2.TabIndex = 6;
@@ -159,7 +161,7 @@
             // buildButton
             // 
             this.buildButton.Location = new System.Drawing.Point(228, 144);
-            this.buildButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buildButton.Margin = new System.Windows.Forms.Padding(2);
             this.buildButton.Name = "buildButton";
             this.buildButton.Size = new System.Drawing.Size(83, 23);
             this.buildButton.TabIndex = 7;
@@ -171,7 +173,7 @@
             // 
             this.checkCompress.AutoSize = true;
             this.checkCompress.Location = new System.Drawing.Point(568, 53);
-            this.checkCompress.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkCompress.Margin = new System.Windows.Forms.Padding(2);
             this.checkCompress.Name = "checkCompress";
             this.checkCompress.Size = new System.Drawing.Size(110, 17);
             this.checkCompress.TabIndex = 8;
@@ -184,7 +186,7 @@
             this.versionSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.versionSelection.FormattingEnabled = true;
             this.versionSelection.Location = new System.Drawing.Point(298, 50);
-            this.versionSelection.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.versionSelection.Margin = new System.Windows.Forms.Padding(2);
             this.versionSelection.Name = "versionSelection";
             this.versionSelection.Size = new System.Drawing.Size(38, 21);
             this.versionSelection.TabIndex = 9;
@@ -203,7 +205,7 @@
             // progressBar1
             // 
             this.progressBar1.Location = new System.Drawing.Point(31, 146);
-            this.progressBar1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(2);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(182, 19);
             this.progressBar1.TabIndex = 11;
@@ -221,7 +223,7 @@
             // 
             this.EncryptIt.AutoSize = true;
             this.EncryptIt.Location = new System.Drawing.Point(361, 102);
-            this.EncryptIt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.EncryptIt.Margin = new System.Windows.Forms.Padding(2);
             this.EncryptIt.Name = "EncryptIt";
             this.EncryptIt.Size = new System.Drawing.Size(100, 17);
             this.EncryptIt.TabIndex = 13;
@@ -234,7 +236,7 @@
             this.comboGameList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboGameList.FormattingEnabled = true;
             this.comboGameList.Location = new System.Drawing.Point(454, 144);
-            this.comboGameList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboGameList.Margin = new System.Windows.Forms.Padding(2);
             this.comboGameList.MaxDropDownItems = 9;
             this.comboGameList.Name = "comboGameList";
             this.comboGameList.Size = new System.Drawing.Size(249, 21);
@@ -255,7 +257,7 @@
             // 
             this.checkXmode.AutoSize = true;
             this.checkXmode.Location = new System.Drawing.Point(368, 53);
-            this.checkXmode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkXmode.Margin = new System.Windows.Forms.Padding(2);
             this.checkXmode.Name = "checkXmode";
             this.checkXmode.Size = new System.Drawing.Size(171, 17);
             this.checkXmode.TabIndex = 16;
@@ -267,7 +269,7 @@
             // 
             this.DontEncLuaCheck.AutoSize = true;
             this.DontEncLuaCheck.Location = new System.Drawing.Point(361, 123);
-            this.DontEncLuaCheck.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.DontEncLuaCheck.Margin = new System.Windows.Forms.Padding(2);
             this.DontEncLuaCheck.Name = "DontEncLuaCheck";
             this.DontEncLuaCheck.Size = new System.Drawing.Size(110, 17);
             this.DontEncLuaCheck.TabIndex = 17;
@@ -289,7 +291,7 @@
             // 
             this.newEngineLua.AutoSize = true;
             this.newEngineLua.Location = new System.Drawing.Point(500, 102);
-            this.newEngineLua.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.newEngineLua.Margin = new System.Windows.Forms.Padding(2);
             this.newEngineLua.Name = "newEngineLua";
             this.newEngineLua.Size = new System.Drawing.Size(155, 17);
             this.newEngineLua.TabIndex = 19;
@@ -301,7 +303,7 @@
             // 
             this.CheckCustomKey.AutoSize = true;
             this.CheckCustomKey.Location = new System.Drawing.Point(302, 175);
-            this.CheckCustomKey.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CheckCustomKey.Margin = new System.Windows.Forms.Padding(2);
             this.CheckCustomKey.Name = "CheckCustomKey";
             this.CheckCustomKey.Size = new System.Drawing.Size(148, 17);
             this.CheckCustomKey.TabIndex = 20;
@@ -312,7 +314,7 @@
             // textBox3
             // 
             this.textBox3.Location = new System.Drawing.Point(454, 172);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(2);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(249, 20);
             this.textBox3.TabIndex = 21;
@@ -327,11 +329,31 @@
             this.label7.TabIndex = 22;
             this.label7.Text = "Typical functions:";
             // 
+            // compressionCB
+            // 
+            this.compressionCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.compressionCB.FormattingEnabled = true;
+            this.compressionCB.Location = new System.Drawing.Point(500, 24);
+            this.compressionCB.Name = "compressionCB";
+            this.compressionCB.Size = new System.Drawing.Size(178, 21);
+            this.compressionCB.TabIndex = 23;
+            // 
+            // compressionLabel
+            // 
+            this.compressionLabel.AutoSize = true;
+            this.compressionLabel.Location = new System.Drawing.Point(424, 28);
+            this.compressionLabel.Name = "compressionLabel";
+            this.compressionLabel.Size = new System.Drawing.Size(70, 13);
+            this.compressionLabel.TabIndex = 24;
+            this.compressionLabel.Text = "Compression:";
+            // 
             // ArchivePacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(712, 200);
+            this.Controls.Add(this.compressionLabel);
+            this.Controls.Add(this.compressionCB);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.CheckCustomKey);
@@ -357,7 +379,7 @@
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ArchivePacker";
@@ -398,5 +420,7 @@
         private System.Windows.Forms.CheckBox CheckCustomKey;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox compressionCB;
+        private System.Windows.Forms.Label compressionLabel;
     }
 }
