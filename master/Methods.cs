@@ -25,6 +25,33 @@ namespace TTG_Tools
             }
         }
 
+        public static void CopyStream(Stream inStream, Stream outStream)
+        {
+            byte[] buffer = new byte[2000];
+            int len;
+            while ((len = inStream.Read(buffer, 0, 2000)) > 0)
+            {
+                outStream.Write(buffer, 0, len);
+            }
+            outStream.Flush();
+        }
+
+        public static string GetExtension(string fileName)
+        {
+            string ext = "";
+            if(fileName.Contains("."))
+            {
+                for(int i = fileName.Length - 1; i >= 0; i--)
+                {
+                    if (fileName[i] == '.')
+                    {
+                        ext = fileName.Substring(i);
+                        return ext;
+                    }
+                }
+            }
+            return ext;
+        }
         public static int CalculateMip(int width, int height, uint codeFormat)
         {
             int w = width << 1;

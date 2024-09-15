@@ -23,6 +23,8 @@ namespace TTG_Tools
             Close();
         }
 
+        private static List<string> fileFormats = new List<string>();
+
         public struct ttarchFiles
         {
             public string fileName;
@@ -30,19 +32,122 @@ namespace TTG_Tools
             public int fileSize;
         }
 
+        private static byte[] DeflateDecompressor(byte[] bytes) //Для старых (версии 8 и 9) и новых архивов
+        {
+            byte[] retVal;
+            using (MemoryStream decompressedMemoryStream = new MemoryStream(bytes))
+            {
+                using (System.IO.Compression.DeflateStream decompressStream = new System.IO.Compression.DeflateStream(decompressedMemoryStream, System.IO.Compression.CompressionMode.Decompress, true))
+                {
+                    decompressStream.Read(bytes, 0, bytes.Length);
+                    retVal = decompressedMemoryStream.ToArray();
+                }
+            }
+            return retVal;
+        }
+
+        private static byte[] ZLibDecompressor(byte[] bytes)
+        {
+            byte[] retBytes = new byte[bytes.Length];
+
+            using (Stream inMemoryStream = new MemoryStream(bytes))
+            {
+                using (Joveler.ZLibWrapper.ZLibStream inZStream = new Joveler.ZLibWrapper.ZLibStream(inMemoryStream, Joveler.ZLibWrapper.ZLibMode.Decompress))
+                {
+                    using (MemoryStream outMemoryStream = new MemoryStream())
+                    {
+
+                        Methods.CopyStream(inZStream, outMemoryStream);
+                        inZStream.Flush();
+                        retBytes = outMemoryStream.ToArray();
+                    }
+                }
+            }
+
+            return retBytes;
+        }
+
         private static ttarchFiles[] ReadTtarch(string path, byte[] key)
         {
             try
             {
+                fileFormats = new List<string>();
                 FileStream fs = new FileStream(path, FileMode.Open);
                 BinaryReader br = new BinaryReader(fs);
                 int version = br.ReadInt32();
                 int encryption = br.ReadInt32();
                 int two = br.ReadInt32();
-                int headerSize = br.ReadInt32();
 
-                byte[] header = br.ReadBytes(headerSize);
-                if(encryption == 1)
+                int countCompressedBlocks;
+                int[] compressedSize;
+                int val = 0;
+
+                if (version > 2)
+                {
+                    val = br.ReadInt32();
+                    countCompressedBlocks = br.ReadInt32();
+
+                    if(val == 2)
+                    {
+                        compressedSize = new int[countCompressedBlocks];
+
+                        for(int k = 0; k < countCompressedBlocks; k++)
+                        {
+                            compressedSize[k] = br.ReadInt32();
+                        }
+                    }
+
+                    uint arcSize = br.ReadUInt32(); //Size of block with files
+
+                    if (version >= 4)
+                    {
+                        int priority = br.ReadInt32();
+                        int priority2 = br.ReadInt32();
+
+                        if(version >= 7)
+                        {
+                            int someVal = br.ReadInt32();
+                            int someVal2 = br.ReadInt32();
+                            int chunkSize = br.ReadInt32();
+
+                            if(version > 7)
+                            {
+                                byte b = br.ReadByte();
+
+                                if(version == 9)
+                                {
+                                    uint crc32 = br.ReadUInt32();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                int headerSize = br.ReadInt32();
+                int cHeaderSize = -1;
+
+                if (version >= 7 && val == 2)
+                {
+                    cHeaderSize = br.ReadInt32();
+                }
+
+                byte[] header = version >= 7 && val == 2 ? br.ReadBytes(cHeaderSize) : br.ReadBytes(headerSize);
+
+                if(version >= 7 && val == 2)
+                {
+                    switch(version)
+                    {
+                        case 7:
+                            header = ZLibDecompressor(header);
+                            break;
+
+                        default:
+                            header = DeflateDecompressor(header);
+                            break;
+                    }
+                }
+
+                if(encryption == 1 && version < 8)
                 {
                     BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, version);
                     header = dec.Crypt_ECB(header, version, true);
@@ -75,6 +180,13 @@ namespace TTG_Tools
                             int zeroVal = mbr.ReadInt32(); //always shows 0 value
                             files[f].fileOffset = mbr.ReadUInt32();
                             files[f].fileSize = mbr.ReadInt32();
+
+                            string ext = Methods.GetExtension(files[f].fileName);
+
+                            if ((ext != "") && !fileFormats.Contains(ext))
+                            {
+                                fileFormats.Add(ext);
+                            }
                         }
                     }
                 }
@@ -114,6 +226,19 @@ namespace TTG_Tools
                         {
                             filesDataGridView.ColumnCount = 4;
                             filesDataGridView.RowCount = files.Length;
+                            fileFormatsCB.Items.Clear();
+
+                            if(fileFormats.Count > 0)
+                            {
+                                fileFormatsCB.Items.Add("All files");
+
+                                for(int f = 0; f < fileFormats.Count; f++)
+                                {
+                                    fileFormatsCB.Items.Add(fileFormats[f]);
+                                }
+
+                                fileFormatsCB.SelectedIndex = 0;
+                            }
 
                             for (int i = 0; i < files.Length; i++)
                             {

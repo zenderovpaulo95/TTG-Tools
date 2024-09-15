@@ -70,22 +70,9 @@ namespace TTG_Tools
             else return false;
         }
 
-        private static void CopyStream(Stream inStream, Stream outStream)
-        {
-            byte[] buffer = new byte[2000];
-            int len;
-            while ((len = inStream.Read(buffer, 0, 2000)) > 0)
-            {
-                outStream.Write(buffer, 0, len);
-            }
-            outStream.Flush();
-        }
-
         private static byte[] ZlibCompressor(byte[] bytes) //Для старых архивов (с версии 3 по 7)
         {
-            ulong destLen = (ulong)bytes.Length;
-            ulong srcLen = (ulong)bytes.Length;
-            byte[] retBytes = new byte[destLen];
+            byte[] retBytes = new byte[bytes.Length];
 
             using (MemoryStream outMemoryStream = new MemoryStream())
             {
@@ -94,7 +81,7 @@ namespace TTG_Tools
                     using (Stream inMemoryStream = new MemoryStream(bytes))
                     {
 
-                        CopyStream(inMemoryStream, outZStream);
+                        Methods.CopyStream(inMemoryStream, outZStream);
                         outZStream.Flush();
                         retBytes = outMemoryStream.ToArray();
                     }
@@ -430,12 +417,12 @@ namespace TTG_Tools
             for (int i = 0; i < directories; i++) //Get directories' name
             {
                 byte[] dir_name_size = new byte[4];
-                if(WithoutParentFolders == false) dir_name_size = BitConverter.GetBytes(di1[i].Parent.Name.Length + "\\".Length + di1[i].Name.Length);
+                if(!WithoutParentFolders) dir_name_size = BitConverter.GetBytes(di1[i].Parent.Name.Length + "\\".Length + di1[i].Name.Length);
                 else dir_name_size = BitConverter.GetBytes(di.FullName.Length);
                 ms.Write(dir_name_size, 0, 4);
 
                 byte[] dir_name = new byte[BitConverter.ToInt32(dir_name_size, 0)];
-                if (WithoutParentFolders == false) dir_name = Encoding.ASCII.GetBytes(di1[i].Parent.Name + "\\" + di1[i].Name);
+                if (!WithoutParentFolders) dir_name = Encoding.ASCII.GetBytes(di1[i].Parent.Name + "\\" + di1[i].Name);
                 else dir_name = Encoding.ASCII.GetBytes(di.FullName);
                 ms.Write(dir_name, 0, dir_name.Length);
             }
@@ -477,9 +464,9 @@ namespace TTG_Tools
                 //Record file table with MemoryStream
                 ms.Write(bin_length, 0, bin_length.Length);
                 ms.Write(bin_file_name, 0, bin_file_name.Length);
-                ms.Write(empty_bytes, 0, 4);
-                ms.Write(bin_file_offset, 0, 4);
-                ms.Write(bin_file_size, 0, 4);
+                ms.Write(empty_bytes, 0, empty_bytes.Length);
+                ms.Write(bin_file_offset, 0, bin_file_offset.Length);
+                ms.Write(bin_file_size, 0, bin_file_size.Length);
 
                 file_offset += file_size;
             }
