@@ -39,8 +39,11 @@ namespace TTG_Tools
             {
                 using (System.IO.Compression.DeflateStream decompressStream = new System.IO.Compression.DeflateStream(decompressedMemoryStream, System.IO.Compression.CompressionMode.Decompress, true))
                 {
-                    decompressStream.Read(bytes, 0, bytes.Length);
-                    retVal = decompressedMemoryStream.ToArray();
+                    using (MemoryStream memOutStream = new MemoryStream())
+                    {
+                        decompressStream.CopyTo(memOutStream);
+                        retVal = memOutStream.ToArray();
+                    }
                 }
             }
             return retVal;
@@ -147,7 +150,7 @@ namespace TTG_Tools
                     }
                 }
 
-                if(encryption == 1 && version < 8)
+                if(encryption == 1)
                 {
                     BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, version);
                     header = dec.Crypt_ECB(header, version, true);

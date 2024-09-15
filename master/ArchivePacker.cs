@@ -104,7 +104,7 @@ namespace TTG_Tools
 
         private static byte[] DeflateCompressor(byte[] bytes) //Для старых (версии 8 и 9) и новых архивов
         {
-            byte[] retVal;
+            /*byte[] retVal;
             using (MemoryStream compressedMemoryStream = new MemoryStream())
             {
                 System.IO.Compression.DeflateStream compressStream = new System.IO.Compression.DeflateStream(compressedMemoryStream, System.IO.Compression.CompressionMode.Compress, true);
@@ -115,6 +115,20 @@ namespace TTG_Tools
                 compressedMemoryStream.Read(retVal, 0, retVal.Length);
                 compressedMemoryStream.Close();
                 compressStream.Close();
+            }
+            return retVal;*/
+
+            byte[] retVal;
+            using (MemoryStream compressedMemoryStream = new MemoryStream())
+            {
+                using (System.IO.Compression.DeflateStream compressStream = new System.IO.Compression.DeflateStream(compressedMemoryStream, System.IO.Compression.CompressionMode.Compress, true))
+                {
+                    using(MemoryStream outMemStream = new MemoryStream())
+                    {
+                        compressStream.CopyTo(outMemStream);
+                        retVal = outMemStream.ToArray();
+                    }
+                }
             }
             return retVal;
         }
