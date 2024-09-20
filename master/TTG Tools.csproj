@@ -110,6 +110,7 @@
     <Compile Include="ClassesStructs\Text\DlogClass.cs" />
     <Compile Include="ClassesStructs\Text\LandbClass.cs" />
     <Compile Include="ClassesStructs\Text\LangdbClass.cs" />
+    <Compile Include="ClassesStructs\Ttarch2Class.cs" />
     <Compile Include="ClassesStructs\TtarchClass.cs" />
     <Compile Include="CRCs.cs" />
     <Compile Include="ClassesStructs\FontClass.cs" />

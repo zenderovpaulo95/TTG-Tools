@@ -225,7 +225,7 @@ namespace TTG_Tools
             UInt32 tmp;
             UInt64 file_offset = 0;
 
-            progressBar1.Maximum = fi.Length;
+            progressBar1.Maximum = fi.Length - 1;
             
             for (int k = 0; k < fi.Length; k++) //Making header with file information
             {
