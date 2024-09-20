@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,18 +15,35 @@ namespace TTG_Tools
             InitializeComponent();
         }
 
+        public static ClassesStructs.TtarchClass ttarch;
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private static List<string> fileFormats = new List<string>();
-
-        public struct ttarchFiles
+        private static byte[] decompressBlock(byte[] bytes)
         {
-            public string fileName;
-            public uint fileOffset;
-            public int fileSize;
+            try
+            {
+                byte[] buf = ZLibDecompressor(bytes);
+                return buf;
+            }
+            catch
+            {
+                try
+                {
+                    //Try deflate decompress
+                    byte[] buf = DeflateDecompressor(bytes);
+
+                    return buf;
+                }
+                catch
+                {
+                    //Else return empty bytes
+                    return null;
+                }
+            }
         }
 
         private static byte[] DeflateDecompressor(byte[] bytes) //Для старых (версии 8 и 9) и новых архивов
@@ -37,7 +51,7 @@ namespace TTG_Tools
             byte[] retVal;
             using (MemoryStream decompressedMemoryStream = new MemoryStream(bytes))
             {
-                using (System.IO.Compression.DeflateStream decompressStream = new System.IO.Compression.DeflateStream(decompressedMemoryStream, System.IO.Compression.CompressionMode.Decompress, true))
+                using (System.IO.Compression.DeflateStream decompressStream = new System.IO.Compression.DeflateStream(decompressedMemoryStream, System.IO.Compression.CompressionMode.Decompress))
                 {
                     using (MemoryStream memOutStream = new MemoryStream())
                     {
@@ -70,14 +84,14 @@ namespace TTG_Tools
             return retBytes;
         }
 
-        private static ttarchFiles[] ReadTtarch(string path, byte[] key)
+        private static void ReadHeaderTtarch(string path, byte[] key)
         {
             try
             {
-                fileFormats = new List<string>();
+                ttarch.fileFormats = new List<string>();
                 FileStream fs = new FileStream(path, FileMode.Open);
                 BinaryReader br = new BinaryReader(fs);
-                int version = br.ReadInt32();
+                ttarch.version = br.ReadInt32();
                 int encryption = br.ReadInt32();
                 int two = br.ReadInt32();
 
@@ -85,7 +99,7 @@ namespace TTG_Tools
                 int[] compressedSize;
                 int val = 0;
 
-                if (version > 2)
+                if (ttarch.version > 2)
                 {
                     val = br.ReadInt32();
                     countCompressedBlocks = br.ReadInt32();
@@ -93,6 +107,7 @@ namespace TTG_Tools
                     if(val == 2)
                     {
                         compressedSize = new int[countCompressedBlocks];
+                        ttarch.isCompressed = true;
 
                         for(int k = 0; k < countCompressedBlocks; k++)
                         {
@@ -102,22 +117,24 @@ namespace TTG_Tools
 
                     uint arcSize = br.ReadUInt32(); //Size of block with files
 
-                    if (version >= 4)
+                    if (ttarch.version >= 4)
                     {
                         int priority = br.ReadInt32();
                         int priority2 = br.ReadInt32();
 
-                        if(version >= 7)
+                        if(ttarch.version >= 7)
                         {
                             int someVal = br.ReadInt32();
                             int someVal2 = br.ReadInt32();
-                            int chunkSize = br.ReadInt32();
 
-                            if(version > 7)
+                            ttarch.isXmode = someVal == 1 || someVal2 == 1;
+                            ttarch.chunkSize = br.ReadInt32();
+
+                            if(ttarch.version > 7)
                             {
                                 byte b = br.ReadByte();
 
-                                if(version == 9)
+                                if(ttarch.version == 9)
                                 {
                                     uint crc32 = br.ReadUInt32();
                                 }
@@ -129,34 +146,24 @@ namespace TTG_Tools
                 int headerSize = br.ReadInt32();
                 int cHeaderSize = -1;
 
-                if (version >= 7 && val == 2)
+                if (ttarch.version >= 7 && val == 2)
                 {
                     cHeaderSize = br.ReadInt32();
                 }
 
-                byte[] header = version >= 7 && val == 2 ? br.ReadBytes(cHeaderSize) : br.ReadBytes(headerSize);
+                byte[] header = ttarch.version >= 7 && val == 2 ? br.ReadBytes(cHeaderSize) : br.ReadBytes(headerSize);
 
-                if(version >= 7 && val == 2)
+                if(ttarch.version >= 7 && val == 2)
                 {
-                    switch(version)
-                    {
-                        case 7:
-                            header = ZLibDecompressor(header);
-                            break;
-
-                        default:
-                            header = DeflateDecompressor(header);
-                            break;
-                    }
+                    header = decompressBlock(header);
                 }
 
                 if(encryption == 1)
                 {
-                    BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, version);
-                    header = dec.Crypt_ECB(header, version, true);
+                    ttarch.isEncrypted = true;
+                    BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, ttarch.version);
+                    header = dec.Crypt_ECB(header, ttarch.version, true);
                 }
-
-                ttarchFiles[] files = null;
 
                 using (MemoryStream ms = new MemoryStream(header))
                 {
@@ -173,22 +180,22 @@ namespace TTG_Tools
 
                         int filesCount = mbr.ReadInt32();
 
-                        files = new ttarchFiles[filesCount];
+                        ttarch.files = new ClassesStructs.TtarchClass.ttarchFiles[filesCount];
 
                         for(int f = 0; f < filesCount; f++)
                         {
                             int nameLen = mbr.ReadInt32();
                             byte[] tmpName = mbr.ReadBytes(nameLen);
-                            files[f].fileName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmpName);
+                            ttarch.files[f].fileName = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmpName);
                             int zeroVal = mbr.ReadInt32(); //always shows 0 value
-                            files[f].fileOffset = mbr.ReadUInt32();
-                            files[f].fileSize = mbr.ReadInt32();
+                            ttarch.files[f].fileOffset = mbr.ReadUInt32();
+                            ttarch.files[f].fileSize = mbr.ReadInt32();
 
-                            string ext = Methods.GetExtension(files[f].fileName);
+                            string ext = Methods.GetExtension(ttarch.files[f].fileName);
 
-                            if ((ext != "") && !fileFormats.Contains(ext))
+                            if ((ext != "") && !ttarch.fileFormats.Contains(ext))
                             {
-                                fileFormats.Add(ext);
+                                ttarch.fileFormats.Add(ext);
                             }
                         }
                     }
@@ -196,13 +203,11 @@ namespace TTG_Tools
 
                 br.Close();
                 fs.Close();
-
-                return files;
             }
             catch
             {
                 MessageBox.Show("Something goes wrong", "Unknown error. Please try another archive.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
+                ttarch = null;
             }
         }
 
@@ -223,32 +228,47 @@ namespace TTG_Tools
                 switch (fi.Extension.ToLower())
                 {
                     case ".ttarch":
-                        ttarchFiles[] files = ReadTtarch(fi.FullName, MainMenu.gamelist[gameListCB.SelectedIndex].key);
+                        ttarch = new ClassesStructs.TtarchClass();
+                        ReadHeaderTtarch(fi.FullName, MainMenu.gamelist[gameListCB.SelectedIndex].key);
 
-                        if (files != null)
+                        if (ttarch != null)
                         {
                             filesDataGridView.ColumnCount = 4;
-                            filesDataGridView.RowCount = files.Length;
+                            filesDataGridView.RowCount = ttarch.files.Length;
                             fileFormatsCB.Items.Clear();
 
-                            if(fileFormats.Count > 0)
+                            string compressedStr = "Compressed: ";
+                            compressedStr += ttarch.isCompressed ? "Yes" : "No";
+                            string encryptedStr = "Encrypted: ";
+                            encryptedStr += ttarch.isEncrypted ? "Yes" : "No";
+                            string xmodeStr = "Has X mode: ";
+                            xmodeStr += ttarch.isXmode ? "Yes" : "No";
+                            string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch.chunkSize);
+
+                            compressionLabel.Text = compressedStr;
+                            encryptionLabel.Text = encryptedStr;
+                            xmodeLabel.Text = xmodeStr;
+                            chunkSizeLabel.Text = chunkSzStr;
+                            versionLabel.Text = "Version: " + Convert.ToString(ttarch.version);
+
+                            if(ttarch.fileFormats.Count > 0)
                             {
                                 fileFormatsCB.Items.Add("All files");
 
-                                for(int f = 0; f < fileFormats.Count; f++)
+                                for(int f = 0; f < ttarch.fileFormats.Count; f++)
                                 {
-                                    fileFormatsCB.Items.Add(fileFormats[f]);
+                                    fileFormatsCB.Items.Add(ttarch.fileFormats[f]);
                                 }
 
                                 fileFormatsCB.SelectedIndex = 0;
                             }
 
-                            for (int i = 0; i < files.Length; i++)
+                            for (int i = 0; i < ttarch.files.Length; i++)
                             {
                                 filesDataGridView[0, i].Value = Convert.ToString(i + 1);
-                                filesDataGridView[1, i].Value = files[i].fileName;
-                                filesDataGridView[2, i].Value = Convert.ToString(files[i].fileOffset);
-                                filesDataGridView[3, i].Value = Convert.ToString(files[i].fileSize);
+                                filesDataGridView[1, i].Value = ttarch.files[i].fileName;
+                                filesDataGridView[2, i].Value = Convert.ToString(ttarch.files[i].fileOffset);
+                                filesDataGridView[3, i].Value = Convert.ToString(ttarch.files[i].fileSize);
                             }
                         }
                         break;
