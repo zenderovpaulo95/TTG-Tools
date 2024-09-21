@@ -38,17 +38,17 @@
             this.unpackSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filesDataGridView = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.xmodeLabel = new System.Windows.Forms.Label();
+            this.chunkSizeLabel = new System.Windows.Forms.Label();
+            this.compressionLabel = new System.Windows.Forms.Label();
+            this.encryptionLabel = new System.Windows.Forms.Label();
+            this.versionLabel = new System.Windows.Forms.Label();
             this.fileFormatsCB = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.gameListCB = new System.Windows.Forms.ComboBox();
             this.decryptLuaCB = new System.Windows.Forms.CheckBox();
-            this.versionLabel = new System.Windows.Forms.Label();
-            this.encryptionLabel = new System.Windows.Forms.Label();
-            this.compressionLabel = new System.Windows.Forms.Label();
-            this.chunkSizeLabel = new System.Windows.Forms.Label();
-            this.xmodeLabel = new System.Windows.Forms.Label();
             this.useCustomKeyCB = new System.Windows.Forms.CheckBox();
             this.customKeyTB = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
@@ -105,6 +105,7 @@
             this.unpackToolStripMenuItem.Name = "unpackToolStripMenuItem";
             this.unpackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.unpackToolStripMenuItem.Text = "Unpack";
+            this.unpackToolStripMenuItem.Click += new System.EventHandler(this.unpackToolStripMenuItem_Click);
             // 
             // unpackSelectedToolStripMenuItem
             // 
@@ -133,6 +134,51 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Archive info";
+            // 
+            // xmodeLabel
+            // 
+            this.xmodeLabel.AutoSize = true;
+            this.xmodeLabel.Location = new System.Drawing.Point(175, 16);
+            this.xmodeLabel.Name = "xmodeLabel";
+            this.xmodeLabel.Size = new System.Drawing.Size(173, 13);
+            this.xmodeLabel.TabIndex = 4;
+            this.xmodeLabel.Text = "Has X mode (in some old archives):";
+            // 
+            // chunkSizeLabel
+            // 
+            this.chunkSizeLabel.AutoSize = true;
+            this.chunkSizeLabel.Location = new System.Drawing.Point(18, 71);
+            this.chunkSizeLabel.Name = "chunkSizeLabel";
+            this.chunkSizeLabel.Size = new System.Drawing.Size(62, 13);
+            this.chunkSizeLabel.TabIndex = 3;
+            this.chunkSizeLabel.Text = "Chunk size:";
+            // 
+            // compressionLabel
+            // 
+            this.compressionLabel.AutoSize = true;
+            this.compressionLabel.Location = new System.Drawing.Point(18, 53);
+            this.compressionLabel.Name = "compressionLabel";
+            this.compressionLabel.Size = new System.Drawing.Size(68, 13);
+            this.compressionLabel.TabIndex = 2;
+            this.compressionLabel.Text = "Compressed:";
+            // 
+            // encryptionLabel
+            // 
+            this.encryptionLabel.AutoSize = true;
+            this.encryptionLabel.Location = new System.Drawing.Point(18, 34);
+            this.encryptionLabel.Name = "encryptionLabel";
+            this.encryptionLabel.Size = new System.Drawing.Size(58, 13);
+            this.encryptionLabel.TabIndex = 1;
+            this.encryptionLabel.Text = "Encrypted:";
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Location = new System.Drawing.Point(18, 16);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(45, 13);
+            this.versionLabel.TabIndex = 0;
+            this.versionLabel.Text = "Version:";
             // 
             // fileFormatsCB
             // 
@@ -186,51 +232,6 @@
             this.decryptLuaCB.TabIndex = 8;
             this.decryptLuaCB.Text = "Decrypt lua scripts";
             this.decryptLuaCB.UseVisualStyleBackColor = true;
-            // 
-            // versionLabel
-            // 
-            this.versionLabel.AutoSize = true;
-            this.versionLabel.Location = new System.Drawing.Point(18, 16);
-            this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(45, 13);
-            this.versionLabel.TabIndex = 0;
-            this.versionLabel.Text = "Version:";
-            // 
-            // encryptionLabel
-            // 
-            this.encryptionLabel.AutoSize = true;
-            this.encryptionLabel.Location = new System.Drawing.Point(18, 34);
-            this.encryptionLabel.Name = "encryptionLabel";
-            this.encryptionLabel.Size = new System.Drawing.Size(58, 13);
-            this.encryptionLabel.TabIndex = 1;
-            this.encryptionLabel.Text = "Encrypted:";
-            // 
-            // compressionLabel
-            // 
-            this.compressionLabel.AutoSize = true;
-            this.compressionLabel.Location = new System.Drawing.Point(18, 53);
-            this.compressionLabel.Name = "compressionLabel";
-            this.compressionLabel.Size = new System.Drawing.Size(68, 13);
-            this.compressionLabel.TabIndex = 2;
-            this.compressionLabel.Text = "Compressed:";
-            // 
-            // chunkSizeLabel
-            // 
-            this.chunkSizeLabel.AutoSize = true;
-            this.chunkSizeLabel.Location = new System.Drawing.Point(18, 71);
-            this.chunkSizeLabel.Name = "chunkSizeLabel";
-            this.chunkSizeLabel.Size = new System.Drawing.Size(62, 13);
-            this.chunkSizeLabel.TabIndex = 3;
-            this.chunkSizeLabel.Text = "Chunk size:";
-            // 
-            // xmodeLabel
-            // 
-            this.xmodeLabel.AutoSize = true;
-            this.xmodeLabel.Location = new System.Drawing.Point(175, 16);
-            this.xmodeLabel.Name = "xmodeLabel";
-            this.xmodeLabel.Size = new System.Drawing.Size(173, 13);
-            this.xmodeLabel.TabIndex = 4;
-            this.xmodeLabel.Text = "Has X mode (in some old archives):";
             // 
             // useCustomKeyCB
             // 

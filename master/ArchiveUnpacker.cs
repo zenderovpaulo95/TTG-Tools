@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace TTG_Tools
 {
@@ -27,6 +28,7 @@ namespace TTG_Tools
             try
             {
                 byte[] buf = ZLibDecompressor(bytes);
+                ttarch.compressAlgorithm = 0;
                 return buf;
             }
             catch
@@ -35,12 +37,13 @@ namespace TTG_Tools
                 {
                     //Try deflate decompress
                     byte[] buf = DeflateDecompressor(bytes);
-
+                    ttarch.compressAlgorithm = 1;
                     return buf;
                 }
                 catch
                 {
                     //Else return empty bytes
+                    ttarch.compressAlgorithm = -1; //Unknown algorithm
                     return null;
                 }
             }
@@ -88,6 +91,7 @@ namespace TTG_Tools
         {
             try
             {
+                ttarch.filePath = path;
                 ttarch.fileFormats = new List<string>();
                 FileStream fs = new FileStream(path, FileMode.Open);
                 BinaryReader br = new BinaryReader(fs);
@@ -96,7 +100,6 @@ namespace TTG_Tools
                 int two = br.ReadInt32();
 
                 int countCompressedBlocks;
-                int[] compressedSize;
                 int val = 0;
 
                 if (ttarch.version > 2)
@@ -106,12 +109,12 @@ namespace TTG_Tools
 
                     if(val == 2)
                     {
-                        compressedSize = new int[countCompressedBlocks];
+                        ttarch.compressedBlocks = new int[countCompressedBlocks];
                         ttarch.isCompressed = true;
 
                         for(int k = 0; k < countCompressedBlocks; k++)
                         {
-                            compressedSize[k] = br.ReadInt32();
+                            ttarch.compressedBlocks[k] = br.ReadInt32();
                         }
                     }
 
@@ -152,6 +155,8 @@ namespace TTG_Tools
                 }
 
                 byte[] header = ttarch.version >= 7 && val == 2 ? br.ReadBytes(cHeaderSize) : br.ReadBytes(headerSize);
+
+                ttarch.filesOffset = (uint)br.BaseStream.Position;
 
                 if(ttarch.version >= 7 && val == 2)
                 {
@@ -201,6 +206,21 @@ namespace TTG_Tools
                     }
                 }
 
+                //Check oldest compressed archives. Need to find out compression algorithm (default it must be zlib)
+                if(ttarch.version < 7 && ttarch.isCompressed)
+                {
+                    byte[] tmp = br.ReadBytes(ttarch.compressedBlocks[0]);
+
+                    if(ttarch.isEncrypted)
+                    {
+                        BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, ttarch.version);
+                        tmp = dec.Crypt_ECB(tmp, ttarch.version, true);
+                    }
+
+                    tmp = decompressBlock(tmp);
+                    tmp = null;
+                }
+
                 br.Close();
                 fs.Close();
             }
@@ -219,11 +239,13 @@ namespace TTG_Tools
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "TTARCH archives (*.ttarch) | *.ttarch| TTARCH2 archives (*.ttarch2) | *.ttarch2";
+            ofd.Filter = "All supported files (*.ttarch, *.ttarch2) | *.ttarch;*.ttarch2| TTARCH archives (*.ttarch) | *.ttarch| TTARCH2 archives (*.ttarch2) | *.ttarch2";
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 FileInfo fi = new FileInfo(ofd.FileName);
+
+                ttarch = null;
 
                 switch (fi.Extension.ToLower())
                 {
@@ -239,6 +261,11 @@ namespace TTG_Tools
 
                             string compressedStr = "Compressed: ";
                             compressedStr += ttarch.isCompressed ? "Yes" : "No";
+                            if (ttarch.isCompressed)
+                            {
+                                compressedStr += " (";
+                                compressedStr += ttarch.compressAlgorithm == 0 ? "zlib)" : "deflate)";
+                            }
                             string encryptedStr = "Encrypted: ";
                             encryptedStr += ttarch.isEncrypted ? "Yes" : "No";
                             string xmodeStr = "Has X mode: ";
@@ -262,6 +289,11 @@ namespace TTG_Tools
 
                                 fileFormatsCB.SelectedIndex = 0;
                             }
+
+                            filesDataGridView.Columns[0].HeaderText = "No.";
+                            filesDataGridView.Columns[1].HeaderText = "File name";
+                            filesDataGridView.Columns[2].HeaderText = "File offset";
+                            filesDataGridView.Columns[3].HeaderText = "File size";
 
                             for (int i = 0; i < ttarch.files.Length; i++)
                             {
@@ -290,6 +322,53 @@ namespace TTG_Tools
             }
 
             gameListCB.SelectedIndex = MainMenu.settings.encKeyIndex;
+        }
+
+        private void unpackToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(ttarch != null)
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    FileStream fs = new FileStream(ttarch.filePath, FileMode.Open);
+                    BinaryReader br = new BinaryReader(fs);
+
+                    bool decrypt = decryptLuaCB.Checked;
+                    byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
+
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = ttarch.files.Length > 1 ? ttarch.files.Length - 1 : 1;
+                    
+                    for(int i = 0; i < ttarch.files.Length; i++)
+                    {
+                        if(!ttarch.isCompressed)
+                        {
+                            br.BaseStream.Seek(ttarch.files[i].fileOffset + ttarch.filesOffset, SeekOrigin.Begin);
+                            byte[] tmp = br.ReadBytes(ttarch.files[i].fileSize);
+                            Methods.meta_crypt(tmp, key, ttarch.version, true);
+                            string fileName = ttarch.files[i].fileName;
+                            if ((fileName.Substring(fileName.Length - 5, 5) == ".lenc") && decrypt)
+                            {
+                                fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
+                                tmp = Methods.decryptLua(tmp, key, ttarch.version);
+                            }
+
+                            File.WriteAllBytes(fbd.SelectedPath + Path.DirectorySeparatorChar + fileName, tmp);
+                        }
+
+                        progressBar1.Value = i;
+                    }
+
+                    br.Close();
+                    fs.Close();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nothing to extract. Please open ttarch/ttarch2 file and then extract.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

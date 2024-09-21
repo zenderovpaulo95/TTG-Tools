@@ -18,8 +18,11 @@ namespace TTG_Tools.ClassesStructs
         public bool isEncrypted;
         public bool isCompressed;
         public bool isXmode;
+        public string filePath;
+        public uint filesOffset; //Offset after header with file table
         public int[] compressedBlocks;
         public int chunkSize;
+        public int compressAlgorithm;
         public int version;
         public List<string> fileFormats;
         public byte[] key; //key of encrypted archive
@@ -33,6 +36,7 @@ namespace TTG_Tools.ClassesStructs
             key = null;
             version = 0;
             chunkSize = 0;
+            compressAlgorithm = -1; //-1 - unknown, 0 - zlib, 1 - deflate
         }
     }
 }
