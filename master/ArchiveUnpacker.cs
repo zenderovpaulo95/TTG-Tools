@@ -340,6 +340,8 @@ namespace TTG_Tools
 
                     progressBar1.Minimum = 0;
                     progressBar1.Maximum = ttarch.files.Length > 1 ? ttarch.files.Length - 1 : 1;
+
+                    int chunkSz = ttarch.chunkSize * 1024;
                     
                     for(int i = 0; i < ttarch.files.Length; i++)
                     {
@@ -356,6 +358,69 @@ namespace TTG_Tools
                             }
 
                             File.WriteAllBytes(fbd.SelectedPath + Path.DirectorySeparatorChar + fileName, tmp);
+                        }
+                        else
+                        {
+                            int index = (int)ttarch.files[i].fileOffset / chunkSz;
+                            int index2 = (int)(ttarch.files[i].fileOffset + ttarch.files[i].fileSize) / chunkSz;
+                            uint off = 0;
+
+                            if(index > ttarch.compressedBlocks.Length)
+                            {
+                                MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+
+                            if (index2 > ttarch.compressedBlocks.Length)
+                            {
+                                MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+
+                            for(int c = 0; c < index; c++)
+                            {
+                                off += (uint)ttarch.compressedBlocks[c];
+                            }
+
+                            br.BaseStream.Seek(ttarch.filesOffset + off, SeekOrigin.Begin);
+
+                            uint c_off = (uint)(ttarch.files[i].fileOffset - (chunkSz * index));
+
+                            using (MemoryStream ms = new MemoryStream())
+                            {
+                                using (BinaryWriter mbw = new BinaryWriter(ms))
+                                {
+                                    for (int c = index; c <= index2; c++)
+                                    {
+                                        byte[] tmp = br.ReadBytes(ttarch.compressedBlocks[c]);
+                                        
+                                        if(ttarch.isEncrypted)
+                                        {
+                                            BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, ttarch.version);
+                                            tmp = dec.Crypt_ECB(tmp, ttarch.version, true);
+                                        }
+
+                                        tmp = decompressBlock(tmp);
+
+                                        mbw.Write(tmp);
+                                    }
+
+                                    byte[] block = ms.ToArray();
+
+                                    byte[] file = new byte[ttarch.files[i].fileSize];
+
+                                    Array.Copy(block, c_off, file, 0, file.Length);
+
+                                    string fileName = ttarch.files[i].fileName;
+                                    if ((fileName.Substring(fileName.Length - 5, 5) == ".lenc") && decrypt)
+                                    {
+                                        fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
+                                        file = Methods.decryptLua(file, key, ttarch.version);
+                                    }
+
+                                    File.WriteAllBytes(fbd.SelectedPath + Path.DirectorySeparatorChar + fileName, file);
+                                }
+                            }
                         }
 
                         progressBar1.Value = i;

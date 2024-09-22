@@ -35,7 +35,7 @@ namespace TTG_Tools.ClassesStructs
             isXmode = false;
             key = null;
             version = 0;
-            chunkSize = 0;
+            chunkSize = 64; //Default 64KB of chunk
             compressAlgorithm = -1; //-1 - unknown, 0 - zlib, 1 - deflate
         }
     }
