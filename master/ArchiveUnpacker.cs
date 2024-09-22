@@ -30,7 +30,8 @@ namespace TTG_Tools
             try
             {
                 byte[] buf = ZLibDecompressor(bytes);
-                ttarch.compressAlgorithm = 0;
+                if (ttarch != null) ttarch.compressAlgorithm = 0;
+                else ttarch2.compressAlgorithm = 0;
                 return buf;
             }
             catch
@@ -39,14 +40,26 @@ namespace TTG_Tools
                 {
                     //Try deflate decompress
                     byte[] buf = DeflateDecompressor(bytes);
-                    ttarch.compressAlgorithm = 1;
+                    if (ttarch != null) ttarch.compressAlgorithm = 1;
+                    else ttarch2.compressAlgorithm = 1;
                     return buf;
                 }
                 catch
                 {
-                    //Else return empty bytes
-                    ttarch.compressAlgorithm = -1; //Unknown algorithm
-                    return null;
+                    try
+                    {
+                        byte[] buf = OodleDecompressor(bytes);
+                        if (ttarch != null) ttarch.compressAlgorithm = -1;
+                        else ttarch2.compressAlgorithm = 2;
+                        return buf;
+                    }
+                    catch
+                    {
+                        //Else return empty bytes
+                        if (ttarch != null) ttarch.compressAlgorithm = -1; //Unknown algorithm
+                        else ttarch2.compressAlgorithm = -1;
+                        return null;
+                    }
                 }
             }
         }
@@ -87,6 +100,26 @@ namespace TTG_Tools
             }
 
             return retBytes;
+        }
+
+        private static byte[] OodleDecompressor(byte[] bytes)
+        {
+            byte[] retBytes = new byte[bytes.Length];
+
+            long bufSize = bytes.Length;
+            long decBufSize = bytes.Length;
+            if (ttarch2 != null)
+            {
+                decBufSize = ttarch2.chunkSize;
+                retBytes = new byte[decBufSize];
+            }
+
+            int size = OodleTools.Imports.OodleLZ_Decompress(bytes, bufSize, retBytes, decBufSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+            byte[] tmp = new byte[size];
+            Array.Copy(retBytes, 0, tmp, 0, tmp.Length);
+
+            return tmp;
         }
 
         private static void ReadHeaderTtarch(string path, byte[] key)
@@ -246,53 +279,182 @@ namespace TTG_Tools
                 byte[] header = br.ReadBytes(4);
                 foffset += 4;
                 ttarch2.isCompressed = Encoding.ASCII.GetString(header) != "NCTT"; //If it's a NCTT header then archive is not compressed
-                ulong archSize = br.ReadUInt64();
-                foffset += 8;
-                byte[] subHeader = br.ReadBytes(4);
-                foffset += 4;
-                if (Encoding.ASCII.GetString(subHeader) == "3ATT")
+                ttarch2.isEncrypted = Encoding.ASCII.GetString(header) == "ECTT" || Encoding.ASCII.GetString(header) == "eCTT";
+
+                if (ttarch2.isCompressed)
                 {
-                    int two = br.ReadInt32();
-                    foffset += 4;
-                }
-
-                ttarch2.version = Encoding.ASCII.GetString(subHeader) == "3ATT" ? 1 : 2;
-
-                uint nameSize = br.ReadUInt32();
-                foffset += 4;
-                uint filesCount = br.ReadUInt32();
-                foffset += 4;
-                ttarch2.files = new ClassesStructs.Ttarch2Class.Ttarch2files[filesCount];
-                ttarch2.filesOffset = foffset + (28 * (ulong)filesCount) + (ulong)nameSize;
-
-                for (int i = 0; i < filesCount; i++)
-                {
-                    ttarch2.files[i].fileNameCRC64 = br.ReadUInt64();
-                    ttarch2.files[i].fileOffset = br.ReadUInt64();
-                    ttarch2.files[i].fileSize = br.ReadInt32();
-                    int unknown = br.ReadInt32();
-                    ushort nameBlock = br.ReadUInt16();
-                    ushort nameOff = br.ReadUInt16();
-                    long pos = br.BaseStream.Position;
-                    ulong nameOffset = foffset + (28 * (ulong)filesCount) + (ulong)nameOff + ((ulong)nameBlock * 0x10000);
-                    br.BaseStream.Seek((long)nameOffset, SeekOrigin.Begin);
-
-                    using (MemoryStream ms = new MemoryStream())
+                    if (Encoding.ASCII.GetString(header) == "eCTT" || Encoding.ASCII.GetString(header) == "zCTT")
                     {
-                        byte[] bytes = null;
+                        int one = br.ReadInt32();
+                        foffset += 4;
+                    }
+                    ttarch2.chunkSize = br.ReadUInt32();
+                    int blocksCount = br.ReadInt32();
+                    foffset += 4 + 4;
+                    ttarch2.compressedBlocks = new ulong[blocksCount + 1];
 
-                        while(true)
-                        {
-                            bytes = br.ReadBytes(1);
-                            if (bytes[0] == 0) break;
-                            ms.Write(bytes, 0, bytes.Length);
-                        }
-
-                        bytes = ms.ToArray();
-                        ttarch2.files[i].fileName = Encoding.ASCII.GetString(bytes);
+                    for (int i = 0; i < ttarch2.compressedBlocks.Length; i++)
+                    {
+                        ttarch2.compressedBlocks[i] = br.ReadUInt64();
+                        foffset += 8;
                     }
 
-                    br.BaseStream.Seek(pos, SeekOrigin.Begin);
+                    long pos = br.BaseStream.Position;
+
+                    byte[] tmp = br.ReadBytes((int)ttarch2.compressedBlocks[1] - (int)ttarch2.compressedBlocks[0]);
+
+                    if(ttarch2.isEncrypted)
+                    {
+                        BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, 7);
+                        tmp = dec.Crypt_ECB(tmp, 7, true);
+                    }
+
+                    tmp = decompressBlock(tmp);
+
+                    int suboff = 0;
+                    uint filesCount = 0;
+
+                    using (MemoryStream ms = new MemoryStream(tmp))
+                    {
+                        using (BinaryReader mbr = new BinaryReader(ms))
+                        {
+                            byte[] subHeader = mbr.ReadBytes(4);
+                            suboff += 4;
+                            //foffset += 4;
+                            if (Encoding.ASCII.GetString(subHeader) == "3ATT")
+                            {
+                                int two = mbr.ReadInt32();
+                                suboff += 4;
+                                //foffset += 4;
+                            }
+
+                            ttarch2.version = Encoding.ASCII.GetString(subHeader) == "3ATT" ? 1 : 2;
+
+                            uint nameSize = mbr.ReadUInt32();
+                            suboff += 4;
+                            //foffset += 4;
+                            filesCount = mbr.ReadUInt32();
+                            suboff += 4;
+
+                            ttarch2.filesOffset = (ulong)suboff + (28 * filesCount) + nameSize;
+                            ttarch2.files = new ClassesStructs.Ttarch2Class.Ttarch2files[filesCount];
+                        }
+                    }
+
+                    if (ttarch2.filesOffset > (ulong)tmp.Length)
+                    {
+                        br.BaseStream.Seek(pos, SeekOrigin.Begin);
+                        int index = (int)(ttarch2.filesOffset / ttarch2.chunkSize) + 1;
+
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            for (int i = 0; i < index; i++)
+                            {
+                                tmp = br.ReadBytes((int)(ttarch2.compressedBlocks[i + 1] - ttarch2.compressedBlocks[i]));
+
+                                if(ttarch2.isEncrypted)
+                                {
+                                    BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, 7);
+                                    tmp = dec.Crypt_ECB(tmp, 7, true);
+                                }
+
+                                tmp = decompressBlock(tmp);
+
+                                ms.Write(tmp, 0, tmp.Length);
+                            }
+
+                            tmp = ms.ToArray();
+                        }
+                    }
+
+                    using (MemoryStream ms = new MemoryStream(tmp))
+                    {
+                        using (BinaryReader mbr = new BinaryReader(ms))
+                        {
+                            mbr.BaseStream.Seek(suboff, SeekOrigin.Begin);
+
+                            for(int i = 0; i < (int)filesCount; i++)
+                            {
+                                ttarch2.files[i].fileNameCRC64 = mbr.ReadUInt64();
+                                ttarch2.files[i].fileOffset = mbr.ReadUInt64();
+                                ttarch2.files[i].fileSize = mbr.ReadInt32();
+                                int unknown = mbr.ReadInt32();
+                                ushort nameBlock = mbr.ReadUInt16();
+                                ushort nameOff = mbr.ReadUInt16();
+                                pos = mbr.BaseStream.Position;
+                                ulong nameOffset = (ulong)suboff + (28 * (ulong)filesCount) + (ulong)nameOff + ((ulong)nameBlock * 0x10000);
+                                mbr.BaseStream.Seek((long)nameOffset, SeekOrigin.Begin);
+
+                                using (MemoryStream mms = new MemoryStream())
+                                {
+                                    byte[] bytes = null;
+
+                                    while (true)
+                                    {
+                                        bytes = mbr.ReadBytes(1);
+                                        if (bytes[0] == 0) break;
+                                        mms.Write(bytes, 0, bytes.Length);
+                                    }
+
+                                    bytes = mms.ToArray();
+                                    ttarch2.files[i].fileName = Encoding.ASCII.GetString(bytes);
+                                }
+
+                                mbr.BaseStream.Seek(pos, SeekOrigin.Begin);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    ulong archSize = br.ReadUInt64();
+                    foffset += 8;
+                    byte[] subHeader = br.ReadBytes(4);
+                    foffset += 4;
+                    if (Encoding.ASCII.GetString(subHeader) == "3ATT")
+                    {
+                        int two = br.ReadInt32();
+                        foffset += 4;
+                    }
+
+                    ttarch2.version = Encoding.ASCII.GetString(subHeader) == "3ATT" ? 1 : 2;
+
+                    uint nameSize = br.ReadUInt32();
+                    foffset += 4;
+                    uint filesCount = br.ReadUInt32();
+                    foffset += 4;
+                    ttarch2.files = new ClassesStructs.Ttarch2Class.Ttarch2files[filesCount];
+                    ttarch2.filesOffset = foffset + (28 * (ulong)filesCount) + (ulong)nameSize;
+
+                    for (int i = 0; i < filesCount; i++)
+                    {
+                        ttarch2.files[i].fileNameCRC64 = br.ReadUInt64();
+                        ttarch2.files[i].fileOffset = br.ReadUInt64();
+                        ttarch2.files[i].fileSize = br.ReadInt32();
+                        int unknown = br.ReadInt32();
+                        ushort nameBlock = br.ReadUInt16();
+                        ushort nameOff = br.ReadUInt16();
+                        long pos = br.BaseStream.Position;
+                        ulong nameOffset = foffset + (28 * (ulong)filesCount) + (ulong)nameOff + ((ulong)nameBlock * 0x10000);
+                        br.BaseStream.Seek((long)nameOffset, SeekOrigin.Begin);
+
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            byte[] bytes = null;
+
+                            while (true)
+                            {
+                                bytes = br.ReadBytes(1);
+                                if (bytes[0] == 0) break;
+                                ms.Write(bytes, 0, bytes.Length);
+                            }
+
+                            bytes = ms.ToArray();
+                            ttarch2.files[i].fileName = Encoding.ASCII.GetString(bytes);
+                        }
+
+                        br.BaseStream.Seek(pos, SeekOrigin.Begin);
+                    }
                 }
 
                 br.Close();
