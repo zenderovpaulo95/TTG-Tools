@@ -18,12 +18,21 @@ namespace TTG_Tools.ClassesStructs
 
         public bool isCompressed;
         public bool isEncrypted;
+        public uint chunkSize;
+        public int compressAlgorithm;
+        public int version;
+        public ulong filesOffset;
+        public ulong[] compressedBlocks;
+        public List<string> fileFormats;
         public Ttarch2files[] files;
 
         public Ttarch2Class()
         {
             isCompressed = false;
             isEncrypted = false;
+            version = 1;
+            compressAlgorithm = -1; //-1 - unknown, 0 - deflate, 1 - oodle lz
+            chunkSize = 0x10000;
         }
     }
 }

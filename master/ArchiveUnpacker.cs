@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using System.Security.Cryptography;
 
 namespace TTG_Tools
 {
@@ -17,6 +18,7 @@ namespace TTG_Tools
         }
 
         public static ClassesStructs.TtarchClass ttarch;
+        public static ClassesStructs.Ttarch2Class ttarch2;
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -231,9 +233,76 @@ namespace TTG_Tools
             }
         }
 
-        private static void ReadTtarch2(string path)
+        private static void ReadHeaderTtarch2(string path, byte[] key)
         {
+            try
+            {
+                FileStream fs = new FileStream(path, FileMode.Open);
+                BinaryReader br = new BinaryReader(fs);
 
+                ulong foffset = 0;
+                ttarch2.fileFormats = new List<string>();
+
+                byte[] header = br.ReadBytes(4);
+                foffset += 4;
+                ttarch2.isCompressed = Encoding.ASCII.GetString(header) != "NCTT"; //If it's a NCTT header then archive is not compressed
+                ulong archSize = br.ReadUInt64();
+                foffset += 8;
+                byte[] subHeader = br.ReadBytes(4);
+                foffset += 4;
+                if (Encoding.ASCII.GetString(subHeader) == "3ATT")
+                {
+                    int two = br.ReadInt32();
+                    foffset += 4;
+                }
+
+                ttarch2.version = Encoding.ASCII.GetString(subHeader) == "3ATT" ? 1 : 2;
+
+                uint nameSize = br.ReadUInt32();
+                foffset += 4;
+                uint filesCount = br.ReadUInt32();
+                foffset += 4;
+                ttarch2.files = new ClassesStructs.Ttarch2Class.Ttarch2files[filesCount];
+                ttarch2.filesOffset = foffset + (28 * (ulong)filesCount) + (ulong)nameSize;
+
+                for (int i = 0; i < filesCount; i++)
+                {
+                    ttarch2.files[i].fileNameCRC64 = br.ReadUInt64();
+                    ttarch2.files[i].fileOffset = br.ReadUInt64();
+                    ttarch2.files[i].fileSize = br.ReadInt32();
+                    int unknown = br.ReadInt32();
+                    ushort nameBlock = br.ReadUInt16();
+                    ushort nameOff = br.ReadUInt16();
+                    long pos = br.BaseStream.Position;
+                    ulong nameOffset = foffset + (28 * (ulong)filesCount) + (ulong)nameOff + ((ulong)nameBlock * 0x10000);
+                    br.BaseStream.Seek((long)nameOffset, SeekOrigin.Begin);
+
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        byte[] bytes = null;
+
+                        while(true)
+                        {
+                            bytes = br.ReadBytes(1);
+                            if (bytes[0] == 0) break;
+                            ms.Write(bytes, 0, bytes.Length);
+                        }
+
+                        bytes = ms.ToArray();
+                        ttarch2.files[i].fileName = Encoding.ASCII.GetString(bytes);
+                    }
+
+                    br.BaseStream.Seek(pos, SeekOrigin.Begin);
+                }
+
+                br.Close();
+                fs.Close();
+            }
+            catch
+            {
+                MessageBox.Show("Something goes wrong", "Unknown error. Please try another archive.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ttarch2 = null;
+            }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -246,6 +315,7 @@ namespace TTG_Tools
                 FileInfo fi = new FileInfo(ofd.FileName);
 
                 ttarch = null;
+                ttarch2 = null;
 
                 switch (fi.Extension.ToLower())
                 {
@@ -306,6 +376,42 @@ namespace TTG_Tools
                         break;
 
                     case ".ttarch2":
+                        ttarch2 = new ClassesStructs.Ttarch2Class();
+                        ReadHeaderTtarch2(fi.FullName, MainMenu.gamelist[gameListCB.SelectedIndex].key);
+
+                        if(ttarch2 != null)
+                        {
+                            filesDataGridView.ColumnCount = 4;
+                            filesDataGridView.RowCount = ttarch2.files.Length;
+                            fileFormatsCB.Items.Clear();
+
+                            if (ttarch2.fileFormats.Count > 0)
+                            {
+                                fileFormatsCB.Items.Add("All files");
+
+                                for (int f = 0; f < ttarch2.fileFormats.Count; f++)
+                                {
+                                    fileFormatsCB.Items.Add(ttarch2.fileFormats[f]);
+                                }
+
+                                fileFormatsCB.SelectedIndex = 0;
+                            }
+
+                            filesDataGridView.Columns[0].HeaderText = "No.";
+                            filesDataGridView.Columns[1].HeaderText = "File name";
+                            filesDataGridView.Columns[2].HeaderText = "File offset";
+                            filesDataGridView.Columns[3].HeaderText = "File size";
+
+                            for (int i = 0; i < ttarch2.files.Length; i++)
+                            {
+                                filesDataGridView[0, i].Value = Convert.ToString(i + 1);
+                                filesDataGridView[1, i].Value = ttarch2.files[i].fileName;
+                                filesDataGridView[2, i].Value = Convert.ToString(ttarch2.files[i].fileOffset);
+                                filesDataGridView[3, i].Value = Convert.ToString(ttarch2.files[i].fileSize);
+                            }
+
+                            MessageBox.Show(Convert.ToString(ttarch2.filesOffset));
+                        }
 
                         break;
                 }

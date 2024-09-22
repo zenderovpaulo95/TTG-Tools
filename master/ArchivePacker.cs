@@ -287,7 +287,7 @@ namespace TTG_Tools
                 fr.Read(file, 0, file.Length);
 
                 //Encrypt lua if it needs
-                if ((fi[l].Extension == ".lua") && (MainMenu.settings.encryptLuaInArchive == false))
+                if ((fi[l].Extension == ".lua") && !MainMenu.settings.encryptLuaInArchive)
                 {
                     file = Methods.encryptLua(file, key, newEngine, 7);
                 }
