@@ -141,6 +141,14 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
+v.1.13.3 (XX.XX.202X)
++ Archive packer:
+Replaced zlib.net wrapper to Zlib.Wrapper by Hajin Jang
+Added Oodle wrapper by Josh Tamely
+
++Archive unpacker:
+Add first version of archive unpacker
+
 v.1.13.2 (14.08.2024)
 +TTG Tools:
 Add support Sam &amp; Max The Devil's Playhouse remastered

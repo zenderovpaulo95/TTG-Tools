@@ -22,6 +22,7 @@ namespace TTG_Tools.ClassesStructs
         public int compressAlgorithm;
         public int version;
         public ulong filesOffset;
+        public string fileName;
         public ulong[] compressedBlocks;
         public List<string> fileFormats;
         public Ttarch2files[] files;

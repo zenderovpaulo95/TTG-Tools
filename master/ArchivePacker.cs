@@ -1,4 +1,5 @@
-﻿using OodleTools;
+﻿using Microsoft.Win32;
+using OodleTools;
 using System;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -403,11 +404,8 @@ namespace TTG_Tools
             
         }
 
-        public void builder_ttarch(string input_folder, string output_path, byte[] key, bool compression, int version_archive, bool encryptCheck, bool DontEncLua) //Функция сборки
+        public void builder_ttarch(string input_folder, string output_path, byte[] key, bool compression, int version_archive, bool encryptCheck, bool DontEncLua, int compressAlgorithm) //Функция сборки
         {
-           // if ((CheckDll(Application.StartupPath + "\\zlib.net.dll") == false)
-           //     && (version_archive > 2 && version_archive < 8)) compression = false; //Проверка на наличие библиотеки для сжатия старых архивов
-
             DirectoryInfo di = new DirectoryInfo(input_folder);
             MemoryStream ms = new MemoryStream(); //Для создания заголовка
             DirectoryInfo[] di1 = di.GetDirectories("*", SearchOption.AllDirectories); //Возня с папками и подпапками (если их не будет, тупо зальются файлы)
@@ -682,151 +680,152 @@ namespace TTG_Tools
                 {
                     progressBar1.Maximum = fi.Length;
 
-                        int hz3 = 2;
-                        hz2 = BitConverter.GetBytes(hz3); //Change unknown data from 1 by 2
+                    int hz3 = 2;
+                    hz2 = BitConverter.GetBytes(hz3); //Change unknown data from 1 by 2
 
-                        uint ca_size = 0; //Size of compressed archive
-                        int sct = 0; //start compressed table
+                    uint ca_size = 0; //Size of compressed archive
+                    int sct = 0; //start compressed table
 
-                        byte[] binCompressedTS = new byte[4];
+                    byte[] binCompressedTS = new byte[4];
 
 
-                        if (version_archive >= 7)
+                    if (version_archive >= 7)
+                    {
+                        switch (version_archive)
                         {
-                            switch (version_archive)
-                            {
-                                case 7:
-                                    table_files = ZlibCompressor(table_files);
-                                    binCompressedTS = BitConverter.GetBytes(table_files.Length);
-                                    break;
-                                default:
-                                    table_files = DeflateCompressor(table_files);
-                                    binCompressedTS = BitConverter.GetBytes(table_files.Length);
-                                    break;
-                            }
+                            case 7:
+                            case 8:
+                                table_files = compressAlgorithm == 0 ? ZlibCompressor(table_files) : DeflateCompressor(table_files);
+                                binCompressedTS = BitConverter.GetBytes(table_files.Length);
+                                break;
+                            default:
+                                table_files = DeflateCompressor(table_files);
+                                binCompressedTS = BitConverter.GetBytes(table_files.Length);
+                                break;
                         }
-                        byte[] block_sz = new byte[1];
-                        if (version_archive == 7) block_sz = BitConverter.GetBytes(0x80);
-                        else block_sz = BitConverter.GetBytes(0x40);
+                    }
+                    byte[] block_sz = new byte[1];
+                    if (version_archive == 7) block_sz = BitConverter.GetBytes(0x80);
+                    else block_sz = BitConverter.GetBytes(0x40);
 
-                        FileStream fa = new FileStream(MainMenu.settings.archivePath, FileMode.Create);
-                        fa.Write(archive_version, 0, 4);
-                        sct += 4;
-                        fa.Write(encrypt, 0, 4);
-                        sct += 4;
-                        fa.Write(hz1, 0, 4);
-                        sct += 4;
-                        fa.Write(hz2, 0, 4);
-                        sct += 4;
+                    FileStream fa = new FileStream(MainMenu.settings.archivePath, FileMode.Create);
+                    fa.Write(archive_version, 0, 4);
+                    sct += 4;
+                    fa.Write(encrypt, 0, 4);
+                    sct += 4;
+                    fa.Write(hz1, 0, 4);
+                    sct += 4;
+                    fa.Write(hz2, 0, 4);
+                    sct += 4;
 
 
-                        FileStream file_reader = new FileStream(Application.StartupPath + "\\temp.file", FileMode.Open);
-                        int blocks = Convert.ToInt32(pad_it(Convert.ToUInt64(file_reader.Length - pos_header), Convert.ToUInt64(0x10000))) / 0x10000;
+                    FileStream file_reader = new FileStream(Application.StartupPath + "\\temp.file", FileMode.Open);
+                    int blocks = Convert.ToInt32(pad_it(Convert.ToUInt64(file_reader.Length - pos_header), Convert.ToUInt64(0x10000))) / 0x10000;
 
-                        byte[] binBlocks = BitConverter.GetBytes(blocks);
+                    byte[] binBlocks = BitConverter.GetBytes(blocks);
 
-                        int compressed_block_size = blocks * 4 + 4 + 4;
-                        byte[] compressed_blocks_header = new byte[compressed_block_size];
-                        Array.Copy(binBlocks, 0, compressed_blocks_header, 0, 4);
-                        int poz = 4;
+                    int compressed_block_size = blocks * 4 + 4 + 4;
+                    byte[] compressed_blocks_header = new byte[compressed_block_size];
+                    Array.Copy(binBlocks, 0, compressed_blocks_header, 0, 4);
+                    int poz = 4;
 
-                        byte[] binTableSize = new byte[4];
-                        binTableSize = BitConverter.GetBytes(table_size);
+                    byte[] binTableSize = new byte[4];
+                    binTableSize = BitConverter.GetBytes(table_size);
                         
 
-                        fa.Write(compressed_blocks_header, 0, compressed_blocks_header.Length);
+                    fa.Write(compressed_blocks_header, 0, compressed_blocks_header.Length);
 
-                        if (version_archive >= 4)
+                    if (version_archive >= 4)
+                    {
+                        fa.Write(priority, 0, 4);
+                        fa.Write(empty_bytes, 0, 4);
+                    }
+
+                    if (version_archive >= 7)
+                    {
+                        if (checkXmode.Checked == true)
                         {
-                            fa.Write(priority, 0, 4);
-                            fa.Write(empty_bytes, 0, 4);
+                            empty_bytes = new byte[4];
+                            empty_bytes = BitConverter.GetBytes(1);
+
+                            fa.Write(empty_bytes, 0, empty_bytes.Length);
+                            fa.Write(empty_bytes, 0, empty_bytes.Length);
+                            empty_bytes = new byte[4];
+                            empty_bytes = BitConverter.GetBytes(0);
+                        }
+                        else
+                        {
+                            empty_bytes = new byte[4];
+                            empty_bytes = BitConverter.GetBytes(0);
+
+                            fa.Write(empty_bytes, 0, empty_bytes.Length);
+                            fa.Write(empty_bytes, 0, empty_bytes.Length);
                         }
 
-                        if (version_archive >= 7)
+                        fa.Write(block_sz, 0, 1);
+                        if (version_archive == 7)
                         {
-                            if (checkXmode.Checked == true)
-                            {
-                                empty_bytes = new byte[4];
-                                empty_bytes = BitConverter.GetBytes(1);
+                            fa.Write(empty_bytes, 0, 3);
+                        }
+                        else fa.Write(empty_bytes, 0, 4);
+                    }
 
-                                fa.Write(empty_bytes, 0, empty_bytes.Length);
-                                fa.Write(empty_bytes, 0, empty_bytes.Length);
-                                empty_bytes = new byte[4];
-                                empty_bytes = BitConverter.GetBytes(0);
-                            }
-                            else
-                            {
-                                empty_bytes = new byte[4];
-                                empty_bytes = BitConverter.GetBytes(0);
+                    if (version_archive == 9)
+                    {
+                        fa.Write(header_crc32, 0, 4);
+                    }
 
-                                fa.Write(empty_bytes, 0, empty_bytes.Length);
-                                fa.Write(empty_bytes, 0, empty_bytes.Length);
-                            }
+                    fa.Write(binTableSize, 0, 4);
 
-                            fa.Write(block_sz, 0, 1);
-                            if (version_archive == 7)
-                            {
-                                fa.Write(empty_bytes, 0, 3);
-                            }
-                            else fa.Write(empty_bytes, 0, 4);
+                    if (version_archive >= 7)
+                    {
+                        fa.Write(binCompressedTS, 0, 4);
+                        fa.Write(table_files, 0, table_files.Length);
+                    }
+                    else fa.Write(table_files, 0, table_files.Length);
+
+
+                    progressBar1.Maximum = blocks;
+                    file_reader.Seek(pos_header, SeekOrigin.Begin);
+
+                    for (int j = 0; j < blocks; j++)
+                    {
+                        byte[] blockArchive = new byte[0x10000];
+                        if (version_archive == 7) blockArchive = new byte[0x20000];
+
+                        file_reader.Read(blockArchive, 0, blockArchive.Length);
+                        byte[] compressed_block;
+                        if (version_archive >= 8) compressed_block = DeflateCompressor(blockArchive);
+                        else compressed_block = ZlibCompressor(blockArchive);
+
+                        if (EncryptIt.Checked == true)
+                        {
+                            int num = comboGameList.SelectedIndex;
+                            compressed_block = encryptFunction(compressed_block, key, version_archive);
                         }
 
-                        if (version_archive == 9)
-                        {
-                            fa.Write(header_crc32, 0, 4);
-                        }
+                        fa.Write(compressed_block, 0, compressed_block.Length);
 
-                        fa.Write(binTableSize, 0, 4);
+                        uint cbs = Convert.ToUInt32(compressed_block.Length);
+                        ca_size += cbs;
 
-                        if (version_archive >= 7)
-                        {
-                            fa.Write(binCompressedTS, 0, 4);
-                            fa.Write(table_files, 0, table_files.Length);
-                        }
-                        else fa.Write(table_files, 0, table_files.Length);
+                        byte[] binSize = new byte[4];
+                        binSize = BitConverter.GetBytes(cbs);
+                        Array.Copy(binSize, 0, compressed_blocks_header, poz, 4);
+                        poz += 4;
+                        Progress(j + 1);
+                    }
 
-
-                        progressBar1.Maximum = blocks;
-                        file_reader.Seek(pos_header, SeekOrigin.Begin);
-
-                        for (int j = 0; j < blocks; j++)
-                        {
-                            byte[] blockArchive = new byte[0x10000];
-                            if (version_archive == 7) blockArchive = new byte[0x20000];
-
-                            file_reader.Read(blockArchive, 0, blockArchive.Length);
-                            byte[] compressed_block;
-                            if (version_archive >= 8) compressed_block = DeflateCompressor(blockArchive);
-                            else compressed_block = ZlibCompressor(blockArchive);
-
-                            if (EncryptIt.Checked == true)
-                            {
-                                int num = comboGameList.SelectedIndex;
-                                compressed_block = encryptFunction(compressed_block, key, version_archive);
-                            }
-
-                            fa.Write(compressed_block, 0, compressed_block.Length);
-
-                            uint cbs = Convert.ToUInt32(compressed_block.Length);
-                            ca_size += cbs;
-
-                            byte[] binSize = new byte[4];
-                            binSize = BitConverter.GetBytes(cbs);
-                            Array.Copy(binSize, 0, compressed_blocks_header, poz, 4);
-                            poz += 4;
-                            Progress(j + 1);
-                        }
-
-                        byte[] binCASize = new byte[4];
-                        binCASize = BitConverter.GetBytes(ca_size);
-                        Array.Copy(binCASize, 0, compressed_blocks_header, poz, 4);
-                        fa.Seek(sct, SeekOrigin.Begin);
-                        fa.Write(compressed_blocks_header, 0, compressed_blocks_header.Length);
-                        fa.Close();
-                        file_reader.Close();
-                        if (File.Exists(Application.StartupPath + "\\temp.file") == true) File.Delete(Application.StartupPath + "\\temp.file");
+                    byte[] binCASize = new byte[4];
+                    binCASize = BitConverter.GetBytes(ca_size);
+                    Array.Copy(binCASize, 0, compressed_blocks_header, poz, 4);
+                    fa.Seek(sct, SeekOrigin.Begin);
+                    fa.Write(compressed_blocks_header, 0, compressed_blocks_header.Length);
+                    fa.Close();
+                    file_reader.Close();
+                    if (File.Exists(Application.StartupPath + "\\temp.file") == true) File.Delete(Application.StartupPath + "\\temp.file");
                 }
-            }
+        }
     
 
         private void ArchivePacker_Load(object sender, EventArgs e)
@@ -981,9 +980,11 @@ namespace TTG_Tools
 
                     int algorithmCompress = 0;
 
-                    if(ttarch2RB.Checked && (versionSelection.SelectedIndex == 1) && (compressionCB.SelectedIndex == 1)) algorithmCompress = 1;
+                    if (ttarch2RB.Checked && (versionSelection.SelectedIndex == 1) && (compressionCB.SelectedIndex == 1)) algorithmCompress = 1;
+                    else if (ttarchRB.Checked && (versionSelection.SelectedIndex == 5 || versionSelection.SelectedIndex == 6) && (compressionCB.SelectedIndex == 1)) algorithmCompress = 1;
+                    else if(ttarchRB.Checked && versionSelection.SelectedIndex == 7) algorithmCompress = 1; //Latest version uses deflate algorithm
 
-                    if (ttarchRB.Checked == true) builder_ttarch(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive);
+                    if (ttarchRB.Checked == true) builder_ttarch(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive, algorithmCompress);
                     else builder_ttarch2(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, keyEnc, MainMenu.settings.encryptLuaInArchive, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress);
                 }
                 else MessageBox.Show("This folder doesn't exist!", "Error");
@@ -1052,8 +1053,27 @@ namespace TTG_Tools
 
         private void versionSelection_SelectedIndexChanged(object sender, EventArgs e)
         {
-            compressionLabel.Visible = ttarch2RB.Checked && versionSelection.SelectedIndex == 1;
-            compressionCB.Visible = ttarch2RB.Checked && versionSelection.SelectedIndex == 1;
+            if (ttarchRB.Checked)
+            {
+                compressionCB.Items.Clear();
+
+                compressionCB.Items.Add("Zlib");
+                compressionCB.Items.Add("Deflate");
+                compressionCB.SelectedIndex = 0;
+
+                compressionCB.Visible = versionSelection.SelectedIndex == 5 || versionSelection.SelectedIndex == 6;
+                compressionLabel.Visible = versionSelection.SelectedIndex == 5 || versionSelection.SelectedIndex == 6;
+            }
+            else
+            {
+                compressionCB.Items.Clear();
+                compressionCB.Items.Add("Deflate");
+                compressionCB.Items.Add("Oodle LZ");
+                compressionCB.SelectedIndex = 0;
+
+                compressionLabel.Visible = ttarch2RB.Checked && versionSelection.SelectedIndex == 1;
+                compressionCB.Visible = ttarch2RB.Checked && versionSelection.SelectedIndex == 1;
+            }
 
             MainMenu.settings.versionArchiveIndex = versionSelection.SelectedIndex;
             Settings.SaveConfig(MainMenu.settings);

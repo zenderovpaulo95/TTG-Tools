@@ -275,6 +275,7 @@ namespace TTG_Tools
 
                 ulong foffset = 0;
                 ttarch2.fileFormats = new List<string>();
+                ttarch2.fileName = path;
 
                 byte[] header = br.ReadBytes(4);
                 foffset += 4;
@@ -398,6 +399,13 @@ namespace TTG_Tools
 
                                     bytes = mms.ToArray();
                                     ttarch2.files[i].fileName = Encoding.ASCII.GetString(bytes);
+
+                                    string ext = Methods.GetExtension(ttarch2.files[i].fileName);
+
+                                    if ((ext != "") && !ttarch2.fileFormats.Contains(ext))
+                                    {
+                                        ttarch2.fileFormats.Add(ext);
+                                    }
                                 }
 
                                 mbr.BaseStream.Seek(pos, SeekOrigin.Begin);
@@ -451,6 +459,13 @@ namespace TTG_Tools
 
                             bytes = ms.ToArray();
                             ttarch2.files[i].fileName = Encoding.ASCII.GetString(bytes);
+
+                            string ext = Methods.GetExtension(ttarch2.files[i].fileName);
+
+                            if ((ext != "") && !ttarch2.fileFormats.Contains(ext))
+                            {
+                                ttarch2.fileFormats.Add(ext);
+                            }
                         }
 
                         br.BaseStream.Seek(pos, SeekOrigin.Begin);
@@ -502,7 +517,7 @@ namespace TTG_Tools
                             encryptedStr += ttarch.isEncrypted ? "Yes" : "No";
                             string xmodeStr = "Has X mode: ";
                             xmodeStr += ttarch.isXmode ? "Yes" : "No";
-                            string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch.chunkSize);
+                            string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch.chunkSize) + "KB";
 
                             compressionLabel.Text = compressedStr;
                             encryptionLabel.Text = encryptedStr;
@@ -546,6 +561,24 @@ namespace TTG_Tools
                             filesDataGridView.ColumnCount = 4;
                             filesDataGridView.RowCount = ttarch2.files.Length;
                             fileFormatsCB.Items.Clear();
+
+                            string compressedStr = "Compressed: ";
+                            compressedStr += ttarch2.isCompressed ? "Yes" : "No";
+                            if (ttarch2.isCompressed)
+                            {
+                                compressedStr += " (";
+                                compressedStr += ttarch2.compressAlgorithm == 1 ? "deflate)" : "oodle LZ)";
+                            }
+                            string encryptedStr = "Encrypted: ";
+                            encryptedStr += ttarch2.isEncrypted ? "Yes" : "No";
+                            string xmodeStr = "Has X mode: No";
+                            string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch2.chunkSize / 1024) + "KB";
+
+                            compressionLabel.Text = compressedStr;
+                            encryptionLabel.Text = encryptedStr;
+                            xmodeLabel.Text = xmodeStr;
+                            chunkSizeLabel.Text = chunkSzStr;
+                            versionLabel.Text = "Version: " + Convert.ToString(ttarch2.version);
 
                             if (ttarch2.fileFormats.Count > 0)
                             {
@@ -694,6 +727,51 @@ namespace TTG_Tools
                         progressBar1.Value = i;
                     }
 
+                    br.Close();
+                    fs.Close();
+                }
+            }
+            else if(ttarch2 != null)
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = ttarch2.files.Length > 1 ? ttarch2.files.Length : 1;
+                    FileStream fs = new FileStream(ttarch2.fileName, FileMode.Open);
+                    BinaryReader br = new BinaryReader(fs);
+                    for (int i = 0; i < ttarch2.files.Length; i++)
+                    {
+                        if (ttarch2.isCompressed)
+                        {
+                            int index = (int)(ttarch2.files[i].fileOffset / ttarch2.chunkSize);
+                            int index2 = (int)(ttarch2.files[i].fileOffset + (ulong)(ttarch2.files[i].fileSize) / (ulong)(ttarch2.chunkSize));
+                            ulong cOff = 0;
+
+                            for(int c = 0; c < index; c++)
+                            {
+                                cOff += (ttarch2.compressedBlocks[c + 1] - ttarch2.compressedBlocks[c]);
+                            }
+                            
+                            //br.BaseStream.Seek(cOff + ttarch2.filesOffset)
+
+                            using (MemoryStream ms = new MemoryStream())
+                            {
+                                for (int c = index; c < index2; c++)
+                                {
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            br.BaseStream.Seek((long)ttarch2.filesOffset + (long)ttarch2.files[i].fileOffset, SeekOrigin.Begin);
+                            byte[] file = br.ReadBytes(ttarch2.files[i].fileSize);
+                            File.WriteAllBytes(fbd.SelectedPath + Path.DirectorySeparatorChar + ttarch2.files[i].fileName, file);
+                            progressBar1.Value = i + 1;
+                        }
+                    }
                     br.Close();
                     fs.Close();
                 }
