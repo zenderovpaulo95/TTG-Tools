@@ -301,6 +301,7 @@ namespace TTG_Tools
                     }
 
                     long pos = br.BaseStream.Position;
+                    ttarch2.cFilesOffset = (ulong)br.BaseStream.Position;
 
                     byte[] tmp = br.ReadBytes((int)ttarch2.compressedBlocks[1] - (int)ttarch2.compressedBlocks[0]);
 
@@ -739,38 +740,76 @@ namespace TTG_Tools
                 {
                     progressBar1.Minimum = 0;
                     progressBar1.Maximum = ttarch2.files.Length > 1 ? ttarch2.files.Length : 1;
+
+                    bool decrypt = decryptLuaCB.Checked;
+                    byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
+
                     FileStream fs = new FileStream(ttarch2.fileName, FileMode.Open);
                     BinaryReader br = new BinaryReader(fs);
                     for (int i = 0; i < ttarch2.files.Length; i++)
                     {
                         if (ttarch2.isCompressed)
                         {
-                            int index = (int)(ttarch2.files[i].fileOffset / ttarch2.chunkSize);
-                            int index2 = (int)(ttarch2.files[i].fileOffset + (ulong)(ttarch2.files[i].fileSize) / (ulong)(ttarch2.chunkSize));
+                            int index = (int)((ttarch2.filesOffset + ttarch2.files[i].fileOffset) / ttarch2.chunkSize);
+                            int index2 = (int)((ttarch2.filesOffset + ttarch2.files[i].fileOffset + (ulong)ttarch2.files[i].fileSize) / (ulong)(ttarch2.chunkSize)) + 1;
                             ulong cOff = 0;
 
                             for(int c = 0; c < index; c++)
                             {
                                 cOff += (ttarch2.compressedBlocks[c + 1] - ttarch2.compressedBlocks[c]);
                             }
-                            
-                            //br.BaseStream.Seek(cOff + ttarch2.filesOffset)
+
+                            //br.BaseStream.Seek((long)(cOff + ttarch2.filesOffset), SeekOrigin.Begin);
+                            br.BaseStream.Seek((long)(cOff + ttarch2.cFilesOffset), SeekOrigin.Begin);
 
                             using (MemoryStream ms = new MemoryStream())
                             {
                                 for (int c = index; c < index2; c++)
                                 {
+                                    byte[] tmp = br.ReadBytes((int)(ttarch2.compressedBlocks[c + 1] - ttarch2.compressedBlocks[c]));
 
+                                    if(ttarch2.isEncrypted)
+                                    {
+                                        BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, 7);
+                                        tmp = dec.Crypt_ECB(tmp, 7, true);
+                                    }
+
+                                    tmp = decompressBlock(tmp);
+                                    ms.Write(tmp, 0, tmp.Length);
                                 }
+
+                                byte[] block = ms.ToArray();
+                                byte[] file = new byte[ttarch2.files[i].fileSize];
+                                //ulong dOff = cOff - (ulong)(ttarch2.chunkSize * index);
+                                ulong dOff = (ttarch2.filesOffset + ttarch2.files[i].fileOffset) - (ulong)(ttarch2.chunkSize * index);
+                                Array.Copy(block, (long)dOff, file, 0, file.Length);
+                                string fileName = ttarch2.files[i].fileName;
+
+                                if ((Methods.GetExtension(fileName).ToLower() == ".lenc") || (Methods.GetExtension(fileName).ToLower() == ".lua") && decrypt)
+                                {
+                                    if (fileName.Substring(fileName.Length - 4, 4).ToLower() == "lenc") fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
+                                    file = Methods.decryptLua(file, key, 7);
+                                }
+
+                                File.WriteAllBytes(fbd.SelectedPath + Path.DirectorySeparatorChar + fileName, file);
                             }
                         }
                         else
                         {
                             br.BaseStream.Seek((long)ttarch2.filesOffset + (long)ttarch2.files[i].fileOffset, SeekOrigin.Begin);
                             byte[] file = br.ReadBytes(ttarch2.files[i].fileSize);
-                            File.WriteAllBytes(fbd.SelectedPath + Path.DirectorySeparatorChar + ttarch2.files[i].fileName, file);
-                            progressBar1.Value = i + 1;
+                            string fileName = ttarch2.files[i].fileName;
+
+                            if ((Methods.GetExtension(fileName).ToLower() == ".lenc") || (Methods.GetExtension(fileName).ToLower() == ".lua") && decrypt)
+                            {
+                                if(fileName.Substring(fileName.Length - 4, 4).ToLower() == "lenc") fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
+                                file = Methods.decryptLua(file, key, 7);
+                            }
+
+                            File.WriteAllBytes(fbd.SelectedPath + Path.DirectorySeparatorChar + fileName, file);
                         }
+
+                        progressBar1.Value = i + 1;
                     }
                     br.Close();
                     fs.Close();
