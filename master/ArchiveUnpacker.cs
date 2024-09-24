@@ -25,6 +25,35 @@ namespace TTG_Tools
             Close();
         }
 
+        private static byte[] decompressBlock(byte[] bytes, int algorithmCompress)
+        {
+            try
+            {
+                byte[] retBuf = null;
+                switch (algorithmCompress)
+                {
+                    case 0:
+                        retBuf = ZLibDecompressor(bytes);
+                        break;
+
+                    case 1:
+                        retBuf = DeflateDecompressor(bytes);
+                        break;
+
+                    case 2:
+                        retBuf = OodleDecompressor(bytes);
+                        break;
+                        
+                }
+
+                return retBuf;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private static byte[] decompressBlock(byte[] bytes)
         {
             try
@@ -114,7 +143,7 @@ namespace TTG_Tools
                 retBytes = new byte[decBufSize];
             }
 
-            int size = OodleTools.Imports.OodleLZ_Decompress(bytes, bufSize, retBytes, decBufSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            int size = OodleTools.Imports.OodleLZ_Decompress(bytes, bufSize, retBytes, decBufSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3);
 
             byte[] tmp = new byte[size];
             Array.Copy(retBytes, 0, tmp, 0, tmp.Length);
@@ -279,11 +308,13 @@ namespace TTG_Tools
 
                 byte[] header = br.ReadBytes(4);
                 foffset += 4;
+                ttarch2.compressAlgorithm = -1;
                 ttarch2.isCompressed = Encoding.ASCII.GetString(header) != "NCTT"; //If it's a NCTT header then archive is not compressed
                 ttarch2.isEncrypted = Encoding.ASCII.GetString(header) == "ECTT" || Encoding.ASCII.GetString(header) == "eCTT";
 
                 if (ttarch2.isCompressed)
                 {
+                    ttarch2.compressAlgorithm = Encoding.ASCII.GetString(header) == "eCTT" || Encoding.ASCII.GetString(header) == "zCTT" ? 2 : 1;
                     if (Encoding.ASCII.GetString(header) == "eCTT" || Encoding.ASCII.GetString(header) == "zCTT")
                     {
                         int one = br.ReadInt32();
@@ -311,7 +342,7 @@ namespace TTG_Tools
                         tmp = dec.Crypt_ECB(tmp, 7, true);
                     }
 
-                    tmp = decompressBlock(tmp);
+                    tmp = decompressBlock(tmp, ttarch2.compressAlgorithm);
 
                     int suboff = 0;
                     uint filesCount = 0;
@@ -360,7 +391,7 @@ namespace TTG_Tools
                                     tmp = dec.Crypt_ECB(tmp, 7, true);
                                 }
 
-                                tmp = decompressBlock(tmp);
+                                tmp = decompressBlock(tmp, ttarch2.compressAlgorithm);
 
                                 ms.Write(tmp, 0, tmp.Length);
                             }
@@ -528,7 +559,7 @@ namespace TTG_Tools
 
                             if(ttarch.fileFormats.Count > 0)
                             {
-                                fileFormatsCB.Items.Add("All files");
+                                if(ttarch.fileFormats.Count > 1) fileFormatsCB.Items.Add("All files");
 
                                 for(int f = 0; f < ttarch.fileFormats.Count; f++)
                                 {
@@ -583,7 +614,7 @@ namespace TTG_Tools
 
                             if (ttarch2.fileFormats.Count > 0)
                             {
-                                fileFormatsCB.Items.Add("All files");
+                                if (ttarch2.fileFormats.Count > 1) fileFormatsCB.Items.Add("All files");
 
                                 for (int f = 0; f < ttarch2.fileFormats.Count; f++)
                                 {
@@ -605,8 +636,6 @@ namespace TTG_Tools
                                 filesDataGridView[2, i].Value = Convert.ToString(ttarch2.files[i].fileOffset);
                                 filesDataGridView[3, i].Value = Convert.ToString(ttarch2.files[i].fileSize);
                             }
-
-                            MessageBox.Show(Convert.ToString(ttarch2.filesOffset));
                         }
 
                         break;
@@ -702,7 +731,7 @@ namespace TTG_Tools
                                             tmp = dec.Crypt_ECB(tmp, ttarch.version, true);
                                         }
 
-                                        tmp = decompressBlock(tmp);
+                                        tmp = decompressBlock(tmp, ttarch.compressAlgorithm);
 
                                         mbw.Write(tmp);
                                     }
@@ -751,7 +780,8 @@ namespace TTG_Tools
                         if (ttarch2.isCompressed)
                         {
                             int index = (int)((ttarch2.filesOffset + ttarch2.files[i].fileOffset) / ttarch2.chunkSize);
-                            int index2 = (int)((ttarch2.filesOffset + ttarch2.files[i].fileOffset + (ulong)ttarch2.files[i].fileSize) / (ulong)(ttarch2.chunkSize)) + 1;
+                            int index2 = (int)((ttarch2.filesOffset + ttarch2.files[i].fileOffset + (ulong)ttarch2.files[i].fileSize) / (ulong)(ttarch2.chunkSize));
+                            if(index2 + 2 < ttarch2.compressedBlocks.Length) index2++;
                             ulong cOff = 0;
 
                             for(int c = 0; c < index; c++)
@@ -764,17 +794,33 @@ namespace TTG_Tools
 
                             using (MemoryStream ms = new MemoryStream())
                             {
-                                for (int c = index; c < index2; c++)
+                                for (int c = index; c <= index2; c++)
                                 {
+                                    var posi = br.BaseStream.Position;
                                     byte[] tmp = br.ReadBytes((int)(ttarch2.compressedBlocks[c + 1] - ttarch2.compressedBlocks[c]));
 
-                                    if(ttarch2.isEncrypted)
+                                    ulong bl = ttarch2.compressedBlocks[c + 1];
+                                    ulong bl2 = ttarch2.compressedBlocks[c];
+
+                                    if(tmp.Length >= 0x10000)
+                                    {
+                                        int pause = 1;
+                                    }
+
+                                    if (ttarch2.isEncrypted)
                                     {
                                         BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, 7);
                                         tmp = dec.Crypt_ECB(tmp, 7, true);
                                     }
 
-                                    tmp = decompressBlock(tmp);
+                                    tmp = decompressBlock(tmp, ttarch2.compressAlgorithm);
+
+                                    if(tmp == null || tmp.Length == 0)
+                                    {
+                                        MessageBox.Show("TTG Tools couldn't decompress block. Compress algorithm is " + Convert.ToString(ttarch2.compressAlgorithm), "Decompress error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        return;
+                                    }
+
                                     ms.Write(tmp, 0, tmp.Length);
                                 }
 

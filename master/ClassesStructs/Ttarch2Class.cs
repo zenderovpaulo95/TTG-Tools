@@ -33,7 +33,7 @@ namespace TTG_Tools.ClassesStructs
             isCompressed = false;
             isEncrypted = false;
             version = 1;
-            compressAlgorithm = -1; //-1 - unknown, 0 - deflate, 1 - oodle lz
+            compressAlgorithm = -1; //-1 - unknown, 1 - deflate, 2 - oodle lz
             chunkSize = 0x10000;
         }
     }
