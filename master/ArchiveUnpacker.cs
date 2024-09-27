@@ -323,18 +323,24 @@ namespace TTG_Tools
                     ttarch2.chunkSize = br.ReadUInt32();
                     int blocksCount = br.ReadInt32();
                     foffset += 4 + 4;
-                    ttarch2.compressedBlocks = new ulong[blocksCount + 1];
+                    ttarch2.compressedBlocks = new ulong[blocksCount];
 
-                    for (int i = 0; i < ttarch2.compressedBlocks.Length; i++)
+                    ulong val1 = br.ReadUInt64();
+                    ulong val2 = 0;
+
+                    for (int i = 0; i < blocksCount; i++)
                     {
-                        ttarch2.compressedBlocks[i] = br.ReadUInt64();
+                        val2 = br.ReadUInt64();
+                        ttarch2.compressedBlocks[i] = val2 - val1;
+
+                        val1 = val2;
                         foffset += 8;
                     }
 
                     long pos = br.BaseStream.Position;
                     ttarch2.cFilesOffset = (ulong)br.BaseStream.Position;
 
-                    byte[] tmp = br.ReadBytes((int)ttarch2.compressedBlocks[1] - (int)ttarch2.compressedBlocks[0]);
+                    byte[] tmp = br.ReadBytes((int)ttarch2.compressedBlocks[0]);
 
                     if(ttarch2.isEncrypted)
                     {
@@ -383,7 +389,7 @@ namespace TTG_Tools
                         {
                             for (int i = 0; i < index; i++)
                             {
-                                tmp = br.ReadBytes((int)(ttarch2.compressedBlocks[i + 1] - ttarch2.compressedBlocks[i]));
+                                tmp = br.ReadBytes((int)ttarch2.compressedBlocks[i]);
 
                                 if(ttarch2.isEncrypted)
                                 {
@@ -781,12 +787,24 @@ namespace TTG_Tools
                         {
                             int index = (int)((ttarch2.filesOffset + ttarch2.files[i].fileOffset) / ttarch2.chunkSize);
                             int index2 = (int)((ttarch2.filesOffset + ttarch2.files[i].fileOffset + (ulong)ttarch2.files[i].fileSize) / (ulong)(ttarch2.chunkSize));
-                            if(index2 + 2 < ttarch2.compressedBlocks.Length) index2++;
+
+                            if (index > ttarch2.compressedBlocks.Length)
+                            {
+                                MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+
+                            if (index2 > ttarch2.compressedBlocks.Length)
+                            {
+                                MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+
                             ulong cOff = 0;
 
                             for(int c = 0; c < index; c++)
                             {
-                                cOff += (ttarch2.compressedBlocks[c + 1] - ttarch2.compressedBlocks[c]);
+                                cOff += ttarch2.compressedBlocks[c];
                             }
 
                             //br.BaseStream.Seek((long)(cOff + ttarch2.filesOffset), SeekOrigin.Begin);
@@ -797,15 +815,7 @@ namespace TTG_Tools
                                 for (int c = index; c <= index2; c++)
                                 {
                                     var posi = br.BaseStream.Position;
-                                    byte[] tmp = br.ReadBytes((int)(ttarch2.compressedBlocks[c + 1] - ttarch2.compressedBlocks[c]));
-
-                                    ulong bl = ttarch2.compressedBlocks[c + 1];
-                                    ulong bl2 = ttarch2.compressedBlocks[c];
-
-                                    if(tmp.Length >= 0x10000)
-                                    {
-                                        int pause = 1;
-                                    }
+                                    byte[] tmp = br.ReadBytes((int)ttarch2.compressedBlocks[c]);
 
                                     if (ttarch2.isEncrypted)
                                     {
@@ -813,15 +823,22 @@ namespace TTG_Tools
                                         tmp = dec.Crypt_ECB(tmp, 7, true);
                                     }
 
-                                    tmp = decompressBlock(tmp, ttarch2.compressAlgorithm);
-
-                                    if(tmp == null || tmp.Length == 0)
+                                    if (tmp.Length == ttarch2.chunkSize)
                                     {
-                                        MessageBox.Show("TTG Tools couldn't decompress block. Compress algorithm is " + Convert.ToString(ttarch2.compressAlgorithm), "Decompress error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                        return;
+                                        ms.Write(tmp, 0, tmp.Length);
                                     }
+                                    else
+                                    {
+                                        tmp = decompressBlock(tmp, ttarch2.compressAlgorithm);
 
-                                    ms.Write(tmp, 0, tmp.Length);
+                                        if (tmp == null || tmp.Length == 0)
+                                        {
+                                            MessageBox.Show("TTG Tools couldn't decompress block. Compress algorithm is " + Convert.ToString(ttarch2.compressAlgorithm), "Decompress error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                            return;
+                                        }
+
+                                        ms.Write(tmp, 0, tmp.Length);
+                                    }
                                 }
 
                                 byte[] block = ms.ToArray();
