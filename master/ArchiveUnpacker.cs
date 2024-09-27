@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Security.Cryptography;
+using System.Data;
 
 namespace TTG_Tools
 {
@@ -520,6 +521,128 @@ namespace TTG_Tools
             }
         }
 
+        private void loadTtarchData(string format)
+        {
+            filesDataGridView.ColumnCount = 4;
+
+            string compressedStr = "Compressed: ";
+            compressedStr += ttarch.isCompressed ? "Yes" : "No";
+            if (ttarch.isCompressed)
+            {
+                compressedStr += " (";
+                compressedStr += ttarch.compressAlgorithm == 0 ? "zlib)" : "deflate)";
+            }
+            string encryptedStr = "Encrypted: ";
+            encryptedStr += ttarch.isEncrypted ? "Yes" : "No";
+            string xmodeStr = "Has X mode: ";
+            xmodeStr += ttarch.isXmode ? "Yes" : "No";
+            string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch.chunkSize) + "KB";
+
+            compressionLabel.Text = compressedStr;
+            encryptionLabel.Text = encryptedStr;
+            xmodeLabel.Text = xmodeStr;
+            chunkSizeLabel.Text = chunkSzStr;
+            versionLabel.Text = "Version: " + Convert.ToString(ttarch.version);
+
+            filesDataGridView.Columns[0].HeaderText = "No.";
+            filesDataGridView.Columns[1].HeaderText = "File name";
+            filesDataGridView.Columns[2].HeaderText = "File offset";
+            filesDataGridView.Columns[3].HeaderText = "File size";
+
+            if (format == "All files")
+            {
+                filesDataGridView.RowCount = ttarch.files.Length;
+
+                for (int i = 0; i < ttarch.files.Length; i++)
+                {
+                    filesDataGridView[0, i].Value = Convert.ToString(i + 1);
+                    filesDataGridView[1, i].Value = ttarch.files[i].fileName;
+                    filesDataGridView[2, i].Value = Convert.ToString(ttarch.files[i].fileOffset);
+                    filesDataGridView[3, i].Value = Convert.ToString(ttarch.files[i].fileSize);
+                }
+            } 
+            else
+            {
+                int c = 0;
+                filesDataGridView.Rows.Clear();
+
+                for (int i = 0; i < ttarch.files.Length; i++)
+                {
+                    if (ttarch.files[i].fileName.ToLower().Contains(format.ToLower()))
+                    {
+                        //if(c > filesDataGridView.RowCount) filesDataGridView.Rows.Add();
+                        filesDataGridView.Rows.Insert(c, c + 1, ttarch.files[i].fileName,  ttarch.files[i].fileOffset, ttarch.files[i].fileSize);
+                        /*filesDataGridView[0, c].Value = Convert.ToString(c + 1);
+                        filesDataGridView[1, c].Value = ttarch.files[i].fileName;
+                        filesDataGridView[2, c].Value = Convert.ToString(ttarch.files[i].fileOffset);
+                        filesDataGridView[3, c].Value = Convert.ToString(ttarch.files[i].fileSize);*/
+
+                        c++;
+                    }
+                }
+            }
+        }
+
+        private void loadTtarch2Data(string format)
+        {
+            filesDataGridView.ColumnCount = 4;
+
+            string compressedStr = "Compressed: ";
+            compressedStr += ttarch2.isCompressed ? "Yes" : "No";
+            if (ttarch2.isCompressed)
+            {
+                compressedStr += " (";
+                compressedStr += ttarch2.compressAlgorithm == 1 ? "deflate)" : "oodle LZ)";
+            }
+            string encryptedStr = "Encrypted: ";
+            encryptedStr += ttarch2.isEncrypted ? "Yes" : "No";
+            string xmodeStr = "Has X mode: No";
+            string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch2.chunkSize / 1024) + "KB";
+
+            compressionLabel.Text = compressedStr;
+            encryptionLabel.Text = encryptedStr;
+            xmodeLabel.Text = xmodeStr;
+            chunkSizeLabel.Text = chunkSzStr;
+            versionLabel.Text = "Version: " + Convert.ToString(ttarch2.version);
+
+            filesDataGridView.Columns[0].HeaderText = "No.";
+            filesDataGridView.Columns[1].HeaderText = "File name";
+            filesDataGridView.Columns[2].HeaderText = "File offset";
+            filesDataGridView.Columns[3].HeaderText = "File size";
+
+            if (format == "All files")
+            {
+                filesDataGridView.RowCount = ttarch2.files.Length;
+
+                for (int i = 0; i < ttarch2.files.Length; i++)
+                {
+                    filesDataGridView[0, i].Value = Convert.ToString(i + 1);
+                    filesDataGridView[1, i].Value = ttarch2.files[i].fileName;
+                    filesDataGridView[2, i].Value = Convert.ToString(ttarch2.files[i].fileOffset);
+                    filesDataGridView[3, i].Value = Convert.ToString(ttarch2.files[i].fileSize);
+                }
+            }
+            else
+            {
+                int c = 0;
+                filesDataGridView.Rows.Clear();
+
+                for (int i = 0; i < ttarch2.files.Length; i++)
+                {
+                    if (ttarch2.files[i].fileName.ToLower().Contains(format.ToLower()))
+                    {
+                        filesDataGridView.Rows.Add();
+                        filesDataGridView[0, c].Value = Convert.ToString(c + 1);
+                        filesDataGridView[1, c].Value = ttarch2.files[i].fileName;
+                        filesDataGridView[2, c].Value = Convert.ToString(ttarch2.files[i].fileOffset);
+                        filesDataGridView[3, c].Value = Convert.ToString(ttarch2.files[i].fileSize);
+
+                        c++;
+                    }
+                }
+            }
+        }
+
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -540,52 +663,22 @@ namespace TTG_Tools
 
                         if (ttarch != null)
                         {
-                            filesDataGridView.ColumnCount = 4;
-                            filesDataGridView.RowCount = ttarch.files.Length;
                             fileFormatsCB.Items.Clear();
 
-                            string compressedStr = "Compressed: ";
-                            compressedStr += ttarch.isCompressed ? "Yes" : "No";
-                            if (ttarch.isCompressed)
+                            if (ttarch.fileFormats.Count > 0)
                             {
-                                compressedStr += " (";
-                                compressedStr += ttarch.compressAlgorithm == 0 ? "zlib)" : "deflate)";
-                            }
-                            string encryptedStr = "Encrypted: ";
-                            encryptedStr += ttarch.isEncrypted ? "Yes" : "No";
-                            string xmodeStr = "Has X mode: ";
-                            xmodeStr += ttarch.isXmode ? "Yes" : "No";
-                            string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch.chunkSize) + "KB";
+                                if (ttarch.fileFormats.Count > 1) fileFormatsCB.Items.Add("All files");
 
-                            compressionLabel.Text = compressedStr;
-                            encryptionLabel.Text = encryptedStr;
-                            xmodeLabel.Text = xmodeStr;
-                            chunkSizeLabel.Text = chunkSzStr;
-                            versionLabel.Text = "Version: " + Convert.ToString(ttarch.version);
-
-                            if(ttarch.fileFormats.Count > 0)
-                            {
-                                if(ttarch.fileFormats.Count > 1) fileFormatsCB.Items.Add("All files");
-
-                                for(int f = 0; f < ttarch.fileFormats.Count; f++)
+                                for (int f = 0; f < ttarch.fileFormats.Count; f++)
                                 {
                                     fileFormatsCB.Items.Add(ttarch.fileFormats[f]);
                                 }
 
                                 fileFormatsCB.SelectedIndex = 0;
                             }
-
-                            filesDataGridView.Columns[0].HeaderText = "No.";
-                            filesDataGridView.Columns[1].HeaderText = "File name";
-                            filesDataGridView.Columns[2].HeaderText = "File offset";
-                            filesDataGridView.Columns[3].HeaderText = "File size";
-
-                            for (int i = 0; i < ttarch.files.Length; i++)
+                            else
                             {
-                                filesDataGridView[0, i].Value = Convert.ToString(i + 1);
-                                filesDataGridView[1, i].Value = ttarch.files[i].fileName;
-                                filesDataGridView[2, i].Value = Convert.ToString(ttarch.files[i].fileOffset);
-                                filesDataGridView[3, i].Value = Convert.ToString(ttarch.files[i].fileSize);
+                                loadTtarchData("All files");
                             }
                         }
                         break;
@@ -596,27 +689,7 @@ namespace TTG_Tools
 
                         if(ttarch2 != null)
                         {
-                            filesDataGridView.ColumnCount = 4;
-                            filesDataGridView.RowCount = ttarch2.files.Length;
                             fileFormatsCB.Items.Clear();
-
-                            string compressedStr = "Compressed: ";
-                            compressedStr += ttarch2.isCompressed ? "Yes" : "No";
-                            if (ttarch2.isCompressed)
-                            {
-                                compressedStr += " (";
-                                compressedStr += ttarch2.compressAlgorithm == 1 ? "deflate)" : "oodle LZ)";
-                            }
-                            string encryptedStr = "Encrypted: ";
-                            encryptedStr += ttarch2.isEncrypted ? "Yes" : "No";
-                            string xmodeStr = "Has X mode: No";
-                            string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch2.chunkSize / 1024) + "KB";
-
-                            compressionLabel.Text = compressedStr;
-                            encryptionLabel.Text = encryptedStr;
-                            xmodeLabel.Text = xmodeStr;
-                            chunkSizeLabel.Text = chunkSzStr;
-                            versionLabel.Text = "Version: " + Convert.ToString(ttarch2.version);
 
                             if (ttarch2.fileFormats.Count > 0)
                             {
@@ -629,18 +702,9 @@ namespace TTG_Tools
 
                                 fileFormatsCB.SelectedIndex = 0;
                             }
-
-                            filesDataGridView.Columns[0].HeaderText = "No.";
-                            filesDataGridView.Columns[1].HeaderText = "File name";
-                            filesDataGridView.Columns[2].HeaderText = "File offset";
-                            filesDataGridView.Columns[3].HeaderText = "File size";
-
-                            for (int i = 0; i < ttarch2.files.Length; i++)
+                            else
                             {
-                                filesDataGridView[0, i].Value = Convert.ToString(i + 1);
-                                filesDataGridView[1, i].Value = ttarch2.files[i].fileName;
-                                filesDataGridView[2, i].Value = Convert.ToString(ttarch2.files[i].fileOffset);
-                                filesDataGridView[3, i].Value = Convert.ToString(ttarch2.files[i].fileSize);
+                                loadTtarch2Data("All files");
                             }
                         }
 
@@ -881,6 +945,18 @@ namespace TTG_Tools
             else
             {
                 MessageBox.Show("Nothing to extract. Please open ttarch/ttarch2 file and then extract.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void fileFormatsCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ttarch != null)
+            {
+                loadTtarchData(fileFormatsCB.Text);
+            }
+            else if(ttarch2 != null) 
+            {
+                loadTtarch2Data(fileFormatsCB.Text);
             }
         }
     }

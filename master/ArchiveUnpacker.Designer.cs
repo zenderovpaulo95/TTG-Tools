@@ -80,14 +80,14 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -103,14 +103,14 @@
             // unpackToolStripMenuItem
             // 
             this.unpackToolStripMenuItem.Name = "unpackToolStripMenuItem";
-            this.unpackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.unpackToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.unpackToolStripMenuItem.Text = "Unpack";
             this.unpackToolStripMenuItem.Click += new System.EventHandler(this.unpackToolStripMenuItem_Click);
             // 
             // unpackSelectedToolStripMenuItem
             // 
             this.unpackSelectedToolStripMenuItem.Name = "unpackSelectedToolStripMenuItem";
-            this.unpackSelectedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.unpackSelectedToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.unpackSelectedToolStripMenuItem.Text = "Unpack selected";
             // 
             // filesDataGridView
@@ -188,6 +188,7 @@
             this.fileFormatsCB.Name = "fileFormatsCB";
             this.fileFormatsCB.Size = new System.Drawing.Size(144, 21);
             this.fileFormatsCB.TabIndex = 3;
+            this.fileFormatsCB.SelectedIndexChanged += new System.EventHandler(this.fileFormatsCB_SelectedIndexChanged);
             // 
             // label1
             // 
