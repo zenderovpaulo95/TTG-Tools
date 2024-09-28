@@ -141,11 +141,10 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
-v.1.13.3 (XX.XX.202X)
+v.1.14 (28.09.2024)
 + Archive packer:
 Replaced zlib.net wrapper to Zlib.Wrapper by Hajin Jang
 Added Oodle wrapper by Josh Tamely
-
 +Archive unpacker:
 Add first version of archive unpacker
 

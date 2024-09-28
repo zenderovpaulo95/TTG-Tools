@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using System.Security.Cryptography;
-using System.Data;
 
 namespace TTG_Tools
 {
@@ -296,7 +292,7 @@ namespace TTG_Tools
             }
         }
 
-        private void UnpackTtarch(string folderPath, string format)
+        private void UnpackTtarch(string folderPath, string format, int[] indexes = null)
         {
             var files = format == "All files" ? ttarch.files : ttarch.files.Where(x => Methods.GetExtension(x.fileName).ToLower() == format.ToLower()).ToArray();
 
@@ -306,19 +302,22 @@ namespace TTG_Tools
             bool decrypt = decryptLuaCB.Checked;
             byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
 
+            int count = indexes != null ? indexes.Length : files.Length;
+
             progressBar1.Minimum = 0;
-            progressBar1.Maximum = files.Length > 1 ? files.Length : 1;
+            progressBar1.Maximum = count;
 
             int chunkSz = ttarch.chunkSize * 1024;
 
-            for (int i = 0; i < files.Length; i++)
+            for (int i = 0; i < count; i++)
             {
+                int ind = indexes != null ? indexes[i] : i;
                 if (!ttarch.isCompressed)
                 {
-                    br.BaseStream.Seek(files[i].fileOffset + ttarch.filesOffset, SeekOrigin.Begin);
-                    byte[] tmp = br.ReadBytes(files[i].fileSize);
+                    br.BaseStream.Seek(files[ind].fileOffset + ttarch.filesOffset, SeekOrigin.Begin);
+                    byte[] tmp = br.ReadBytes(files[ind].fileSize);
                     Methods.meta_crypt(tmp, key, ttarch.version, true);
-                    string fileName = files[i].fileName;
+                    string fileName = files[ind].fileName;
                     if ((fileName.Substring(fileName.Length - 5, 5) == ".lenc") && decrypt)
                     {
                         fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
@@ -329,8 +328,8 @@ namespace TTG_Tools
                 }
                 else
                 {
-                    int index = (int)files[i].fileOffset / chunkSz;
-                    int index2 = (int)(files[i].fileOffset + files[i].fileSize) / chunkSz;
+                    int index = (int)files[ind].fileOffset / chunkSz;
+                    int index2 = (int)(files[ind].fileOffset + files[ind].fileSize) / chunkSz;
                     uint off = 0;
 
                     if (index > ttarch.compressedBlocks.Length)
@@ -352,7 +351,7 @@ namespace TTG_Tools
 
                     br.BaseStream.Seek(ttarch.filesOffset + off, SeekOrigin.Begin);
 
-                    uint c_off = (uint)(files[i].fileOffset - (chunkSz * index));
+                    uint c_off = (uint)(files[ind].fileOffset - (chunkSz * index));
 
                     using (MemoryStream ms = new MemoryStream())
                     {
@@ -375,11 +374,11 @@ namespace TTG_Tools
 
                             byte[] block = ms.ToArray();
 
-                            byte[] file = new byte[files[i].fileSize];
+                            byte[] file = new byte[files[ind].fileSize];
 
                             Array.Copy(block, c_off, file, 0, file.Length);
 
-                            string fileName = files[i].fileName;
+                            string fileName = files[ind].fileName;
                             if ((fileName.Substring(fileName.Length - 5, 5) == ".lenc") && decrypt)
                             {
                                 fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
@@ -391,7 +390,7 @@ namespace TTG_Tools
                     }
                 }
 
-                progressBar1.Value = i;
+                progressBar1.Value = i + 1;
             }
 
             br.Close();
@@ -623,23 +622,27 @@ namespace TTG_Tools
             }
         }
 
-        private void UnpackTtarch2(string folderPath, string format)
+        private void UnpackTtarch2(string folderPath, string format, int[] indexes = null)
         {
             var files = format == "All files" ? ttarch2.files : ttarch2.files.Where(x => Methods.GetExtension(x.fileName).ToLower() == format.ToLower()).ToArray();
+
+            int count = indexes != null ? indexes.Length : files.Length;
+            
             progressBar1.Minimum = 0;
-            progressBar1.Maximum = files.Length > 1 ? files.Length : 1;
+            progressBar1.Maximum = count;
 
             bool decrypt = decryptLuaCB.Checked;
             byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
 
             FileStream fs = new FileStream(ttarch2.fileName, FileMode.Open);
             BinaryReader br = new BinaryReader(fs);
-            for (int i = 0; i < files.Length; i++)
+            for (int i = 0; i < count; i++)
             {
+                int ind = indexes != null ? indexes[i] : i;
                 if (ttarch2.isCompressed)
                 {
-                    int index = (int)((ttarch2.filesOffset + files[i].fileOffset) / ttarch2.chunkSize);
-                    int index2 = (int)((ttarch2.filesOffset + files[i].fileOffset + (ulong)files[i].fileSize) / (ulong)(ttarch2.chunkSize));
+                    int index = (int)((ttarch2.filesOffset + files[ind].fileOffset) / ttarch2.chunkSize);
+                    int index2 = (int)((ttarch2.filesOffset + files[ind].fileOffset + (ulong)files[ind].fileSize) / (ulong)(ttarch2.chunkSize));
 
                     if (index > ttarch2.compressedBlocks.Length)
                     {
@@ -660,7 +663,6 @@ namespace TTG_Tools
                         cOff += ttarch2.compressedBlocks[c];
                     }
 
-                    //br.BaseStream.Seek((long)(cOff + ttarch2.filesOffset), SeekOrigin.Begin);
                     br.BaseStream.Seek((long)(cOff + ttarch2.cFilesOffset), SeekOrigin.Begin);
 
                     using (MemoryStream ms = new MemoryStream())
@@ -695,10 +697,10 @@ namespace TTG_Tools
                         }
 
                         byte[] block = ms.ToArray();
-                        byte[] file = new byte[files[i].fileSize];
-                        ulong dOff = (ttarch2.filesOffset + files[i].fileOffset) - (ulong)(ttarch2.chunkSize * index);
+                        byte[] file = new byte[files[ind].fileSize];
+                        ulong dOff = (ttarch2.filesOffset + files[ind].fileOffset) - (ulong)(ttarch2.chunkSize * index);
                         Array.Copy(block, (long)dOff, file, 0, file.Length);
-                        string fileName = files[i].fileName;
+                        string fileName = files[ind].fileName;
 
                         if ((Methods.GetExtension(fileName).ToLower() == ".lenc") || (Methods.GetExtension(fileName).ToLower() == ".lua") && decrypt)
                         {
@@ -711,9 +713,9 @@ namespace TTG_Tools
                 }
                 else
                 {
-                    br.BaseStream.Seek((long)ttarch2.filesOffset + (long)files[i].fileOffset, SeekOrigin.Begin);
-                    byte[] file = br.ReadBytes(files[i].fileSize);
-                    string fileName = files[i].fileName;
+                    br.BaseStream.Seek((long)ttarch2.filesOffset + (long)files[ind].fileOffset, SeekOrigin.Begin);
+                    byte[] file = br.ReadBytes(files[ind].fileSize);
+                    string fileName = files[ind].fileName;
 
                     if ((Methods.GetExtension(fileName).ToLower() == ".lenc") || (Methods.GetExtension(fileName).ToLower() == ".lua") && decrypt)
                     {
@@ -788,13 +790,30 @@ namespace TTG_Tools
 
             filesDataGridView.RowCount = files.Length;
 
+            int maxnameLen = 0;
+            int maxOffLen = 0;
+            int maxSizeLen = 0;
+            int maxNoLen = 0;
+
             for (int i = 0; i < files.Length; i++)
             {
                 filesDataGridView[0, i].Value = Convert.ToString(i + 1);
                 filesDataGridView[1, i].Value = files[i].fileName;
                 filesDataGridView[2, i].Value = Convert.ToString(files[i].fileOffset);
                 filesDataGridView[3, i].Value = Convert.ToString(files[i].fileSize);
+
+                maxNoLen = Convert.ToString(i + 1).Length > maxNoLen ? Convert.ToString(i + 1).Length : maxNoLen;
+                maxnameLen = files[i].fileName.Length > maxnameLen ? files[i].fileName.Length : maxnameLen;
+                maxSizeLen = Convert.ToString(files[i].fileSize).Length > maxSizeLen ? Convert.ToString(files[i].fileSize).Length : maxSizeLen;
+                maxOffLen = Convert.ToString(files[i].fileOffset).Length > maxOffLen ? Convert.ToString(files[i].fileOffset).Length : maxOffLen;
             }
+
+            filesDataGridView.Columns[0].Width = maxNoLen * 10;
+            filesDataGridView.Columns[1].Width = maxnameLen * 8;
+            filesDataGridView.Columns[2].Width = maxOffLen * 10;
+            filesDataGridView.Columns[3].Width = maxSizeLen * 10;
+
+            filesDataGridView.ClearSelection();
         }
 
         private void loadTtarch2Data(string format)
@@ -809,13 +828,30 @@ namespace TTG_Tools
 
             filesDataGridView.RowCount = files.Length;
 
+            int maxnameLen = 0;
+            int maxOffLen = 0;
+            int maxSizeLen = 0;
+            int maxNoLen = 0;
+
             for (int i = 0; i < files.Length; i++)
             {
                 filesDataGridView[0, i].Value = Convert.ToString(i + 1);
                 filesDataGridView[1, i].Value = files[i].fileName;
                 filesDataGridView[2, i].Value = Convert.ToString(files[i].fileOffset);
                 filesDataGridView[3, i].Value = Convert.ToString(files[i].fileSize);
+
+                maxNoLen = Convert.ToString(i + 1).Length > maxNoLen ? Convert.ToString(i + 1).Length : maxNoLen;
+                maxnameLen = files[i].fileName.Length > maxnameLen ? files[i].fileName.Length : maxnameLen;
+                maxSizeLen = Convert.ToString(files[i].fileSize).Length > maxSizeLen ? Convert.ToString(files[i].fileSize).Length : maxSizeLen;
+                maxOffLen = Convert.ToString(files[i].fileOffset).Length > maxOffLen ? Convert.ToString(files[i].fileOffset).Length : maxOffLen;
             }
+
+            filesDataGridView.Columns[0].Width = maxNoLen * 10;
+            filesDataGridView.Columns[1].Width = maxnameLen * 8;
+            filesDataGridView.Columns[2].Width = maxOffLen * 10;
+            filesDataGridView.Columns[3].Width = maxSizeLen * 10;
+
+            filesDataGridView.ClearSelection();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -891,6 +927,7 @@ namespace TTG_Tools
                 }
 
                 Form.ActiveForm.Text = "Archive unpacker. Opened file: " + fi.Name;
+                actionsToolStripMenuItem.Enabled = true;
             }
         }
 
@@ -902,6 +939,10 @@ namespace TTG_Tools
             }
 
             gameListCB.SelectedIndex = MainMenu.settings.encKeyIndex;
+            customKeyTB.Text = MainMenu.settings.encCustomKey;
+            useCustomKeyCB.Checked = MainMenu.settings.customKey;
+
+            actionsToolStripMenuItem.Enabled = false;
         }
 
         private void unpackToolStripMenuItem_Click(object sender, EventArgs e)
@@ -960,12 +1001,36 @@ namespace TTG_Tools
 
         private void unpackSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int selectedIndex = filesDataGridView.SelectedRows.Count;
-            int[] indexes = new int[selectedIndex];
-
-            for(int i = 0; i < selectedIndex; i++)
+            //TODO: придумать распаковку по выбранным из списка файлам
+            if (filesDataGridView.SelectedRows.Count > 0)
             {
-                indexes[i] = filesDataGridView.SelectedRows[i].Index;
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                int[] indexes = new int[filesDataGridView.SelectedRows.Count];
+
+                for (int i = 0; i < indexes.Length; i++)
+                {
+                    indexes[i] = filesDataGridView.SelectedRows[i].Index;
+                }
+
+                if(ttarch != null)
+                {
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                    {
+                        UnpackTtarch(fbd.SelectedPath, fileFormatsCB.Text, indexes);
+                    }
+                }
+                else if(ttarch2 != null)
+                {
+                    if(fbd.ShowDialog() == DialogResult.OK)
+                    {
+                        UnpackTtarch2(fbd.SelectedPath, fileFormatsCB.Text, indexes);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select files from list first.", "No selected files from list", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }

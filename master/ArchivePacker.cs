@@ -122,12 +122,13 @@ namespace TTG_Tools
             byte[] retVal;
             using (MemoryStream compressedMemoryStream = new MemoryStream())
             {
-                using (System.IO.Compression.DeflateStream compressStream = new System.IO.Compression.DeflateStream(compressedMemoryStream, System.IO.Compression.CompressionMode.Compress, true))
+                using (System.IO.Compression.DeflateStream compressStream = new System.IO.Compression.DeflateStream(compressedMemoryStream, System.IO.Compression.CompressionMode.Compress))
                 {
-                    using(MemoryStream outMemStream = new MemoryStream())
+                    using(MemoryStream inMemStream = new MemoryStream(bytes))
                     {
-                        compressStream.CopyTo(outMemStream);
-                        retVal = outMemStream.ToArray();
+                        inMemStream.CopyTo(compressStream);
+                        compressStream.Close();
+                        retVal = compressedMemoryStream.ToArray();
                     }
                 }
             }
@@ -226,21 +227,18 @@ namespace TTG_Tools
             UInt32 tmp;
             UInt64 file_offset = 0;
 
-            progressBar1.Maximum = fi.Length - 1;
+            progressBar1.Maximum = fi.Length;
             
             for (int k = 0; k < fi.Length; k++) //Making header with file information
             {
-                byte[] crc64_hash = new byte[8]; //CRC64 file name
-                crc64_hash = BitConverter.GetBytes(name_crc[k]);
-                Array.Copy(crc64_hash, 0, info_table, Convert.ToInt64(offset), 8);
+                byte[] crc64_hash = BitConverter.GetBytes(name_crc[k]); //CRC64 file name
+                Array.Copy(crc64_hash, 0, info_table, Convert.ToInt64(offset), crc64_hash.Length);
                 offset += 8;
-                byte[] fo_bin = new byte[8]; //Offset to file
-                fo_bin = BitConverter.GetBytes(file_offset);
-                Array.Copy(fo_bin, 0, info_table, Convert.ToInt64(offset), 8);
+                byte[] fo_bin = BitConverter.GetBytes(file_offset); //Offset to file
+                Array.Copy(fo_bin, 0, info_table, Convert.ToInt64(offset), fo_bin.Length);
                 offset += 8;
-                byte[] fs_bin = new byte[4]; //Size of file
-                fs_bin = BitConverter.GetBytes(fi[k].Length);
-                Array.Copy(fs_bin, 0, info_table, Convert.ToInt64(offset), 4);
+                byte[] fs_bin = BitConverter.GetBytes((int)fi[k].Length); //Size of file
+                Array.Copy(fs_bin, 0, info_table, Convert.ToInt64(offset), fs_bin.Length);
                 offset += 4;
                 Array.Copy(BitConverter.GetBytes(0), 0, info_table, Convert.ToInt64(offset), 4);
                 offset += 4;
@@ -334,8 +332,7 @@ namespace TTG_Tools
                 offset = compressAlgorithm == 0 ? chunk_table_size + 4 + 4 + 4 : chunk_table_size + 4 + 4 + 4 + 4;
 
                 byte[] chunk_table = new byte[chunk_table_size];
-                byte[] bin_offset = new byte[8];
-                bin_offset = BitConverter.GetBytes(offset);
+                byte[] bin_offset = BitConverter.GetBytes(offset);
 
                 Array.Copy(bin_offset, 0, chunk_table, (uint)offset_table, 8);
                 offset_table += 8;
@@ -420,32 +417,25 @@ namespace TTG_Tools
                 WithoutParentFolders = true;
             }
 
-            byte[] dir_name_count = new byte[4];
-            dir_name_count = BitConverter.GetBytes(directories);
-            ms.Write(dir_name_count, 0, 4);
+            byte[] dir_name_count = BitConverter.GetBytes(directories);
+            ms.Write(dir_name_count, 0, dir_name_count.Length);
 
             byte[] empty_bytes = { 0x00, 0x00, 0x00, 0x00 }; //Unknown 00 00 00 00 bytes
 
             for (int i = 0; i < directories; i++) //Get directories' name
             {
-                byte[] dir_name_size = new byte[4];
-                if(!WithoutParentFolders) dir_name_size = BitConverter.GetBytes(di1[i].Parent.Name.Length + "\\".Length + di1[i].Name.Length);
-                else dir_name_size = BitConverter.GetBytes(di.FullName.Length);
-                ms.Write(dir_name_size, 0, 4);
-
-                byte[] dir_name = new byte[BitConverter.ToInt32(dir_name_size, 0)];
-                if (!WithoutParentFolders) dir_name = Encoding.ASCII.GetBytes(di1[i].Parent.Name + "\\" + di1[i].Name);
-                else dir_name = Encoding.ASCII.GetBytes(di.FullName);
+                byte[] dir_name = !WithoutParentFolders ? Encoding.ASCII.GetBytes(di1[i].Parent.Name + "\\" + di1[i].Name) : Encoding.ASCII.GetBytes(di.FullName);
+                byte[] dir_name_size = BitConverter.GetBytes(dir_name.Length);
+                ms.Write(dir_name_size, 0, dir_name_size.Length);
                 ms.Write(dir_name, 0, dir_name.Length);
             }
 
             fi = di.GetFiles("*", SearchOption.AllDirectories);
 
-            byte[] files_count = new byte[4]; //Get count of file
-            files_count = BitConverter.GetBytes(fi.Length);
-            ms.Write(files_count, 0, 4);
+            byte[] files_count = BitConverter.GetBytes(fi.Length); //Get count of file
+            ms.Write(files_count, 0, files_count.Length);
            
-            long file_offset = 0; //Calculate file's offset
+            uint file_offset = 0; //Calculate file's offset
 
             for (int j = 0; j < fi.Length; j++)
             {
@@ -457,15 +447,13 @@ namespace TTG_Tools
                 else name = fi[j].Name;
 
                 int file_name_length = name.Length;
-                byte[] bin_length = new byte[4];
-                bin_length = BitConverter.GetBytes(file_name_length);
-
+                byte[] bin_length = BitConverter.GetBytes(file_name_length);
 
                 byte[] bin_file_name = new byte[name.Length];
                 bin_file_name = Encoding.ASCII.GetBytes(name);
 
-                long file_size;
-                file_size = fi[j].Length;
+                int file_size;
+                file_size = (int)fi[j].Length;
 
                 byte[] bin_file_size = new byte[4];
                 bin_file_size = BitConverter.GetBytes(file_size);
@@ -480,7 +468,7 @@ namespace TTG_Tools
                 ms.Write(bin_file_offset, 0, bin_file_offset.Length);
                 ms.Write(bin_file_size, 0, bin_file_size.Length);
 
-                file_offset += file_size;
+                file_offset += (uint)file_size;
             }
 
             if (version_archive == 4)
@@ -500,13 +488,11 @@ namespace TTG_Tools
                 uint temp_table_size = (uint)tempHeader.Length;
                 temp_table_size += 4;
 
-                byte[] binTable = new byte[4];
-                binTable = BitConverter.GetBytes(temp_table_size);
-                Array.Copy(binTable, 0, tempHeader, table_files.Length, 4);
+                byte[] binTable = BitConverter.GetBytes(temp_table_size);
+                Array.Copy(binTable, 0, tempHeader, table_files.Length, binTable.Length);
 
-                byte[] archive_size = new byte[4];
-                archive_size = BitConverter.GetBytes(file_offset);
-                Array.Copy(archive_size, 0, tempHeader, table_files.Length + 4, 4);
+                byte[] archive_size = BitConverter.GetBytes(file_offset);
+                Array.Copy(archive_size, 0, tempHeader, table_files.Length + 4, archive_size.Length);
 
                 byte[] bin_feedface = {0xCE, 0xFA, 0xED, 0xFE};
                 
@@ -519,8 +505,7 @@ namespace TTG_Tools
 
             uint table_size = (uint)table_files.Length;
 
-            byte[] header_crc32 = new byte[4];
-            header_crc32 = CRCs.CRC32_generator(table_files);
+            byte[] header_crc32 = CRCs.CRC32_generator(table_files);
 
             long header_size = table_size;
 
@@ -529,23 +514,18 @@ namespace TTG_Tools
                 table_files = encryptFunction(table_files, key, version_archive);
             }
 
-            byte[] archive_version = new byte[4]; //Get archive's version
+            byte[] archive_version = BitConverter.GetBytes(version_archive); //Get archive's version
 
-            archive_version = BitConverter.GetBytes(version_archive);
-
-            byte[] encrypt = new byte[4]; //Set flag for encrypt archive
-            if ((version_archive <= 2) || encryptCheck == true) encrypt = BitConverter.GetBytes(1);
-            else encrypt = BitConverter.GetBytes(0);
-
+            byte[] encrypt = (version_archive <= 2) || encryptCheck ? BitConverter.GetBytes(1) : BitConverter.GetBytes(0); //Set flag for encrypt archive
 
             byte[] hz1 = { 0x02, 0x00, 0x00, 0x00 }; //Unknown data
             byte[] hz2 = { 0x01, 0x00, 0x00, 0x00 }; //Unknown data (1)
-            byte[] priority = new byte[4];
-            priority = BitConverter.GetBytes(0); //Set default archive's priority 0 (this since version 7)
+
+            byte[] priority = BitConverter.GetBytes(0); //Set default archive's priority 0 (this since version 7)
             int pos_header = 0;
 
             //Remove temporary file if it exists
-            if (File.Exists(Application.StartupPath + "\\temp.file") == true) File.Delete(Application.StartupPath + "\\temp.file");
+            if (File.Exists(Application.StartupPath + "\\temp.file")) File.Delete(Application.StartupPath + "\\temp.file");
 
             FileStream fs = new FileStream(Application.StartupPath + "\\temp.file", FileMode.CreateNew);
 
@@ -564,8 +544,7 @@ namespace TTG_Tools
                 pos_header += 4;
 
                 long archive_size = file_offset; //Archive's size
-                byte[] bin_arch_size = new byte[4];
-                bin_arch_size = BitConverter.GetBytes(archive_size);
+                byte[] bin_arch_size = BitConverter.GetBytes(archive_size);
                 fs.Write(bin_arch_size, 0, 4);
                 pos_header += 4;
             }
@@ -588,7 +567,6 @@ namespace TTG_Tools
 
                     if (checkXmode.Checked == true)
                     {
-                        empty_bytes = new byte[4];
                         empty_bytes = BitConverter.GetBytes(1);
 
                         fs.Write(empty_bytes, 0, empty_bytes.Length);
@@ -598,7 +576,6 @@ namespace TTG_Tools
                     }
                     else
                     {
-                        empty_bytes = new byte[4];
                         empty_bytes = BitConverter.GetBytes(0);
 
                         fs.Write(empty_bytes, 0, empty_bytes.Length);
@@ -607,7 +584,6 @@ namespace TTG_Tools
                         pos_header += 4;
                     }
 
-                    empty_bytes = new byte[4];
                     empty_bytes = BitConverter.GetBytes(0);
 
                     byte[] block_sz = { 0x40 }; //Set block size 64KB for versions since 7
@@ -629,13 +605,12 @@ namespace TTG_Tools
 
                 if (version_archive == 9)
                 {
-                    fs.Write(header_crc32, 0, 4);
+                    fs.Write(header_crc32, 0, header_crc32.Length);
                     pos_header += 4;
                 }
             }
 
-            byte[] bin_header_size = new byte[4]; //Set table size
-            bin_header_size = BitConverter.GetBytes(header_size);
+            byte[] bin_header_size = BitConverter.GetBytes(header_size); //Set table size
 
             fs.Write(bin_header_size, 0, 4);
             pos_header += 4;
@@ -688,7 +663,6 @@ namespace TTG_Tools
 
                     byte[] binCompressedTS = new byte[4];
 
-
                     if (version_archive >= 7)
                     {
                         switch (version_archive)
@@ -704,9 +678,6 @@ namespace TTG_Tools
                                 break;
                         }
                     }
-                    byte[] block_sz = new byte[1];
-                    if (version_archive == 7) block_sz = BitConverter.GetBytes(0x80);
-                    else block_sz = BitConverter.GetBytes(0x40);
 
                     FileStream fa = new FileStream(MainMenu.settings.archivePath, FileMode.Create);
                     fa.Write(archive_version, 0, 4);
@@ -762,17 +733,19 @@ namespace TTG_Tools
                             fa.Write(empty_bytes, 0, empty_bytes.Length);
                         }
 
+                        byte[] block_sz = version_archive == 7 ? BitConverter.GetBytes(0x80) : BitConverter.GetBytes(0x40);
                         fa.Write(block_sz, 0, 1);
+
                         if (version_archive == 7)
                         {
                             fa.Write(empty_bytes, 0, 3);
                         }
-                        else fa.Write(empty_bytes, 0, 4);
+                        else fa.Write(empty_bytes, 0, empty_bytes.Length);
                     }
 
                     if (version_archive == 9)
                     {
-                        fa.Write(header_crc32, 0, 4);
+                        fa.Write(header_crc32, 0, header_crc32.Length);
                     }
 
                     fa.Write(binTableSize, 0, 4);
@@ -790,17 +763,15 @@ namespace TTG_Tools
 
                     for (int j = 0; j < blocks; j++)
                     {
-                        byte[] blockArchive = new byte[0x10000];
-                        if (version_archive == 7) blockArchive = new byte[0x20000];
+                        byte[] blockArchive = version_archive == 7 ? new byte[0x20000] : new byte[0x10000];
 
                         file_reader.Read(blockArchive, 0, blockArchive.Length);
                         byte[] compressed_block;
-                        if (version_archive >= 8) compressed_block = DeflateCompressor(blockArchive);
+                        if (version_archive >= 8) compressed_block = version_archive == 8 && compressAlgorithm == 0 ? ZlibCompressor(blockArchive) : DeflateCompressor(blockArchive);
                         else compressed_block = ZlibCompressor(blockArchive);
 
                         if (EncryptIt.Checked == true)
                         {
-                            int num = comboGameList.SelectedIndex;
                             compressed_block = encryptFunction(compressed_block, key, version_archive);
                         }
 
@@ -809,8 +780,7 @@ namespace TTG_Tools
                         uint cbs = Convert.ToUInt32(compressed_block.Length);
                         ca_size += cbs;
 
-                        byte[] binSize = new byte[4];
-                        binSize = BitConverter.GetBytes(cbs);
+                        byte[] binSize = BitConverter.GetBytes(cbs);
                         Array.Copy(binSize, 0, compressed_blocks_header, poz, 4);
                         poz += 4;
                         Progress(j + 1);
@@ -976,13 +946,13 @@ namespace TTG_Tools
                         }
                     }
 
-                    if ((MainMenu.settings.archivePath.ToLower().IndexOf(".obb") > 0)) MainMenu.settings.compressArchive = false;
+                    if (Methods.GetExtension(MainMenu.settings.archivePath).ToLower() == ".obb") MainMenu.settings.compressArchive = false;
 
                     int algorithmCompress = 0;
 
                     if (ttarch2RB.Checked && (versionSelection.SelectedIndex == 1) && (compressionCB.SelectedIndex == 1)) algorithmCompress = 1;
                     else if (ttarchRB.Checked && (versionSelection.SelectedIndex == 5 || versionSelection.SelectedIndex == 6) && (compressionCB.SelectedIndex == 1)) algorithmCompress = 1;
-                    else if(ttarchRB.Checked && versionSelection.SelectedIndex == 7) algorithmCompress = 1; //Latest version uses deflate algorithm
+                    else if (ttarchRB.Checked && versionSelection.SelectedIndex == 7) algorithmCompress = 1; //Latest version uses deflate algorithm
 
                     if (ttarchRB.Checked == true) builder_ttarch(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive, algorithmCompress);
                     else builder_ttarch2(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, keyEnc, MainMenu.settings.encryptLuaInArchive, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress);
@@ -1063,6 +1033,10 @@ namespace TTG_Tools
 
                 compressionCB.Visible = versionSelection.SelectedIndex == 5 || versionSelection.SelectedIndex == 6;
                 compressionLabel.Visible = versionSelection.SelectedIndex == 5 || versionSelection.SelectedIndex == 6;
+
+                checkXmode.Visible = versionSelection.SelectedIndex >= 5;
+                checkCompress.Visible = versionSelection.SelectedIndex >= 1;
+                newEngineLua.Visible = false;
             }
             else
             {
@@ -1073,6 +1047,8 @@ namespace TTG_Tools
 
                 compressionLabel.Visible = ttarch2RB.Checked && versionSelection.SelectedIndex == 1;
                 compressionCB.Visible = ttarch2RB.Checked && versionSelection.SelectedIndex == 1;
+                newEngineLua.Visible = true;
+                checkXmode.Visible = false;
             }
 
             MainMenu.settings.versionArchiveIndex = versionSelection.SelectedIndex;

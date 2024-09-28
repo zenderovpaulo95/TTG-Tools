@@ -10,6 +10,8 @@ Special thanks to:
 - Taylor Hornby for C# source code of Blowfish encryption
 - gdkchan, Stella/AboodXD for swizzle method of Nintendo Switch
 - daemon1 and tge for PS4 swizzle algorithm
+- Josh Tamely for oodle wrapper
+- Hajin Jang for Zlib.Wrapper
 
 This tool have to make easier translations for games from Telltale and Skunkape games.
 It supports some games (at least I tested only these games):
@@ -46,3 +48,4 @@ It supports some games (at least I tested only these games):
 - The Walking Dead: The Telltale Definitive Series
 - Sam and Max Save the World Remastered
 - Sam and Max Beyond Time and Space Remastered
+- Sam and Max The Devil's playhouse Remastered
