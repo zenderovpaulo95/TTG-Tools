@@ -80,14 +80,14 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -103,21 +103,23 @@
             // unpackToolStripMenuItem
             // 
             this.unpackToolStripMenuItem.Name = "unpackToolStripMenuItem";
-            this.unpackToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.unpackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.unpackToolStripMenuItem.Text = "Unpack";
             this.unpackToolStripMenuItem.Click += new System.EventHandler(this.unpackToolStripMenuItem_Click);
             // 
             // unpackSelectedToolStripMenuItem
             // 
             this.unpackSelectedToolStripMenuItem.Name = "unpackSelectedToolStripMenuItem";
-            this.unpackSelectedToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.unpackSelectedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.unpackSelectedToolStripMenuItem.Text = "Unpack selected";
+            this.unpackSelectedToolStripMenuItem.Click += new System.EventHandler(this.unpackSelectedToolStripMenuItem_Click);
             // 
             // filesDataGridView
             // 
             this.filesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.filesDataGridView.Location = new System.Drawing.Point(12, 180);
             this.filesDataGridView.Name = "filesDataGridView";
+            this.filesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.filesDataGridView.Size = new System.Drawing.Size(953, 495);
             this.filesDataGridView.TabIndex = 1;
             // 
@@ -223,6 +225,7 @@
             this.gameListCB.Name = "gameListCB";
             this.gameListCB.Size = new System.Drawing.Size(343, 21);
             this.gameListCB.TabIndex = 7;
+            this.gameListCB.SelectedIndexChanged += new System.EventHandler(this.gameListCB_SelectedIndexChanged);
             // 
             // decryptLuaCB
             // 
@@ -243,6 +246,7 @@
             this.useCustomKeyCB.TabIndex = 9;
             this.useCustomKeyCB.Text = "Use a custom key";
             this.useCustomKeyCB.UseVisualStyleBackColor = true;
+            this.useCustomKeyCB.CheckedChanged += new System.EventHandler(this.useCustomKeyCB_CheckedChanged);
             // 
             // customKeyTB
             // 
