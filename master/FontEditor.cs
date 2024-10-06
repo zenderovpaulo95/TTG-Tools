@@ -163,7 +163,7 @@ namespace TTG_Tools
                 {
                     dataGridViewWithCoord.Rows[i].HeaderCell.Value = Convert.ToString(i + 1);
                     dataGridViewWithCoord[0, i].Value = i;
-                    dataGridViewWithCoord[1, i].Value = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(BitConverter.GetBytes(i));
+                    dataGridViewWithCoord[1, i].Value = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(BitConverter.GetBytes(i)).Replace("\0", string.Empty);
                     dataGridViewWithCoord[2, i].Value = font.glyph.chars[i].XStart;
                     dataGridViewWithCoord[3, i].Value = font.glyph.chars[i].XEnd;
                     dataGridViewWithCoord[4, i].Value = font.glyph.chars[i].YStart;
@@ -192,11 +192,12 @@ namespace TTG_Tools
                 {
                     dataGridViewWithCoord.Rows[i].HeaderCell.Value = Convert.ToString(i + 1);
                     dataGridViewWithCoord[0, i].Value = font.glyph.charsNew[i].charId;
-                    dataGridViewWithCoord[1, i].Value = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(BitConverter.GetBytes(font.glyph.charsNew[i].charId));
+
+                    dataGridViewWithCoord[1, i].Value = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(BitConverter.GetBytes(font.glyph.charsNew[i].charId)).Replace("\0", string.Empty);
                     
                     if(MainMenu.settings.unicodeSettings == 0)
                     {
-                        dataGridViewWithCoord[1, i].Value = Encoding.Unicode.GetString(BitConverter.GetBytes(font.glyph.charsNew[i].charId));
+                        dataGridViewWithCoord[1, i].Value = Encoding.Unicode.GetString(BitConverter.GetBytes(font.glyph.charsNew[i].charId)).Replace("\0", string.Empty);
                     }
 
                     dataGridViewWithCoord[2, i].Value = font.glyph.charsNew[i].XStart;
@@ -217,16 +218,7 @@ namespace TTG_Tools
             {
                 for(int l = 0; l < dataGridViewWithCoord.ColumnCount; l++)
                 {
-                    switch (Modified)
-                    {
-                        case true:
-                            dataGridViewWithCoord[l, k].Style.BackColor = Color.GreenYellow;
-                            break;
-
-                        default:
-                            dataGridViewWithCoord[l, k].Style.BackColor = Color.White;
-                            break;
-                    }
+                    dataGridViewWithCoord[l, k].Style.BackColor = Modified ? Color.GreenYellow : Color.White;
                 }
             }
         }
@@ -1247,12 +1239,12 @@ namespace TTG_Tools
             if ((font.tex != null && font.tex[file_n].isIOS) || (font.NewTex != null && font.NewTex[file_n].isPVR))
             {
                 saveFD.Filter = "PVR files (*.pvr)|*.pvr";
-                saveFD.FileName = Methods.GetNameOfFileOnly(ofd.SafeFileName.ToString(), ".font") + "_" + file_n.ToString() + ".pvr";
+                saveFD.FileName = font.FontName + "_" + file_n.ToString() + ".pvr";
             }
             else
             {
                 saveFD.Filter = "dds files (*.dds)|*.dds";
-                saveFD.FileName = Methods.GetNameOfFileOnly(ofd.SafeFileName.ToString(), ".font") + "_" + file_n.ToString() + ".dds";
+                saveFD.FileName = font.FontName + "_" + file_n.ToString() + ".dds";
             }
 
             if (saveFD.ShowDialog() == DialogResult.OK)
@@ -1631,7 +1623,9 @@ namespace TTG_Tools
                                         break;
 
                                     case "file":
-                                        if(splitted[k + 1].ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + "\\" + splitted[k + 1]))
+                                        string fileName = strings[m].Substring(strings[m].IndexOf("file=") + 5).Replace("\"", string.Empty);
+
+                                        if (fileName.ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + "\\" + fileName))
                                         {
                                             ReplaceTexture(fi.DirectoryName + "\\" + splitted[k + 1], tmpNewTex[idNum]);
                                         }
@@ -1803,9 +1797,12 @@ namespace TTG_Tools
                                         break;
 
                                     case "file":
-                                        if (splitted[k + 1].ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + "\\" +  splitted[k + 1]))
+
+                                        string fileName = strings[m].Substring(strings[m].IndexOf("file=") + 5).Replace("\"", string.Empty);
+
+                                        if (fileName.ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + "\\" +  fileName))
                                         {
-                                            ReplaceTexture(fi.DirectoryName + "\\" + splitted[k + 1], tmpOldTex[idNum]);
+                                            ReplaceTexture(fi.DirectoryName + "\\" + fileName, tmpOldTex[idNum]);
                                         }
                                         break;
                                 }
