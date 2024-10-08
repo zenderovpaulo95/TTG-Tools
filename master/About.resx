@@ -141,6 +141,14 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
+v.1.14.1 (08.10.2024)
++ Auto(De)Packer:
+Fixed export/import dlog files
++ Archive unpacker:
+Fixed selected unpack files
++ Font editor:
+Show correct chars in char column
+
 v.1.14 (28.09.2024)
 + Archive packer:
 Replaced zlib.net wrapper to Zlib.Wrapper by Hajin Jang

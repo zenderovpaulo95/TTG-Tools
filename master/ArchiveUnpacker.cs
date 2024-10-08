@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace TTG_Tools
 {
@@ -20,6 +21,19 @@ namespace TTG_Tools
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        void Progress(int i)
+        {
+            if (progressBar1.InvokeRequired)
+            {
+                progressBar1.Invoke(new ProgressHandler(Progress), i);
+                //Thread.Sleep(30);
+            }
+            else
+            {
+                progressBar1.Value = i;
+            }
         }
 
         private static byte[] decompressBlock(byte[] bytes, int algorithmCompress)
@@ -390,7 +404,7 @@ namespace TTG_Tools
                     }
                 }
 
-                progressBar1.Value = i + 1;
+                Progress(i + 1);
             }
 
             br.Close();
@@ -726,7 +740,7 @@ namespace TTG_Tools
                     File.WriteAllBytes(folderPath + Path.DirectorySeparatorChar + fileName, file);
                 }
 
-                progressBar1.Value = i + 1;
+                Progress(i + 1);
             }
             br.Close();
             fs.Close();
@@ -865,12 +879,13 @@ namespace TTG_Tools
 
                 ttarch = null;
                 ttarch2 = null;
+                byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
 
                 switch (fi.Extension.ToLower())
                 {
                     case ".ttarch":
                         ttarch = new ClassesStructs.TtarchClass();
-                        ReadHeaderTtarch(fi.FullName, MainMenu.gamelist[gameListCB.SelectedIndex].key);
+                        ReadHeaderTtarch(fi.FullName, key);
 
                         if (ttarch != null)
                         {
@@ -898,7 +913,7 @@ namespace TTG_Tools
 
                     case ".ttarch2":
                         ttarch2 = new ClassesStructs.Ttarch2Class();
-                        ReadHeaderTtarch2(fi.FullName, MainMenu.gamelist[gameListCB.SelectedIndex].key);
+                        ReadHeaderTtarch2(fi.FullName, key);
 
                         if(ttarch2 != null)
                         {
@@ -1001,7 +1016,6 @@ namespace TTG_Tools
 
         private void unpackSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO: придумать распаковку по выбранным из списка файлам
             if (filesDataGridView.SelectedRows.Count > 0)
             {
                 FolderBrowserDialog fbd = new FolderBrowserDialog();
@@ -1010,7 +1024,8 @@ namespace TTG_Tools
 
                 for (int i = 0; i < indexes.Length; i++)
                 {
-                    indexes[i] = filesDataGridView.SelectedRows[i].Index;
+                    indexes[i] = Convert.ToInt32(filesDataGridView.SelectedRows[i].Cells[0].Value) - 1;
+                    //indexes[i] = filesDataGridView.SelectedRows[i].Index;
                 }
 
                 if(ttarch != null)
