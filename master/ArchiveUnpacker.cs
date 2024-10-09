@@ -897,6 +897,8 @@ namespace TTG_Tools
                             {
                                 if (ttarch.fileFormats.Count > 1) fileFormatsCB.Items.Add("All files");
 
+                                ttarch.fileFormats.Sort();
+
                                 for (int f = 0; f < ttarch.fileFormats.Count; f++)
                                 {
                                     fileFormatsCB.Items.Add(ttarch.fileFormats[f]);
@@ -924,6 +926,8 @@ namespace TTG_Tools
                             if (ttarch2.fileFormats.Count > 0)
                             {
                                 if (ttarch2.fileFormats.Count > 1) fileFormatsCB.Items.Add("All files");
+
+                                ttarch2.fileFormats.Sort();
 
                                 for (int f = 0; f < ttarch2.fileFormats.Count; f++)
                                 {

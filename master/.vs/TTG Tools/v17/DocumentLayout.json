@@ -3,7 +3,7 @@
   "WorkspaceRootPath": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\User\\source\\repos\\ttg-tools\\master\\about.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|c:\\users\\user\\source\\repos\\ttg-tools\\master\\about.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:about.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -15,16 +15,20 @@
       "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:archiveunpacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\User\\source\\repos\\ttg-tools\\master\\archivepacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:archivepacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\User\\source\\repos\\ttg-tools\\master\\texts\\dlogworker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:texts\\dlogworker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|c:\\users\\user\\source\\repos\\ttg-tools\\master\\texts\\dlogworker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:texts\\dlogworker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|c:\\users\\user\\source\\repos\\ttg-tools\\master\\classesstructs\\text\\dlogclass.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:classesstructs\\text\\dlogclass.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\User\\source\\repos\\ttg-tools\\master\\fonteditor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:fonteditor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\User\\source\\repos\\ttg-tools\\master\\archivepacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:archivepacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\User\\source\\repos\\ttg-tools\\master\\fonteditor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
@@ -54,13 +58,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "DlogWorker.cs",
               "DocumentMoniker": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\Texts\\DlogWorker.cs",
               "RelativeDocumentMoniker": "Texts\\DlogWorker.cs",
               "ToolTip": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\Texts\\DlogWorker.cs",
               "RelativeToolTip": "Texts\\DlogWorker.cs",
-              "ViewState": "AQIAAFkAAAAAAAAAAAAuwLUAAAASAAAA",
+              "ViewState": "AQIAAKAAAAAAAAAAAAAAAK8AAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-06T12:38:33.942Z",
               "EditorCaption": ""
@@ -75,18 +79,20 @@
               "RelativeToolTip": "FontEditor.cs",
               "ViewState": "AQIAAEQGAAAAAAAAAADwv1sGAAAsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-06T10:25:44.37Z"
+              "WhenOpened": "2024-10-06T10:25:44.37Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "FontEditor.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "DocumentMoniker": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\FontEditor.cs",
               "RelativeDocumentMoniker": "FontEditor.cs",
               "ToolTip": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\FontEditor.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "RelativeToolTip": "FontEditor.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-06T10:25:38.638Z"
+              "WhenOpened": "2024-10-06T10:25:38.638Z",
+              "EditorCaption": " [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]"
             },
             {
               "$type": "Document",
@@ -108,7 +114,7 @@
               "RelativeDocumentMoniker": "ArchiveUnpacker.cs",
               "ToolTip": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\ArchiveUnpacker.cs",
               "RelativeToolTip": "ArchiveUnpacker.cs",
-              "ViewState": "AQIAAO8DAAAAAAAAAAA6wAIEAAAUAAAA",
+              "ViewState": "AQIAAIsDAAAAAAAAAAApwKEDAAA6AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-28T16:28:18.137Z",
               "EditorCaption": ""
@@ -127,7 +133,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
+              "Title": "DlogClass.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\ClassesStructs\\Text\\DlogClass.cs",
+              "RelativeDocumentMoniker": "ClassesStructs\\Text\\DlogClass.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\ClassesStructs\\Text\\DlogClass.cs",
+              "RelativeToolTip": "ClassesStructs\\Text\\DlogClass.cs",
+              "ViewState": "AQIAADwAAAAAAAAAAAAowEsAAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-09T10:48:12.967Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "ArchivePacker.cs",
               "DocumentMoniker": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\ArchivePacker.cs",
               "RelativeDocumentMoniker": "ArchivePacker.cs",
@@ -135,20 +154,18 @@
               "RelativeToolTip": "ArchivePacker.cs",
               "ViewState": "AQIAAAMAAAAAAAAAAAAAACMAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-28T16:01:10.704Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-28T16:01:10.704Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "ArchivePacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "DocumentMoniker": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\ArchivePacker.cs",
               "RelativeDocumentMoniker": "ArchivePacker.cs",
               "ToolTip": "C:\\Users\\User\\source\\repos\\ttg-tools\\master\\ArchivePacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "RelativeToolTip": "ArchivePacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-28T16:01:08.354Z",
-              "EditorCaption": " [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]"
+              "WhenOpened": "2024-09-28T16:01:08.354Z"
             }
           ]
         }

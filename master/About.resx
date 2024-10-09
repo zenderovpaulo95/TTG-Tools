@@ -141,6 +141,12 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
+v.1.14.2 (09.10.2024)
++ Auto(De)Packer:
+Fixed export/import dlog files
++ Archive unpacker:
+Now tool sorts filtered file formats
+
 v.1.14.1 (08.10.2024)
 + Auto(De)Packer:
 Fixed export/import dlog files

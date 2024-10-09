@@ -173,12 +173,12 @@ namespace TTG_Tools.Texts
                 dlog.newLangdbBlockSize += 4;
                 //dlog.landb.newBlockLength += 4;
 
-                dlog.landb.lastLandbData.Unknown3 = br.ReadInt32();
-                dlog.newLangdbBlockSize += 4;
+                dlog.landb.lastLandbData.BlockLen = br.ReadInt32();
+                //dlog.newLangdbBlockSize += 4;
                 //dlog.landb.newBlockLength += 4;
 
-                dlog.landb.lastLandbData.Unknown4 = br.ReadInt32();
-                dlog.newLangdbBlockSize += 4;
+                dlog.landb.lastLandbData.Block = br.ReadBytes(dlog.landb.lastLandbData.BlockLen - 4);
+                dlog.newLangdbBlockSize += dlog.landb.lastLandbData.BlockLen;
                 //dlog.landb.newBlockLength += 4;
 
                 long tmpPos = br.BaseStream.Position;
@@ -320,8 +320,8 @@ namespace TTG_Tools.Texts
 
                 bw.Write(dlog.landb.lastLandbData.Unknown1);
                 bw.Write(dlog.landb.lastLandbData.Unknown2);
-                bw.Write(dlog.landb.lastLandbData.Unknown3);
-                bw.Write(dlog.landb.lastLandbData.Unknown4);
+                bw.Write(dlog.landb.lastLandbData.BlockLen);
+                bw.Write(dlog.landb.lastLandbData.Block);
 
                 bw.Write(dlog.someDlogData);
 

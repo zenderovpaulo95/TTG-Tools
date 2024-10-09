@@ -72,8 +72,8 @@ namespace TTG_Tools.ClassesStructs.Text
     {
         public int Unknown1;
         public int Unknown2;
-        public int Unknown3;
-        public int Unknown4;
+        public int BlockLen;
+        public byte[] Block;
     }
 
     public class DlogClass
