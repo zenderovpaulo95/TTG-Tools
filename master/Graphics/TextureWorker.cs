@@ -5,7 +5,7 @@ using TTG_Tools.Graphics.DDS;
 using TTG_Tools.Graphics.PVR;
 using TTG_Tools.Graphics.Swizzles;
 
-namespace TTG_Tools
+namespace TTG_Tools.Graphics
 {
     public class TextureWorker
     {

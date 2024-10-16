@@ -683,6 +683,18 @@ namespace TTG_Tools
             }
         }
 
+        public static bool meta_check(FileInfo fi)
+        {
+            FileStream fs = new FileStream(fi.FullName, FileMode.Open);
+            
+            byte[] header = new byte[4];
+            fs.Read(header, 0, header.Length);
+            fs.Close();
+
+            uint header_type = BitConverter.ToUInt32(header, 0);
+            return (header_type == 0xFB4A1764) || (header_type == 0xEB794091) || (header_type == 0x64AFDEFB) || (header_type == 0x64AFDEAA) || (header_type == 0x4D424553);
+        }
+
         public static int meta_crypt(byte[] file, byte[] key, int version_archive, bool decrypt)
         {
             uint file_type = 0;

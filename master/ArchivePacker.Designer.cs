@@ -49,14 +49,16 @@
             this.label5 = new System.Windows.Forms.Label();
             this.checkXmode = new System.Windows.Forms.CheckBox();
             this.DontEncLuaCheck = new System.Windows.Forms.CheckBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.newEngineLua = new System.Windows.Forms.CheckBox();
             this.CheckCustomKey = new System.Windows.Forms.CheckBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.compressionCB = new System.Windows.Forms.ComboBox();
             this.compressionLabel = new System.Windows.Forms.Label();
+            this.messageListBox = new System.Windows.Forms.ListBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -124,7 +126,7 @@
             this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(194, 20);
+            this.textBox1.Size = new System.Drawing.Size(283, 20);
             this.textBox1.TabIndex = 3;
             // 
             // textBox2
@@ -133,12 +135,12 @@
             this.textBox2.Margin = new System.Windows.Forms.Padding(2);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(194, 20);
+            this.textBox2.Size = new System.Drawing.Size(283, 20);
             this.textBox2.TabIndex = 4;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(302, 86);
+            this.button1.Location = new System.Drawing.Point(400, 86);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(24, 19);
@@ -149,7 +151,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(302, 117);
+            this.button2.Location = new System.Drawing.Point(400, 117);
             this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(24, 19);
@@ -160,7 +162,7 @@
             // 
             // buildButton
             // 
-            this.buildButton.Location = new System.Drawing.Point(228, 144);
+            this.buildButton.Location = new System.Drawing.Point(341, 153);
             this.buildButton.Margin = new System.Windows.Forms.Padding(2);
             this.buildButton.Name = "buildButton";
             this.buildButton.Size = new System.Drawing.Size(83, 23);
@@ -204,10 +206,10 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(31, 146);
+            this.progressBar1.Location = new System.Drawing.Point(18, 208);
             this.progressBar1.Margin = new System.Windows.Forms.Padding(2);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(182, 19);
+            this.progressBar1.Size = new System.Drawing.Size(842, 19);
             this.progressBar1.TabIndex = 11;
             // 
             // label4
@@ -222,7 +224,7 @@
             // EncryptIt
             // 
             this.EncryptIt.AutoSize = true;
-            this.EncryptIt.Location = new System.Drawing.Point(361, 102);
+            this.EncryptIt.Location = new System.Drawing.Point(14, 18);
             this.EncryptIt.Margin = new System.Windows.Forms.Padding(2);
             this.EncryptIt.Name = "EncryptIt";
             this.EncryptIt.Size = new System.Drawing.Size(100, 17);
@@ -235,7 +237,7 @@
             // 
             this.comboGameList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboGameList.FormattingEnabled = true;
-            this.comboGameList.Location = new System.Drawing.Point(454, 144);
+            this.comboGameList.Location = new System.Drawing.Point(166, 60);
             this.comboGameList.Margin = new System.Windows.Forms.Padding(2);
             this.comboGameList.MaxDropDownItems = 9;
             this.comboGameList.Name = "comboGameList";
@@ -246,7 +248,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(336, 146);
+            this.label5.Location = new System.Drawing.Point(48, 62);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(110, 13);
@@ -268,7 +270,7 @@
             // DontEncLuaCheck
             // 
             this.DontEncLuaCheck.AutoSize = true;
-            this.DontEncLuaCheck.Location = new System.Drawing.Point(361, 123);
+            this.DontEncLuaCheck.Location = new System.Drawing.Point(14, 39);
             this.DontEncLuaCheck.Margin = new System.Windows.Forms.Padding(2);
             this.DontEncLuaCheck.Name = "DontEncLuaCheck";
             this.DontEncLuaCheck.Size = new System.Drawing.Size(110, 17);
@@ -277,20 +279,10 @@
             this.DontEncLuaCheck.UseVisualStyleBackColor = true;
             this.DontEncLuaCheck.CheckedChanged += new System.EventHandler(this.DontEncLuaCheck_CheckedChanged);
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(340, 86);
-            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(106, 13);
-            this.label6.TabIndex = 18;
-            this.label6.Text = "Encryption functions:";
-            // 
             // newEngineLua
             // 
             this.newEngineLua.AutoSize = true;
-            this.newEngineLua.Location = new System.Drawing.Point(500, 102);
+            this.newEngineLua.Location = new System.Drawing.Point(153, 18);
             this.newEngineLua.Margin = new System.Windows.Forms.Padding(2);
             this.newEngineLua.Name = "newEngineLua";
             this.newEngineLua.Size = new System.Drawing.Size(155, 17);
@@ -302,7 +294,7 @@
             // CheckCustomKey
             // 
             this.CheckCustomKey.AutoSize = true;
-            this.CheckCustomKey.Location = new System.Drawing.Point(302, 175);
+            this.CheckCustomKey.Location = new System.Drawing.Point(14, 91);
             this.CheckCustomKey.Margin = new System.Windows.Forms.Padding(2);
             this.CheckCustomKey.Name = "CheckCustomKey";
             this.CheckCustomKey.Size = new System.Drawing.Size(148, 17);
@@ -313,7 +305,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(454, 172);
+            this.textBox3.Location = new System.Drawing.Point(166, 88);
             this.textBox3.Margin = new System.Windows.Forms.Padding(2);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(249, 20);
@@ -347,23 +339,41 @@
             this.compressionLabel.TabIndex = 24;
             this.compressionLabel.Text = "Compression:";
             // 
+            // messageListBox
+            // 
+            this.messageListBox.FormattingEnabled = true;
+            this.messageListBox.Location = new System.Drawing.Point(14, 238);
+            this.messageListBox.Name = "messageListBox";
+            this.messageListBox.Size = new System.Drawing.Size(852, 368);
+            this.messageListBox.TabIndex = 25;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.EncryptIt);
+            this.groupBox2.Controls.Add(this.comboGameList);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.DontEncLuaCheck);
+            this.groupBox2.Controls.Add(this.newEngineLua);
+            this.groupBox2.Controls.Add(this.textBox3);
+            this.groupBox2.Controls.Add(this.CheckCustomKey);
+            this.groupBox2.Location = new System.Drawing.Point(444, 75);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(422, 116);
+            this.groupBox2.TabIndex = 26;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Encryption functions:";
+            // 
             // ArchivePacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(712, 200);
+            this.ClientSize = new System.Drawing.Size(877, 617);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.messageListBox);
             this.Controls.Add(this.compressionLabel);
             this.Controls.Add(this.compressionCB);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.CheckCustomKey);
-            this.Controls.Add(this.newEngineLua);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.DontEncLuaCheck);
             this.Controls.Add(this.checkXmode);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.comboGameList);
-            this.Controls.Add(this.EncryptIt);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label3);
@@ -388,6 +398,8 @@
             this.Load += new System.EventHandler(this.ArchivePacker_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -415,12 +427,13 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox checkXmode;
         private System.Windows.Forms.CheckBox DontEncLuaCheck;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox newEngineLua;
         private System.Windows.Forms.CheckBox CheckCustomKey;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox compressionCB;
         private System.Windows.Forms.Label compressionLabel;
+        private System.Windows.Forms.ListBox messageListBox;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }

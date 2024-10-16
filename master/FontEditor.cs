@@ -67,7 +67,7 @@ namespace TTG_Tools
             Array.Copy(temp, 0, tex.Content, 0, temp.Length);
 
             MemoryStream ms = new MemoryStream(tex.Content);
-            TextureWorker.ReadDDSHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, false);
+            Graphics.TextureWorker.ReadDDSHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, false);
             ms.Close();
 
             tex.OriginalHeight = tex.Height;
@@ -88,7 +88,7 @@ namespace TTG_Tools
 
             if (fi.Extension.ToLower() == ".dds")
             {
-                TextureWorker.ReadDDSHeader(ms, ref NewTex.Width, ref NewTex.Height, ref NewTex.Mip, ref NewTex.TextureFormat, true);
+                Graphics.TextureWorker.ReadDDSHeader(ms, ref NewTex.Width, ref NewTex.Height, ref NewTex.Mip, ref NewTex.TextureFormat, true);
                 NewTex.platform.platform = 2;
 
                 if(MainMenu.settings.swizzleNintendoSwitch) NewTex.platform.platform = 15;
@@ -96,7 +96,7 @@ namespace TTG_Tools
             }
             else
             {
-                TextureWorker.ReadPvrHeader(ms, ref NewTex.Width, ref NewTex.Height, ref NewTex.Mip, ref NewTex.platform.platform, true);
+                Graphics.TextureWorker.ReadPvrHeader(ms, ref NewTex.Width, ref NewTex.Height, ref NewTex.Mip, ref NewTex.platform.platform, true);
                 NewTex.platform.platform = (NewTex.platform.platform != 7) || (NewTex.platform.platform != 9) ? 7 : NewTex.platform.platform;
             }
 
@@ -719,7 +719,7 @@ namespace TTG_Tools
 
                             for (int i = 0; i < font.TexCount; i++)
                             {
-                                font.tex[i] = TextureWorker.GetOldTextures(binContent, ref poz, fontFlags != null, someTexData);
+                                font.tex[i] = Graphics.TextureWorker.GetOldTextures(binContent, ref poz, fontFlags != null, someTexData);
                                 if (font.tex[i] == null)
                                 {
                                     MessageBox.Show("Maybe unsupported font.", "Error");
@@ -754,7 +754,7 @@ namespace TTG_Tools
 
                             for (int i = 0; i < font.TexCount; i++)
                             {
-                                font.NewTex[i] = TextureWorker.GetNewTextures(binContent, ref poz, ref tmpPosition, fontFlags != null, someTexData, true, ref format, AddInfo);
+                                font.NewTex[i] = Graphics.TextureWorker.GetNewTextures(binContent, ref poz, ref tmpPosition, fontFlags != null, someTexData, true, ref format, AddInfo);
 
                                 if (font.NewTex[i] == null)
                                 {
@@ -985,7 +985,7 @@ namespace TTG_Tools
 
                 for (int i = 0; i < font.TexCount; i++)
                 {
-                    TextureWorker.ReplaceOldTextures(fs, font.tex[i], someTexData, encrypted, encKey, version);
+                    Graphics.TextureWorker.ReplaceOldTextures(fs, font.tex[i], someTexData, encrypted, encKey, version);
                 }
             }
             else
@@ -1047,7 +1047,7 @@ namespace TTG_Tools
                 if (Encoding.ASCII.GetString(check_header) == "ERTM")
                 {
                     for (int i = 0; i < font.TexCount; i++) {
-                        TextureWorker.ReplaceNewTextures(fs, c, Encoding.ASCII.GetString(check_header), font.NewTex[i], true);
+                        Graphics.TextureWorker.ReplaceNewTextures(fs, c, Encoding.ASCII.GetString(check_header), font.NewTex[i], true);
                     }
                 }
                 else
@@ -1058,7 +1058,7 @@ namespace TTG_Tools
                     {
                         for(int i = 0; i < font.TexCount; i++)
                         {
-                            TextureWorker.ReplaceNewTextures(fs, c, Encoding.ASCII.GetString(check_header), font.NewTex[i], true);
+                            Graphics.TextureWorker.ReplaceNewTextures(fs, c, Encoding.ASCII.GetString(check_header), font.NewTex[i], true);
                         }
 
                         if (font.NewTex[0].SomeValue > 4 && c == 2) bw.Write(font.LastZero);

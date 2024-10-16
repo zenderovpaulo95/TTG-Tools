@@ -243,6 +243,8 @@ namespace TTG_Tools
                     ttarch.isEncrypted = true;
                     BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, ttarch.version);
                     header = dec.Crypt_ECB(header, ttarch.version, true);
+
+                    File.WriteAllBytes("test.bin", header);
                 }
 
                 using (MemoryStream ms = new MemoryStream(header))
