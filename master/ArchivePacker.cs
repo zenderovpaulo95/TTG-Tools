@@ -594,6 +594,8 @@ namespace TTG_Tools
             byte[] chunk = new byte[chunkSize];
             uint compressedArchive = 0;
 
+            //TODO: Подумать над нормальным кодом запаковки архивов
+
             while(ch < chunksCount && a < fi.Length)
             {
                 string name = (fi[a].Extension.ToLower() == ".lua") && !DontEncLua ? fi[a].Name.Remove(fi[a].Name.Length - 3, 3) + "lenc" : fi[a].Name;
