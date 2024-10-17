@@ -92,7 +92,7 @@ namespace TTG_Tools
 
             using (MemoryStream outMemoryStream = new MemoryStream())
             {
-                using (Joveler.ZLibWrapper.ZLibStream outZStream = new Joveler.ZLibWrapper.ZLibStream(outMemoryStream, Joveler.ZLibWrapper.ZLibMode.Compress, Joveler.ZLibWrapper.ZLibCompLevel.Level7))
+                using (Joveler.ZLibWrapper.ZLibStream outZStream = new Joveler.ZLibWrapper.ZLibStream(outMemoryStream, Joveler.ZLibWrapper.ZLibMode.Compress, Joveler.ZLibWrapper.ZLibCompLevel.Level9))
                 {
                     using (Stream inMemoryStream = new MemoryStream(bytes))
                     {
@@ -629,7 +629,7 @@ namespace TTG_Tools
                     chunkFile -= chSize;
                     chunkFileOff += chSize;
 
-                    if ((chunkOff >= chunkSize) || (ch + 1 == chunksCount))
+                    if ((chunkOff >= chunkSize) || ((ch + 1 == chunksCount) && (a + 1 == fi.Length)))
                     {
                         if((ch + 1 == chunksCount) && (chunkOff < chunkSize))
                         {

@@ -383,7 +383,10 @@ namespace TTG_Tools
                                     tmp = dec.Crypt_ECB(tmp, ttarch.version, true);
                                 }
 
-                                tmp = decompressBlock(tmp, ttarch.compressAlgorithm);
+                                if (tmp.Length != chunkSz)
+                                {
+                                    tmp = decompressBlock(tmp, ttarch.compressAlgorithm);
+                                }
 
                                 mbw.Write(tmp);
                             }
