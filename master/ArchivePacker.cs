@@ -141,7 +141,7 @@ namespace TTG_Tools
         public byte[] encryptFunction(byte[] bytes, byte[] key, int archiveVersion)
         {
             BlowFishCS.BlowFish enc = new BlowFishCS.BlowFish(key, archiveVersion);
-            Methods.meta_crypt(bytes, key, archiveVersion, false);
+            //Methods.meta_crypt(bytes, key, archiveVersion, false);
             return enc.Crypt_ECB(bytes, archiveVersion, false);
         }
 
@@ -612,11 +612,6 @@ namespace TTG_Tools
                 for(int c = 0; c < fileChunkCount; c++)
                 {
                     int chSize = chunkFile;
-
-                    if(ch + 1 == chunksCount)
-                    {
-                        int pause = 1;
-                    }
                     
                     if(chunkOff + chSize > chunkSize)
                     {
@@ -641,8 +636,16 @@ namespace TTG_Tools
 
                         if (compression)
                         {
-                            if (versionArchive >= 8) chunk = versionArchive == 8 && compressAlgorithm == 0 ? ZlibCompressor(chunk) : DeflateCompressor(chunk);
-                            else chunk = ZlibCompressor(chunk);
+                            byte[] check = new byte[chunk.Length];
+                            if (versionArchive >= 8) check = versionArchive == 8 && compressAlgorithm == 0 ? ZlibCompressor(chunk) : DeflateCompressor(chunk);
+                            else check = ZlibCompressor(chunk);
+
+                            if(check.Length < chunk.Length)
+                            {
+                                chunk = new byte[check.Length];
+                                Array.Copy(check, 0, chunk, 0, chunk.Length);
+                                check = null;
+                            }
 
                             if (encryptCheck)
                             {
