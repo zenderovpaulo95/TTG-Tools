@@ -79,8 +79,7 @@ namespace TTG_Tools
             /*if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
             else MainMenu.settings.unicodeSettings = 1;*/
 
-            EncVersion = 2;
-            if (comboBox2.SelectedIndex == 1) EncVersion = 7;
+            EncVersion = comboBox2.SelectedIndex != 1 ? 2 : 7;
 
             string versionOfGame = " ";
             numKey = comboBox1.SelectedIndex;
@@ -98,97 +97,10 @@ namespace TTG_Tools
             parametresImport.Add(MainMenu.settings.deleteDDSafterImport.ToString());
             parametresImport.Add(Convert.ToString(EncVersion));
             parametresImport.Add(MainMenu.settings.encLangdb.ToString());
-            
+            parametresImport.Add(MainMenu.settings.encNewLua.ToString());
+
             threadImport = new Thread(new ParameterizedThreadStart(processImport.DoImportEncoding));
             threadImport.Start(parametresImport);
-
-
-            for (int i = 0; i < fi.Length; i++)
-            {
-                if ((fi[i].Extension == ".lua") || (fi[i].Extension == ".lenc"))
-                {
-                    byte[] encKey;
-
-                    if (MainMenu.settings.customKey)
-                    {
-                        encKey = Methods.stringToKey(MainMenu.settings.encCustomKey);
-
-                        if (encKey == null)
-                        {
-                            MessageBox.Show("You must enter key encryption!", "Error");
-                            return;
-                        }
-                    }
-                    else encKey = MainMenu.gamelist[comboBox1.SelectedIndex].key;
-
-                    int version;
-                    if (selected_index == 0) version = 2;
-                    else version = 7;
-
-                    FileStream fs = new FileStream(fi[i].FullName, FileMode.Open);
-                    byte[] luaContent = Methods.ReadFull(fs);
-                    fs.Close();
-
-                    luaContent = Methods.encryptLua(luaContent, encKey, CheckNewEngine.Checked, version);
-
-                    if (File.Exists(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + fi[i].Name)) File.Delete(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + fi[i].Name);
-                    fs = new FileStream(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + fi[i].Name, FileMode.CreateNew);
-                    fs.Write(luaContent, 0, luaContent.Length);
-                    fs.Close();
-
-                    listBox1.Items.Add("File " + fi[i].Name + " encrypted.");
-                }
-                if ((i + 1 < fi.Count()) && (fi[i].Extension == ".font") && (fi[i + 1].Extension.ToLower() == ".ttf") && GetNameOnly(i) == GetNameOnly(i + 1))
-                {
-                    
-                }
-                else if (fi[i].Extension == ".font")
-                {
-                    int version;
-                    if (selected_index == 0) version = 2;
-                    else version = 7;
-
-                    FileStream fs = new FileStream(fi[i].FullName, FileMode.Open);
-                    byte[] fontContent = Methods.ReadFull(fs);
-                    fs.Close();
-
-                    byte[] checkHeader = new byte[4];
-                    Array.Copy(fontContent, 0, checkHeader, 0, 4);
-                    if ((Encoding.ASCII.GetString(checkHeader) != "5VSM") && (Encoding.ASCII.GetString(checkHeader) != "ERTM")
-                        && (Encoding.ASCII.GetString(checkHeader) != "6VSM"))
-                    {
-
-                        if (Methods.FindStartOfStringSomething(fontContent, 0, "DDS ") < fontContent.Length - 100)
-                        {
-                            if (version == 2)
-                            {
-                                //Шифруем заголовок текстуры
-                                int poz = Methods.FindStartOfStringSomething(fontContent, 0, "DDS ");
-                                byte[] tempHeader = new byte[2048];
-                                if (fontContent.Length - poz < tempHeader.Length) tempHeader = new byte[fontContent.Length - poz];
-
-                                Array.Copy(fontContent, poz, tempHeader, 0, tempHeader.Length);
-                                BlowFishCS.BlowFish encHeader = new BlowFishCS.BlowFish(MainMenu.gamelist[numKey].key, version);
-
-                                tempHeader = encHeader.Crypt_ECB(tempHeader, version, false);
-
-                                Array.Copy(fontContent, poz, tempHeader, 0, 2048);
-                            }
-                        }
-
-
-                        //Шифруем шрифт
-                        Methods.meta_crypt(fontContent, MainMenu.gamelist[numKey].key, version, false);
-
-                        fs = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + fi[i].Name, FileMode.OpenOrCreate);
-                        fs.Write(fontContent, 0, fontContent.Length);
-                        fs.Close();
-
-                        listBox1.Items.Add("File " + fi[i].Name + " encrypted!");
-
-                    }
-                }
-            }
         }
 
         public static string GetNameOnly(int i)
@@ -214,8 +126,7 @@ namespace TTG_Tools
             }
             else encKey = MainMenu.gamelist[comboBox1.SelectedIndex].key;
 
-            int arc_version = 2;
-            if (comboBox2.SelectedIndex == 1) arc_version = 7;
+            int arc_version = comboBox2.SelectedIndex != 1 ? 2 : 7;
 
             Methods.DeleteCurrentFile("\\del.me");
             try
@@ -241,26 +152,6 @@ namespace TTG_Tools
             threadExport = new Thread(new ParameterizedThreadStart(processExport.DoExportEncoding));
             threadExport.Start(parametresExport);
 
-            for (int i = 0; i < fi.Length; i++)
-            {
-                if ((fi[i].Extension == ".lenc") || (fi[i].Extension == ".lua"))
-                {
-                    FileStream fs = new FileStream(fi[i].FullName, FileMode.Open);
-                    byte[] luaContent = Methods.ReadFull(fs);
-                    fs.Close();
-
-                    int version;
-                    if (selected_index == 0) version = 2;
-                    else version = 7;
-                    luaContent = Methods.decryptLua(luaContent, encKey, version);
-
-                    fs = new FileStream(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + fi[i].Name, FileMode.OpenOrCreate);
-                    fs.Write(luaContent, 0, luaContent.Length);
-                    fs.Close();
-                    listBox1.Items.Add("File " + fi[i].Name + " decrypted.");
-                }
-            }
-
             if (debug != null)
             {
                 StreamWriter sw = new StreamWriter(MainMenu.settings.pathForOutputFolder + "\\bugs.txt");
@@ -284,101 +175,6 @@ namespace TTG_Tools
                 this.text = text;                
             }
         }
-
-        public class Langdb
-        {
-            public byte[] hz_data;
-            public byte[] realID;
-            public byte[] lenght_of_textblok;
-            public byte[] count_text;
-            public byte[] lenght_of_name;
-            public string name;
-            public byte[] lenght_of_text;
-            public string text;
-            public byte[] lenght_of_waw;
-            public string waw;
-            public byte[] lenght_of_animation;
-            public string animation;
-            public byte[] magic_bytes;
-
-            public Langdb() { }
-            public Langdb(byte[] hz_data, byte[] realID, byte[] lenght_of_textblok, byte[] count_text, byte[] lenght_of_name,
-            string name, byte[] lenght_of_text, string text, byte[] lenght_of_waw,
-            string waw, byte[] lenght_of_animation, string animation, byte[] magic_bytes)
-            {
-                this.animation = animation;
-                this.hz_data = hz_data;
-                this.realID = realID;
-                this.lenght_of_animation = lenght_of_animation;
-                this.lenght_of_name = lenght_of_name;
-                this.lenght_of_text = lenght_of_text;
-                this.lenght_of_textblok = lenght_of_textblok;
-                this.lenght_of_waw = lenght_of_waw;
-                this.magic_bytes = magic_bytes;
-                this.name = name;
-                this.text = text;
-                this.waw = waw;
-                this.count_text = count_text;
-            }
-        }
-
-        public static Int32 GetSizeOfByteMassiv(byte[] str)
-        {
-            try
-            {
-                return str.Length;
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-        public static Int32 GetSizeOfString(string str)
-        {
-            try
-            {
-                return str.Length;
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-        public static void SaveStringInfo(FileStream MyFileStream, string data, int ASCII_N, int UnicodeMode, bool oldFormat)
-        {
-            byte[] b1 = BitConverter.GetBytes(data.Length + 8);
-            byte[] b2 = BitConverter.GetBytes(data.Length);
-
-            if (((UnicodeMode == 0) || (UnicodeMode == 2)) && (!oldFormat))
-            {
-                byte[] bin_data = Encoding.UTF8.GetBytes(data);
-                b1 = BitConverter.GetBytes(bin_data.Length + 8);
-                b2 = BitConverter.GetBytes(bin_data.Length);
-            }
-
-            MyFileStream.Write(b1, 0, b1.Length);
-            MyFileStream.Write(b2, 0, b2.Length);
-            if (data.Length > 0)
-            {
-                byte[] hex_data = new byte[data.Length];
-                //
-                if ((MainMenu.settings.unicodeSettings != 1) && (!oldFormat)) hex_data = (byte[])Encoding.UTF8.GetBytes(data);
-                else hex_data = (byte[])ASCIIEncoding.GetEncoding(ASCII_N).GetBytes(data);
-                MyFileStream.Write(hex_data, 0, hex_data.Length);
-            }
-        }
-        public static void SaveStringInfoForProp(FileStream MyFileStream, string data, int ASCII_N)
-        {
-            byte[] b = BitConverter.GetBytes(data.Length);
-            MyFileStream.Write(b, 0, b.Length);
-            if (data.Length > 0)
-            {
-                byte[] hex_data = new byte[data.Length];
-                hex_data = (byte[])ASCIIEncoding.GetEncoding(ASCII_N).GetBytes(data);
-                MyFileStream.Write(hex_data, 0, hex_data.Length);
-            }
-        }
-
 
         private void AutoPacker_Load(object sender, EventArgs e)
         {

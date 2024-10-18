@@ -28,7 +28,6 @@ namespace TTG_Tools
             if (progressBar1.InvokeRequired)
             {
                 progressBar1.Invoke(new ProgressHandler(Progress), i);
-                //Thread.Sleep(30);
             }
             else
             {

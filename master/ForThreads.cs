@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TTG_Tools
 {
@@ -30,6 +31,7 @@ namespace TTG_Tools
             bool deleteFromInputImported = param[4] == "True";//false;
             int version = Convert.ToInt32(param[6]);
             bool FullEncrypt = param[7] == "True";
+            bool isNewEngine = param[8] == "True";
             byte[] encKey = null;
 
             bool[] show = { false, false, false, false, false, false };
@@ -121,6 +123,32 @@ namespace TTG_Tools
                                             result = Graphics.FontWorker.DoWork(inputFiles[i].FullName, false);
                                             ReportForWork(result);
                                             show[5] = true;
+                                            break;
+                                        case ".lua":
+                                        case ".lenc":
+                                            if (MainMenu.settings.customKey)
+                                            {
+                                                encKey = Methods.stringToKey(MainMenu.settings.encCustomKey);
+
+                                                if (encKey == null)
+                                                {
+                                                    MessageBox.Show("You must enter key encryption!", "Error");
+                                                    return;
+                                                }
+                                            }
+
+                                            FileStream fs = new FileStream(inputFiles[i].FullName, FileMode.Open);
+                                            byte[] luaContent = Methods.ReadFull(fs);
+                                            fs.Close();
+
+                                            luaContent = Methods.encryptLua(luaContent, encKey, isNewEngine, version);
+
+                                            if (File.Exists(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name)) File.Delete(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name);
+                                            fs = new FileStream(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name, FileMode.CreateNew);
+                                            fs.Write(luaContent, 0, luaContent.Length);
+                                            fs.Close();
+
+                                            ReportForWork("File " + inputFiles[i].Name + " encrypted.");
                                             break;
                                         default:
                                             MessageBox.Show("Error in Switch!");
@@ -472,8 +500,12 @@ namespace TTG_Tools
                 destinationForExportList.Add(".dlog");
                 destinationForExportList.Add(".prop");
                 destinationForExportList.Add(".font");
+                destinationForExportList.Add(".lua");
+                destinationForExportList.Add(".lenc");
 
                 List<int> extractedFormat = new List<int>();
+                extractedFormat.Add(-1);
+                extractedFormat.Add(-1);
                 extractedFormat.Add(-1);
                 extractedFormat.Add(-1);
                 extractedFormat.Add(-1);
@@ -532,6 +564,24 @@ namespace TTG_Tools
                                     ReportForWork(message);
                                     break;
 
+                                case ".lenc":
+                                case ".lua":
+                                    FileStream fs = new FileStream(inputFiles[i].FullName, FileMode.Open);
+                                    byte[] luaContent = Methods.ReadFull(fs);
+                                    fs.Close();
+
+                                    
+                                    luaContent = Methods.decryptLua(luaContent, encKey, version);
+
+                                    fs = new FileStream(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name, FileMode.OpenOrCreate);
+                                    fs.Write(luaContent, 0, luaContent.Length);
+                                    fs.Close();
+
+                                    ReportForWork("File " + inputFiles[i].Name + " decrypted.");
+                                    if (destinationForExport == ".lua") extractedFormat[6] = 6;
+                                    else extractedFormat[7] = 7;
+                                    break;
+
                                 default:
                                     MessageBox.Show("Error in Switch!");
                                       break;
@@ -540,7 +590,6 @@ namespace TTG_Tools
                         }
                     }
                 }
-
 
                 foreach(int extractList in extractedFormat)
                 {

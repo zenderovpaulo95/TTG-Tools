@@ -7,16 +7,24 @@
       "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:archivepacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\test\\source\\repos\\ttg-tools\\master\\archiveunpacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:archiveunpacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|c:\\users\\test\\source\\repos\\ttg-tools\\master\\autopacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:autopacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|c:\\users\\test\\source\\repos\\ttg-tools\\master\\autopacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:autopacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\test\\source\\repos\\ttg-tools\\master\\methods.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:methods.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\test\\source\\repos\\ttg-tools\\master\\archivepacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:archivepacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\test\\source\\repos\\ttg-tools\\master\\archiveunpacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|solutionrelative:archiveunpacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{91A4EBF7-4A84-4501-8C14-6215B75B3239}|TTG Tools.csproj|C:\\Users\\test\\source\\repos\\ttg-tools\\master\\forthreads.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -34,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -47,6 +55,31 @@
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "AutoPacker.cs",
+              "DocumentMoniker": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\AutoPacker.cs",
+              "RelativeDocumentMoniker": "AutoPacker.cs",
+              "ToolTip": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\AutoPacker.cs",
+              "RelativeToolTip": "AutoPacker.cs",
+              "ViewState": "AgIAAGIAAAAAAAAAAADwv4sAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-18T16:53:56.391Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AutoPacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "DocumentMoniker": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\AutoPacker.cs",
+              "RelativeDocumentMoniker": "AutoPacker.cs",
+              "ToolTip": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\AutoPacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "RelativeToolTip": "AutoPacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-18T16:53:55.224Z",
+              "EditorCaption": " [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "ArchiveUnpacker.cs",
               "DocumentMoniker": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\ArchiveUnpacker.cs",
               "RelativeDocumentMoniker": "ArchiveUnpacker.cs",
@@ -59,7 +92,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "ArchiveUnpacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "DocumentMoniker": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\ArchiveUnpacker.cs",
               "RelativeDocumentMoniker": "ArchiveUnpacker.cs",
@@ -71,7 +104,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "ForThreads.cs",
               "DocumentMoniker": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\ForThreads.cs",
               "RelativeDocumentMoniker": "ForThreads.cs",
@@ -79,12 +112,11 @@
               "RelativeToolTip": "ForThreads.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAADwvxYAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-16T08:28:16.776Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-16T08:28:16.776Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "Methods.cs",
               "DocumentMoniker": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\Methods.cs",
               "RelativeDocumentMoniker": "Methods.cs",
@@ -92,8 +124,7 @@
               "RelativeToolTip": "Methods.cs",
               "ViewState": "AgIAALgCAAAAAAAAAAAWwMACAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-16T07:53:41.725Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-16T07:53:41.725Z"
             },
             {
               "$type": "Document",
@@ -103,22 +134,21 @@
               "RelativeDocumentMoniker": "ArchivePacker.cs",
               "ToolTip": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\ArchivePacker.cs",
               "RelativeToolTip": "ArchivePacker.cs",
-              "ViewState": "AgIAAEYCAAAAAAAAAAAiwFkCAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAMoAAAAAAAAAAADwv+IAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-16T07:43:43.04Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "ArchivePacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "DocumentMoniker": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\ArchivePacker.cs",
               "RelativeDocumentMoniker": "ArchivePacker.cs",
               "ToolTip": "C:\\Users\\test\\source\\repos\\ttg-tools\\master\\ArchivePacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "RelativeToolTip": "ArchivePacker.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-16T07:38:08.574Z",
-              "EditorCaption": " [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]"
+              "WhenOpened": "2024-10-16T07:38:08.574Z"
             }
           ]
         }
