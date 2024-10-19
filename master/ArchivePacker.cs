@@ -147,8 +147,9 @@ namespace TTG_Tools
         }
 
 
-        public void builder_ttarch2(string inputFolder, string outputPath, bool compression, bool encryption, byte[] key, bool encLua, int versionArchive, bool newEngine, int compressAlgorithm)
-        {                           
+        public void builder_ttarch2(string inputFolder, string outputPath, bool compression, bool encryption, bool encLua, byte[] key, int versionArchive, bool newEngine, int compressAlgorithm)
+        {
+            if (messageListBox.Items.Count > 1) messageListBox.Items.Clear();
             DirectoryInfo di = new DirectoryInfo(inputFolder);
             fi = di.GetFiles("*", SearchOption.AllDirectories);
 
@@ -169,7 +170,7 @@ namespace TTG_Tools
 
             for(int i = 0; i < fi.Length; i++)
             {
-                name[i] = (fi[i].Extension == ".lua") && (MainMenu.settings.encryptLuaInArchive == false) && (!newEngine) ? fi[i].Name.Remove(fi[i].Name.Length - 3, 3) + "lenc" : fi[i].Name;
+                name[i] = (fi[i].Extension == ".lua") && encLua && (!newEngine) ? fi[i].Name.Remove(fi[i].Name.Length - 3, 3) + "lenc" : fi[i].Name;
                 nameCRC[i] = CRCs.CRC64(0, name[i].ToLower()); //Calculate crc64 file name with lower characters
                 nameSize += (ulong)name[i].Length + 1;
                 dataSize += (ulong)fi[i].Length;
@@ -225,17 +226,21 @@ namespace TTG_Tools
             byte[] subHeader = versionArchive == 1 ? Encoding.ASCII.GetBytes("3ATT") : Encoding.ASCII.GetBytes("4ATT");
 
             //Перепроверить код на рассчёт общего размера
-            commonSize = versionArchive == 1 ? dataSize + tableSize + nameSize + 4 + 4 + 4 + 4 : dataSize + tableSize + nameSize + 4 + 4 + 4; //Common archive's size
             nameSize = pad_it(nameSize, 0x10000); //Pad size of file name's block by 64KB
+            commonSize = versionArchive == 1 ? dataSize + tableSize + nameSize + 4 + 4 + 4 + 4 : dataSize + tableSize + nameSize + 4 + 4 + 4; //Common archive's size
+
             int chunksCount = (int)(pad_it(commonSize, (ulong)chunkSize)) / chunkSize;
+            ulong chunksFirstOffset = compressAlgorithm == 1 ? 24 + (ulong)(chunksCount * 8) : 20 + (ulong)(chunksCount * 8);
             ulong[] compressedOffset = new ulong[chunksCount];
-            ulong startOffset = versionArchive
             byte[] namesTable = new byte[nameSize];
             byte[] table;
             ulong nameOff = 0;
             int zeros = 0;
             ushort ns = (ushort)nameSize;
             ushort tmpNS = 0;
+            uint chunkOff = 0;
+            ulong chunkOffset = chunksFirstOffset;
+            byte[] tmp;
 
             using (MemoryStream ms = new MemoryStream())
             {
@@ -243,7 +248,7 @@ namespace TTG_Tools
                 {
                     for (int i = 0; i < fi.Length; i++)
                     {
-                        byte[] tmp = Encoding.ASCII.GetBytes(name[i] + '\0');
+                        tmp = Encoding.ASCII.GetBytes(name[i] + '\0');
                         Array.Copy(tmp, 0, namesTable, (int)nameOff, tmp.Length);
                         nameOff += (ulong)tmp.Length;
 
@@ -253,7 +258,7 @@ namespace TTG_Tools
                         mbw.Write(zeros);
                         tmpNS = (ushort)(ns - nameSize);
                         mbw.Write((ushort)(tmpNS / 0x10000)); //Get offset to file name
-                        mbw.Write((ushort)(tmpNS % 0x10000)); //The same thing but calculates another
+                        mbw.Write((ushort)(tmpNS % 0x10000)); //The same thing but calculates next offset
                         ns += (ushort)tmp.Length;
                         offset += (ulong)fi[i].Length;
                     }
@@ -268,8 +273,7 @@ namespace TTG_Tools
             BinaryWriter bw = new BinaryWriter(fs);
 
             bw.Write(header);
-
-            //Подумать над сборкой ttarch2 файлов
+            long pos = 0;
 
             if(!compression)
             {
@@ -277,277 +281,191 @@ namespace TTG_Tools
             }
             else
             {
-                bw.Write(BitConverter.GetBytes(1));
+                if(compression && compressAlgorithm == 1) bw.Write(BitConverter.GetBytes(1));
                 bw.Write(chunkSize);
                 bw.Write(chunksCount);
+                bw.Write(chunksFirstOffset);
+                pos = bw.BaseStream.Position;
+
+                for(int i = 0; i < chunksCount; i++)
+                {
+                    bw.Write(compressedOffset[i]); //Write just empty values
+                }
             }
 
             int ch = 0;
             int a = 0;
             progressBar1.Maximum = fi.Length;
 
-            while(ch < chunksCount)
+            //Try write subheader and file table
+            int tableChunksCount = versionArchive == 1 ? pad_size(16 + table.Length + namesTable.Length, chunkSize) / chunkSize : pad_size(12 + table.Length + namesTable.Length, chunkSize) / chunkSize;
+            byte[] chunk = new byte[chunkSize];
+
+            Array.Copy(subHeader, 0, chunk, chunkOff, subHeader.Length);
+            chunkOff += (uint)subHeader.Length;
+            
+            if (versionArchive == 1)
             {
+                tmp = BitConverter.GetBytes(2);
+                Array.Copy(tmp, 0, chunk, chunkOff, tmp.Length);
+                chunkOff += (uint)tmp.Length;
+            }
 
-                while(a < fi.Length)
+            tmp = BitConverter.GetBytes(chunkSize);
+            Array.Copy(tmp, 0, chunk, chunkOff, tmp.Length);
+            chunkOff += (uint)tmp.Length;
+
+            tmp = BitConverter.GetBytes((int)fi.Length);
+            Array.Copy(tmp, 0, chunk, chunkOff, tmp.Length);
+            chunkOff += (uint)tmp.Length;
+
+            tmp = new byte[table.Length + namesTable.Length];
+            Array.Copy(table, 0, tmp, 0, table.Length);
+            Array.Copy(namesTable, 0, tmp, table.Length, namesTable.Length);
+            uint chunkFile = (uint)tmp.Length;
+            uint chunkFileOff = 0;
+
+            for (int c = 0; c < tableChunksCount; c++)
+            {
+                uint chSize = (uint)chunkFile;
+
+                if (chunkOff + chSize > chunkSize)
                 {
+                    chSize = chunkOff == 0 ? (uint)chunkSize : (uint)chunkSize - chunkOff;
+                }
 
-                    AddNewReport("File " + fi[a].Name + " packed");
+                Array.Copy(tmp, chunkFileOff, chunk, chunkOff, chSize);
+
+                chunkOff += chSize;
+                chunkFile -= chSize;
+                chunkFileOff += chSize;
+
+                if (chunkOff >= chunkSize)
+                {
+                    if (compression)
+                    {
+                        byte[] check = versionArchive == 2 && compressAlgorithm == 1 ? OodleCompress(chunk) : DeflateCompressor(chunk);
+
+                        if (check.Length < chunk.Length)
+                        {
+                            chunk = new byte[check.Length];
+                            Array.Copy(check, 0, chunk, 0, chunk.Length);
+                            check = null;
+                        }
+
+                        if (encryption)
+                        {
+                            chunk = encryptFunction(chunk, key, 7);
+                        }
+                    }
+
+                    bw.Write(chunk);
+
+                    if (compression)
+                    {
+                        chunkOffset += (ulong)chunk.Length;
+                        compressedOffset[ch] = chunkOffset;
+                    }
+
+                    chunkOff = 0;
+                    chunk = new byte[chunkSize];
+                    ch++;
+                }
+            }
+
+            while (ch < chunksCount && a < fi.Length)
+            {
+                byte[] file = File.ReadAllBytes(fi[a].FullName);
+
+                if ((encLua && fi[a].Extension.ToLower() == ".lua") || fi[a].Extension.ToLower() == ".lenc")
+                {
+                    file = Methods.encryptLua(file, key, newEngine, 7);
+                }
+
+                int fileChunkCount = pad_size((int)chunkOff + file.Length, chunkSize) / chunkSize;
+                chunkFile = (uint)file.Length;
+                chunkFileOff = 0;
+
+                for (int c = 0; c < fileChunkCount; c++)
+                {
+                    uint chSize = chunkFile;
+
+                    if (chunkOff + chSize > chunkSize)
+                    {
+                        chSize = chunkOff == 0 ? (uint)chunkSize : (uint)chunkSize - chunkOff;
+                    }
+
+                    Array.Copy(file, chunkFileOff, chunk, chunkOff, chSize);
+
+                    chunkOff += chSize;
+                    chunkFile -= chSize;
+                    chunkFileOff += chSize;
+
+                    if ((chunkOff >= chunkSize) || ((ch + 1 == chunksCount) && (a + 1 == fi.Length)))
+                    {                        
+                        if ((ch + 1 == chunksCount) && (chunkOff < chunkSize))
+                        {
+                            tmp = new byte[chunkOff];
+                            Array.Copy(chunk, 0, tmp, 0, tmp.Length);
+                            chunk = new byte[tmp.Length];
+                            Array.Copy(tmp, 0, chunk, 0, tmp.Length);
+                        }
+
+                        if (compression)
+                        {
+                            byte[] check = versionArchive == 2 && compressAlgorithm == 1 ? OodleCompress(chunk) : DeflateCompressor(chunk);
+
+                            if (check.Length < chunk.Length)
+                            {
+                                chunk = new byte[check.Length];
+                                Array.Copy(check, 0, chunk, 0, chunk.Length);
+                                check = null;
+                            }
+
+                            if (encryption)
+                            {
+                                chunk = encryptFunction(chunk, key, 7);
+                            }
+                        }
+
+                        bw.Write(chunk);
+
+                        if (compression)
+                        {
+                            chunkOffset += (uint)chunk.Length;
+                            compressedOffset[ch] = chunkOffset;
+                        }
+
+                        chunkOff = 0;
+                        chunk = new byte[chunkSize];
+                        ch++;
+                    }
+                }
+
+                AddNewReport("File " + fi[a].Name + " packed");
+                Progress(a + 1);
+                a++;
+            }
+
+            if (compression)
+            {
+                bw.BaseStream.Seek(pos, SeekOrigin.Begin);
+
+                for (int c = 0; c < chunksCount; c++)
+                {
+                    bw.Write(compressedOffset[c]);
                 }
             }
 
             bw.Close();
             fs.Close();
-            /*for (int i = 0; i < fi.Length; i++) //Get CRC64 checksum
-            {
-                name[i] = null;
-                if ((fi[i].Extension == ".lua") && (MainMenu.settings.encryptLuaInArchive == false))
-                {
-                    if (!newEngine) name[i] = fi[i].Name.Replace(".lua", ".lenc");
-                    else name[i] = fi[i].Name;
-                }
-                else name[i] = fi[i].Name;
-                name_crc[i] = CRCs.CRC64(0, name[i].ToLower()); //Calculate crc64 file name with lower characters
-            }
 
-            for (int k = 0; k < fi.Length - 1; k++) //Sort file names by less crc64
-            {
-                for (int l = k + 1; l < fi.Length; l++)
-                {
-                    if (name_crc[l] < name_crc[k])
-                    {
-                        FileInfo temp = fi[k];
-                        fi[k] = fi[l];
-                        fi[l] = temp;
-                        
-                        string temp_str = name[k];
-                        name[k] = name[l];
-                        name[l] = temp_str;
-
-                        UInt64 temp_crc = name_crc[k];
-                        name_crc[k] = name_crc[l];
-                        name_crc[l] = temp_crc;
-                    }
-                }
-            }
-
-            UInt32 info_size = (uint)fi.Length * (8 + 8 + 4 + 4 + 2 + 2); //Prepare header size...
-            UInt32 data_size = 0; //archive's size
-            UInt32 name_size = 0; //and size of file name table
-
-            for (int j = 0; j < fi.Length; j++) //Calculate archive's size and size of file name table
-            {
-                name_size += Convert.ToUInt32(name[j].Length) + 1;
-                data_size += Convert.ToUInt32(fi[j].Length);
-            }
-
-            name_size = Convert.ToUInt32(pad_it((UInt64)name_size, (UInt64)0x10000)); //Pad size of file name's block by 64KB
-            byte[] info_table = new byte[info_size];
-            byte[] names_table = new byte[name_size];
-
-            UInt32 name_offset = 0;
-            for (int d = 0; d < fi.Length; d++) //Calculate name's offset and add zero byte after file name
-            {
-                name[d] += "\0";
-                Array.Copy(Encoding.ASCII.GetBytes(name[d]), 0, names_table, name_offset, name[d].Length);
-                name_offset += Convert.ToUInt32(name[d].Length);
-            }
-
-            byte[] nctt_header = { 0x4E, 0x43, 0x54, 0x54 }; //Prepare non-compressed header (NCTT)
-            byte[] att = new byte[4];
-
-            //And prepare compressed header
-            if (version_archive == 1) att = BitConverter.GetBytes(0x33415454); //Before Minecraft:Story mode - 3ATT
-            else if (version_archive == 2) att = BitConverter.GetBytes(0x34415454); //After Minecraft Story mode - 4ATT
-
-            Array.Reverse(att);
-
-            UInt64 common_size = data_size + info_size + name_size + 4 + 4 + 4 + 4; //Common archive's size
-
-            byte[] cz_bin = new byte[8];
-            cz_bin = BitConverter.GetBytes(common_size);
-
-
-            UInt32 ns = name_size;
-            UInt32 tmp;
-            UInt64 file_offset = 0;
-
-            progressBar1.Maximum = fi.Length;
-            
-            for (int k = 0; k < fi.Length; k++) //Making header with file information
-            {
-                byte[] crc64_hash = BitConverter.GetBytes(name_crc[k]); //CRC64 file name
-                Array.Copy(crc64_hash, 0, info_table, Convert.ToInt64(offset), crc64_hash.Length);
-                offset += 8;
-                byte[] fo_bin = BitConverter.GetBytes(file_offset); //Offset to file
-                Array.Copy(fo_bin, 0, info_table, Convert.ToInt64(offset), fo_bin.Length);
-                offset += 8;
-                byte[] fs_bin = BitConverter.GetBytes((int)fi[k].Length); //Size of file
-                Array.Copy(fs_bin, 0, info_table, Convert.ToInt64(offset), fs_bin.Length);
-                offset += 4;
-                Array.Copy(BitConverter.GetBytes(0), 0, info_table, Convert.ToInt64(offset), 4);
-                offset += 4;
-                tmp = ns - name_size;
-                byte[] tmp_bin1 = new byte[2]; //Get offset to file name
-                tmp_bin1 = BitConverter.GetBytes(tmp / 0x10000);
-                Array.Copy(tmp_bin1, 0, info_table, Convert.ToInt64(offset), 2);
-                offset += 2;
-                byte[] tmp_bin2 = new byte[2]; //The same thing but calculates another
-                tmp_bin2 = BitConverter.GetBytes(tmp % 0x10000);
-                Array.Copy(tmp_bin2, 0, info_table, Convert.ToInt64(offset), 2);
-                offset += 2;
-                ns += Convert.ToUInt32(name[k].Length);
-                file_offset += Convert.ToUInt32(fi[k].Length);
-
-                Progress(k + 1);
-            } 
-
-            string format = ".ttarch2";
-            if (output_path.IndexOf(".obb") > 0) format = ".obb";
-            string temp_path = output_path.Replace(format, ".tmp");
-
-            FileStream fs = new FileStream(temp_path, FileMode.Create);
-
-            fs.Write(nctt_header, 0, 4);
-            fs.Write(cz_bin, 0, 8);
-            fs.Write(att, 0, 4);
-
-            if (version_archive == 1) //In older versions I had to write 02 00 00 00
-            {
-                fs.Write(BitConverter.GetBytes(2), 0, 4);
-            }
-
-            fs.Write(BitConverter.GetBytes(name_size), 0, 4);
-            fs.Write(BitConverter.GetBytes(fi.Length), 0, 4);
-            fs.Write(info_table, 0, Convert.ToInt32(info_size));
-            fs.Write(names_table, 0, Convert.ToInt32(name_size));
-
-            progressBar1.Maximum = fi.Length;
-
-            for (int l = 0; l < fi.Length; l++)
-            {
-                FileStream fr = new FileStream(fi[l].FullName, FileMode.Open);
-                byte[] file = new byte[fr.Length];
-                fr.Read(file, 0, file.Length);
-
-                //Encrypt lua if it needs
-                if ((fi[l].Extension == ".lua") && !MainMenu.settings.encryptLuaInArchive)
-                {
-                    file = Methods.encryptLua(file, key, newEngine, 7);
-                }
-
-                fs.Write(file, 0, file.Length);
-                fr.Close();
-                Progress(l + 1);
-            }
-            fs.Close();
-
-            if (compression == false)
-            {
-                if (File.Exists(output_path) == true) File.Delete(output_path);
-                File.Move(temp_path, output_path); //If we won't compress archive just rename a temporary file
-            }
-            else
-            {
-                fs = new FileStream(output_path, FileMode.Create);
-
-                UInt64 offset_table = 0;//Calculate offsets compressed blocks
-
-                UInt64 full_it = pad_it(common_size, 0x10000); //Pad size from 3ATT/4ATT header
-
-                UInt32 blocks_count = Convert.ToUInt32(full_it) / 0x10000; //Get count of compressed blocks
-                byte[] bin_blocks_count = new byte[4];
-                bin_blocks_count = BitConverter.GetBytes(blocks_count);
-
-                //ZCTT - compressed archive with zlib/deflate libraries
-                //ECTT - encrypted compressed archive with zlib/deflate libraries
-                //zCTT - compressed archive with oo2core library
-                //eCTT - encrypted compressed archive with oo2core library
-
-                byte[] compressedHeader = { 0x5A, 0x43, 0x54, 0x54 }; //Compressed archive's header (ZCTT)
-
-                if (compressAlgorithm == 1) compressedHeader[0] = 0x7a; //If oodle algorithm then change Z to z char
-
-                byte[] encCompressedHeader = { 0x45, 0x43, 0x54, 0x54 }; //Encrypted compressed archive's header (ECTT)
-
-                if (compressAlgorithm == 1) encCompressedHeader[0] = 0x65; //If oodle algorithm then change E to e char
-
-                byte[] chunk_size = { 0x00, 0x00, 0x01, 0x00 }; //Write chunk size (64KB)
-                UInt64 chunk_table_size = 8 * blocks_count + 8;
-                offset = compressAlgorithm == 0 ? chunk_table_size + 4 + 4 + 4 : chunk_table_size + 4 + 4 + 4 + 4;
-
-                byte[] chunk_table = new byte[chunk_table_size];
-                byte[] bin_offset = BitConverter.GetBytes(offset);
-
-                Array.Copy(bin_offset, 0, chunk_table, (uint)offset_table, 8);
-                offset_table += 8;
-
-                if (MainMenu.settings.encArchive) fs.Write(encCompressedHeader, 0, encCompressedHeader.Length); //If compressed archive encrypts then write encrypted header
-                else fs.Write(compressedHeader, 0, compressedHeader.Length); //else write compressed header
-
-                if(compressAlgorithm == 1)
-                {
-                    byte[] val = BitConverter.GetBytes(1);
-                    fs.Write(val, 0, val.Length);
-                }
-                fs.Write(chunk_size, 0, 4);
-                fs.Write(bin_blocks_count, 0, 4);
-                fs.Write(chunk_table, 0, chunk_table.Length);
-
-                FileStream temp_fr = new FileStream(temp_path, FileMode.Open);
-                temp_fr.Seek(12, SeekOrigin.Begin);
-
-                progressBar1.Maximum = (int)blocks_count;
-
-                for (int i = 0; i < blocks_count; i++) //Read 64KB blocks and compress it
-                {
-                    byte[] temp = new byte[0x10000];
-                    temp_fr.Read(temp, 0, temp.Length);
-
-                    byte[] compressed_block = new byte[temp.Length];
-
-                    switch (compressAlgorithm)
-                    {
-                        case 0:
-                            compressed_block = DeflateCompressor(temp);
-                            break;
-
-                        case 1:
-                            compressed_block = OodleCompress(temp);
-                            break;
-                    }
-                    
-
-                    if (MainMenu.settings.encArchive) //Encrypt compressed block if user select encrypt archive
-                    {
-                        int num = comboGameList.SelectedIndex;
-                        temp = encryptFunction(compressed_block, key, 7);
-                    }
-
-                    offset += (uint)compressed_block.Length;
-                    bin_offset = BitConverter.GetBytes(offset);
-                    Array.Copy(bin_offset, 0, chunk_table, (uint)offset_table, 8);
-                    offset_table += 8;
-                    fs.Write(compressed_block, 0, compressed_block.Length);
-
-                    Progress(i + 1);
-                }
-
-                int off = 12;
-                if (compressAlgorithm == 1) off += 4;
-
-                fs.Seek(off, SeekOrigin.Begin); //Return to chunk table position
-                fs.Write(chunk_table, 0, chunk_table.Length); //and record our data
-
-                temp_fr.Close();
-                fs.Close();
-                File.Delete(temp_path); //Remove temporary file
-            }*/
-
+            AddNewReport("Packing archive complete");
         }
 
         public void builder_ttarch(string inputFolder, string outputPath, byte[] key, bool compression, int versionArchive, bool encryptCheck, bool DontEncLua, int compressAlgorithm) //Функция сборки
         {
+            if (messageListBox.Items.Count > 1) messageListBox.Items.Clear();
             DirectoryInfo di = new DirectoryInfo(inputFolder);
             DirectoryInfo[] di1 = di.GetDirectories("*", SearchOption.AllDirectories); //Just for fun if files were in different directories for Telltale Tool engine this optional
 
@@ -603,7 +521,7 @@ namespace TTG_Tools
                 if (Methods.meta_check(fi[i]) && compression)
                 {
                     compression = false;
-                    AddNewReport("Found file with meta encryption. Compression flag disabled.");
+                    AddNewReport("Found file with meta encryption. Compression is unset.");
                 }
 
                 byte[] binFileName = Encoding.ASCII.GetBytes(name);
@@ -729,7 +647,7 @@ namespace TTG_Tools
             bw.Write(tableSize);
             bw.Write(table);
 
-            progressBar1.Maximum = fi.Length > 1 ? fi.Length : 1;
+            progressBar1.Maximum = fi.Length;
 
             int ch = 0;
             int a = 0;
@@ -831,9 +749,6 @@ namespace TTG_Tools
             fs.Close();
 
             AddNewReport("Packing archive complete");
-
-            bw.Close();
-            fs.Close();
         }
     
 
@@ -971,7 +886,7 @@ namespace TTG_Tools
                     if(CheckCustomKey.Checked) keyEnc = Methods.stringToKey(textBox3.Text);
                     else keyEnc = MainMenu.gamelist[comboGameList.SelectedIndex].key;
                     
-                    if((keyEnc == null) && (MainMenu.settings.encArchive || (MainMenu.settings.encryptLuaInArchive == false)))
+                    if((keyEnc == null) && (MainMenu.settings.encArchive || !MainMenu.settings.encryptLuaInArchive))
                     {
                         if (!CheckCustomKey.Checked)
                         {
@@ -994,7 +909,7 @@ namespace TTG_Tools
                     else if (ttarchRB.Checked && versionSelection.SelectedIndex == 7) algorithmCompress = 1; //Latest version uses deflate algorithm
 
                     if (ttarchRB.Checked == true) builder_ttarch(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive, algorithmCompress);
-                    else builder_ttarch2(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, MainMenu.settings.encArchive, keyEnc, MainMenu.settings.encryptLuaInArchive, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress);
+                    else builder_ttarch2(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, MainMenu.settings.encArchive, !MainMenu.settings.encryptLuaInArchive, keyEnc, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress);
                 }
                 else MessageBox.Show("This folder doesn't exist!", "Error");
                 

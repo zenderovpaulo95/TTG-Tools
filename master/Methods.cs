@@ -788,7 +788,7 @@ namespace TTG_Tools
 
             if (Encoding.ASCII.GetString(checkHeader) == "\x1bLua")
             {
-                if(newEngine == true)
+                if(newEngine)
                 {
                         header = Encoding.ASCII.GetBytes("\x1bLEn");
                         byte[] tempLua = new byte[luaContent.Length - 4];
@@ -802,7 +802,7 @@ namespace TTG_Tools
             else if ((Encoding.ASCII.GetString(checkHeader) != "\x1bLEn") && (Encoding.ASCII.GetString(checkHeader) != "\x1bLEo")
                 && (Encoding.ASCII.GetString(checkHeader) != "\x1bLua"))
             {
-                if(newEngine == true)
+                if(newEngine)
                 {
                         header = Encoding.ASCII.GetBytes("\x1bLEo");
                         byte[] tempLua2 = new byte[luaContent.Length];

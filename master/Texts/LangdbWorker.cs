@@ -13,16 +13,21 @@ namespace TTG_Tools.Texts
     {
         private static LangdbClass GetStringsFromLangdb(BinaryReader br, bool hasFlags)
         {
+            bool tryAgain = false; //Silly check for oldest incorrect file sizes
+            long pos = 0;
+            tryAgainRead:
             try
             {
                 LangdbClass langdb = new LangdbClass();
                 langdb.blockLength = 0;
+                if(!tryAgain) pos = br.BaseStream.Position;
+                else br.BaseStream.Seek(pos, SeekOrigin.Begin);
                 int checkBlockLength = br.ReadInt32();
-                long checkSize = br.BaseStream.Length - br.BaseStream.Position + 4;
+                long checkSize = br.BaseStream.Length - pos + 4;
 
                 langdb.isBlockLength = false;
 
-                if (checkSize == checkBlockLength)
+                if (checkSize == checkBlockLength || tryAgain)
                 {
                     langdb.blockLength = checkBlockLength;
                     langdb.newBlockLength = 8;
@@ -32,7 +37,6 @@ namespace TTG_Tools.Texts
                 else
                 {
                     langdb.blockLength = -1;
-                    langdb.isBlockLength = false;
                     langdb.langdbCount = checkBlockLength;
                 }
 
@@ -44,21 +48,21 @@ namespace TTG_Tools.Texts
                 {
                     langdb.langdbs[i].stringNumber = (uint)(i + 1);
                     langdb.langdbs[i].anmID = br.ReadUInt32();
-                    langdb.newBlockLength += 4;
+                    if(langdb.isBlockLength) langdb.newBlockLength += 4;
 
                     langdb.langdbs[i].voxID = br.ReadUInt32();
-                    langdb.newBlockLength += 4;
+                    if (langdb.isBlockLength) langdb.newBlockLength += 4;
 
                     int blockSize = -1;
 
                     if (langdb.isBlockLength)
                     {
                         blockSize = br.ReadInt32();
-                        langdb.newBlockLength += 4;
+                        if (langdb.isBlockLength) langdb.newBlockLength += 4;
                     }
 
                     int stringLength = br.ReadInt32();
-                    langdb.newBlockLength += 4;
+                    if (langdb.isBlockLength) langdb.newBlockLength += 4;
 
                     //Don't calculate actor name's length
                     byte[] tmp = br.ReadBytes(stringLength);
@@ -67,11 +71,11 @@ namespace TTG_Tools.Texts
                     if (langdb.isBlockLength)
                     {
                         blockSize = br.ReadInt32();
-                        langdb.newBlockLength += 4;
+                        if (langdb.isBlockLength) langdb.newBlockLength += 4;
                     }
 
                     stringLength = br.ReadInt32();
-                    langdb.newBlockLength += 4;
+                    if (langdb.isBlockLength) langdb.newBlockLength += 4;
 
                     //Don't calculate actor speech's length
                     tmp = br.ReadBytes(stringLength);
@@ -80,15 +84,15 @@ namespace TTG_Tools.Texts
                     if (langdb.isBlockLength)
                     {
                         blockSize = br.ReadInt32();
-                        langdb.newBlockLength += 4;
+                        if (langdb.isBlockLength) langdb.newBlockLength += 4;
                     }
 
                     stringLength = br.ReadInt32();
-                    langdb.newBlockLength += 4;
+                    if (langdb.isBlockLength) langdb.newBlockLength += 4;
 
                     tmp = br.ReadBytes(stringLength);
                     langdb.langdbs[i].anmFile = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
-                    langdb.newBlockLength += stringLength;
+                    if (langdb.isBlockLength) langdb.newBlockLength += stringLength;
 
                     if (langdb.isBlockLength)
                     {
@@ -97,24 +101,30 @@ namespace TTG_Tools.Texts
                     }
 
                     stringLength = br.ReadInt32();
-                    langdb.newBlockLength += 4;
+                    if (langdb.isBlockLength) langdb.newBlockLength += 4;
 
                     tmp = br.ReadBytes(stringLength);
                     langdb.langdbs[i].voxFile = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetString(tmp);
-                    langdb.newBlockLength += stringLength;
+                    if (langdb.isBlockLength) langdb.newBlockLength += stringLength;
 
                     langdb.flags[i] = new ClassesStructs.FlagsClass.LangdbFlagClass();
                     langdb.flags[i].flags = br.ReadBytes(3);
-                    langdb.newBlockLength += 3;
+                    if (langdb.isBlockLength) langdb.newBlockLength += 3;
 
                     langdb.langdbs[i].zero = br.ReadInt32();
-                    langdb.newBlockLength += 4;
+                    if (langdb.isBlockLength) langdb.newBlockLength += 4;
                 }
 
                 return langdb;
             }
             catch
             {
+                if (!tryAgain)
+                {
+                    tryAgain = true;
+                    goto tryAgainRead;
+                }
+                
                 return null;
             }
         }
@@ -268,8 +278,7 @@ namespace TTG_Tools.Texts
                 index = type == 1 ? Methods.GetIndex(commonTexts, langdb.langdbs[i].anmID) : Methods.GetIndex(commonTexts, langdb.langdbs[i].stringNumber);
                 if (index != -1) langdb.langdbs[i].actorSpeech = commonTexts[index].actorSpeechTranslation;
 
-                if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags
-                    && (index != -1))
+                if(MainMenu.settings.newTxtFormat && MainMenu.settings.changeLangFlags && (index != -1))
                 {
                     string tmpFlags = commonTexts[index].flags;
 
@@ -441,12 +450,6 @@ namespace TTG_Tools.Texts
                     ClassesStructs.Text.CommonTextClass txt = new CommonTextClass();
                     txt.txtList = ReadText.GetStrings(txtFile);
 
-                    /*if(txt.txtList.Count < langdbs.langdbCount)
-                    {
-                        FileInfo txtFI = new FileInfo(txtFile);
-                        return "Not enough strings in " + txtFI.Name + " for " + fi.Name + " file.";
-                    }*/
-
                     int type = CheckNumbers(txt.txtList, langdbs);
                     if (type == -1) return "I don't know which type of number strings select for " + fi.Name + " file.";
 
@@ -455,7 +458,7 @@ namespace TTG_Tools.Texts
                     ms = new MemoryStream(buffer);
                     br = new BinaryReader(ms);
 
-                    string outputFile = MainMenu.settings.pathForOutputFolder + "\\" + fi.Name;
+                    string outputFile = MainMenu.settings.pathForOutputFolder + Path.DirectorySeparatorChar + fi.Name;
 
                     int rebuildResult = RebuildLangdb(br, outputFile, langdbs);
 
