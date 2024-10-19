@@ -776,7 +776,7 @@ namespace TTG_Tools.Graphics
 
             tmp = new byte[4];
             Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-            if (BitConverter.ToInt32(tmp, 0) == 1)
+            if (BitConverter.ToInt32(tmp, 0) == 1 || tex.platform.platform == 4)
             {
                 tex.Tex.Textures[i].One = BitConverter.ToInt32(tmp, 0);
                 poz += 4;
