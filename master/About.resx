@@ -141,6 +141,14 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
+v.1.14.3 (19.10.2024)
++ Auto(De)Packer:
+Fix export/import langdb files
++ Archive packer:
+Add message of packed files and now tool removes duplicated files
++ Archive unpacker:
+Change unknown error message
+
 v.1.14.2 (09.10.2024)
 + Auto(De)Packer:
 Fixed export/import dlog files

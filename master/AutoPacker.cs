@@ -84,6 +84,7 @@ namespace TTG_Tools
             string versionOfGame = " ";
             numKey = comboBox1.SelectedIndex;
             selected_index = comboBox2.SelectedIndex;
+            byte[] encKey = MainMenu.settings.customKey ? Methods.stringToKey(MainMenu.settings.encCustomKey) : MainMenu.gamelist[numKey].key;
 
             //Create import files thread
             var processImport = new ForThreads();
@@ -98,6 +99,7 @@ namespace TTG_Tools
             parametresImport.Add(Convert.ToString(EncVersion));
             parametresImport.Add(MainMenu.settings.encLangdb.ToString());
             parametresImport.Add(MainMenu.settings.encNewLua.ToString());
+            parametresImport.Add(BitConverter.ToString(encKey).Replace("-", ""));
 
             threadImport = new Thread(new ParameterizedThreadStart(processImport.DoImportEncoding));
             threadImport.Start(parametresImport);
@@ -116,15 +118,9 @@ namespace TTG_Tools
             numKey = comboBox1.SelectedIndex;
             selected_index = comboBox2.SelectedIndex;
 
-            byte[] encKey;
+            byte[] encKey = MainMenu.settings.customKey ? Methods.stringToKey(MainMenu.settings.encCustomKey) : MainMenu.gamelist[comboBox1.SelectedIndex].key;
 
             string debug = null;
-
-            if (MainMenu.settings.customKey)
-            {
-                encKey = Methods.stringToKey(MainMenu.settings.encCustomKey);
-            }
-            else encKey = MainMenu.gamelist[comboBox1.SelectedIndex].key;
 
             int arc_version = comboBox2.SelectedIndex != 1 ? 2 : 7;
 
@@ -139,6 +135,7 @@ namespace TTG_Tools
                 MessageBox.Show("Open and close program or fix path in config.xml!", "Error!");
                 return;
             }
+
             //Создаем нить для экспорта текста из LANGDB
             var processExport = new ForThreads();
             processExport.ReportForWork += AddNewReport;

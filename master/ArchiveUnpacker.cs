@@ -302,7 +302,7 @@ namespace TTG_Tools
             }
             catch
             {
-                MessageBox.Show("Something goes wrong", "Unknown error. Please try another archive.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Something goes wrong", "Unknown error. Please try another archive or change encryption key.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ttarch = null;
             }
         }
@@ -635,7 +635,7 @@ namespace TTG_Tools
             }
             catch
             {
-                MessageBox.Show("Something goes wrong", "Unknown error. Please try another archive.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Something goes wrong", "Unknown error. Please try another archive or change encryption key.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ttarch2 = null;
             }
         }

@@ -32,9 +32,9 @@ namespace TTG_Tools
             int version = Convert.ToInt32(param[6]);
             bool FullEncrypt = param[7] == "True";
             bool isNewEngine = param[8] == "True";
-            byte[] encKey = null;
+            byte[] encKey = Methods.stringToKey(param[9]);
 
-            bool[] show = { false, false, false, false, false, false };
+            bool[] show = { false, false, false, false, false, false, false };
 
             string result = "";
 
@@ -49,6 +49,8 @@ namespace TTG_Tools
             destination.Add(".dlog");
             destination.Add(".dlog");
             destination.Add(".prop");
+            destination.Add(".lua");
+            destination.Add(".lenc");
             List<string> extention = new List<string>();
             extention.Add(".dds");
             extention.Add(".pvr");
@@ -60,6 +62,10 @@ namespace TTG_Tools
             extention.Add(".txt");
             extention.Add(".tsv");
             extention.Add(".txt");
+            extention.Add(".lua");
+            extention.Add(".lenc");
+
+            bool emptyFiles = true;
 
             for (int d = 0; d < destination.Count; d++)
             {
@@ -98,42 +104,50 @@ namespace TTG_Tools
                                         case ".d3dtx":
                                             result = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, false, FullEncrypt, ref encKey, version);
                                             ReportForWork(result);
+                                            emptyFiles = false;
                                             show[0] = true;    
                                                 break;
                                         case ".landb":
                                             result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, encKey, version);
                                             ReportForWork(result);
+                                            emptyFiles = false;
                                             show[1] = true;
                                                 break;
                                         case ".langdb":
                                             result = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, FullEncrypt, ref encKey, version);
                                             ReportForWork(result);
+                                            emptyFiles = false;
                                             show[2] = true;
                                                 break;
                                         case ".dlog":
                                             result = Texts.DlogWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, ref encKey, ref version);
                                             ReportForWork(result);
+                                            emptyFiles = false;
                                             show[3] = true;
                                                 break;
                                         case ".prop":
                                             ImportTXTinPROP(inputFiles[i], fileDestination[j]);
+                                            emptyFiles = false;
                                             show[4] = true;
                                                 break;
                                         case ".font":
                                             result = Graphics.FontWorker.DoWork(inputFiles[i].FullName, false);
                                             ReportForWork(result);
+                                            emptyFiles = false;
                                             show[5] = true;
                                             break;
                                         case ".lua":
                                         case ".lenc":
+
                                             if (MainMenu.settings.customKey)
                                             {
                                                 encKey = Methods.stringToKey(MainMenu.settings.encCustomKey);
 
                                                 if (encKey == null)
                                                 {
-                                                    MessageBox.Show("You must enter key encryption!", "Error");
-                                                    return;
+                                                    ReportForWork("You must enter key encryption!");
+                                                    //MessageBox.Show("You must enter key encryption!", "Error");
+                                                    //return;
                                                 }
                                             }
 
@@ -149,6 +163,8 @@ namespace TTG_Tools
                                             fs.Close();
 
                                             ReportForWork("File " + inputFiles[i].Name + " encrypted.");
+                                            emptyFiles = false;
+                                            show[6] = true;
                                             break;
                                         default:
                                             MessageBox.Show("Error in Switch!");
@@ -210,12 +226,18 @@ namespace TTG_Tools
                         case 5:
                             message += ".FONT";
                             break;
+
+                        case 6:
+                            message += ".LUA/.LENC";
+                            break;
                     }
                     message += " FILES COMPLETE!";
 
                     ReportForWork(message);
                 }
             }
+
+            if (emptyFiles) ReportForWork("Nothing to import. Empty folder.");
         }
 
         public void ImportTXTinPROP(FileInfo inputFile, FileInfo DestinationFile)
@@ -488,7 +510,6 @@ namespace TTG_Tools
             string pathOutput = param[1];
             string versionOfGame = param[2];
             byte[] key = Methods.stringToKey(param[3]);
-            byte[] encKey = null;
             int version = Convert.ToInt32(param[4]);
 
             if (Directory.Exists(pathInput) && Directory.Exists(pathOutput))
@@ -514,6 +535,7 @@ namespace TTG_Tools
                 extractedFormat.Add(-1);
 
                 string message = "";
+                bool emptyFiles = true;
 
                 foreach (string destinationForExport in destinationForExportList)
                 {
@@ -522,30 +544,32 @@ namespace TTG_Tools
 
                     if (inputFiles.Length > 0)
                     {
+                        emptyFiles = false;
+
                         for (int i = 0; i < inputFiles.Length; i++)
                         {
                             switch (destinationForExport)
                             {
                                 case ".langdb":
-                                    message = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, "", true, false, ref encKey, 2);
+                                    message = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, "", true, false, ref key, 2);
                                     ReportForWork(message);
                                     extractedFormat[0] = 0;
                                         break;
 
                                 case ".d3dtx":
-                                    message = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, true, false, ref encKey, version);
+                                    message = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, true, false, ref key, version);
                                     ReportForWork(message);
                                     extractedFormat[1] = 1;
                                         break;
 
                                 case ".landb":
-                                    message = Texts.LandbWorker.DoWork(inputFiles[i].FullName, "", true, encKey, version);
+                                    message = Texts.LandbWorker.DoWork(inputFiles[i].FullName, "", true, key, version);
                                     ReportForWork(message);
                                     extractedFormat[2] = 2;
                                        break;
 
                                 case ".dlog":
-                                    message = Texts.DlogWorker.DoWork(inputFiles[i].FullName, "", true, ref encKey, ref version);
+                                    message = Texts.DlogWorker.DoWork(inputFiles[i].FullName, "", true, ref key, ref version);
                                     //ExtractDlogFile(inputFiles, i);
                                     ReportForWork(message);
                                     extractedFormat[3] = 3;
@@ -571,7 +595,7 @@ namespace TTG_Tools
                                     fs.Close();
 
                                     
-                                    luaContent = Methods.decryptLua(luaContent, encKey, version);
+                                    luaContent = Methods.decryptLua(luaContent, key, version);
 
                                     fs = new FileStream(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name, FileMode.OpenOrCreate);
                                     fs.Write(luaContent, 0, luaContent.Length);
@@ -595,6 +619,8 @@ namespace TTG_Tools
                 {
                     if(extractList != -1) ReportForWork("EXPORT OF ALL *" + destinationForExportList[extractList].ToUpper() + " FILES COMPLETE!");
                 }
+
+                if(emptyFiles) ReportForWork("Nothing to extract. Empty folder.");
             }
 
         }
