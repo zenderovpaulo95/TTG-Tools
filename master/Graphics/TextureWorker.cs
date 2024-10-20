@@ -4,6 +4,7 @@ using System.IO;
 using TTG_Tools.Graphics.DDS;
 using TTG_Tools.Graphics.PVR;
 using TTG_Tools.Graphics.Swizzles;
+using System.Linq;
 
 namespace TTG_Tools.Graphics
 {
@@ -975,7 +976,7 @@ namespace TTG_Tools.Graphics
 
                         if(!oldTex.isIOS) oldTex.TexSize = oldTex.Content.Length;
 
-                        if (File.Exists(OutputDir + "\\" + fi.Name)) File.Delete(OutputDir + "\\" + fi.Name);
+                        if (File.Exists(OutputDir + Path.DirectorySeparatorChar + fi.Name)) File.Delete(OutputDir + Path.DirectorySeparatorChar + fi.Name);
 
                         ms = new MemoryStream();
                         tmp = new byte[headerPos];
@@ -992,7 +993,7 @@ namespace TTG_Tools.Graphics
 
                         if (FullEncrypt) Methods.meta_crypt(tmp, EncKey, version, false);
 
-                        FileStream fs = new FileStream(OutputDir + "\\" + fi.Name, FileMode.CreateNew);
+                        FileStream fs = new FileStream(OutputDir + Path.DirectorySeparatorChar + fi.Name, FileMode.CreateNew);
                         fs.Write(tmp, 0, tmp.Length);
                         fs.Close();
                     }
@@ -1028,7 +1029,8 @@ namespace TTG_Tools.Graphics
                 {
                     result = "File " + fi.Name + " successfully imported.";
 
-                    byte[] NewContent = File.ReadAllBytes(fi.FullName.Remove(fi.FullName.Length - 5) + "dds");
+                    string format = tex.isPVR ? "pvr" : "dds";
+                    byte[] NewContent = File.ReadAllBytes(fi.FullName.Remove(fi.FullName.Length - 5) + format);
                     tex.Tex.Content = new byte[NewContent.Length];
                     Array.Copy(NewContent, 0, tex.Tex.Content, 0, tex.Tex.Content.Length);
 
@@ -1184,9 +1186,66 @@ namespace TTG_Tools.Graphics
                 tmp = BitConverter.GetBytes(tex.Content.Length);
                 Array.Copy(tmp, 0, tex.block, tex.block.Length - 0x20, tmp.Length);
             }
+            else if (tex.isPS3)
+            {
+                int tmpPos = tex.block.Length;
+
+                byte texFormat = 0;
+
+                int texSize = tex.Content.Length;
+                int paddedSize = Methods.pad_size(texSize, 128);
+
+                //cut dds header and copy to padded block
+                tmp = new byte[paddedSize - 128];
+                Array.Copy(tex.Content, 128, tmp, 0, tex.Content.Length - 128);
+                tex.Content = new byte[tmp.Length];
+                Array.Copy(tmp, 0, tex.Content, 0, tmp.Length);
+
+                switch (tex.TextureFormat)
+                {
+                    case (uint)ClassesStructs.TextureClass.OldTextureFormat.DX_DXT1:
+                        texFormat = 0x86;
+                        break;
+
+                    case (uint)ClassesStructs.TextureClass.OldTextureFormat.DX_DXT5:
+                        texFormat = 0x88;
+                        break;
+                }
+
+                tmp = new byte[1];
+                tmp[0] = Convert.ToByte(tex.Mip);
+                Array.Copy(tmp, 0, tex.block, tmpPos - 103, tmp.Length);
+
+                tmp = new byte[1];
+                tmp[0] = texFormat;
+                Array.Copy(tmp, 0, tex.block, tmpPos - 104, tmp.Length);
+
+                tmp = new byte[1];
+                tmp[0] = Convert.ToByte(tex.Mip);
+                Array.Copy(tmp, 0, tex.block, tmpPos - 103, tmp.Length);
+
+                tmp = BitConverter.GetBytes(tex.Width).Reverse().ToArray();
+                Array.Copy(tmp, 2, tex.block, tmpPos - 96, 2);
+
+                tmp = BitConverter.GetBytes(tex.Height).Reverse().ToArray();
+                Array.Copy(tmp, 2, tex.block, tmpPos - 94, 2);
+
+
+                tex.TexSize = texSize;
+
+                tmp = BitConverter.GetBytes(texSize - 128).Reverse().ToArray();
+                Array.Copy(tmp, 0, tex.block, tmpPos - 124, tmp.Length);
+
+                tmp = BitConverter.GetBytes(paddedSize - 128).Reverse().ToArray();
+                Array.Copy(tmp, 0, tex.block, tmpPos - 108, tmp.Length);
+
+                paddedSize += 4; //Add 4 bytes for common size block
+                tmp = BitConverter.GetBytes(paddedSize);
+                Array.Copy(tmp, 0, tex.block, tmpPos - 132, tmp.Length);
+            }
 
             bw.Write(tex.block);
-            if(!tex.isIOS) bw.Write(tex.TexSize);
+            if(!tex.isIOS && !tex.isPS3) bw.Write(tex.TexSize);
 
             if (NeedEncrypt && !tex.isIOS)
             {
@@ -1597,68 +1656,130 @@ namespace TTG_Tools.Graphics
                 int lastPos = poz;
 
                 poz = Methods.FindStartOfStringSomething(binContent, lastPos, "DDS ");
-                tex.isIOS = poz == -1;
+                tex.isIOS = Methods.FindStartOfStringSomething(binContent, lastPos, "PVR!") != -1;
+                tex.isPS3 = Methods.FindStartOfStringSomething(binContent, lastPos, "\x02\x01\x01\x00") != -1;
                 poz = !tex.isIOS ? poz -= 4 : Methods.FindStartOfStringSomething(binContent, lastPos, "PVR!") + 8;
+                poz = !tex.isPS3 ? poz -= 4 : Methods.FindStartOfStringSomething(binContent, lastPos, "\x02\x01\x01\x00") + 128;
 
                 tex.block = new byte[poz - lastPos];
                 Array.Copy(binContent, lastPos, tex.block, 0, tex.block.Length);
                 tex.BlockPos += tex.block.Length;
+                byte formatTex = 0;
+                int paddedSize = 0;
 
-                switch (tex.isIOS)
+                if(tex.isIOS)
                 {
-                    case true:
-                        tmp = new byte[4];
-                        Array.Copy(binContent, poz - 0x38, tmp, 0, tmp.Length);
-                        tex.TexSize = BitConverter.ToInt32(tmp, 0) - 0x34;
-                        
-                        tmp = new byte[4];
-                        Array.Copy(binContent, poz - 0x2c, tmp, 0, tmp.Length);
-                        tex.Width = BitConverter.ToInt32(tmp, 0);
-                        tex.OriginalWidth = tex.Width;
+                    tmp = new byte[4];
+                    Array.Copy(binContent, poz - 0x38, tmp, 0, tmp.Length);
+                    tex.TexSize = BitConverter.ToInt32(tmp, 0) - 0x34;
 
-                        tmp = new byte[4];
-                        Array.Copy(binContent, poz - 0x30, tmp, 0, tmp.Length);
-                        tex.Height = BitConverter.ToInt32(tmp, 0);
-                        tex.OriginalHeight = tex.Height;
+                    tmp = new byte[4];
+                    Array.Copy(binContent, poz - 0x2c, tmp, 0, tmp.Length);
+                    tex.Width = BitConverter.ToInt32(tmp, 0);
+                    tex.OriginalWidth = tex.Width;
 
-                        tmp = new byte[4];
-                        Array.Copy(binContent, poz - 0x24, tmp, 0, tmp.Length);
-                        tex.mobTexFormat = BitConverter.ToUInt32(tmp, 0);
+                    tmp = new byte[4];
+                    Array.Copy(binContent, poz - 0x30, tmp, 0, tmp.Length);
+                    tex.Height = BitConverter.ToInt32(tmp, 0);
+                    tex.OriginalHeight = tex.Height;
 
-                        tmp = new byte[4];
-                        Array.Copy(binContent, poz - 0x28, tmp, 0, tmp.Length);
-                        tex.Mip = BitConverter.ToInt32(tmp, 0);
+                    tmp = new byte[4];
+                    Array.Copy(binContent, poz - 0x24, tmp, 0, tmp.Length);
+                    tex.mobTexFormat = BitConverter.ToUInt32(tmp, 0);
 
-                        break;
-
-                    default:
-                        tmp = new byte[4];
-                        Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-                        tex.TexSize = BitConverter.ToInt32(tmp, 0);
-                        poz += 4;
-                        tex.BlockPos += 4;
-                        break;
+                    tmp = new byte[4];
+                    Array.Copy(binContent, poz - 0x28, tmp, 0, tmp.Length);
+                    tex.Mip = BitConverter.ToInt32(tmp, 0);
                 }
+                else if(tex.isPS3)
+                {
+                    tmp = new byte[4];
+                    Array.Copy(binContent, poz - 124, tmp, 0, tmp.Length);
+                    Array.Reverse(tmp);
+                    tex.TexSize = BitConverter.ToInt32(tmp, 0);
 
+                    tmp = new byte[4];
+                    Array.Copy(binContent, poz - 108, tmp, 0, tmp.Length);
+                    Array.Reverse(tmp);
+                    paddedSize = BitConverter.ToInt32(tmp, 0);
+
+                    tmp = new byte[2];
+                    Array.Copy(binContent, poz - 96, tmp, 0, tmp.Length);
+                    Array.Reverse(tmp);
+                    tex.Width = BitConverter.ToInt16(tmp, 0);
+
+                    tmp = new byte[2];
+                    Array.Copy(binContent, poz - 94, tmp, 0, tmp.Length);
+                    Array.Reverse(tmp);
+                    tex.Height = BitConverter.ToInt16(tmp, 0);
+
+                    tmp = new byte[1];
+                    Array.Copy(binContent, poz - 104, tmp, 0, tmp.Length);
+                    formatTex = tmp[0];
+
+                    tmp = new byte[1];
+                    Array.Copy(binContent, poz - 103, tmp, 0, tmp.Length);
+                    tex.Mip = Convert.ToInt32(tmp[0]);
+                }
+                else
+                {
+                    tmp = new byte[4];
+                    Array.Copy(binContent, poz, tmp, 0, tmp.Length);
+                    tex.TexSize = BitConverter.ToInt32(tmp, 0);
+                    poz += 4;
+                    tex.BlockPos += 4;
+                }
+                
                 tex.Content = new byte[tex.TexSize];
                 Array.Copy(binContent, poz, tex.Content, 0, tex.Content.Length);
-                poz += tex.Content.Length;
+                poz += tex.isPS3 ? paddedSize : tex.Content.Length;
 
-                switch (tex.isIOS)
+                if(tex.isIOS)
                 {
-                    case true:
-                        byte[] header = GenPvrHeader(tex.Width, tex.Height, tex.Mip, tex.mobTexFormat, 0, 0, false);
+                    byte[] header = GenPvrHeader(tex.Width, tex.Height, tex.Mip, tex.mobTexFormat, 0, 0, false);
 
-                        if (header == null) return null;
+                    if (header == null) return null;
 
-                        tmp = new byte[tex.Content.Length + header.Length];
-                        Array.Copy(header, 0, tmp, 0, header.Length);
-                        Array.Copy(tex.Content, 0, tmp, header.Length, tex.Content.Length);
-                        tex.Content = new byte[tmp.Length];
-                        Array.Copy(tmp, 0, tex.Content, 0, tex.Content.Length);
-                        break;
+                    tmp = new byte[tex.Content.Length + header.Length];
+                    Array.Copy(header, 0, tmp, 0, header.Length);
+                    Array.Copy(tex.Content, 0, tmp, header.Length, tex.Content.Length);
+                    tex.Content = new byte[tmp.Length];
+                    Array.Copy(tmp, 0, tex.Content, 0, tex.Content.Length);
+                }
+                else if(tex.isPS3)
+                {
+                    uint format = 0;
+                    string texFormat = "";
 
-                    default:
+                    switch(formatTex)
+                    {
+                        case 0x86: //DXT1
+                        case 0xA6:
+                            format = 0x40;
+                            break;
+
+                        case 0x88: //DXT5
+                        case 0xA8: //DXT5
+                            format = 0x42;
+                            break;
+
+                        case 0x81:
+                            format = 4; //ARGB4444?
+                            break;
+                    }
+
+                    byte[] header = GenHeader(format, tex.Width, tex.Height, (uint)tex.TexSize, 0, 0, tex.Mip, ref texFormat);
+
+                    if (header == null) return null;
+
+                    tmp = new byte[tex.Content.Length + header.Length];
+                    Array.Copy(header, 0, tmp, 0, header.Length);
+                    Array.Copy(tex.Content, 0, tmp, header.Length, tex.Content.Length);
+                    tex.Content = new byte[tmp.Length];
+                    Array.Copy(tmp, 0, tex.Content, 0, tex.Content.Length);
+                }
+                else
+                {
                     tmp = new byte[4];
                     Array.Copy(tex.Content, 16, tmp, 0, tmp.Length);
                     tex.Width = BitConverter.ToInt32(tmp, 0);
@@ -1666,9 +1787,7 @@ namespace TTG_Tools.Graphics
                     tmp = new byte[4];
                     Array.Copy(tex.Content, 12, tmp, 0, tmp.Length);
                     tex.Height = BitConverter.ToInt32(tmp, 0);
-                        break;
                 }
-
 
                 if ((tex.TexFlags != null) && (tex.TexFlags.TexSizes != null)) 
                 {
@@ -1862,6 +1981,9 @@ namespace TTG_Tools.Graphics
 
             switch (tex.SomeValue)
             {
+                case 3:
+                    blSize = checkHeader == "ERTM" ? 0x24 : 0x28; //I hope this solution will work correct
+                    break;
                 case 4:
                     blSize = 0x28;
                     break;

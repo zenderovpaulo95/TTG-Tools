@@ -52,6 +52,7 @@
         public class OldT3Texture
         {
             public bool isIOS;
+            public bool isPS3;
             public uint mobTexFormat; //For iOS devices
             public int sizeBlock; //For games since Hector
             public int someValue; //For games since Hector
@@ -78,6 +79,7 @@
             public OldT3Texture(OldT3Texture newClass)
             {
                 isIOS = newClass.isIOS;
+                isPS3 = newClass.isPS3;
                 mobTexFormat = newClass.mobTexFormat;
                 sizeBlock = newClass.sizeBlock;
                 someValue = newClass.someValue;

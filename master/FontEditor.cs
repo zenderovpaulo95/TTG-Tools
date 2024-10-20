@@ -62,7 +62,6 @@ namespace TTG_Tools
             byte[] temp = Methods.ReadFull(fs);
             fs.Close();
 
-
             tex.Content = new byte[temp.Length];
             Array.Copy(temp, 0, tex.Content, 0, temp.Length);
 
@@ -70,10 +69,68 @@ namespace TTG_Tools
             Graphics.TextureWorker.ReadDDSHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, false);
             ms.Close();
 
+            /*if (tex.isPS3)
+            {
+                int tmpPos = tex.block.Length;
+
+                byte texFormat = 0;
+
+                int texSize = tex.Content.Length;
+                int paddedSize = Methods.pad_size(texSize, 128);
+
+                //cut dds header and copy to padded block
+                byte[] tmp = new byte[paddedSize - 128];
+                Array.Copy(tex.Content, 128, tmp, 0, tex.Content.Length - 128);
+                tex.Content = new byte[tmp.Length];
+                Array.Copy(tmp, 0, tex.Content, 0, tmp.Length);
+
+                switch (tex.TextureFormat)
+                {
+                    case (uint)ClassesStructs.TextureClass.OldTextureFormat.DX_DXT1:
+                        texFormat = 0x86;
+                        break;
+
+                    case (uint)ClassesStructs.TextureClass.OldTextureFormat.DX_DXT5:
+                        texFormat = 0x88;
+                        break;
+                }
+
+                tmp = new byte[1];
+                tmp[0] = Convert.ToByte(tex.Mip);
+                Array.Copy(tmp, 0, tex.block, tmpPos - 103, tmp.Length);
+
+                tmp = new byte[1];
+                tmp[0] = texFormat;
+                Array.Copy(tmp, 0, tex.block, tmpPos - 104, tmp.Length);
+
+                tmp = new byte[1];
+                tmp[0] = Convert.ToByte(tex.Mip);
+                Array.Copy(tmp, 0, tex.block, tmpPos - 103, tmp.Length);
+
+                tmp = BitConverter.GetBytes(tex.Width).Reverse().ToArray();
+                Array.Copy(tmp, 2, tex.block, tmpPos - 96, 2);
+
+                tmp = BitConverter.GetBytes(tex.Height).Reverse().ToArray();
+                Array.Copy(tmp, 2, tex.block, tmpPos - 94, 2);
+
+
+                tex.TexSize = texSize;
+
+                tmp = BitConverter.GetBytes(texSize - 128).Reverse().ToArray();
+                Array.Copy(tmp, 0, tex.block, tmpPos - 124, tmp.Length);
+
+                tmp = BitConverter.GetBytes(paddedSize - 128).Reverse().ToArray();
+                Array.Copy(tmp, 0, tex.block, tmpPos - 108, tmp.Length);
+
+                paddedSize += 4; //Add 4 bytes for common size block
+                tmp = BitConverter.GetBytes(paddedSize);
+                Array.Copy(tmp, 0, tex.block, tmpPos - 132, tmp.Length);
+            }*/
+
             tex.OriginalHeight = tex.Height;
             tex.OriginalWidth = tex.Width;
             font.BlockTexSize += tex.Content.Length - tex.TexSize;
-            tex.TexSize = tex.Content.Length;
+            if(!tex.isPS3) tex.TexSize = tex.Content.Length;
         }
 
         private void ReplaceTexture(string DdsFile, ClassesStructs.TextureClass.NewT3Texture NewTex)
@@ -795,7 +852,7 @@ namespace TTG_Tools
                         rbNoKerning.Enabled = font.NewFormat;
                         edited = false;
                         FileInfo fi = new FileInfo(FileName);
-                        Form.ActiveForm.Text = "Font Editor. Opened file " + fi.Name;
+                        if(Form.ActiveForm != null) Form.ActiveForm.Text = "Font Editor. Opened file " + fi.Name;
 
                     }
                     catch(Exception ex)
@@ -1625,9 +1682,9 @@ namespace TTG_Tools
                                     case "file":
                                         string fileName = strings[m].Substring(strings[m].IndexOf("file=") + 5).Replace("\"", string.Empty);
 
-                                        if (fileName.ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + "\\" + fileName))
+                                        if (fileName.ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + Path.DirectorySeparatorChar + fileName))
                                         {
-                                            ReplaceTexture(fi.DirectoryName + "\\" + splitted[k + 1], tmpNewTex[idNum]);
+                                            ReplaceTexture(fi.DirectoryName + Path.DirectorySeparatorChar + splitted[k + 1], tmpNewTex[idNum]);
                                         }
                                         break;
                                 }
@@ -1800,9 +1857,9 @@ namespace TTG_Tools
 
                                         string fileName = strings[m].Substring(strings[m].IndexOf("file=") + 5).Replace("\"", string.Empty);
 
-                                        if (fileName.ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + "\\" +  fileName))
+                                        if (fileName.ToLower().Contains(".dds") && File.Exists(fi.DirectoryName + Path.DirectorySeparatorChar +  fileName))
                                         {
-                                            ReplaceTexture(fi.DirectoryName + "\\" + fileName, tmpOldTex[idNum]);
+                                            ReplaceTexture(fi.DirectoryName + Path.DirectorySeparatorChar + fileName, tmpOldTex[idNum]);
                                         }
                                         break;
                                 }

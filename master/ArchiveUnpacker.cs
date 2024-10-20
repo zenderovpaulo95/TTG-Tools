@@ -242,8 +242,6 @@ namespace TTG_Tools
                     ttarch.isEncrypted = true;
                     BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, ttarch.version);
                     header = dec.Crypt_ECB(header, ttarch.version, true);
-
-                    File.WriteAllBytes("test.bin", header);
                 }
 
                 using (MemoryStream ms = new MemoryStream(header))
@@ -300,9 +298,9 @@ namespace TTG_Tools
                 br.Close();
                 fs.Close();
             }
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("Something goes wrong", "Unknown error. Please try another archive or change encryption key.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Unknown error. Please try another archive or change encryption key.\r\nGot exception:\r\n" + ex.Message, "Something goes wrong", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ttarch = null;
             }
         }
@@ -949,7 +947,7 @@ namespace TTG_Tools
                         break;
                 }
 
-                Form.ActiveForm.Text = "Archive unpacker. Opened file: " + fi.Name;
+                if (Form.ActiveForm != null) Form.ActiveForm.Text = "Archive unpacker. Opened file: " + fi.Name;
                 actionsToolStripMenuItem.Enabled = true;
             }
         }

@@ -50,23 +50,6 @@ namespace TTG_Tools
                 progressBar1.Value = i;
             }
         }
-
-
-        public static UInt64 pad_it(UInt64 num, UInt64 pad)
-        {
-            UInt64 t;
-            t = num % pad;
-
-            if (Convert.ToBoolean(t)) num += pad - t;
-            return (num);
-        }
-
-        public static Int32 pad_size(Int32 num, Int32 pad)
-        {
-            while (num % pad != 0) num++;
-
-            return num;
-        }
         
         private bool CheckDll(string filePath)
         {
@@ -226,10 +209,10 @@ namespace TTG_Tools
             byte[] subHeader = versionArchive == 1 ? Encoding.ASCII.GetBytes("3ATT") : Encoding.ASCII.GetBytes("4ATT");
 
             //Перепроверить код на рассчёт общего размера
-            nameSize = pad_it(nameSize, 0x10000); //Pad size of file name's block by 64KB
+            nameSize = Methods.pad_it(nameSize, 0x10000); //Pad size of file name's block by 64KB
             commonSize = versionArchive == 1 ? dataSize + tableSize + nameSize + 4 + 4 + 4 + 4 : dataSize + tableSize + nameSize + 4 + 4 + 4; //Common archive's size
 
-            int chunksCount = (int)(pad_it(commonSize, (ulong)chunkSize)) / chunkSize;
+            int chunksCount = (int)(Methods.pad_it(commonSize, (ulong)chunkSize)) / chunkSize;
             ulong chunksFirstOffset = compressAlgorithm == 1 ? 24 + (ulong)(chunksCount * 8) : 20 + (ulong)(chunksCount * 8);
             ulong[] compressedOffset = new ulong[chunksCount];
             byte[] namesTable = new byte[nameSize];
@@ -298,7 +281,7 @@ namespace TTG_Tools
             progressBar1.Maximum = fi.Length;
 
             //Try write subheader and file table
-            int tableChunksCount = versionArchive == 1 ? pad_size(16 + table.Length + namesTable.Length, chunkSize) / chunkSize : pad_size(12 + table.Length + namesTable.Length, chunkSize) / chunkSize;
+            int tableChunksCount = versionArchive == 1 ? Methods.pad_size(16 + table.Length + namesTable.Length, chunkSize) / chunkSize : Methods.pad_size(12 + table.Length + namesTable.Length, chunkSize) / chunkSize;
             byte[] chunk = new byte[chunkSize];
 
             Array.Copy(subHeader, 0, chunk, chunkOff, subHeader.Length);
@@ -382,7 +365,7 @@ namespace TTG_Tools
                     file = Methods.encryptLua(file, key, newEngine, 7);
                 }
 
-                int fileChunkCount = pad_size((int)chunkOff + file.Length, chunkSize) / chunkSize;
+                int fileChunkCount = Methods.pad_size((int)chunkOff + file.Length, chunkSize) / chunkSize;
                 chunkFile = (uint)file.Length;
                 chunkFileOff = 0;
 
@@ -499,6 +482,7 @@ namespace TTG_Tools
 
             mbw.Write(directories);
             tableSize += 4;
+            uint uncompressedHeaderSize = 0;
 
             for (int i = 0; i < directories; i++) //Get directories' name
             {
@@ -560,6 +544,7 @@ namespace TTG_Tools
             }
 
             byte[] table = ms.ToArray();
+            uncompressedHeaderSize = (uint)table.Length;
 
             byte[] crc32Header = CRCs.CRC32_generator(table);
 
@@ -584,11 +569,11 @@ namespace TTG_Tools
             mbw.Close();
             ms.Close();
 
-            int chunksCount = pad_size((int)fileOffset, (int)chunkSize) / chunkSize;
+            int chunksCount = Methods.pad_size((int)fileOffset, (int)chunkSize) / chunkSize;
 
             compressedChunks = new uint[chunksCount];
             int encrypted = (versionArchive <= 2) || encryptCheck ? 1 : 0; //Set flag for encrypt archive
-            int unknown1 = 2;
+            int platform = 2; //2 - PC
             int unknown2 = compression ? 2 : 1;
 
             if (File.Exists(outputPath)) File.Delete(outputPath);
@@ -597,7 +582,7 @@ namespace TTG_Tools
             BinaryWriter bw = new BinaryWriter(fs);
             bw.Write(versionArchive);
             bw.Write(encrypted);
-            bw.Write(unknown1);
+            bw.Write(platform);
             uint pos = 0;
 
             if(archiveVersion >= 3)
@@ -639,6 +624,7 @@ namespace TTG_Tools
                         if (versionArchive == 9)
                         {
                             bw.Write(crc32Header);
+                            bw.Write(uncompressedHeaderSize);
                         }
                     }
                 }
@@ -665,7 +651,7 @@ namespace TTG_Tools
 
                 if ((!DontEncLua && fi[a].Extension.ToLower() == ".lua") || fi[a].Extension.ToLower() == ".lenc") file = Methods.encryptLua(file, key, false, archiveVersion);
 
-                int fileChunkCount = pad_size(chunkOff + file.Length, chunkSize) / chunkSize;
+                int fileChunkCount = Methods.pad_size(chunkOff + file.Length, chunkSize) / chunkSize;
                 int chunkFile = file.Length;
                 int chunkFileOff = 0;
 

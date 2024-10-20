@@ -183,7 +183,7 @@ namespace TTG_Tools
                 string firstActorName = "", secondActorName = "";
                 bool hasDuplicate;
 
-                progressBar1.Maximum = checkTxts.Count - 1;
+                progressBar1.Maximum = checkTxts.Count;
 
                 for (int i = 0; i < checkTxts.Count; i++)
                 {
@@ -233,7 +233,7 @@ namespace TTG_Tools
                         duplicatedStrs.Add(tmpTxt);
                     }
 
-                    ProcessorProgress(i);
+                    ProcessorProgress(i + 1);
                 }
 
                 
@@ -281,7 +281,7 @@ namespace TTG_Tools
                     DirectoryInfo di = new DirectoryInfo(filePath);
                     FileInfo[] fi = di.GetFiles("*.*", SearchOption.AllDirectories);
 
-                    progressBar2.Maximum = fi.Length - 1;
+                    progressBar2.Maximum = fi.Length;
 
                     for (int i = 0; i < fi.Length; i++)
                     {
@@ -294,7 +294,7 @@ namespace TTG_Tools
                             else Texts.SaveText.OldMethod(checkTxts, true, false, readyFilePath + "\\" + tmpFI.Name);
                         }
 
-                        ProcessorProgress2(i);
+                        ProcessorProgress2(i + 1);
                     }
                 }
                 else
@@ -311,7 +311,7 @@ namespace TTG_Tools
             List<CommonText> orStrings = Texts.ReadText.GetStrings(originalPath);
             List<CommonText> trStrings = Texts.ReadText.GetStrings(translatePath);
 
-            progressBar1.Maximum = orStrings.Count - 1;
+            progressBar1.Maximum = orStrings.Count;
 
             for (int i = 0; i < orStrings.Count; i++)
             {
@@ -335,7 +335,7 @@ namespace TTG_Tools
 
                 orStrings[i] = tmpTxt;
 
-                ProcessorProgress(i);
+                ProcessorProgress(i + 1);
             }
 
             if (sortStrsCB.Checked)
@@ -391,7 +391,7 @@ namespace TTG_Tools
                 FileInfo[] originalFI = originalDI.GetFiles("*.*", SearchOption.AllDirectories);
                 FileInfo[] translateFI = translateDI.GetFiles("*.*", SearchOption.AllDirectories);
 
-                progressBar2.Maximum = originalFI.Length - 1;
+                progressBar2.Maximum = originalFI.Length;
 
                 for(int i = 0; i < originalFI.Length; i++)
                 {
@@ -414,7 +414,7 @@ namespace TTG_Tools
                         }
                     }
 
-                    ProcessorProgress2(i);
+                    ProcessorProgress2(i + 1);
                 }
             }
         }
@@ -425,7 +425,7 @@ namespace TTG_Tools
             CommonText tmpTxts;
             List<CommonText> nonTranslate = new List<CommonText>();
 
-            progressBar1.Maximum = checkTxt.Count - 1;
+            progressBar1.Maximum = checkTxt.Count;
 
             string originalStr = "", translatedStr = "";
 
@@ -452,7 +452,7 @@ namespace TTG_Tools
                     nonTranslate.Add(tmpTxts);
                 }
 
-                ProcessorProgress(i);
+                ProcessorProgress(i + 1);
             }
 
             return nonTranslate;
@@ -496,7 +496,7 @@ namespace TTG_Tools
                 {
                     DirectoryInfo di = new DirectoryInfo(filePath);
                     FileInfo[] fi = di.GetFiles("*.*", SearchOption.AllDirectories);
-                    progressBar2.Maximum = fi.Length - 1;
+                    progressBar2.Maximum = fi.Length;
 
                     for (int i = 0; i < fi.Length; i++)
                     {
@@ -520,7 +520,7 @@ namespace TTG_Tools
                             }
                         }
 
-                        ProcessorProgress2(i);
+                        ProcessorProgress2(i + 1);
                     }
                 }
                 else
@@ -538,7 +538,7 @@ namespace TTG_Tools
             string firstString = "", secondString = "";
             string firstActor = "", secondActor = "";
 
-            progressBar1.Maximum = originalStrs.Count - 1;
+            progressBar1.Maximum = originalStrs.Count;
 
             for (int i = 0; i < originalStrs.Count; i++)
             {
@@ -571,7 +571,7 @@ namespace TTG_Tools
                     }
                 }
 
-                ProcessorProgress(i);
+                ProcessorProgress(i + 1);
             }
 
             return sortedStrs;

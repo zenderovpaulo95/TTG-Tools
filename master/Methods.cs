@@ -79,6 +79,22 @@ namespace TTG_Tools
             return str;
         }
 
+        public static UInt64 pad_it(UInt64 num, UInt64 pad)
+        {
+            UInt64 t;
+            t = num % pad;
+
+            if (Convert.ToBoolean(t)) num += pad - t;
+            return (num);
+        }
+
+        public static Int32 pad_size(Int32 num, Int32 pad)
+        {
+            while (num % pad != 0) num++;
+
+            return num;
+        }
+
         //For tests
         public static bool isUTF8String(byte[] arr)
         {
