@@ -50,6 +50,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sortLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -184,9 +185,9 @@
             this.labelUnicode.AutoSize = true;
             this.labelUnicode.Location = new System.Drawing.Point(212, 107);
             this.labelUnicode.Name = "labelUnicode";
-            this.labelUnicode.Size = new System.Drawing.Size(35, 13);
+            this.labelUnicode.Size = new System.Drawing.Size(72, 13);
             this.labelUnicode.TabIndex = 16;
-            this.labelUnicode.Text = "label3";
+            this.labelUnicode.Text = "Unicode label";
             // 
             // checkIOS
             // 
@@ -307,11 +308,21 @@
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
+            // sortLabel
+            // 
+            this.sortLabel.AutoSize = true;
+            this.sortLabel.Location = new System.Drawing.Point(7, 162);
+            this.sortLabel.Name = "sortLabel";
+            this.sortLabel.Size = new System.Drawing.Size(51, 13);
+            this.sortLabel.TabIndex = 16;
+            this.sortLabel.Text = "Sort label";
+            // 
             // AutoPacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(821, 612);
+            this.Controls.Add(this.sortLabel);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.checkCustomKey);
             this.Controls.Add(this.label1);
@@ -363,6 +374,7 @@
         private System.Windows.Forms.RadioButton rbSwitchSwizzle;
         private System.Windows.Forms.RadioButton rbPS4Swizzle;
         private System.Windows.Forms.RadioButton rbNoSwizzle;
+        private System.Windows.Forms.Label sortLabel;
     }
 }
 

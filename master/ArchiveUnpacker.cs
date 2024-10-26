@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
-using System.Threading;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using TTG_Tools.ClassesStructs;
 
 namespace TTG_Tools
@@ -277,7 +275,7 @@ namespace TTG_Tools
                             {
                                 ttarch.isEncryptedLua = Methods.GetExtension(ttarch.files[f].fileName).ToLower() == ".lenc";
 
-                                byte[] tmp = getTtarchFile(ttarch, ttarch.files[f], key, ttarch.chunkSize * 1024, fs);
+                                byte[] tmp = getTtarchFile(ttarch, ttarch.files[f], key, ttarch.chunkSize * 1024, br);
 
                                 ttarch.isEncryptedLua = Methods.isLuaEncrypted(tmp);
                             }
@@ -322,6 +320,7 @@ namespace TTG_Tools
             var files = format == "All files" ? ttarch.files : ttarch.files.Where(x => Methods.GetExtension(x.fileName).ToLower() == format.ToLower()).ToArray();
 
             FileStream fs = new FileStream(ttarch.filePath, FileMode.Open);
+            BinaryReader br = new BinaryReader(fs);
 
             bool decrypt = decryptLuaCB.Checked;
             byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
@@ -337,7 +336,7 @@ namespace TTG_Tools
             {
                 int ind = indexes != null ? indexes[i] : i;
 
-                byte[] file = getTtarchFile(ttarch, files[ind], key, chunkSz, fs);
+                byte[] file = getTtarchFile(ttarch, files[ind], key, chunkSz, br);
 
                 string fileName = files[ind].fileName;
                 if ((fileName.Substring(fileName.Length - 5, 5) == ".lenc") && decrypt)
@@ -351,6 +350,7 @@ namespace TTG_Tools
                 Progress(i + 1);
             }
 
+            br.Close();
             fs.Close();
         }
 
@@ -507,7 +507,7 @@ namespace TTG_Tools
                                         }
                                         else
                                         {
-                                            byte[] lua = getTtarch2File(ttarch2, ttarch2.files[i], key, fs);
+                                            byte[] lua = getTtarch2File(ttarch2, ttarch2.files[i], key, br);
 
                                             ttarch2.isEncryptedLua = Methods.isLuaEncrypted(lua);
                                         }
@@ -581,7 +581,7 @@ namespace TTG_Tools
                                 }
                                 else
                                 {
-                                    byte[] tmp = getTtarch2File(ttarch2, ttarch2.files[i], key, fs);
+                                    byte[] tmp = getTtarch2File(ttarch2, ttarch2.files[i], key, br);
 
                                     ttarch2.isEncryptedLua = Methods.isLuaEncrypted(tmp);
                                 }
@@ -620,12 +620,13 @@ namespace TTG_Tools
             byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
 
             FileStream fs = new FileStream(ttarch2.fileName, FileMode.Open);
+            BinaryReader br = new BinaryReader(fs);
 
             for (int i = 0; i < count; i++)
             {
                 int ind = indexes != null ? indexes[i] : i;
 
-                byte[] file = getTtarch2File(ttarch2, files[ind], key, fs);
+                byte[] file = getTtarch2File(ttarch2, files[ind], key, br);
 
                 string fileName = files[ind].fileName;
                 if (((fileName.Substring(fileName.Length - 5, 5).ToLower() == ".lenc") || (fileName.Substring(fileName.Length - 4, 4).ToLower() == ".lua")) && decrypt)
@@ -639,6 +640,7 @@ namespace TTG_Tools
                 Progress(i + 1);
             }
 
+            br.Close();
             fs.Close();
         }
 
@@ -730,10 +732,9 @@ namespace TTG_Tools
             filesDataGridView.ClearSelection();
         }
 
-        private static byte[] getTtarchFile(ClassesStructs.TtarchClass ttarch, ClassesStructs.TtarchClass.ttarchFiles file, byte[] key, int chunkSz, Stream stream)
+        private static byte[] getTtarchFile(ClassesStructs.TtarchClass ttarch, ClassesStructs.TtarchClass.ttarchFiles file, byte[] key, int chunkSz, BinaryReader br)
         {
             byte[] result = null;
-            BinaryReader br = new BinaryReader(stream);
 
             if (!ttarch.isCompressed)
             {
@@ -751,7 +752,6 @@ namespace TTG_Tools
                 {
                     MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    br.Close();
                     return null;
                 }
 
@@ -759,7 +759,6 @@ namespace TTG_Tools
                 {
                     MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    br.Close();
                     return null;
                 }
 
@@ -802,14 +801,12 @@ namespace TTG_Tools
                 }
             }
 
-            br.Close();
             return result;
         }
 
-        private static byte[] getTtarch2File(Ttarch2Class ttarch2, Ttarch2Class.Ttarch2files file, byte[] key, Stream stream)
+        private static byte[] getTtarch2File(Ttarch2Class ttarch2, Ttarch2Class.Ttarch2files file, byte[] key, BinaryReader br)
         {
             byte[] result = null;
-            BinaryReader br = new BinaryReader(stream);
 
             if (ttarch2.isCompressed)
             {
@@ -820,7 +817,6 @@ namespace TTG_Tools
                 {
                     MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    br.Close();
                     return null;
                 }
 
@@ -828,7 +824,6 @@ namespace TTG_Tools
                 {
                     MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    br.Close();
                     return null;
                 }
 
@@ -886,8 +881,6 @@ namespace TTG_Tools
                 result = br.ReadBytes(file.fileSize);
             }
 
-            br.Close();
-
             return result;
         }
         private void loadTtarch2Data(string format)
@@ -937,7 +930,7 @@ namespace TTG_Tools
             {
                 FileInfo fi = new FileInfo(ofd.FileName);
 
-                if(fi.Attributes.HasFlag(FileAttributes.ReadOnly)) fi.Attributes = FileAttributes.Normal;
+                if(fi.Attributes.HasFlag(FileAttributes.ReadOnly) || !fi.Attributes.HasFlag(FileAttributes.Normal)) fi.Attributes = FileAttributes.Normal;
 
                 ttarch = null;
                 ttarch2 = null;

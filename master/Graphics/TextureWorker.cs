@@ -935,8 +935,8 @@ namespace TTG_Tools.Graphics
 
                             string format = oldTex.isIOS ? ".pvr" : ".dds";
 
-                            if (File.Exists(OutputDir + "\\" + fi.Name.Replace(".d3dtx", format))) File.Delete(OutputDir + "\\" + fi.Name.Replace(".d3dtx", format));
-                            File.WriteAllBytes(OutputDir + "\\" + fi.Name.Replace(".d3dtx", format), oldTex.Content);
+                            if (File.Exists(OutputDir + Path.DirectorySeparatorChar + fi.Name.Replace(".d3dtx", format))) File.Delete(OutputDir + Path.DirectorySeparatorChar + fi.Name.Replace(".d3dtx", format));
+                            File.WriteAllBytes(OutputDir + Path.DirectorySeparatorChar + fi.Name.Replace(".d3dtx", format), oldTex.Content);
 
                             if (additionalMessage != null) result += additionalMessage;
                         }
@@ -1658,8 +1658,18 @@ namespace TTG_Tools.Graphics
                 poz = Methods.FindStartOfStringSomething(binContent, lastPos, "DDS ");
                 tex.isIOS = Methods.FindStartOfStringSomething(binContent, lastPos, "PVR!") != -1;
                 tex.isPS3 = Methods.FindStartOfStringSomething(binContent, lastPos, "\x02\x01\x01\x00") != -1;
-                poz = !tex.isIOS ? poz -= 4 : Methods.FindStartOfStringSomething(binContent, lastPos, "PVR!") + 8;
-                poz = !tex.isPS3 ? poz -= 4 : Methods.FindStartOfStringSomething(binContent, lastPos, "\x02\x01\x01\x00") + 128;
+
+                if ((!tex.isIOS || !tex.isPS3) && poz != -1)
+                {
+                    poz -= 4;
+                    tex.isPS3 = false;
+                    tex.isIOS = false;
+                }
+                else
+                {
+                    if (tex.isIOS) poz = Methods.FindStartOfStringSomething(binContent, lastPos, "PVR!") + 8;
+                    else poz = Methods.FindStartOfStringSomething(binContent, lastPos, "\x02\x01\x01\x00") + 128;
+                }
 
                 tex.block = new byte[poz - lastPos];
                 Array.Copy(binContent, lastPos, tex.block, 0, tex.block.Length);

@@ -548,8 +548,6 @@ namespace TTG_Tools
 
             byte[] crc32Header = CRCs.CRC32_generator(table);
 
-            tableSize = (uint)table.Length;
-
             if (versionArchive <= 2 || encryptCheck) table = encryptFunction(table, key, versionArchive);
 
             if (versionArchive >= 7 && compression)
@@ -565,6 +563,8 @@ namespace TTG_Tools
                         break;
                 }
             }
+
+            tableSize = (uint)table.Length;
 
             mbw.Close();
             ms.Close();
@@ -624,7 +624,7 @@ namespace TTG_Tools
                         if (versionArchive == 9)
                         {
                             bw.Write(crc32Header);
-                            bw.Write(uncompressedHeaderSize);
+                            if(compression) bw.Write(uncompressedHeaderSize);
                         }
                     }
                 }

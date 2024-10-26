@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
-using BlowFishCS;
 
 namespace TTG_Tools
 {
@@ -191,6 +188,7 @@ namespace TTG_Tools
             comboBox2.SelectedIndex = MainMenu.settings.versionEnc;
             labelUnicode.Text = "Unicode is ";
             labelUnicode.Text += MainMenu.settings.unicodeSettings == 0 ? "set." : "not set.";
+            sortLabel.Text = MainMenu.settings.sortSameString ? "Warning! Some files may be slowly extract due enabled sort strings." : "";
             checkEncDDS.Checked = MainMenu.settings.encDDSonly;
             checkIOS.Checked = MainMenu.settings.iOSsupport;
             checkEncLangdb.Checked = MainMenu.settings.encLangdb;
@@ -309,6 +307,8 @@ namespace TTG_Tools
 
             labelUnicode.Text = "Unicode is ";
             labelUnicode.Text += MainMenu.settings.unicodeSettings == 0 ? "set." : "not set.";
+
+            sortLabel.Text = MainMenu.settings.sortSameString ? "Warning! Some files may be slowly extract due enabled sort strings." : "";
         }
 
         private void SettingsForm_FormClosed(object sender, FormClosedEventArgs e)
