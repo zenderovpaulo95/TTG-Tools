@@ -51,6 +51,7 @@
             this.decryptLuaCB = new System.Windows.Forms.CheckBox();
             this.useCustomKeyCB = new System.Windows.Forms.CheckBox();
             this.customKeyTB = new System.Windows.Forms.TextBox();
+            this.encrLuaLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.filesDataGridView)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -103,14 +104,14 @@
             // unpackToolStripMenuItem
             // 
             this.unpackToolStripMenuItem.Name = "unpackToolStripMenuItem";
-            this.unpackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.unpackToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.unpackToolStripMenuItem.Text = "Unpack";
             this.unpackToolStripMenuItem.Click += new System.EventHandler(this.unpackToolStripMenuItem_Click);
             // 
             // unpackSelectedToolStripMenuItem
             // 
             this.unpackSelectedToolStripMenuItem.Name = "unpackSelectedToolStripMenuItem";
-            this.unpackSelectedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.unpackSelectedToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.unpackSelectedToolStripMenuItem.Text = "Unpack selected";
             this.unpackSelectedToolStripMenuItem.Click += new System.EventHandler(this.unpackSelectedToolStripMenuItem_Click);
             // 
@@ -125,6 +126,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.encrLuaLabel);
             this.groupBox1.Controls.Add(this.xmodeLabel);
             this.groupBox1.Controls.Add(this.chunkSizeLabel);
             this.groupBox1.Controls.Add(this.compressionLabel);
@@ -255,6 +257,15 @@
             this.customKeyTB.Size = new System.Drawing.Size(298, 20);
             this.customKeyTB.TabIndex = 10;
             // 
+            // encrLuaLabel
+            // 
+            this.encrLuaLabel.AutoSize = true;
+            this.encrLuaLabel.Location = new System.Drawing.Point(175, 34);
+            this.encrLuaLabel.Name = "encrLuaLabel";
+            this.encrLuaLabel.Size = new System.Drawing.Size(111, 13);
+            this.encrLuaLabel.TabIndex = 5;
+            this.encrLuaLabel.Text = "Lua scripts encrypted:";
+            // 
             // ArchiveUnpacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -312,5 +323,6 @@
         private System.Windows.Forms.Label xmodeLabel;
         private System.Windows.Forms.CheckBox useCustomKeyCB;
         private System.Windows.Forms.TextBox customKeyTB;
+        private System.Windows.Forms.Label encrLuaLabel;
     }
 }

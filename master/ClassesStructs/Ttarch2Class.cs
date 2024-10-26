@@ -18,6 +18,7 @@ namespace TTG_Tools.ClassesStructs
 
         public bool isCompressed;
         public bool isEncrypted;
+        public bool isEncryptedLua;
         public uint chunkSize;
         public int compressAlgorithm;
         public int version;
@@ -32,6 +33,7 @@ namespace TTG_Tools.ClassesStructs
         {
             isCompressed = false;
             isEncrypted = false;
+            isEncryptedLua = false;
             version = 1;
             compressAlgorithm = -1; //-1 - unknown, 1 - deflate, 2 - oodle lz
             chunkSize = 0x10000;

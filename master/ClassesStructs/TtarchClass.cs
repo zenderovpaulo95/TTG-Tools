@@ -18,6 +18,7 @@ namespace TTG_Tools.ClassesStructs
         public bool isEncrypted;
         public bool isCompressed;
         public bool isXmode;
+        public bool isEncryptedLua;
         public string filePath;
         public uint filesOffset; //Offset after header with file table
         public int[] compressedBlocks;
@@ -33,6 +34,7 @@ namespace TTG_Tools.ClassesStructs
             isCompressed = false;
             isEncrypted = false;
             isXmode = false;
+            isEncryptedLua = false;
             key = null;
             version = 0;
             chunkSize = 64; //Default 64KB of chunk

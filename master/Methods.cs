@@ -793,6 +793,17 @@ namespace TTG_Tools
             }
         }
 
+        public static bool isLuaEncrypted(byte[] file)
+        {
+            byte[] tmp = new byte[4];
+
+            if (file.Length <= 4) return false; //Not so correct option but I think that files less than 4 bytes probably not encrypted
+
+            Array.Copy(file, 0, tmp, 0, tmp.Length);
+
+            return Encoding.ASCII.GetString(tmp) != "\x1bLua" || Encoding.ASCII.GetString(tmp) == "\x1bLEo" || Encoding.ASCII.GetString(tmp) == "\x1bLEn";
+        }
+
         public static byte[] encryptLua(byte[] luaContent, byte[] key, bool newEngine, int version)
         {
             //newEngine - игры, выпущенные с Tales From the Borderlands и переизданные на новом движке

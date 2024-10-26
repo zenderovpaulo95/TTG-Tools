@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
+using TTG_Tools.ClassesStructs;
 
 namespace TTG_Tools
 {
@@ -270,6 +272,16 @@ namespace TTG_Tools
                             ttarch.files[f].fileOffset = mbr.ReadUInt32();
                             ttarch.files[f].fileSize = mbr.ReadInt32();
 
+                            if (((Methods.GetExtension(ttarch.files[f].fileName).ToLower() == ".lenc") || (Methods.GetExtension(ttarch.files[f].fileName).ToLower() == ".lua"))
+                                && !ttarch.isEncryptedLua)
+                            {
+                                ttarch.isEncryptedLua = Methods.GetExtension(ttarch.files[f].fileName).ToLower() == ".lenc";
+
+                                byte[] tmp = getTtarchFile(ttarch, ttarch.files[f], key, ttarch.chunkSize * 1024, fs);
+
+                                ttarch.isEncryptedLua = Methods.isLuaEncrypted(tmp);
+                            }
+
                             string ext = Methods.GetExtension(ttarch.files[f].fileName);
 
                             if ((ext != "") && !ttarch.fileFormats.Contains(ext))
@@ -310,7 +322,6 @@ namespace TTG_Tools
             var files = format == "All files" ? ttarch.files : ttarch.files.Where(x => Methods.GetExtension(x.fileName).ToLower() == format.ToLower()).ToArray();
 
             FileStream fs = new FileStream(ttarch.filePath, FileMode.Open);
-            BinaryReader br = new BinaryReader(fs);
 
             bool decrypt = decryptLuaCB.Checked;
             byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
@@ -325,91 +336,21 @@ namespace TTG_Tools
             for (int i = 0; i < count; i++)
             {
                 int ind = indexes != null ? indexes[i] : i;
-                if (!ttarch.isCompressed)
+
+                byte[] file = getTtarchFile(ttarch, files[ind], key, chunkSz, fs);
+
+                string fileName = files[ind].fileName;
+                if ((fileName.Substring(fileName.Length - 5, 5) == ".lenc") && decrypt)
                 {
-                    br.BaseStream.Seek(files[ind].fileOffset + ttarch.filesOffset, SeekOrigin.Begin);
-                    byte[] tmp = br.ReadBytes(files[ind].fileSize);
-                    Methods.meta_crypt(tmp, key, ttarch.version, true);
-                    string fileName = files[ind].fileName;
-                    if ((fileName.Substring(fileName.Length - 5, 5) == ".lenc") && decrypt)
-                    {
-                        fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
-                        tmp = Methods.decryptLua(tmp, key, ttarch.version);
-                    }
-
-                    File.WriteAllBytes(folderPath + Path.DirectorySeparatorChar + fileName, tmp);
+                    fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
+                    file = Methods.decryptLua(file, key, ttarch.version);
                 }
-                else
-                {
-                    int index = (int)files[ind].fileOffset / chunkSz;
-                    int index2 = (int)(files[ind].fileOffset + files[ind].fileSize) / chunkSz;
-                    uint off = 0;
 
-                    if (index > ttarch.compressedBlocks.Length)
-                    {
-                        MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    if (index2 > ttarch.compressedBlocks.Length)
-                    {
-                        MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    for (int c = 0; c < index; c++)
-                    {
-                        off += (uint)ttarch.compressedBlocks[c];
-                    }
-
-                    br.BaseStream.Seek(ttarch.filesOffset + off, SeekOrigin.Begin);
-
-                    uint c_off = (uint)(files[ind].fileOffset - (chunkSz * index));
-
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        using (BinaryWriter mbw = new BinaryWriter(ms))
-                        {
-                            for (int c = index; c <= index2; c++)
-                            {
-                                byte[] tmp = br.ReadBytes(ttarch.compressedBlocks[c]);
-
-                                if (ttarch.isEncrypted)
-                                {
-                                    BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, ttarch.version);
-                                    tmp = dec.Crypt_ECB(tmp, ttarch.version, true);
-                                }
-
-                                if (tmp.Length != chunkSz)
-                                {
-                                    tmp = decompressBlock(tmp, ttarch.compressAlgorithm);
-                                }
-
-                                mbw.Write(tmp);
-                            }
-
-                            byte[] block = ms.ToArray();
-
-                            byte[] file = new byte[files[ind].fileSize];
-
-                            Array.Copy(block, c_off, file, 0, file.Length);
-
-                            string fileName = files[ind].fileName;
-                            if ((fileName.Substring(fileName.Length - 5, 5) == ".lenc") && decrypt)
-                            {
-                                fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
-                                file = Methods.decryptLua(file, key, ttarch.version);
-                            }
-
-                            File.WriteAllBytes(folderPath + Path.DirectorySeparatorChar + fileName, file);
-                        }
-                    }
-                }
+                File.WriteAllBytes(folderPath + Path.DirectorySeparatorChar + fileName, file);
 
                 Progress(i + 1);
             }
 
-            br.Close();
             fs.Close();
         }
 
@@ -558,6 +499,20 @@ namespace TTG_Tools
 
                                     string ext = Methods.GetExtension(ttarch2.files[i].fileName);
 
+                                    if (((ext == ".lenc") || (ext == ".lua")) && !ttarch2.isEncryptedLua)
+                                    {
+                                        if (ext == ".lenc")
+                                        {
+                                            ttarch2.isEncryptedLua = true;
+                                        }
+                                        else
+                                        {
+                                            byte[] lua = getTtarch2File(ttarch2, ttarch2.files[i], key, fs);
+
+                                            ttarch2.isEncryptedLua = Methods.isLuaEncrypted(lua);
+                                        }
+                                    }
+
                                     if ((ext != "") && !ttarch2.fileFormats.Contains(ext))
                                     {
                                         ttarch2.fileFormats.Add(ext);
@@ -618,6 +573,20 @@ namespace TTG_Tools
 
                             string ext = Methods.GetExtension(ttarch2.files[i].fileName);
 
+                            if(((ext == ".lenc") || (ext == ".lua")) && !ttarch2.isEncryptedLua)
+                            {
+                                if (ext == ".lenc")
+                                {
+                                    ttarch2.isEncryptedLua = true;
+                                }
+                                else
+                                {
+                                    byte[] tmp = getTtarch2File(ttarch2, ttarch2.files[i], key, fs);
+
+                                    ttarch2.isEncryptedLua = Methods.isLuaEncrypted(tmp);
+                                }
+                            }
+
                             if ((ext != "") && !ttarch2.fileFormats.Contains(ext))
                             {
                                 ttarch2.fileFormats.Add(ext);
@@ -651,146 +620,75 @@ namespace TTG_Tools
             byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
 
             FileStream fs = new FileStream(ttarch2.fileName, FileMode.Open);
-            BinaryReader br = new BinaryReader(fs);
+
             for (int i = 0; i < count; i++)
             {
                 int ind = indexes != null ? indexes[i] : i;
-                if (ttarch2.isCompressed)
+
+                byte[] file = getTtarch2File(ttarch2, files[ind], key, fs);
+
+                string fileName = files[ind].fileName;
+                if (((fileName.Substring(fileName.Length - 5, 5).ToLower() == ".lenc") || (fileName.Substring(fileName.Length - 4, 4).ToLower() == ".lua")) && decrypt)
                 {
-                    int index = (int)((ttarch2.filesOffset + files[ind].fileOffset) / ttarch2.chunkSize);
-                    int index2 = (int)((ttarch2.filesOffset + files[ind].fileOffset + (ulong)files[ind].fileSize) / (ulong)(ttarch2.chunkSize));
-
-                    if (index > ttarch2.compressedBlocks.Length)
-                    {
-                        MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    if (index2 > ttarch2.compressedBlocks.Length)
-                    {
-                        MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    ulong cOff = 0;
-
-                    for (int c = 0; c < index; c++)
-                    {
-                        cOff += ttarch2.compressedBlocks[c];
-                    }
-
-                    br.BaseStream.Seek((long)(cOff + ttarch2.cFilesOffset), SeekOrigin.Begin);
-
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        for (int c = index; c <= index2; c++)
-                        {
-                            var posi = br.BaseStream.Position;
-                            byte[] tmp = br.ReadBytes((int)ttarch2.compressedBlocks[c]);
-
-                            if (ttarch2.isEncrypted)
-                            {
-                                BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, 7);
-                                tmp = dec.Crypt_ECB(tmp, 7, true);
-                            }
-
-                            if (tmp.Length == ttarch2.chunkSize)
-                            {
-                                ms.Write(tmp, 0, tmp.Length);
-                            }
-                            else
-                            {
-                                tmp = decompressBlock(tmp, ttarch2.compressAlgorithm);
-
-                                if (tmp == null || tmp.Length == 0)
-                                {
-                                    MessageBox.Show("TTG Tools couldn't decompress block. Compress algorithm is " + Convert.ToString(ttarch2.compressAlgorithm), "Decompress error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    return;
-                                }
-
-                                ms.Write(tmp, 0, tmp.Length);
-                            }
-                        }
-
-                        byte[] block = ms.ToArray();
-                        byte[] file = new byte[files[ind].fileSize];
-                        ulong dOff = (ttarch2.filesOffset + files[ind].fileOffset) - (ulong)(ttarch2.chunkSize * index);
-                        Array.Copy(block, (long)dOff, file, 0, file.Length);
-                        string fileName = files[ind].fileName;
-
-                        if ((Methods.GetExtension(fileName).ToLower() == ".lenc") || (Methods.GetExtension(fileName).ToLower() == ".lua") && decrypt)
-                        {
-                            if (fileName.Substring(fileName.Length - 4, 4).ToLower() == "lenc") fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
-                            file = Methods.decryptLua(file, key, 7);
-                        }
-
-                        File.WriteAllBytes(folderPath + Path.DirectorySeparatorChar + fileName, file);
-                    }
+                    fileName = fileName.Substring(fileName.Length - 5, 5).ToLower() == ".lenc" ? fileName.Remove(fileName.Length - 4, 4) + "lua" : fileName.Remove(fileName.Length - 3, 3) + "lua";
+                    file = Methods.decryptLua(file, key, 7);
                 }
-                else
-                {
-                    br.BaseStream.Seek((long)ttarch2.filesOffset + (long)files[ind].fileOffset, SeekOrigin.Begin);
-                    byte[] file = br.ReadBytes(files[ind].fileSize);
-                    string fileName = files[ind].fileName;
 
-                    if ((Methods.GetExtension(fileName).ToLower() == ".lenc") || (Methods.GetExtension(fileName).ToLower() == ".lua") && decrypt)
-                    {
-                        if (fileName.Substring(fileName.Length - 4, 4).ToLower() == "lenc") fileName = fileName.Remove(fileName.Length - 4, 4) + "lua";
-                        file = Methods.decryptLua(file, key, 7);
-                    }
-
-                    File.WriteAllBytes(folderPath + Path.DirectorySeparatorChar + fileName, file);
-                }
+                File.WriteAllBytes(folderPath + Path.DirectorySeparatorChar + fileName, file);
 
                 Progress(i + 1);
             }
-            br.Close();
+
             fs.Close();
         }
 
         private void getArchiveInfo()
         {
+            string compressedStr = "Compressed: ";
+            string encryptedStr = "Encrypted: ";
+            string xmodeStr = "Has X mode: ";
+            string chunkSzStr = "Chunk size: ";
+            string encLua = "Lua scripts encrypted: ";
+            string arcVersion = "Version: ";
+
             if (ttarch != null)
             {
-                string compressedStr = "Compressed: ";
                 compressedStr += ttarch.isCompressed ? "Yes" : "No";
                 if (ttarch.isCompressed)
                 {
                     compressedStr += " (";
                     compressedStr += ttarch.compressAlgorithm == 0 ? "zlib)" : "deflate)";
                 }
-                string encryptedStr = "Encrypted: ";
+                
                 encryptedStr += ttarch.isEncrypted ? "Yes" : "No";
-                string xmodeStr = "Has X mode: ";
                 xmodeStr += ttarch.isXmode ? "Yes" : "No";
-                string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch.chunkSize) + "KB";
+                chunkSzStr += Convert.ToString(ttarch.chunkSize) + "KB";
 
-                compressionLabel.Text = compressedStr;
-                encryptionLabel.Text = encryptedStr;
-                xmodeLabel.Text = xmodeStr;
-                chunkSizeLabel.Text = chunkSzStr;
-                versionLabel.Text = "Version: " + Convert.ToString(ttarch.version);
+                encLua += ttarch.isEncryptedLua ? "Yes" : "No";
+                arcVersion += Convert.ToString(ttarch.version);
             }
             else if (ttarch2 != null)
             {
-                string compressedStr = "Compressed: ";
                 compressedStr += ttarch2.isCompressed ? "Yes" : "No";
                 if (ttarch2.isCompressed)
                 {
                     compressedStr += " (";
                     compressedStr += ttarch2.compressAlgorithm == 1 ? "deflate)" : "oodle LZ)";
                 }
-                string encryptedStr = "Encrypted: ";
-                encryptedStr += ttarch2.isEncrypted ? "Yes" : "No";
-                string xmodeStr = "Has X mode: No";
-                string chunkSzStr = "Chunk size: " + Convert.ToString(ttarch2.chunkSize / 1024) + "KB";
 
-                compressionLabel.Text = compressedStr;
-                encryptionLabel.Text = encryptedStr;
-                xmodeLabel.Text = xmodeStr;
-                chunkSizeLabel.Text = chunkSzStr;
-                versionLabel.Text = "Version: " + Convert.ToString(ttarch2.version);
+                encryptedStr += ttarch2.isEncrypted ? "Yes" : "No";
+                xmodeStr = "Has X mode: No";
+                chunkSzStr += Convert.ToString(ttarch2.chunkSize / 1024) + "KB";
+                encLua += ttarch2.isEncryptedLua ? "Yes" : "No";
+                arcVersion += Convert.ToString(ttarch2.version);
             }
+
+            compressionLabel.Text = compressedStr;
+            encryptionLabel.Text = encryptedStr;
+            xmodeLabel.Text = xmodeStr;
+            chunkSizeLabel.Text = chunkSzStr;
+            encrLuaLabel.Text = encLua;
+            versionLabel.Text = arcVersion;
         }
 
         private void loadTtarchData(string format)
@@ -832,6 +730,166 @@ namespace TTG_Tools
             filesDataGridView.ClearSelection();
         }
 
+        private static byte[] getTtarchFile(ClassesStructs.TtarchClass ttarch, ClassesStructs.TtarchClass.ttarchFiles file, byte[] key, int chunkSz, Stream stream)
+        {
+            byte[] result = null;
+            BinaryReader br = new BinaryReader(stream);
+
+            if (!ttarch.isCompressed)
+            {
+                br.BaseStream.Seek(file.fileOffset + ttarch.filesOffset, SeekOrigin.Begin);
+                result = br.ReadBytes(file.fileSize);
+                Methods.meta_crypt(result, key, ttarch.version, true);
+            }
+            else
+            {
+                int index = (int)file.fileOffset / chunkSz;
+                int index2 = (int)(file.fileOffset + file.fileSize) / chunkSz;
+                uint off = 0;
+
+                if (index > ttarch.compressedBlocks.Length)
+                {
+                    MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    br.Close();
+                    return null;
+                }
+
+                if (index2 > ttarch.compressedBlocks.Length)
+                {
+                    MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    br.Close();
+                    return null;
+                }
+
+                for (int c = 0; c < index; c++)
+                {
+                    off += (uint)ttarch.compressedBlocks[c];
+                }
+                br.BaseStream.Seek(ttarch.filesOffset + off, SeekOrigin.Begin);
+
+                uint c_off = (uint)(file.fileOffset - (chunkSz * index));
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (BinaryWriter mbw = new BinaryWriter(ms))
+                    {
+                        for (int c = index; c <= index2; c++)
+                        {
+                            byte[] tmp = br.ReadBytes(ttarch.compressedBlocks[c]);
+
+                            if (ttarch.isEncrypted)
+                            {
+                                BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, ttarch.version);
+                                tmp = dec.Crypt_ECB(tmp, ttarch.version, true);
+                            }
+
+                            if (tmp.Length != chunkSz)
+                            {
+                                tmp = decompressBlock(tmp, ttarch.compressAlgorithm);
+                            }
+
+                            mbw.Write(tmp);
+                        }
+
+                        byte[] block = ms.ToArray();
+
+                        result = new byte[file.fileSize];
+
+                        Array.Copy(block, c_off, result, 0, result.Length);
+                    }
+                }
+            }
+
+            br.Close();
+            return result;
+        }
+
+        private static byte[] getTtarch2File(Ttarch2Class ttarch2, Ttarch2Class.Ttarch2files file, byte[] key, Stream stream)
+        {
+            byte[] result = null;
+            BinaryReader br = new BinaryReader(stream);
+
+            if (ttarch2.isCompressed)
+            {
+                int index = (int)((ttarch2.filesOffset + file.fileOffset) / ttarch2.chunkSize);
+                int index2 = (int)((ttarch2.filesOffset + file.fileOffset + (ulong)file.fileSize) / (ulong)(ttarch2.chunkSize));
+
+                if (index > ttarch2.compressedBlocks.Length)
+                {
+                    MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    br.Close();
+                    return null;
+                }
+
+                if (index2 > ttarch2.compressedBlocks.Length)
+                {
+                    MessageBox.Show("Something wrong with offset in compressed archive", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    br.Close();
+                    return null;
+                }
+
+                ulong cOff = 0;
+
+                for (int c = 0; c < index; c++)
+                {
+                    cOff += ttarch2.compressedBlocks[c];
+                }
+
+                br.BaseStream.Seek((long)(cOff + ttarch2.cFilesOffset), SeekOrigin.Begin);
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    for (int c = index; c <= index2; c++)
+                    {
+                        var posi = br.BaseStream.Position;
+                        byte[] tmp = br.ReadBytes((int)ttarch2.compressedBlocks[c]);
+
+                        if (ttarch2.isEncrypted)
+                        {
+                            BlowFishCS.BlowFish dec = new BlowFishCS.BlowFish(key, 7);
+                            tmp = dec.Crypt_ECB(tmp, 7, true);
+                        }
+
+                        if (tmp.Length == ttarch2.chunkSize)
+                        {
+                            ms.Write(tmp, 0, tmp.Length);
+                        }
+                        else
+                        {
+                            tmp = decompressBlock(tmp, ttarch2.compressAlgorithm);
+
+                            if (tmp == null || tmp.Length == 0)
+                            {
+                                MessageBox.Show("TTG Tools couldn't decompress block. Compress algorithm is " + Convert.ToString(ttarch2.compressAlgorithm), "Decompress error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                                br.Close();
+                                return null;
+                            }
+
+                            ms.Write(tmp, 0, tmp.Length);
+                        }
+                    }
+
+                    byte[] block = ms.ToArray();
+                    result = new byte[file.fileSize];
+                    ulong dOff = (ttarch2.filesOffset + file.fileOffset) - (ulong)(ttarch2.chunkSize * index);
+                    Array.Copy(block, (long)dOff, result, 0, result.Length);
+                }
+            }
+            else
+            {
+                br.BaseStream.Seek((long)ttarch2.filesOffset + (long)file.fileOffset, SeekOrigin.Begin);
+                result = br.ReadBytes(file.fileSize);
+            }
+
+            br.Close();
+
+            return result;
+        }
         private void loadTtarch2Data(string format)
         {
             filesDataGridView.ColumnCount = 4;
@@ -879,8 +937,13 @@ namespace TTG_Tools
             {
                 FileInfo fi = new FileInfo(ofd.FileName);
 
+                if(fi.Attributes.HasFlag(FileAttributes.ReadOnly)) fi.Attributes = FileAttributes.Normal;
+
                 ttarch = null;
                 ttarch2 = null;
+
+                if (progressBar1.Value > 0) progressBar1.Value = 0;
+
                 byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
 
                 switch (fi.Extension.ToLower())
