@@ -1737,6 +1737,7 @@ namespace TTG_Tools.Graphics
                     Array.Copy(binContent, poz, tmp, 0, tmp.Length);
                     tex.TexSize = BitConverter.ToInt32(tmp, 0);
                     poz += 4;
+
                     tex.BlockPos += 4;
                 }
                 
@@ -2156,6 +2157,7 @@ namespace TTG_Tools.Graphics
                         texPoz -= tex.Tex.Textures[i].MipSize;
                         tex.Tex.Textures[i].Block = new byte[tex.Tex.Textures[i].MipSize];
                         Array.Copy(binContent, tmpPoz, tex.Tex.Textures[i].Block, 0, tex.Tex.Textures[i].Block.Length);
+
                         tmpPoz += (uint)tex.Tex.Textures[i].MipSize;
 
                         Array.Copy(tex.Tex.Textures[i].Block, 0, tex.Tex.Content, texPoz, tex.Tex.Textures[i].Block.Length);

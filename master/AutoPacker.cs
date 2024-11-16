@@ -345,5 +345,9 @@ namespace TTG_Tools
                 Settings.SaveConfig(MainMenu.settings);
             }
         }
+
+        private void convertArgb8888Cb_CheckedChanged(object sender, EventArgs e)
+        {
+        }
     }
 }

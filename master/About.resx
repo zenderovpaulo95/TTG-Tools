@@ -141,13 +141,18 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
-v.1.14.4 (XX.XX.20XX)
+v.1.14.4 (16.11.2024)
 + Archive packer:
 Fix packing ttarch archives with version 9
 + Auto(De)Packer and Font editor:
-Add support ps3 textures for oldest games
+Add support ps3 textures for oldest games (not completely tested!)
 + Text editor:
 Minor fixes with progress bars
++ Archive packer:
+Minor fixes
++ Archive unpacker:
+Minor fixes.
+Add support search files in archive.
 
 v.1.14.3 (19.10.2024)
 + Auto(De)Packer:

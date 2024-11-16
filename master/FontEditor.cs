@@ -2009,5 +2009,9 @@ namespace TTG_Tools
             MainMenu.settings.swizzleNintendoSwitch = true;
             Settings.SaveConfig(MainMenu.settings);
         }
+
+        private void convertArgb8888CB_CheckedChanged(object sender, EventArgs e)
+        {
+        }
     }
 }

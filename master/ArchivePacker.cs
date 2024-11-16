@@ -1,13 +1,13 @@
-﻿using Microsoft.Win32;
-using OodleTools;
-using System;
-using System.Configuration;
-using System.Drawing.Drawing2D;
-using System.Globalization;
+﻿using System;
+using System.Threading;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace TTG_Tools
 {
@@ -18,14 +18,13 @@ namespace TTG_Tools
 
         public static FileInfo[] fi; //Получение списка файлов
         int archiveVersion;
-        
 
         public ArchivePacker()
         {
             InitializeComponent();
         }
 
-        void AddNewReport(string report)
+        public void AddNewReport(string report)
         {
             if (messageListBox.InvokeRequired)
             {
@@ -39,7 +38,7 @@ namespace TTG_Tools
             }
         }
 
-        void Progress(int i)
+        public void Progress(int i)
         {
             if (progressBar1.InvokeRequired)
             {
@@ -50,24 +49,17 @@ namespace TTG_Tools
                 progressBar1.Value = i;
             }
         }
-        
-        private bool CheckDll(string filePath)
+
+        public void SetMaximum(int i)
         {
-            if (File.Exists(filePath) == true)
+            if (progressBar1.InvokeRequired)
             {
-                try
-                {
-                    byte[] testBlock = { 0x43, 0x48, 0x45, 0x43, 0x4B, 0x20, 0x54, 0x45, 0x53, 0x54, 0x20, 0x42, 0x4C, 0x4F, 0x43, 0x4B };
-                    testBlock = ZlibCompressor(testBlock);
-                    
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
+                progressBar1.Invoke(new ProgressHandler(SetMaximum), i);
             }
-            else return false;
+            else
+            {
+                progressBar1.Maximum = i;
+            }
         }
 
         private static byte[] ZlibCompressor(byte[] bytes) //Для старых архивов (с версии 3 по 7)
@@ -122,7 +114,7 @@ namespace TTG_Tools
 
         
 
-        public byte[] encryptFunction(byte[] bytes, byte[] key, int archiveVersion)
+        private static byte[] encryptFunction(byte[] bytes, byte[] key, int archiveVersion)
         {
             BlowFishCS.BlowFish enc = new BlowFishCS.BlowFish(key, archiveVersion);
             //Methods.meta_crypt(bytes, key, archiveVersion, false);
@@ -130,9 +122,8 @@ namespace TTG_Tools
         }
 
 
-        public void builder_ttarch2(string inputFolder, string outputPath, bool compression, bool encryption, bool encLua, byte[] key, int versionArchive, bool newEngine, int compressAlgorithm)
+        async Task ttarch2Builder(string inputFolder, string outputPath, bool compression, bool encryption, bool encLua, byte[] key, int versionArchive, bool newEngine, int compressAlgorithm)
         {
-            if (messageListBox.Items.Count > 1) messageListBox.Items.Clear();
             DirectoryInfo di = new DirectoryInfo(inputFolder);
             fi = di.GetFiles("*", SearchOption.AllDirectories);
 
@@ -208,7 +199,6 @@ namespace TTG_Tools
 
             byte[] subHeader = versionArchive == 1 ? Encoding.ASCII.GetBytes("3ATT") : Encoding.ASCII.GetBytes("4ATT");
 
-            //Перепроверить код на рассчёт общего размера
             nameSize = Methods.pad_it(nameSize, 0x10000); //Pad size of file name's block by 64KB
             commonSize = versionArchive == 1 ? dataSize + tableSize + nameSize + 4 + 4 + 4 + 4 : dataSize + tableSize + nameSize + 4 + 4 + 4; //Common archive's size
 
@@ -278,7 +268,7 @@ namespace TTG_Tools
 
             int ch = 0;
             int a = 0;
-            progressBar1.Maximum = fi.Length;
+            SetMaximum(fi.Length);
 
             //Try write subheader and file table
             int tableChunksCount = versionArchive == 1 ? Methods.pad_size(16 + table.Length + namesTable.Length, chunkSize) / chunkSize : Methods.pad_size(12 + table.Length + namesTable.Length, chunkSize) / chunkSize;
@@ -446,9 +436,8 @@ namespace TTG_Tools
             AddNewReport("Packing archive complete");
         }
 
-        public void builder_ttarch(string inputFolder, string outputPath, byte[] key, bool compression, int versionArchive, bool encryptCheck, bool DontEncLua, int compressAlgorithm) //Функция сборки
+        async Task ttarchBuilder(string inputFolder, string outputPath, byte[] key, bool compression, int versionArchive, bool encryptCheck, bool DontEncLua, int compressAlgorithm) //Функция сборки
         {
-            if (messageListBox.Items.Count > 1) messageListBox.Items.Clear();
             DirectoryInfo di = new DirectoryInfo(inputFolder);
             DirectoryInfo[] di1 = di.GetDirectories("*", SearchOption.AllDirectories); //Just for fun if files were in different directories for Telltale Tool engine this optional
 
@@ -585,7 +574,7 @@ namespace TTG_Tools
             bw.Write(platform);
             uint pos = 0;
 
-            if(archiveVersion >= 3)
+            if(versionArchive >= 3)
             {
                 bw.Write(unknown2);
                 int headerChunksCount = compression ? chunksCount : 0;
@@ -602,16 +591,16 @@ namespace TTG_Tools
                 pos = (uint)bw.BaseStream.Position;
                 bw.Write(fileOffset); //Archive size
 
-                if (archiveVersion == 4 || archiveVersion >= 7)
+                if (versionArchive == 4 || versionArchive >= 7)
                 {
                     int priority = 0;
-                    int unknownValue = checkXmode.Checked ? 1 : 0;
+                    int unknownValue = MainMenu.settings.oldXmode ? 1 : 0;
                     byte[] binChunkSize = BitConverter.GetBytes(headerChunkSize);
 
                     bw.Write(priority);
                     bw.Write(priority);
 
-                    if (archiveVersion > 4)
+                    if (versionArchive > 4)
                     {
                         bw.Write(unknownValue);
                         bw.Write(unknownValue);
@@ -633,7 +622,7 @@ namespace TTG_Tools
             bw.Write(tableSize);
             bw.Write(table);
 
-            progressBar1.Maximum = fi.Length;
+            SetMaximum(fi.Length);
 
             int ch = 0;
             int a = 0;
@@ -647,9 +636,9 @@ namespace TTG_Tools
                 string name = (fi[a].Extension.ToLower() == ".lua") && !DontEncLua ? fi[a].Name.Remove(fi[a].Name.Length - 3, 3) + "lenc" : fi[a].Name;
                 byte[] file = File.ReadAllBytes(fi[a].FullName);
 
-                int res = Methods.meta_crypt(file, key, archiveVersion, false);
+                int res = Methods.meta_crypt(file, key, versionArchive, false);
 
-                if ((!DontEncLua && fi[a].Extension.ToLower() == ".lua") || fi[a].Extension.ToLower() == ".lenc") file = Methods.encryptLua(file, key, false, archiveVersion);
+                if ((!DontEncLua && fi[a].Extension.ToLower() == ".lua") || fi[a].Extension.ToLower() == ".lenc") file = Methods.encryptLua(file, key, false, versionArchive);
 
                 int fileChunkCount = Methods.pad_size(chunkOff + file.Length, chunkSize) / chunkSize;
                 int chunkFile = file.Length;
@@ -857,7 +846,7 @@ namespace TTG_Tools
             }
         }
 
-        private void buildButton_Click(object sender, EventArgs e)
+        private async void buildButton_Click(object sender, EventArgs e)
         {
             if ((MainMenu.settings.inputDirPath != "") && (MainMenu.settings.archivePath != ""))
             {
@@ -894,8 +883,19 @@ namespace TTG_Tools
                     else if (ttarchRB.Checked && (versionSelection.SelectedIndex == 5 || versionSelection.SelectedIndex == 6) && (compressionCB.SelectedIndex == 1)) algorithmCompress = 1;
                     else if (ttarchRB.Checked && versionSelection.SelectedIndex == 7) algorithmCompress = 1; //Latest version uses deflate algorithm
 
-                    if (ttarchRB.Checked == true) builder_ttarch(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive, algorithmCompress);
-                    else builder_ttarch2(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, MainMenu.settings.encArchive, !MainMenu.settings.encryptLuaInArchive, keyEnc, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress);
+                    if (messageListBox.Items.Count > 1) messageListBox.Items.Clear();
+
+                    if(ttarchRB.Checked)
+                    {
+                        await Task.Run(() => ttarchBuilder(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive, algorithmCompress));
+                    }
+                    else
+                    {
+                        await Task.Run(() => ttarch2Builder(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, MainMenu.settings.encArchive, !MainMenu.settings.encryptLuaInArchive, keyEnc, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress));
+                    }
+
+                    /*if (ttarchRB.Checked == true) ttarchBuilder(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive, algorithmCompress);
+                    else builder_ttarch2(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, MainMenu.settings.encArchive, !MainMenu.settings.encryptLuaInArchive, keyEnc, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress);*/
                 }
                 else MessageBox.Show("This folder doesn't exist!", "Error");
                 

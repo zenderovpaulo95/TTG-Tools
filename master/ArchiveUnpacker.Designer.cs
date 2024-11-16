@@ -38,6 +38,7 @@
             this.unpackSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filesDataGridView = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.encrLuaLabel = new System.Windows.Forms.Label();
             this.xmodeLabel = new System.Windows.Forms.Label();
             this.chunkSizeLabel = new System.Windows.Forms.Label();
             this.compressionLabel = new System.Windows.Forms.Label();
@@ -51,7 +52,9 @@
             this.decryptLuaCB = new System.Windows.Forms.CheckBox();
             this.useCustomKeyCB = new System.Windows.Forms.CheckBox();
             this.customKeyTB = new System.Windows.Forms.TextBox();
-            this.encrLuaLabel = new System.Windows.Forms.Label();
+            this.searchFilesByNameCB = new System.Windows.Forms.CheckBox();
+            this.searchTB = new System.Windows.Forms.TextBox();
+            this.searchBtn = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.filesDataGridView)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -81,14 +84,14 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -104,24 +107,24 @@
             // unpackToolStripMenuItem
             // 
             this.unpackToolStripMenuItem.Name = "unpackToolStripMenuItem";
-            this.unpackToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.unpackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.unpackToolStripMenuItem.Text = "Unpack";
             this.unpackToolStripMenuItem.Click += new System.EventHandler(this.unpackToolStripMenuItem_Click);
             // 
             // unpackSelectedToolStripMenuItem
             // 
             this.unpackSelectedToolStripMenuItem.Name = "unpackSelectedToolStripMenuItem";
-            this.unpackSelectedToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.unpackSelectedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.unpackSelectedToolStripMenuItem.Text = "Unpack selected";
             this.unpackSelectedToolStripMenuItem.Click += new System.EventHandler(this.unpackSelectedToolStripMenuItem_Click);
             // 
             // filesDataGridView
             // 
             this.filesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.filesDataGridView.Location = new System.Drawing.Point(12, 180);
+            this.filesDataGridView.Location = new System.Drawing.Point(12, 226);
             this.filesDataGridView.Name = "filesDataGridView";
             this.filesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.filesDataGridView.Size = new System.Drawing.Size(953, 495);
+            this.filesDataGridView.Size = new System.Drawing.Size(953, 449);
             this.filesDataGridView.TabIndex = 1;
             // 
             // groupBox1
@@ -138,6 +141,15 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Archive info";
+            // 
+            // encrLuaLabel
+            // 
+            this.encrLuaLabel.AutoSize = true;
+            this.encrLuaLabel.Location = new System.Drawing.Point(175, 34);
+            this.encrLuaLabel.Name = "encrLuaLabel";
+            this.encrLuaLabel.Size = new System.Drawing.Size(111, 13);
+            this.encrLuaLabel.TabIndex = 5;
+            this.encrLuaLabel.Text = "Lua scripts encrypted:";
             // 
             // xmodeLabel
             // 
@@ -214,7 +226,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(16, 144);
+            this.progressBar1.Location = new System.Drawing.Point(16, 189);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(949, 23);
             this.progressBar1.TabIndex = 6;
@@ -257,20 +269,42 @@
             this.customKeyTB.Size = new System.Drawing.Size(298, 20);
             this.customKeyTB.TabIndex = 10;
             // 
-            // encrLuaLabel
+            // searchFilesByNameCB
             // 
-            this.encrLuaLabel.AutoSize = true;
-            this.encrLuaLabel.Location = new System.Drawing.Point(175, 34);
-            this.encrLuaLabel.Name = "encrLuaLabel";
-            this.encrLuaLabel.Size = new System.Drawing.Size(111, 13);
-            this.encrLuaLabel.TabIndex = 5;
-            this.encrLuaLabel.Text = "Lua scripts encrypted:";
+            this.searchFilesByNameCB.AutoSize = true;
+            this.searchFilesByNameCB.Location = new System.Drawing.Point(16, 146);
+            this.searchFilesByNameCB.Name = "searchFilesByNameCB";
+            this.searchFilesByNameCB.Size = new System.Drawing.Size(89, 17);
+            this.searchFilesByNameCB.TabIndex = 11;
+            this.searchFilesByNameCB.Text = "Search name";
+            this.searchFilesByNameCB.UseVisualStyleBackColor = true;
+            this.searchFilesByNameCB.CheckedChanged += new System.EventHandler(this.searchFilesByNameCB_CheckedChanged);
+            // 
+            // searchTB
+            // 
+            this.searchTB.Location = new System.Drawing.Point(135, 143);
+            this.searchTB.Name = "searchTB";
+            this.searchTB.Size = new System.Drawing.Size(415, 20);
+            this.searchTB.TabIndex = 13;
+            // 
+            // searchBtn
+            // 
+            this.searchBtn.Location = new System.Drawing.Point(572, 141);
+            this.searchBtn.Name = "searchBtn";
+            this.searchBtn.Size = new System.Drawing.Size(75, 23);
+            this.searchBtn.TabIndex = 14;
+            this.searchBtn.Text = "Search";
+            this.searchBtn.UseVisualStyleBackColor = true;
+            this.searchBtn.Click += new System.EventHandler(this.searchBtn_Click);
             // 
             // ArchiveUnpacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(978, 696);
+            this.Controls.Add(this.searchBtn);
+            this.Controls.Add(this.searchTB);
+            this.Controls.Add(this.searchFilesByNameCB);
             this.Controls.Add(this.customKeyTB);
             this.Controls.Add(this.useCustomKeyCB);
             this.Controls.Add(this.decryptLuaCB);
@@ -324,5 +358,8 @@
         private System.Windows.Forms.CheckBox useCustomKeyCB;
         private System.Windows.Forms.TextBox customKeyTB;
         private System.Windows.Forms.Label encrLuaLabel;
+        private System.Windows.Forms.CheckBox searchFilesByNameCB;
+        private System.Windows.Forms.TextBox searchTB;
+        private System.Windows.Forms.Button searchBtn;
     }
 }

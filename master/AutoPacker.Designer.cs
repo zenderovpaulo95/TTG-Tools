@@ -93,12 +93,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(10, 184);
+            this.listBox1.Location = new System.Drawing.Point(10, 197);
             this.listBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox1.Size = new System.Drawing.Size(801, 407);
+            this.listBox1.Size = new System.Drawing.Size(801, 394);
             this.listBox1.TabIndex = 2;
             // 
             // buttonDecrypt
@@ -126,7 +126,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Size = new System.Drawing.Size(442, 140);
+            this.groupBox1.Size = new System.Drawing.Size(442, 147);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Some functions";
@@ -311,7 +311,7 @@
             // sortLabel
             // 
             this.sortLabel.AutoSize = true;
-            this.sortLabel.Location = new System.Drawing.Point(7, 162);
+            this.sortLabel.Location = new System.Drawing.Point(19, 169);
             this.sortLabel.Name = "sortLabel";
             this.sortLabel.Size = new System.Drawing.Size(51, 13);
             this.sortLabel.TabIndex = 16;
@@ -322,8 +322,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(821, 612);
-            this.Controls.Add(this.sortLabel);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.sortLabel);
             this.Controls.Add(this.checkCustomKey);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox1);

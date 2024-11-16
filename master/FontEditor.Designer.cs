@@ -87,9 +87,9 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
-            this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
             this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
+            this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
+            this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewWithTextures)).BeginInit();
@@ -236,7 +236,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1004, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1011, 24);
             this.menuStrip1.TabIndex = 24;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -418,11 +418,11 @@
             this.Column11,
             this.Column12,
             this.Column13});
-            this.dataGridViewWithCoord.Location = new System.Drawing.Point(12, 130);
+            this.dataGridViewWithCoord.Location = new System.Drawing.Point(12, 134);
             this.dataGridViewWithCoord.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridViewWithCoord.Name = "dataGridViewWithCoord";
             this.dataGridViewWithCoord.RowHeadersWidth = 51;
-            this.dataGridViewWithCoord.Size = new System.Drawing.Size(979, 377);
+            this.dataGridViewWithCoord.Size = new System.Drawing.Size(986, 373);
             this.dataGridViewWithCoord.TabIndex = 27;
             this.dataGridViewWithCoord.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridViewWithCoord_CellBeginEdit);
             this.dataGridViewWithCoord.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewWithCoord_CellEndEdit);
@@ -669,17 +669,17 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Swizzle methods";
             // 
-            // rbNoSwizzle
+            // rbSwitchSwizzle
             // 
-            this.rbNoSwizzle.AutoSize = true;
-            this.rbNoSwizzle.Location = new System.Drawing.Point(7, 22);
-            this.rbNoSwizzle.Name = "rbNoSwizzle";
-            this.rbNoSwizzle.Size = new System.Drawing.Size(51, 17);
-            this.rbNoSwizzle.TabIndex = 0;
-            this.rbNoSwizzle.TabStop = true;
-            this.rbNoSwizzle.Text = "None";
-            this.rbNoSwizzle.UseVisualStyleBackColor = true;
-            this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
+            this.rbSwitchSwizzle.AutoSize = true;
+            this.rbSwitchSwizzle.Location = new System.Drawing.Point(7, 74);
+            this.rbSwitchSwizzle.Name = "rbSwitchSwizzle";
+            this.rbSwitchSwizzle.Size = new System.Drawing.Size(103, 17);
+            this.rbSwitchSwizzle.TabIndex = 2;
+            this.rbSwitchSwizzle.TabStop = true;
+            this.rbSwitchSwizzle.Text = "Nintendo Switch";
+            this.rbSwitchSwizzle.UseVisualStyleBackColor = true;
+            this.rbSwitchSwizzle.CheckedChanged += new System.EventHandler(this.rbSwitchSwizzle_CheckedChanged);
             // 
             // rbPS4Swizzle
             // 
@@ -693,23 +693,23 @@
             this.rbPS4Swizzle.UseVisualStyleBackColor = true;
             this.rbPS4Swizzle.CheckedChanged += new System.EventHandler(this.rbPS4Swizzle_CheckedChanged);
             // 
-            // rbSwitchSwizzle
+            // rbNoSwizzle
             // 
-            this.rbSwitchSwizzle.AutoSize = true;
-            this.rbSwitchSwizzle.Location = new System.Drawing.Point(7, 74);
-            this.rbSwitchSwizzle.Name = "rbSwitchSwizzle";
-            this.rbSwitchSwizzle.Size = new System.Drawing.Size(103, 17);
-            this.rbSwitchSwizzle.TabIndex = 2;
-            this.rbSwitchSwizzle.TabStop = true;
-            this.rbSwitchSwizzle.Text = "Nintendo Switch";
-            this.rbSwitchSwizzle.UseVisualStyleBackColor = true;
-            this.rbSwitchSwizzle.CheckedChanged += new System.EventHandler(this.rbSwitchSwizzle_CheckedChanged);
+            this.rbNoSwizzle.AutoSize = true;
+            this.rbNoSwizzle.Location = new System.Drawing.Point(7, 22);
+            this.rbNoSwizzle.Name = "rbNoSwizzle";
+            this.rbNoSwizzle.Size = new System.Drawing.Size(51, 17);
+            this.rbNoSwizzle.TabIndex = 0;
+            this.rbNoSwizzle.TabStop = true;
+            this.rbNoSwizzle.Text = "None";
+            this.rbNoSwizzle.UseVisualStyleBackColor = true;
+            this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
             // 
             // FontEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1004, 519);
+            this.ClientSize = new System.Drawing.Size(1011, 519);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.dataGridViewWithCoord);
