@@ -70,6 +70,12 @@ namespace TTG_Tools
             try
             {
                 byte[] retBuf = null;
+
+                if(algorithmCompress == -1)
+                {
+                    retBuf = decompressBlock(bytes);
+                }
+
                 switch (algorithmCompress)
                 {
                     case 0:

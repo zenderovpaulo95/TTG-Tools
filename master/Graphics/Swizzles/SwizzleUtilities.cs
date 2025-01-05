@@ -2,6 +2,9 @@
  * Special thanks to daemon1 and tge for PS4 swizzle algorithm *
  ***************************************************************/
 
+//Для изучения алгоритмов
+//https://github.com/Shadowth117/DrSwizzler
+
 namespace TTG_Tools.Graphics.Swizzles
 {
     public class SwizzleUtilities

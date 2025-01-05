@@ -30,6 +30,7 @@ namespace TTG_Tools.Texts
         private static List<CommonText> OldTextMode(string FilePath)
         {
             List<CommonText> txts = new List<CommonText>();
+            FileInfo fi = new FileInfo(FilePath);
             FileStream fs = new FileStream(FilePath, FileMode.Open);
             StreamReader sr = new StreamReader(fs, Encoding.UTF8);
 
@@ -66,11 +67,15 @@ namespace TTG_Tools.Texts
                                 txts[lastListIndex] = tmpTxt;
                             }
 
+                            int diff = 0;
+
                             try
                             {
                                 tmpTxt.strNumber = (uint)curNum;
-                                int numPos = tmpString.IndexOf(")") + 2;
-                                tmpTxt.actorName = tmpString.Substring(numPos, tmpString.Length - numPos);
+                                int numPos = tmpString.IndexOf(")") + 1;
+                                if ((numPos < tmpString.Length) && (tmpString[numPos] == ' ')) numPos++;
+                                diff = tmpString.Length - numPos;
+                                tmpTxt.actorName = tmpString.Substring(numPos, diff);
                                 tmpTxt.actorSpeechOriginal = "";
                                 tmpTxt.actorSpeechTranslation = "";
                                 tmpTxt.flags = "";
@@ -83,7 +88,7 @@ namespace TTG_Tools.Texts
                             }
                             catch
                             {
-                                MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
+                                MessageBox.Show("Error in file " + fi.Name + ". String \"" + tmpString + "\". Difference between end and start is " + Convert.ToString(diff), "Error");
                                 if (sr != null) sr.Close();
                                 if (fs != null) fs.Close();
 
@@ -156,6 +161,7 @@ namespace TTG_Tools.Texts
         private static List<CommonText> TsvTextMode(string FilePath)
         {
             List<CommonText> txts = new List<CommonText>();
+            FileInfo fi = new FileInfo(FilePath);
             FileStream fs = new FileStream(FilePath, FileMode.Open);
             StreamReader sr = new StreamReader(fs, Encoding.UTF8);
 
@@ -193,7 +199,7 @@ namespace TTG_Tools.Texts
                         }
                         catch
                         {
-                            MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
+                            MessageBox.Show("Error in file " + fi.Name + ". String \"" + tmpString + "\".", "Error");
 
                             if (sr != null) sr.Close();
                             if (fs != null) fs.Close();
@@ -203,7 +209,7 @@ namespace TTG_Tools.Texts
                     }
                     else
                     {
-                        MessageBox.Show("Error in string \"" + tmpString + "\".", "Error");
+                        MessageBox.Show("Error in file " + fi.Name + ". String \"" + tmpString + "\".", "Error");
 
                         if (sr != null) sr.Close();
                         if (fs != null) fs.Close();
@@ -229,6 +235,7 @@ namespace TTG_Tools.Texts
         private static List<CommonText> NewTextMode(string FilePath)
         {
             List<CommonText> txts = new List<CommonText>();
+            FileInfo fi = new FileInfo(FilePath);
             FileStream fs = new FileStream(FilePath, FileMode.Open);
             StreamReader sr = new StreamReader(fs, Encoding.UTF8);
 
@@ -253,7 +260,7 @@ namespace TTG_Tools.Texts
                         switch(i)
                         {
                             case 0:
-                                if (tmpString.IndexOf("langid=") != 0) throw new Exception("Error in string " + tmpString + ".");
+                                if (tmpString.IndexOf("langid=") != 0) throw new Exception("File " + fi.Name + ". Error in string " + tmpString + ".");
                                 try
                                 {
                                     tmpString = tmpString.Substring(7, tmpString.Length - 7);
@@ -271,7 +278,7 @@ namespace TTG_Tools.Texts
                                 break;
 
                             case 1:
-                                if (tmpString.IndexOf("actor=") != 0) throw new Exception("Error in string " + tmpString + ".");
+                                if (tmpString.IndexOf("actor=") != 0) throw new Exception("File " + fi.Name + ". Error in string " + tmpString + ".");
 
                                 try
                                 {
@@ -279,7 +286,7 @@ namespace TTG_Tools.Texts
                                 }
                                 catch
                                 {
-                                    MessageBox.Show("Something wrong with file\r\n" + FilePath);
+                                    MessageBox.Show("Something wrong with file\r\n" + fi.Name);
 
                                     if (sr != null) sr.Close();
                                     if (fs != null) fs.Close();
@@ -289,7 +296,7 @@ namespace TTG_Tools.Texts
                                 break;
 
                             case 2:
-                                if (tmpString.IndexOf("speechOriginal=") != 0) throw new Exception("Error in string " + tmpString + ".");
+                                if (tmpString.IndexOf("speechOriginal=") != 0) throw new Exception("File " + fi.Name + ". Error in string " + tmpString + ".");
 
                                 try
                                 {
@@ -307,7 +314,7 @@ namespace TTG_Tools.Texts
                                 break;
 
                             case 3:
-                                if (tmpString.IndexOf("speechTranslation=") != 0) throw new Exception("Error in string " + tmpString + ".");
+                                if (tmpString.IndexOf("speechTranslation=") != 0) throw new Exception("File " + fi.Name + ". Error in string " + tmpString + ".");
 
                                 try
                                 {
@@ -325,7 +332,7 @@ namespace TTG_Tools.Texts
                                 break;
 
                             case 4:
-                                if (tmpString.IndexOf("flags=") != 0) throw new Exception("Error in string " + tmpString + ".");
+                                if (tmpString.IndexOf("flags=") != 0) throw new Exception("File " + fi.Name + ". Error in string " + tmpString + ".");
 
                                 try
                                 {

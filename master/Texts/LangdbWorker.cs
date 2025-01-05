@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TTG_Tools.ClassesStructs.Text;
 using System.IO;
-using System.Windows.Forms.VisualStyles;
 
 namespace TTG_Tools.Texts
 {
@@ -308,7 +305,7 @@ namespace TTG_Tools.Texts
                 for (int j = 0; j < txts.Count; j++)
                 {
                     if (langdb.langdbs[i].anmID == txts[j].strNumber) countLangres++;
-                    if (langdb.langdbs[i].stringNumber == txts[i].strNumber) countStrings++;
+                    if (langdb.langdbs[i].stringNumber == txts[j].strNumber) countStrings++;
                 }
             }
 
