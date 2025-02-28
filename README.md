@@ -1,3 +1,7 @@
+NOTICE! Unfortunately, TTG Tools modder Sudakov will no longer support the tool. I hope everyone can understand. Here is the fork link with possible updates and bug fixes in the font tool:
+
+https://github.com/Nemiroff/TTG-Tools
+
 TTG Tools by Den Em
 Added some modifications into tool and uploaded from agreement of Den Em.
 
