@@ -1,7 +1,3 @@
-NOTICE! Unfortunately, TTG Tools modder Sudakov will no longer support the tool. I hope everyone can understand. Here is the fork link with possible updates and bug fixes in the font tool:
-
-https://github.com/Nemiroff/TTG-Tools
-
 TTG Tools by Den Em
 Added some modifications into tool and uploaded from agreement of Den Em.
 
@@ -16,6 +12,7 @@ Special thanks to:
 - daemon1 and tge for PS4 swizzle algorithm
 - Josh Tamely for oodle wrapper
 - Hajin Jang for Zlib.Wrapper
+- Nemiroff thanks for fixing a bug in the Font Editor.
 
 This tool have to make easier translations for games from Telltale and Skunkape games.
 It supports some games (at least I tested only these games):
