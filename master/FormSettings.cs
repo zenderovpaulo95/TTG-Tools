@@ -39,7 +39,7 @@ namespace TTG_Tools
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
             else MainMenu.settings.unicodeSettings = 2;
 
-            if(MainMenu.settings.ASCII_N == 1252) MainMenu.settings.unicodeSettings = 0;
+            //if(MainMenu.settings.ASCII_N == 1252) MainMenu.settings.unicodeSettings = 0;
 
             MainMenu.settings.languageIndex = -1;
             if (checkLanguage.Checked)
@@ -173,16 +173,12 @@ namespace TTG_Tools
             //Terrible fix for users windows-1252 encoding
             if (Convert.ToInt32(numericUpDownASCII.Value.ToString()) == 1252)
             {
-                rbNormalUnicode.Checked = true;
+                if(rbNonNormalUnicode2.Checked) rbNormalUnicode.Checked = true;
                 rbNonNormalUnicode2.Enabled = false;
-                rbNormalUnicode.Enabled = false;
-                rbNewBttF.Enabled = false;
             }
             else
             {
                 rbNonNormalUnicode2.Enabled = true;
-                rbNormalUnicode.Enabled = true;
-                rbNewBttF.Enabled = true;
 
                 switch (MainMenu.settings.unicodeSettings)
                 {

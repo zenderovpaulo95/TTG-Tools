@@ -138,6 +138,7 @@ Special thanks to:
 - daemon1 and tge for PS4 swizzle algorithm
 - Josh Tamely for oodle wrapper
 - Hajin Jang for Zlib.Wrapper
+- Nemiroff thanks for fixing a bug in the Font Editor.
 
 List of supported games:
 Telltale's Texas Hold Em, Tales of Monkey Island, Sam &amp; Max: Season One, Sam &amp; Max: Season Two, Wallace and Gromit's Grand Adventures, CSI: Deadly Intent, Sam &amp; Max: The Devil's Playhouse, Puzzle Agent, CSI: Fatal Conspiracy, Poker Night at the Inventory, Back to the Future: The Game, Strong Bad, Hector: The Badge of Carnage, Puzzle Agent 2, Jurassic Park: The Game, The Walking Dead, Poker Night 2, Wolf Among Us, The Walking Dead Season Two, Tales from the Borderlands, Game of Thrones, Minecraft: Story Mode (Seasons one and two), Walking Dead: Michonne, Batman (Seasons one and two), The Walking Dead: The Final Season, The Walking Dead : The Telltale Definitive Series, Sam &amp; Max Save the World Remastered, Sam &amp; Max Beyond Time and Space Remastered, Sam &amp; Max The Devil's Playhouse Remastered.
@@ -145,6 +146,19 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
+
+v.1.14.7 (05.07.2025)
++ Auto(De)Packer (Packer and Unpacker)
+Pashok6798 fixed an encoding bug where Latin characters were showing up as "?" in Back To The Future: The Game on Xbox 360 and PS4.
++ Font editor:
+Added Nemiroff's fixes to the official TTG Tools build.
++ TTG Tools:
+Removed russian messages.
+
+v.1.14.6 (24.02.2025)
++ Font editor:
+Nemiroff fixed some critical bugs in the Font Editor. (Many thanks!)
+
 v.1.14.5 (05.01.2025)
 + Auto(De)Packer
 Minor fixes import text files.
@@ -307,336 +321,332 @@ v.1.0.0 (20.05.18)
 +Auto(De)packer
 Added support landb files for The Guardians of the Galaxy
 
-v.0.9.9b (12.06.16 - 06.06.16 "Костыльная версия". К версии 1.0.0 всё должно работать нормально)
+v.0.9.9b (12.06.16 - 06.06.16 "Crutch version". Everything should work properly by version 1.0.0)
 + TTG Tools
-Подправлена поддержка импорта и экспорта PVR текстур.
+Fixed support for importing and exporting PVR textures.
 + Archive Packer
-Исправлена сборка старых архивов.
+Fixed building old archives.
 
 v.0.9.8b (06.03.16)
 + TTG Tools
-Добавлена поддержка в Archive Packer и Auto(De)Packer использования ключей, отсутствующих в списке.
-Также изменена структура шифрования lua-скриптов. Экспериментальная версия. Если структура шифрования в Walking Dead: Michonne бдует отличаться, переделаем.
-Добавлен ключ к игре Walking Dead Michonne.
+Added support in Archive Packer and Auto(De)Packer for using keys not listed.
+Also changed the encryption structure of lua scripts. Experimental version. If the encryption structure in Walking Dead: Michonne turns out to be different, it will be redone.
+Added encryption key for Walking Dead: Michonne.
 + Archive Packer
-Добавлена возможность шифровать архивы и lua скрипты во время сборки архивов.
-При наличии библиотеки zlib.net.dll можно будет сжимать архивы для версий 3-7 в ttarch формате.
+Added ability to encrypt archives and lua scripts during archive building.
+With the zlib.net.dll library, you can compress archives for versions 3–7 in ttarch format.
 + Auto(De)Packer
-Добавлена возомжность шифровать/расшифровывать lua/lenc скрипты.
-Для старых игр появилась возможность вытаскивать текстуры для iOS в PVR формате.
-Изменился метод расшифрования текстур. Особая благодарность aluigi за исходники его программы ttarchext.
-Добавлена поддержка экспорта текстур (рекомендую импортировать текстуры, как сделано в оригинале. Модификацию текстур пока программа плохо поддерживает).
+Added ability to encrypt/decrypt lua/lenc scripts.
+For older games, added ability to extract iOS textures in PVR format.
+Texture decryption method has changed. Special thanks to aluigi for the source code of his ttarchext program.
+Added support for exporting textures (it is recommended to import textures as done in the original. Texture modification is still poorly supported).
 + Font Editor
-Поправлены мелкие ошибки.
-Добавлена возможность вытаскивать текстуры для старых игр на iOS в PVR формате.
-Добавлена возможность авторасшифровки шрифтов (экспериментальная версия).
+Minor bug fixes.
+Added support for extracting textures for older iOS games in PVR format.
+Added experimental font auto-decryption feature.
 
 v.0.9.7b (07.11.15)
 + Archive Packer
-Добавлена тестовая возможность сборки архивов.
-(Особая благодарность aluigi за исходный код программы ttarchext)
+Added experimental archive building feature.
+(Special thanks to aluigi for the ttarchext source code)
 + Auto(De)Packer
-Немного изменён интерфейс. Добавлена тестовая версия сборки ttarch2 для игр до Майнкрафта, а также тестовая возможность зашифровать langdb файлы для Сэма и Макса сезон 2).
-Добавлена поддержка Unicode (для Minecraft: Story Mode).
+Slight interface changes. Added experimental ttarch2 builder for games up to Minecraft and experimental ability to encrypt langdb files for Sam &amp; Max Season 2.
+Added Unicode support (for Minecraft: Story Mode).
 + Font Editor
-Добавлена поддержка Unicode (для Minecraft: Story Mode).
+Added Unicode support (for Minecraft: Story Mode).
 
 v.0.9.6b (26.09.15)
 + Auto(De)Packer
-Теперь функции для импорта/экспорта ресурсов разделены на "До игры Волк среди нас" и "После игры Волк среди нас"
-Эксперимент со сборкой текстур для игр с Poker Night 2.
+Import/export functions now split between "Before The Wolf Among Us" and "After The Wolf Among Us".
+Experimented with building textures for Poker Night 2.
 + Font Editor
-Возвращена совместимость до старых игр Telltale Games (по крайней мере, до Сэма и Макса сезон 1)
+Restored compatibility with older Telltale Games (at least back to Sam &amp; Max Season 1).
 
-v.0.9.5b (2.08.15)
+v.0.9.5b (02.08.15)
 + Auto(De)Packer
-Добавлена поддержка экспорта/импорта текстур для Poker Night 2
+Added support for exporting/importing textures for Poker Night 2.
 + Font Editor
-Добавлен костыль для экспорта/импорта координат в txt формате
-Теперь работают шрифты с Покера 1 (тестировал именно с него. С более старых версий не тестировал).
+Added workaround for exporting/importing coordinates in TXT format.
+Fonts from Poker Night 1 now work (tested with that version. Older ones not tested).
 
 v.0.9.4b (14.07.15)
 + Font Editor:
- Шрифты The Wolf Among Us, Poker Night 2, Walking Dead: Season Two и Walking Dead the game Remastered снова работают.
-Немного изменен внешний вид формы.
- Импорт/экспорт файлов частично подправлен.
- В случае внесенных изменений в шрифт, при закрытии формы будет задаваться вопрос о сохранении. В случае простого открытия формы программа не будет ничего спрашивать.
- Эксперимент с импортом/экспортом текстур другого формата
+The fonts from The Wolf Among Us, Poker Night 2, Walking Dead: Season Two, and Walking Dead Remastered now work again.
+Slight form appearance change.
+Partial fixes to import/export of files.
+If changes are made to the font, you'll be prompted to save when closing. If just opening the form, no prompts appear.
+Experimented with importing/exporting textures of a different format.
 
 v.0.9.3b (04.03.15)
 + Auto(De)Packer:
-Для LANGDB возможен эксопрт/импорт по настоящему ID строк.
+LANGDB can now be exported/imported by actual string ID.
 + Font Editor:
- Импорт координат шрифтов по новому методу более корректен. (Благодарности для pashok6798)
+Improved import of font coordinates using a new method. (Thanks to pashok6798)
 
 v.0.9.2b (26.02.15)
 + Auto(De)Packer:
-Теперь "Г" добавляется по набору букв только для игр на движке версии TFTB.
-Если алфавит не задан в config.xml, то файлы собираются без добавления Г и при запуске программы выводится предложение перейти в настройки.
-"Г" убирается при экспорте.
+The letter "Г" is added only for TFTB engine games when alphabet is defined.
+If alphabet is not set in config.xml, files are built without "Г", and a prompt is shown.
+"Г" is removed on export.
 
 v.0.9.1b (21.02.15)
 + Auto(De)Packer:
-Добавлен импорт текстур TFTB и GOT.
+Added support for importing textures from TFTB and GOT.
 
 v.0.9b (20.02.15)
-*Продолжаю вести логи. Без описаний  была добавлена поддержка TFTB и GOT (Шрифты, текстуры, текст).
+* Continuing logs. Support for TFTB and GOT (Fonts, Textures, Text) added without full descriptions.
 + Auto(De)Packer:
- Исправлен алгоритм перехода между разными версиями текстур при экспорте.
+Fixed texture version switching during export.
 + Font Editor:
-Импорт координат ещё из одной программы (тест)
-*невозможно работать со шрифтами кроме версий TFTB и GOT.
+Importing coordinates from another program (test).
+* Only TFTB and GOT font versions are currently supported.
 
 v.0.8.9b (04.07.14)
 + Auto(De)Packer:
- Разбор текстур TWAU более корректен. Вроде. (Благодарности для pashok6798)
+More accurate parsing of TWAU textures. Probably. (Thanks to pashok6798)
 
 v.0.8.8b (30.12.13)
 + Auto(De)Packer:
-Добавлена проверка на размер текстуры при сборе текстур TWAU, TWD S2
+Added texture size check during TWAU, TWD S2 texture compilation.
 
 v.0.8.7b (23.12.13)
 + Auto(De)Packer:
-Извлекается ещё один тип текстур встреченный в The Walking Dead Season Two
-Собираются обратно текстуры из The Wolf Among Us и The Walking Dead Season Two
-Поправлены условия для использования ttarchext. (Теперь при выборе алгоритма для WAU и PN2, программа не будет пытаться дешифровать шрифты и соответственно не будет паковать в игровые архивы встреченные фаилы.)
+Another type of texture from The Walking Dead Season Two is extracted.
+Repacking textures from The Wolf Among Us and The Walking Dead Season Two works.
+Fixed ttarchext algorithm usage conditions (Now the tool won't try to decrypt fonts or pack found files into archives for WAU and PN2).
 
 v.0.8.6b (18.12.13)
 + Auto(De)Packer:
-Частично извлекаются текстуры из The Wolf Among Us
+Partial extraction of textures from The Wolf Among Us.
 
 v.0.8.5b (26.10.13)
 + Font Editor:
-В шрифтах от Wolf Among Us теперь создаются строки для координат букв при импорте, которых в оригинальном шрифте нет. 
+For WAU fonts, missing character coordinates are now generated during import.
 
 v.0.8.4b (15.10.13)
 + Font Editor:
-Поддержка шрифтов из The Wolf Among Us содержащих более 1 текстуры.
-Исправлена путаница между шириной и высотой для PN2, WAU.
+Supports WAU fonts with multiple textures.
+Fixed width/height mix-up for PN2 and WAU.
 
 v.0.8.3b (14.10.13)
 + Auto(De)Packer:
-Поддержка The Wolf Among Us
+Support for The Wolf Among Us.
 + Font Editor:
-Поддержка The Wolf Among Us
+Support for The Wolf Among Us.
 
 v.0.8.2b (10.07.13)
 + Font Editor:
-Опять работает The Walking Dead
+The Walking Dead works again.
 
 v.0.8.1b (13.05.13)
 + Font Editor:
-Добавлена возможность изменить ширину всех букв.
+Added ability to change width of all characters.
 
 v.0.8.0b (13.05.13)
 + Font Editor:
-Исправлена ошибка с подменой русских букв на символы пунктуации из Unicode.
-Копирование координат символов снова работает.
-Добавлен блок выбора наличия кернинга в шрифте.  (Опция актуальна только для движка PN2 и новее.)
+Fixed issue with Cyrillic letters being replaced by punctuation.
+Character coordinate copy works again.
+Added toggle for kerning presence (only applies to PN2 engine or newer).
 
 v.0.7.9b (12.05.13)
 + Font Editor:
-Редактируются шрифты от Poker Night 2. С остальными шрифтами работа не гарантируется.
+Poker Night 2 fonts can now be edited. Other fonts may not work.
 
 v.0.7.8 (17.01.13)
 + Auto(De)Packer:
-Теперь можно выбрать: сортировать ли одинаковые строки при экспорте или нет.
-Экспортируется и импортируется текст из statsinfo_text.prop от игры Walking Dead.
-(seasonstatstext.prop временно не работает.)
+You can now choose whether or not to sort identical strings during export.
+Text from statsinfo_text.prop in The Walking Dead can be imported/exported.
+(seasonstatstext.prop temporarily does not work.)
 
 v.0.7.7 (13.01.13)
 + Font Editor:
-Шрифты от Walking Dead открываются без шаманства.
+Walking Dead fonts now open without special tricks.
 + Auto(De)Packer:
-Опционально импортируются не только текст сообщении, но и имена. (Необходимо для исправления бага разработчиков в УиГ).
+Optionally imports both messages and names. (Fixes developer bug in Strong Bad.)
 
 v.0.7.6 (10.11.12)
 + Auto(De)Packer:
-Экспортируется и импортируется текст из seasonstatstext.prop от игры Walking Dead.
-(Возможно работает и с некторыми другими prop.)
-Исправлены опечатки.
+Exports and imports text from seasonstatstext.prop (The Walking Dead).
+(May work for other .prop files too.)
+Fixed typos.
 
 v.0.7.5 (10.11.12)
 + Auto(De)Packer:
-При экспорте текста одинаковые строки ставятся рядом
+Identical lines are placed next to each other on text export.
 
 v.0.7.4 (11.06.11)
 + Font Editor:
-Добавлена поддерджка Hector: Ep 1
+Added support for Hector: Ep 1.
 
 v.0.7.3 (20.05.11)
 + Auto(De)Packer:
-Теперь для СиМ 201-205 langdb не только пакуется, но и импортирует txt.
-Все операции импорта для СиМ 201-205 теперь вызываются в потоке.
-Все потоки объеденены в один для логичности и упрощения.
-+100500 мелких правок.
+Now supports langdb import for Sam &amp; Max 201–205.
+All Sam &amp; Max 201–205 import operations now run in a thread.
+All threads merged for logic and simplicity.
++ Many small fixes.
 
 v.0.7.2 (11.05.11)
 + Auto(De)Packer:
-DLOG-файлы от эпизодов СиМ 302-305 теперь собираются верно.
-+Text Editor:
-Теперь при сортировке двуязычнико строки не пропадают. Наконец-то это правда.
-Прогресс-бар всегда заполняется на 100%.
+DLOG files from Sam &amp; Max 302–305 now compile properly.
++ Text Editor:
+Fixed disappearing bilingual lines during sorting.
+Progress bar now always reaches 100%.
 
 v.0.7.1 (10.05.11)
-Множество исправлений и изменений в Text Editor'е, которые затрагивают алгоритм импорта-экспорта текста.
+Many fixes and changes to Text Editor affecting import-export algorithm.
 
 v.0.7.0 (03.05.11)
-+ MainMenu
-Надеюсь решена проблема со странной кодировкой в титрах ToMI.
-Так же теперь можно нормально пользовать переводчик титров.
-При смене путей в настройках используются новые параметры, а не те, что были при запуске.
++ MainMenu:
+Hopefully fixed strange encoding in ToMI credits.
+Subtitle translation now works properly.
+Path settings now apply immediately when changed.
 
 v.0.6.9 (31.03.11)
-Теперь если при считывании txt-файла будет обнаружена ошибка, то будет показано соответсвующее сообщение с проблемной строкой.
+If an error occurs while reading a txt file, a message will show the problem line.
 + Auto(De)Packer:
-При возникновении ошибки считывания будет добавлена строка об ошибке с указанием строки и файла.
-Теперь форму можно растягивать.
+On read error, a line indicating the error and file will be added.
+The window is now resizable.
 
 v.0.6.8 (30.03.11)
-+Text Editor:
-Переработан алгоритм импорта одноязычных файлов. (Он работает и теперь нет разницы с какого файла начинать.)
++ Text Editor:
+Single-language import algorithm reworked. (Now it doesn't matter which file is loaded first.)
 
 v.0.6.7 (24.03.11)
-Добавлена форма для настройки программы.
-Настройки теперь хранятся в xml.
-Отключена возможность использования TextCollector'а. (Позже он будет удалён насовесем.)
+Added settings window.
+Settings saved in XML.
+Disabled TextCollector (will be removed permanently).
 + Auto(De)Packer:
-Экспорт текста происходит теперь гораздо быстрее.
-После успешного импорта DDS и соответсвующих настройках программы исходные файлы удаляются. (Не затрагивает импорт для S&amp;M: Season 2)
-Если DDS была успешно импортирована, то она удаляется. Если все DDS-текстуры из папки были верно импортированы в файл D3DTX, то он удаляется. Иначе остается сам D3DTX и неверная(-ые) DDS.
+Text export is now much faster.
+If DDS was successfully imported, it is deleted. If all DDS textures in a folder are successfully packed into D3DTX, D3DTX is deleted. If not, the faulty DDS and D3DTX remain.
 + MainMenu:
-Небольшие изменения в GUI.
-+About:
-Добавлена ссылка на твиттер и удалена устаревшая информация.
+Small GUI changes.
++ About:
+Added Twitter link and removed outdated info.
 
 v.0.6.6 (20.03.11)
 + Auto(De)Packer:
-Восстановлен импорт файлов с комментариями в названии.
+Restored import of files with comments in filenames.
 
 v.0.6.5 (15.03.11)
 + Auto(De)Packer:
-Исправлена ошибка с невозможностью экспорта из LANGDB (Баг внесенный в логику прошлым обновлением).
-Так же добавлено сообщение из нитей о завершении экспорта файлов (Пока это только LANGDB.)
-+Text Editor:
-Исправлена ошибка с добавлением второго файла (Всегда следует начинать с оригинального).
-Наконец-то добавлена нормальная функция сохранения результатов.
-Путь до переведенного файла теперь не заменяет путь к оригинальному файлу.
+Fixed LANGDB export bug (introduced in previous update).
+Added thread completion messages (currently only for LANGDB).
++ Text Editor:
+Fixed bug when adding second file (always start with original).
+Added proper result save function.
+Translated file path no longer overwrites original path.
 
 v.0.6.4 (14.03.11)
 + Auto(De)Packer:
-Исправлена ошибка с неверным импортом текстур при наличии двух файлов, имеющих определенные названия.
-Теперь при задействии нити осуществляется автопрокрутка и добавляется строка о завершении работы алгоритма.
-Добавлено одно сообщение о неверном пути к папкам.
+Fixed bug importing textures with two specific filenames.
+Scroll auto-moves to end of thread output.
+Added message for invalid folder paths.
 
-v.0.6.3 (3.03.11)
+v.0.6.3 (03.03.11)
 + Auto(De)Packer:
-Исправлена ошибка с дублированием переводов строк.
+Fixed string translation duplication issue.
 
 v.0.6.2 (17.01.11)
 + Font Editor:
-Добавлена возможность импортировать координаты из файлов XML сгененрированных FontStudio.
-Добавлена тестовая поддержка Strong Bad. В конце извлеченных файлов находится что-то ещё, без чего игра работает. Возможно это "левый" кусок от других файлов, причем ещё почти полностью защифрованный.
+Can now import coordinates from FontStudio-generated XML.
+Experimental support for Strong Bad. Some leftover encrypted chunks may exist.
 + Auto(De)Packer:
-Добавлена поддержка извлечения текста из LANGDB.
-Экспорт и импорт текста для LANGDB осуществляется в отдельном потоке.
+Support for extracting LANGDB text.
+LANGDB text import/export now runs in a separate thread.
 
-v.0.6.1 (24.12.10) (На самом деле это очень давнее обновление)
-Теперь программа занимает меньше памяти в ОЗУ.
+v.0.6.1 (24.12.10)
+Now uses less RAM.
 + About:
-Немного подправлен текст.
+Minor text fixes.
 + Font Editor:
-Восстановлена обработка ошибки открытия неизвестного/зашифрованного файла.
-+ Возможно ещё что-то, но я уже забыл.
+Error handling for unknown/encrypted font files restored.
++ Possibly other things, but I forgot.
 
-
-v.0.6.0 (1.11.10)
+v.0.6.0 (01.11.10)
 + Font Editor:
-Добавлена поддержка игры CSI: Fatal Conspiracy.
+Added support for CSI: Fatal Conspiracy.
 + Auto(De)Packer:
-Импорт текста в Landb тоже работает в отдельном потоке.
+LANGDB text import runs in a separate thread.
 
 v.0.5.9 (25.10.10)
-Добавлена временная кнопка в главное меню и в TextEditor'е создается файл с одинаковыми строками из двух и делается обновленный файл.
-
+Temporary button added in main menu and Text Editor creates a file with identical lines from two files.
 
 v.0.5.8 (16.10.10)
 + Auto(De)Packer:
-Теперь d3dtx-текстуры собираются в отдельной нити, так же теперь и текстуры поддерживают комментарии в имени импортируемого файла внутри скобок ().
-Сборка неправильно сохраненной текстуры не приводит к фатальной ошибке, хотя нормальной проверки там нет (Если размер DDS больше D3DTX, то будет сообщено об ошибка). 
-Ну и сборка текстур теперь не приводит к падению при завершении сканирования папки.
-+TextEditor
-Новый инструмент, который является переписанным Text Collector'ом (ибо он был тормозной и унылый).
+d3dtx textures now built in a separate thread, now support filename comments in parentheses.
+Bad DDS → D3DTX build no longer crashes the app.
++ Text Editor:
+New tool — rewritten Text Collector (old one was slow and boring).
 
-v.0.5.7 (30.09.10) 
+v.0.5.7 (30.09.10)
 + Auto(De)Packer:
-Теперь имена и расширения у текстур при сравнении имён проходят через функцию ToLower().
+Texture names/extensions are now compared using ToLower().
 
-v.0.5.6 (25.08.10) 
+v.0.5.6 (25.08.10)
 + Auto(De)Packer:
-Может извлекать dds из незашифрованных/упакованных d3dtx.
+Can extract DDS from unencrypted/packed D3DTX.
 
-v.0.5.5 (19.08.10) 
+v.0.5.5 (19.08.10)
 + Font Editor:
-Можно экспортировать и импортировать координаты.
+Coordinates can now be exported/imported.
 
-v.0.5.4 (3.08.10) 
+v.0.5.4 (03.08.10)
 + Auto(De)Packer:
-Исправлена работа с landb.
-Теперь при экспорте текст компануется как при работе с TextCollector.
+Fixed handling of LANGDB.
+Now exports text like TextCollector.
 
-v.0.5.3 (26.07.10) 
+v.0.5.3 (26.07.10)
 + Auto(De)Packer:
-Теперь путь к папкам Input, Output и прочему хранится во внешнем файле; 
-Исправлены разные косяки с блоком работы для второго сезона СиМ. 
+Paths to Input, Output, etc. now stored in external file.
+Fixed logic for Sam &amp; Max Season 2.
 
-v.0.5.2 (23.07.10) 
+v.0.5.2 (23.07.10)
 + Auto(De)Packer:
-Теперь программа может находит две текстовые строки в одной записи в dlog. (Если будет встречено три, пишите/стучите мне.)
+Can now detect two text strings in one DLOG entry. (If three are found, contact me.)
 
-v.0.5.1 (17.07.10) 
+v.0.5.1 (17.07.10)
 + Auto(De)Packer:
-Исправлена пара (очень) досадных недоразумений при работе с dlog.
+Fixed a couple of annoying bugs with DLOG.
 
-v.0.5 (17.07.10) 
+v.0.5 (17.07.10)
 + Auto(De)Packer:
-landb + txt &gt;&gt; landb
-landb &gt;&gt; txt
-Может извлекать и возвращать текст в landb (Puzzle Agent - The Mystery of Scoggins). Условия названия файлов такие же как и у dlog.
-Исправлен старый баг с необходимостью перезапуска программы.
-+ Немного подчищен код.
+landb + txt → landb
+landb → txt
+Supports extracting and reinserting text into landb (Puzzle Agent).
+Fixed old bug requiring program restart.
++ Cleaned up code.
 + Main Menu:
-Теперь сворачивается в трей.
-+ Незанчительные изменения в GUI.
+Now minimizes to tray.
++ Minor GUI tweaks.
 
-v.0.4.1 (15.07.10) 
+v.0.4.1 (15.07.10)
 + AutoPacker:
-Может извлекать текст из dlog в txt. (Если в исходной папке с ним хранится txt с тем же названием без учёта комментария и расширения, то тогда имя извлеченного файла будет взято у него!)
+Can extract text from dlog into txt. (If matching txt is found in source folder, its name is used.)
 
-v.0.4 (14.07.10) 
+v.0.4 (14.07.10)
 + Text Collector:
-другой более универсальный алгоритм вырезания комментариев.
+More universal comment-stripping algorithm.
 + AutoPacker:
-dlog + txt &gt;&gt; dlog
-txt в названии могут содержать комментарии внутри скобок (). Например: txt(Проверка).txt; корректно импортируется внутрь файла txt.dlog.
-+ Так же алгоритм разбора строк внутри импортируемых txt в программу теперь совершенно новый и очень простой.
+dlog + txt → dlog
+Supports comments in parentheses in txt filenames.
+New string parsing algorithm in importer — now extremely simple.
 
-v.0.3.6 (12.07.10) 
+v.0.3.6 (12.07.10)
 + Text Collector:
-исправлен косяк с вырезанием комментариев в конструкции []. Они не обрабатывались по какой-то причине.
+Fixed bug with comment stripping inside []. It was not processed for some reason.
 
-v.0.3.5 (7.07.10) 
+v.0.3.5 (07.07.10)
 + Text Collector:
-добавлена кнопка очистки полей, отключен блок работы с папками (до момента написания);
-для создаваемого файла предлагает имя на основе оригинала с пометкой "(all)" в названии файла.
+Clear fields button added, folder block disabled for now;
+Suggested file name is based on original with “(all)” suffix.
 + Font Editor:
-добавлена поддержка игры: Puzzle Agent - The Mystery of Scoggins
+Added support for Puzzle Agent - The Mystery of Scoggins.
 
-v.0.3. (20.06.10) 
+v.0.3 (20.06.10)
 + Text Collector:
-Собирает из двух файлов один и ставит одинаковые строки (без учёта комментариев, пробелов/запятых/etc) рядом.
-В дальнейшем после редактирования этот файл можно смело импортировать в игру.
-Работает лишь с файлами с одинаковым числом игровых строк!
+Merges two files into one, placing matching lines together (ignores comments, spaces, commas, etc).
+After editing, you can safely import this file back into the game.
+Works only with files containing the same number of lines.
 
 v.0.2.1 (17.06.10) 
 + Font Editor:

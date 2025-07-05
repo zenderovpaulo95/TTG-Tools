@@ -98,5 +98,34 @@ namespace TTG_Tools
             checkBoxChangeLangFlags.Enabled = newTxtFormatRB.Checked;
             checkBoxChangeLangFlags.Visible = newTxtFormatRB.Checked;
         }
+
+        public string SetFolder(string inputPath)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.ShowNewFolderButton = true;
+            if (Directory.Exists(inputPath))
+            {
+                fbd.SelectedPath = inputPath;
+            }
+            else
+            {
+                fbd.SelectedPath = Application.StartupPath;
+            }
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                return fbd.SelectedPath;
+            }
+            else { return inputPath; }
+        }
+
+        private void buttonInputFolder_Click(object sender, EventArgs e)
+        {
+            textBoxInputFolder.Text = SetFolder(textBoxInputFolder.Text);
+        }
+
+        private void buttonOutputFolder_Click(object sender, EventArgs e)
+        {
+            textBoxOutputFolder.Text = SetFolder(textBoxOutputFolder.Text);
+        }
     }
 }

@@ -60,19 +60,6 @@
             this.exportCoordinatesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripImportFNT = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridViewWithCoord = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStripExp_imp_Coord = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportCoordinatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importCoordinatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,6 +77,19 @@
             this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
             this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
             this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewWithTextures)).BeginInit();
@@ -256,7 +256,7 @@
             this.openToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -265,7 +265,7 @@
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -273,14 +273,14 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.saveAsToolStripMenuItem.Text = "Save As ...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -427,97 +427,6 @@
             this.dataGridViewWithCoord.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridViewWithCoord_CellBeginEdit);
             this.dataGridViewWithCoord.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewWithCoord_CellEndEdit);
             this.dataGridViewWithCoord.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewWithCoord_CellMouseClick);
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "№";
-            this.Column1.MinimumWidth = 6;
-            this.Column1.Name = "Column1";
-            this.Column1.Width = 40;
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "Char";
-            this.Column2.MinimumWidth = 6;
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 40;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "X start";
-            this.Column3.MinimumWidth = 6;
-            this.Column3.Name = "Column3";
-            this.Column3.Width = 60;
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "X end";
-            this.Column4.MinimumWidth = 6;
-            this.Column4.Name = "Column4";
-            this.Column4.Width = 60;
-            // 
-            // Column5
-            // 
-            this.Column5.HeaderText = "Y start";
-            this.Column5.MinimumWidth = 6;
-            this.Column5.Name = "Column5";
-            this.Column5.Width = 60;
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "Y end";
-            this.Column6.MinimumWidth = 6;
-            this.Column6.Name = "Column6";
-            this.Column6.Width = 60;
-            // 
-            // Column7
-            // 
-            this.Column7.HeaderText = "№ dds";
-            this.Column7.MinimumWidth = 6;
-            this.Column7.Name = "Column7";
-            this.Column7.Width = 65;
-            // 
-            // Column8
-            // 
-            this.Column8.HeaderText = "Width";
-            this.Column8.MinimumWidth = 6;
-            this.Column8.Name = "Column8";
-            this.Column8.Width = 119;
-            // 
-            // Column9
-            // 
-            this.Column9.HeaderText = "Height";
-            this.Column9.MinimumWidth = 6;
-            this.Column9.Name = "Column9";
-            this.Column9.Width = 119;
-            // 
-            // Column10
-            // 
-            this.Column10.HeaderText = "Channel";
-            this.Column10.MinimumWidth = 6;
-            this.Column10.Name = "Column10";
-            this.Column10.Width = 119;
-            // 
-            // Column11
-            // 
-            this.Column11.HeaderText = "X offset";
-            this.Column11.MinimumWidth = 6;
-            this.Column11.Name = "Column11";
-            this.Column11.Width = 119;
-            // 
-            // Column12
-            // 
-            this.Column12.HeaderText = "Y offset";
-            this.Column12.MinimumWidth = 6;
-            this.Column12.Name = "Column12";
-            this.Column12.Width = 119;
-            // 
-            // Column13
-            // 
-            this.Column13.HeaderText = "X advanced";
-            this.Column13.MinimumWidth = 6;
-            this.Column13.Name = "Column13";
-            this.Column13.Width = 119;
             // 
             // contextMenuStripExp_imp_Coord
             // 
@@ -705,6 +614,101 @@
             this.rbNoSwizzle.UseVisualStyleBackColor = true;
             this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
             // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "№";
+            this.Column1.MinimumWidth = 6;
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.Width = 40;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "Char";
+            this.Column2.MinimumWidth = 6;
+            this.Column2.Name = "Column2";
+            this.Column2.ReadOnly = true;
+            this.Column2.Width = 40;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "X start";
+            this.Column3.MinimumWidth = 6;
+            this.Column3.Name = "Column3";
+            this.Column3.Width = 60;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "X end";
+            this.Column4.MinimumWidth = 6;
+            this.Column4.Name = "Column4";
+            this.Column4.Width = 60;
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "Y start";
+            this.Column5.MinimumWidth = 6;
+            this.Column5.Name = "Column5";
+            this.Column5.Width = 60;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "Y end";
+            this.Column6.MinimumWidth = 6;
+            this.Column6.Name = "Column6";
+            this.Column6.Width = 60;
+            // 
+            // Column7
+            // 
+            this.Column7.HeaderText = "№ dds";
+            this.Column7.MinimumWidth = 6;
+            this.Column7.Name = "Column7";
+            this.Column7.Width = 65;
+            // 
+            // Column8
+            // 
+            this.Column8.HeaderText = "Width";
+            this.Column8.MinimumWidth = 6;
+            this.Column8.Name = "Column8";
+            this.Column8.ReadOnly = true;
+            this.Column8.Width = 119;
+            // 
+            // Column9
+            // 
+            this.Column9.HeaderText = "Height";
+            this.Column9.MinimumWidth = 6;
+            this.Column9.Name = "Column9";
+            this.Column9.ReadOnly = true;
+            this.Column9.Width = 119;
+            // 
+            // Column10
+            // 
+            this.Column10.HeaderText = "Channel";
+            this.Column10.MinimumWidth = 6;
+            this.Column10.Name = "Column10";
+            this.Column10.Width = 119;
+            // 
+            // Column11
+            // 
+            this.Column11.HeaderText = "X offset";
+            this.Column11.MinimumWidth = 6;
+            this.Column11.Name = "Column11";
+            this.Column11.Width = 119;
+            // 
+            // Column12
+            // 
+            this.Column12.HeaderText = "Y offset";
+            this.Column12.MinimumWidth = 6;
+            this.Column12.Name = "Column12";
+            this.Column12.Width = 119;
+            // 
+            // Column13
+            // 
+            this.Column13.HeaderText = "X advanced";
+            this.Column13.MinimumWidth = 6;
+            this.Column13.Name = "Column13";
+            this.Column13.Width = 119;
+            // 
             // FontEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -788,6 +792,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Width;
         private System.Windows.Forms.DataGridViewTextBoxColumn Size;
         private System.Windows.Forms.ToolStripMenuItem removeDuplicatesCharsToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.RadioButton rbSwitchSwizzle;
+        private System.Windows.Forms.RadioButton rbPS4Swizzle;
+        private System.Windows.Forms.RadioButton rbNoSwizzle;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
@@ -801,9 +809,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.RadioButton rbSwitchSwizzle;
-        private System.Windows.Forms.RadioButton rbPS4Swizzle;
-        private System.Windows.Forms.RadioButton rbNoSwizzle;
     }
 }

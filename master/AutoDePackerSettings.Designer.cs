@@ -197,6 +197,7 @@
             this.buttonOutputFolder.TabIndex = 22;
             this.buttonOutputFolder.Text = "Output Folder";
             this.buttonOutputFolder.UseVisualStyleBackColor = true;
+            this.buttonOutputFolder.Click += new System.EventHandler(this.buttonOutputFolder_Click);
             // 
             // buttonInputFolder
             // 
@@ -207,6 +208,7 @@
             this.buttonInputFolder.TabIndex = 23;
             this.buttonInputFolder.Text = "Input Folder";
             this.buttonInputFolder.UseVisualStyleBackColor = true;
+            this.buttonInputFolder.Click += new System.EventHandler(this.buttonInputFolder_Click);
             // 
             // okBtn
             // 
