@@ -382,6 +382,7 @@ namespace TTG_Tools.Texts
                             tmpStr = Methods.ConvertString(tmpStr, false);
                             tmpActorSpeech = Encoding.UTF8.GetBytes(tmpStr);
                         }
+                        else tmpActorSpeech = Encoding.GetEncoding(MainMenu.settings.ASCII_N).GetBytes(landb.landbs[i].actorSpeech);
                     }
                     landb.landbs[i].actorSpeechSize = tmpActorSpeech.Length;
                     landb.landbs[i].blockActorSpeechSize = landb.landbs[i].actorSpeechSize + 8;
