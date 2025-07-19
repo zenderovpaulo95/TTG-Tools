@@ -385,7 +385,7 @@
             // 
             this.toolStripImportFNT.Name = "toolStripImportFNT";
             this.toolStripImportFNT.Size = new System.Drawing.Size(412, 22);
-            this.toolStripImportFNT.Text = "Import coordinates from Bitmap Font Generator (*.fnt типа xml)";
+            this.toolStripImportFNT.Text = "Import coordinates from Bitmap Font Generator (*.fnt XML-like type)";
             this.toolStripImportFNT.Click += new System.EventHandler(this.toolStripImportFNT_Click);
             // 
             // dataGridViewWithCoord

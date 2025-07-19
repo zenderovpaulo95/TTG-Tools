@@ -141,15 +141,21 @@ Special thanks to:
 - Nemiroff thanks for fixing a bug in the Font Editor.
 
 List of supported games:
-Telltale's Texas Hold Em, Tales of Monkey Island, Sam &amp; Max: Season One, Sam &amp; Max: Season Two, Wallace and Gromit's Grand Adventures, CSI: Deadly Intent, Sam &amp; Max: The Devil's Playhouse, Puzzle Agent, CSI: Fatal Conspiracy, Poker Night at the Inventory, Back to the Future: The Game, Strong Bad, Hector: The Badge of Carnage, Puzzle Agent 2, Jurassic Park: The Game, The Walking Dead, Poker Night 2, Wolf Among Us, The Walking Dead Season Two, Tales from the Borderlands, Game of Thrones, Minecraft: Story Mode (Seasons one and two), Walking Dead: Michonne, Batman (Seasons one and two), The Walking Dead: The Final Season, The Walking Dead : The Telltale Definitive Series, Sam &amp; Max Save the World Remastered, Sam &amp; Max Beyond Time and Space Remastered, Sam &amp; Max The Devil's Playhouse Remastered.
+Telltale's Texas Hold Em, Tales of Monkey Island, Sam &amp; Max: Season One, Sam &amp; Max: Season Two, Wallace and Gromit's Grand Adventures, CSI: Deadly Intent, Sam &amp; Max: The Devil's Playhouse, Puzzle Agent 1, CSI: Fatal Conspiracy, Poker Night at the Inventory, Back to the Future: The Game, Strong Bad, Hector: The Badge of Carnage, Puzzle Agent 2, Jurassic Park: The Game, The Walking Dead, Poker Night 2, The Wolf Among Us, The Walking Dead Season Two, Tales from the Borderlands, Game of Thrones - A Telltale Games Series, Minecraft: Story Mode (Seasons One and Two), The Walking Dead: Michonne, Batman (Seasons One and Two), The Walking Dead: The Final Season, The Walking Dead : The Telltale Definitive Series, Sam &amp; Max Save the World Remastered, Sam &amp; Max Beyond Time and Space Remastered, Sam &amp; Max The Devil's Playhouse Remastered.
 Maybe some games doesn't work.
 
 ===
 [Version history]
 
+v.1.14.8 (19.07.2025)
++ TTG Tools:
+Fixed the names of the games
++ Font editor:
+Removed russian messages.
+
 v.1.14.7 (05.07.2025)
 + Auto(De)Packer (Packer and Unpacker)
-Pashok6798 fixed an encoding bug where Latin characters were showing up as "?" in Back To The Future: The Game on Xbox 360 and PS4.
+Fixed an encoding bug where Latin characters were showing up as "?" in Back To The Future: The Game on Xbox 360 and PS4.
 + Font editor:
 Added Nemiroff's fixes to the official TTG Tools build.
 + TTG Tools:
@@ -207,7 +213,7 @@ Add first version of archive unpacker
 
 v.1.13.2 (14.08.2024)
 +TTG Tools:
-Add support Sam &amp; Max The Devil's Playhouse remastered
+Add support Sam &amp; Max The Devil's Playhouse Remastered
 
 v.1.13.1 (02.09.2023)
 + TTG Tools:
@@ -302,12 +308,12 @@ v1.0.3 (14.12.19)
 + TTG Tools
 Minor update
 - Auto(De)Packer:
-Removed support newer games (WD season 4 and WD Definitive Series). This tool won't support
+Removed support newer games (TWD season 4 and TWD Definitive Series). This tool won't support
 anymore newest games.
 
 v.1.0.2 (03.12.19)
 + Auto(De)Packer:
-Поддержка The Walking Dead - The Definitive Series
+Support for The Walking Dead - The Definitive Series
 
 v.1.0.1 (27.10.18)
 +TTG Tools
@@ -331,7 +337,7 @@ v.0.9.8b (06.03.16)
 + TTG Tools
 Added support in Archive Packer and Auto(De)Packer for using keys not listed.
 Also changed the encryption structure of lua scripts. Experimental version. If the encryption structure in Walking Dead: Michonne turns out to be different, it will be redone.
-Added encryption key for Walking Dead: Michonne.
+Added encryption key for The Walking Dead: Michonne.
 + Archive Packer
 Added ability to encrypt archives and lua scripts during archive building.
 With the zlib.net.dll library, you can compress archives for versions 3–7 in ttarch format.
@@ -371,7 +377,7 @@ Fonts from Poker Night 1 now work (tested with that version. Older ones not test
 
 v.0.9.4b (14.07.15)
 + Font Editor:
-The fonts from The Wolf Among Us, Poker Night 2, Walking Dead: Season Two, and Walking Dead Remastered now work again.
+The fonts from The Wolf Among Us, Poker Night 2, The Walking Dead: Season Two, and The Walking Dead Remastered now work again.
 Slight form appearance change.
 Partial fixes to import/export of files.
 If changes are made to the font, you'll be prompted to save when closing. If just opening the form, no prompts appear.
@@ -460,7 +466,7 @@ Text from statsinfo_text.prop in The Walking Dead can be imported/exported.
 
 v.0.7.7 (13.01.13)
 + Font Editor:
-Walking Dead fonts now open without special tricks.
+The Walking Dead fonts now open without special tricks.
 + Auto(De)Packer:
 Optionally imports both messages and names. (Fixes developer bug in Strong Bad.)
 
@@ -652,7 +658,7 @@ v.0.2.1 (17.06.10)
 + Font Editor:
 when you copy coordinates, copied cell marked green;
 fixed rare bug with coordinates.
--Известные баги:
+-Known bugs:
 if you used a Font Editor, you need close and open program for using AutoPacker.
 
 v.0.2 (16.06.10) 
