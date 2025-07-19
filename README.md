@@ -4,15 +4,15 @@ Added some modifications into tool and uploaded from agreement of Den Em.
 For correct compilation you have to download zlib.net.dll from here: http://www.componentace.com/download/download.php?editionid=25
 and add it in zlib folder.
 
-Special thanks to:
-- Den Em for accept to upload his source code.
-- aluigi for source code of ttarchext;
-- Taylor Hornby for C# source code of Blowfish encryption
-- gdkchan, Stella/AboodXD for swizzle method of Nintendo Switch
-- daemon1 and tge for PS4 swizzle algorithm
-- Josh Tamely for oodle wrapper
-- Hajin Jang for Zlib.Wrapper
-- Nemiroff thanks for fixing a bug in the Font Editor.
+Special thanks to:  
+- Den Em for accepting to upload his source code  
+- aluigi for the source code of ttarchext  
+- Taylor Hornby for the C# source code of Blowfish encryption  
+- gdkchan, Stella/AboodXD for the swizzle method of Nintendo Switch  
+- daemon1 and tge for the PS4 swizzle algorithm  
+- Josh Tamely for the Oodle wrapper  
+- Hajin Jang for the Zlib wrapper  
+- Nemiroff for fixing a bug in the Font Editor
 
 This tool have to make easier translations for games from Telltale and Skunkape games.
 It supports some games (at least I tested only these games):
