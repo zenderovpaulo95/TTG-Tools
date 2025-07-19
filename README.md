@@ -19,14 +19,14 @@ It supports some games (at least I tested only these games):
 - Telltale Texas Hold'em
 - Bone: Out from Boneville
 - Bone: The Great Cow Race
-- Sam & Max Save the World
-- Sam & Max Beyond Time and Space
+- Sam & Max: Save the World (2006)
+- Sam & Max: Beyond Time and Space (2007)
+- Sam & Max: The Devil's Playhouse (2010)
 - Strong Bad's Cool Game for Attractive People
 - Wallace & Gromit's Grand Adventures	
 - Tales of Monkey Island
-- Sam & Max: The Devil's Playhouse
 - Hector: Badge of Carnage
-- Nelson Tethers: Puzzle Agent
+- Puzzle Agent 1
 - Poker Night at the Inventory
 - Back to the Future: The Game
 - Puzzle Agent 2
@@ -37,16 +37,16 @@ It supports some games (at least I tested only these games):
 - The Wolf Among Us
 - The Walking Dead: Season Two
 - Tales from the Borderlands (2015 & 2021 versions)
-- Game of Thrones
-- Minecraft: Story Mode
+- Game of Thrones: The Telltale Series
+- Minecraft: Story Mode - Season One
 - The Walking Dead: Michonne
 - Batman: The Telltale Series
 - The Walking Dead: A New Frontier
 - Marvel’s Guardians of the Galaxy: The Telltale Series
-- Minecraft: Story Mode — Season 2
+- Minecraft: Story Mode — Season Two
 - Batman: The Enemy Within
 - The Walking Dead: The Final Season
 - The Walking Dead: The Telltale Definitive Series
-- Sam and Max Save the World Remastered
-- Sam and Max Beyond Time and Space Remastered
-- Sam and Max The Devil's playhouse Remastered
+- Sam and Max: Save the World - Remastered
+- Sam and Max: Beyond Time and Space - Remastered
+- Sam and Max: The Devil's Playhouse - Remastered
