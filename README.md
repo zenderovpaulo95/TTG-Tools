@@ -43,7 +43,7 @@ It supports some games (at least I tested only these games):
 - Batman: The Telltale Series
 - The Walking Dead: A New Frontier
 - Marvel’s Guardians of the Galaxy: The Telltale Series
-- Minecraft: Story Mode — Season Two
+- Minecraft: Story Mode - Season Two
 - Batman: The Enemy Within
 - The Walking Dead: The Final Season
 - The Walking Dead: The Telltale Definitive Series
