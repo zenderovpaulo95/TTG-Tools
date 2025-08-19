@@ -13,6 +13,7 @@ Special thanks to:
 - Josh Tamely for the Oodle wrapper  
 - Hajin Jang for the Zlib wrapper  
 - Nemiroff for fixing a bug in the Font Editor
+- Krisp for adding Xbox texture support and font editing with Swizzle.  
 
 This tool have to make easier translations for games from Telltale and Skunkape games.
 It supports some games (at least I tested only these games):
@@ -50,3 +51,4 @@ It supports some games (at least I tested only these games):
 - Sam and Max: Save the World - Remastered
 - Sam and Max: Beyond Time and Space - Remastered
 - Sam and Max: The Devil's Playhouse - Remastered
+
