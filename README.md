@@ -4,6 +4,10 @@ TTG Tools is a powerful utility for modifying files from Telltale Games, includi
 
 This version of TTG Tools includes some modifications and has been uploaded with the permission of Den Em.
 
+## Download
+
+<a href="https://github.com/zenderovpaulo95/TTG-Tools/releases/tag/v.1.14.9" style="display:inline-block;padding:10px 20px;background-color:#28a745;color:white;border-radius:5px;text-decoration:none;font-weight:bold;">⬇ Download TTG Tools v1.14.9</a>
+
 ## Compilation
 
 For correct compilation, you need to download `zlib.net.dll` from [here](http://www.componentace.com/download/download.php?editionid=25) and place it in the `zlib` folder.
