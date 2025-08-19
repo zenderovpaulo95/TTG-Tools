@@ -6,7 +6,7 @@ This version of TTG Tools includes some modifications and has been uploaded with
 
 ## Introduction
 
-TTG Tools can unpack/repack langdb, landb, font (Walking Dead Season 4, Walking Dead Definitive Collection, and Sam & Max remasters vector fonts only) and dlog (only for Sam & Max: The Devil's Playhouse, a.k.a Season 3 original) files. It can also decrypt/encrypt older langdb, font, and d3dtx files—the tool knows which files need encryption, so if it didn't encrypt, it doesn't need it. This can be done with the "Auto (De)Packer" window.
+TTG Tools can unpack/repack langdb, landb, font (The Walking Dead: Season 4, The Walking Dead Definitive Collection, and Sam & Max remasters vector fonts only) and dlog (only for Sam & Max: The Devil's Playhouse, a.k.a Season 3 original) files. It can also decrypt/encrypt older langdb, font, and d3dtx files—the tool knows which files need encryption, so if it didn't encrypt, it doesn't need it. This can be done with the "Auto (De)Packer" window.
 
 To extract/repack files, put your files into the "Input" folder. Needed files can be found in the "Output" folder. TTG Tools can extract the following files into these formats:
 
@@ -210,3 +210,4 @@ TTG Tools makes it easier to translate and modify Telltale Games and Skunkape Ga
 - Sam & Max: Save the World - Remastered
 - Sam & Max: Beyond Time and Space - Remastered
 - Sam & Max: The Devil's Playhouse - Remastered
+
