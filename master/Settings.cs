@@ -51,6 +51,7 @@ namespace TTG_Tools
         private bool _newTxtFormat;
         private bool _changeLangFlags;
         private bool _swizzlePS4;
+        private bool _swizzleXbox360;
 
         private int _languageIndex;
 
@@ -471,6 +472,19 @@ namespace TTG_Tools
             }
         }
 
+        [XmlAttribute("swizzleXbox360")]
+        public bool swizzleXbox360
+        {
+            get
+            {
+                return _swizzleXbox360;
+            }
+            set
+            {
+                _swizzleXbox360 = value;
+            }
+        }
+
         [XmlAttribute("ASCIILanguageIndex")]
         public int languageIndex
         {
@@ -517,6 +531,7 @@ namespace TTG_Tools
             bool _changeLangFlags,
             bool _ignoreEmptyStrings,
             bool _swizzlePS4,
+            bool _swizzleXbox360,
             int _languageIndex)
         {
             this.ASCII_N = _ASCII_N;
@@ -551,6 +566,7 @@ namespace TTG_Tools
             this.changeLangFlags = _changeLangFlags;
             this.ignoreEmptyStrings = _ignoreEmptyStrings;
             this.swizzlePS4 = _swizzlePS4;
+            this.swizzleXbox360 = _swizzleXbox360;
             this.languageIndex = _languageIndex;
         }
 

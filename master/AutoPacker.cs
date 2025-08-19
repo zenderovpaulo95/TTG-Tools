@@ -194,10 +194,11 @@ namespace TTG_Tools
             checkEncLangdb.Checked = MainMenu.settings.encLangdb;
             CheckNewEngine.Checked = MainMenu.settings.encNewLua;
 
-            if (MainMenu.settings.swizzlePS4 || MainMenu.settings.swizzleNintendoSwitch)
+            if (MainMenu.settings.swizzlePS4 || MainMenu.settings.swizzleNintendoSwitch || MainMenu.settings.swizzleXbox360) // Modifique esta linha
             {
                 if (MainMenu.settings.swizzleNintendoSwitch) rbSwitchSwizzle.Checked = true;
-                else rbPS4Swizzle.Checked = true;
+                else if (MainMenu.settings.swizzlePS4) rbPS4Swizzle.Checked = true; // Use else if
+                else if (MainMenu.settings.swizzleXbox360) rbXbox360Swizzle.Checked = true; // Adicione esta linha
             }
             else rbNoSwizzle.Checked = true;
 
@@ -332,6 +333,7 @@ namespace TTG_Tools
             {
                 MainMenu.settings.swizzlePS4 = true;
                 MainMenu.settings.swizzleNintendoSwitch = false;
+                MainMenu.settings.swizzleXbox360 = false;
                 Settings.SaveConfig(MainMenu.settings);
             }
         }
@@ -342,6 +344,18 @@ namespace TTG_Tools
             {
                 MainMenu.settings.swizzleNintendoSwitch = true;
                 MainMenu.settings.swizzlePS4 = false;
+                MainMenu.settings.swizzleXbox360 = false;
+                Settings.SaveConfig(MainMenu.settings);
+            }
+        }
+
+        private void rbXbox360Swizzle_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbXbox360Swizzle.Checked)
+            {
+                MainMenu.settings.swizzleXbox360 = true;
+                MainMenu.settings.swizzlePS4 = false;
+                MainMenu.settings.swizzleNintendoSwitch = false;
                 Settings.SaveConfig(MainMenu.settings);
             }
         }

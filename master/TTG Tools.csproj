@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TTG_Tools</RootNamespace>
     <AssemblyName>TTG Tools</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>ttgtool.ico</ApplicationIcon>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -126,6 +126,7 @@
     <Compile Include="Graphics\PVR\pvr.cs" />
     <Compile Include="Graphics\Swizzles\PS4.cs" />
     <Compile Include="Graphics\Swizzles\SwizzleUtilities.cs" />
+    <Compile Include="Graphics\Swizzles\Xbox360.cs" />
     <Compile Include="InEngineWords\ClassStructsNames.cs" />
     <Compile Include="InEngineWords\VariableTypes.cs" />
     <Compile Include="Settings.cs" />

@@ -37,6 +37,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
             this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
+            this.rbXbox360Swizzle = new System.Windows.Forms.RadioButton();
             this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
             this.labelUnicode = new System.Windows.Forms.Label();
             this.checkIOS = new System.Windows.Forms.CheckBox();
@@ -136,10 +137,11 @@
             // 
             this.groupBox2.Controls.Add(this.rbSwitchSwizzle);
             this.groupBox2.Controls.Add(this.rbPS4Swizzle);
+            this.groupBox2.Controls.Add(this.rbXbox360Swizzle);
             this.groupBox2.Controls.Add(this.rbNoSwizzle);
             this.groupBox2.Location = new System.Drawing.Point(276, 15);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(126, 88);
+            this.groupBox2.Size = new System.Drawing.Size(126, 109);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Swizzle methods";
@@ -168,6 +170,18 @@
             this.rbPS4Swizzle.UseVisualStyleBackColor = true;
             this.rbPS4Swizzle.CheckedChanged += new System.EventHandler(this.rbPS4Swizzle_CheckedChanged);
             // 
+            // rbXbox360Swizzle
+            // 
+            this.rbXbox360Swizzle.AutoSize = true;
+            this.rbXbox360Swizzle.Location = new System.Drawing.Point(16, 86);
+            this.rbXbox360Swizzle.Name = "rbXbox360Swizzle";
+            this.rbXbox360Swizzle.Size = new System.Drawing.Size(70, 17);
+            this.rbXbox360Swizzle.TabIndex = 3;
+            this.rbXbox360Swizzle.TabStop = true;
+            this.rbXbox360Swizzle.Text = "Xbox 360";
+            this.rbXbox360Swizzle.UseVisualStyleBackColor = true;
+            this.rbXbox360Swizzle.CheckedChanged += new System.EventHandler(this.rbXbox360Swizzle_CheckedChanged);
+            // 
             // rbNoSwizzle
             // 
             this.rbNoSwizzle.AutoSize = true;
@@ -183,7 +197,7 @@
             // labelUnicode
             // 
             this.labelUnicode.AutoSize = true;
-            this.labelUnicode.Location = new System.Drawing.Point(212, 107);
+            this.labelUnicode.Location = new System.Drawing.Point(5, 126);
             this.labelUnicode.Name = "labelUnicode";
             this.labelUnicode.Size = new System.Drawing.Size(72, 13);
             this.labelUnicode.TabIndex = 16;
@@ -373,6 +387,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton rbSwitchSwizzle;
         private System.Windows.Forms.RadioButton rbPS4Swizzle;
+        private System.Windows.Forms.RadioButton rbXbox360Swizzle;
         private System.Windows.Forms.RadioButton rbNoSwizzle;
         private System.Windows.Forms.Label sortLabel;
     }

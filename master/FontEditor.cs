@@ -148,8 +148,9 @@ namespace TTG_Tools
                 Graphics.TextureWorker.ReadDDSHeader(ms, ref NewTex.Width, ref NewTex.Height, ref NewTex.Mip, ref NewTex.TextureFormat, true);
                 NewTex.platform.platform = 2;
 
-                if(MainMenu.settings.swizzleNintendoSwitch) NewTex.platform.platform = 15;
+                if (MainMenu.settings.swizzleNintendoSwitch) NewTex.platform.platform = 15;
                 if (MainMenu.settings.swizzlePS4) NewTex.platform.platform = 11;
+                if (MainMenu.settings.swizzleXbox360) NewTex.platform.platform = 4;
             }
             else
             {
@@ -179,7 +180,7 @@ namespace TTG_Tools
                 NewTex.Tex.Textures[i].Block = new byte[NewTex.Tex.Textures[i].MipSize];
 
                 Array.Copy(NewTex.Tex.Content, pos, NewTex.Tex.Textures[i].Block, 0, NewTex.Tex.Textures[i].Block.Length);
-                switch(NewTex.platform.platform)
+                switch (NewTex.platform.platform)
                 {
                     case 11:
                         if (NewTex.Tex.Textures[i].Block.Length < blockSize) blockSize = NewTex.Tex.Textures[i].Block.Length;
@@ -189,7 +190,49 @@ namespace TTG_Tools
                     case 15:
                         NewTex.Tex.Textures[i].Block = NintendoSwitch.NintendoSwizzle(NewTex.Tex.Textures[i].Block, w, h, (int)NewTex.TextureFormat, false);
                         break;
-                } 
+                    case 4:
+                        int texelBytePitch;
+                        int blockPixelSize;
+                        bool performByteSwap;
+
+                        if (NewTex.TextureFormat == 0x00) // ARGB 8.8.8.8
+                        {
+                            texelBytePitch = 4;
+                            blockPixelSize = 1;
+                            performByteSwap = false;
+                        }
+                        else if (NewTex.TextureFormat == 0x40 || NewTex.TextureFormat == 0x43) // DXT1, BC4
+                        {
+                            texelBytePitch = 8;
+                            blockPixelSize = 4;
+                            performByteSwap = true;
+                        }
+                        else // DXT3, DXT5, BC5
+                        {
+                            texelBytePitch = 16;
+                            blockPixelSize = 4;
+                            performByteSwap = true;
+                        }
+
+                        if (NewTex.TextureFormat == 0x00)
+                        {
+                            NewTex.Tex.Textures[i].Block = Xbox360.ConvertBGRAtoARGB(NewTex.Tex.Textures[i].Block);
+                        }
+
+                        byte[] swizzledBlock = Xbox360.Swizzle(NewTex.Tex.Textures[i].Block, w, h, texelBytePitch, blockPixelSize, performByteSwap);
+
+                        if (swizzledBlock.Length > NewTex.Tex.Textures[i].MipSize)
+                        {
+                            byte[] truncatedBlock = new byte[NewTex.Tex.Textures[i].MipSize];
+                            Array.Copy(swizzledBlock, 0, truncatedBlock, 0, NewTex.Tex.Textures[i].MipSize);
+                            NewTex.Tex.Textures[i].Block = truncatedBlock;
+                        }
+                        else
+                        {
+                            NewTex.Tex.Textures[i].Block = swizzledBlock;
+                        }
+                        break;
+                }
 
 
                 pos += NewTex.Tex.Textures[i].MipSize;
@@ -2032,6 +2075,7 @@ namespace TTG_Tools
 
         private void rbNoSwizzle_CheckedChanged(object sender, EventArgs e)
         {
+            MainMenu.settings.swizzleXbox360 = false;
             MainMenu.settings.swizzlePS4 = false;
             MainMenu.settings.swizzleNintendoSwitch = false;
             Settings.SaveConfig(MainMenu.settings);
@@ -2039,16 +2083,29 @@ namespace TTG_Tools
 
         private void rbPS4Swizzle_CheckedChanged(object sender, EventArgs e)
         {
+            MainMenu.settings.swizzleXbox360 = false;
             MainMenu.settings.swizzlePS4 = true;
-            MainMenu.settings.swizzleNintendoSwitch = true;
+            MainMenu.settings.swizzleNintendoSwitch = false;
             Settings.SaveConfig(MainMenu.settings);
         }
 
         private void rbSwitchSwizzle_CheckedChanged(object sender, EventArgs e)
         {
+            MainMenu.settings.swizzleXbox360 = false;
             MainMenu.settings.swizzlePS4 = false;
             MainMenu.settings.swizzleNintendoSwitch = true;
             Settings.SaveConfig(MainMenu.settings);
+        }
+
+        private void rbXbox360Swizzle_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbXbox360Swizzle.Checked)
+            {
+                MainMenu.settings.swizzleXbox360 = true;
+                MainMenu.settings.swizzlePS4 = false;
+                MainMenu.settings.swizzleNintendoSwitch = false;
+                Settings.SaveConfig(MainMenu.settings);
+            }
         }
 
         private void convertArgb8888CB_CheckedChanged(object sender, EventArgs e)

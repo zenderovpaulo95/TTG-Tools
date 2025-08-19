@@ -60,6 +60,19 @@
             this.exportCoordinatesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripImportFNT = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridViewWithCoord = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStripExp_imp_Coord = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportCoordinatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importCoordinatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,20 +89,8 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
             this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
+            this.rbXbox360Swizzle = new System.Windows.Forms.RadioButton();
             this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewWithTextures)).BeginInit();
@@ -117,7 +118,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(186, 97);
+            this.groupBox1.Size = new System.Drawing.Size(186, 126);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Copy coordinates";
@@ -256,7 +257,7 @@
             this.openToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -265,7 +266,7 @@
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -273,14 +274,14 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.saveAsToolStripMenuItem.Text = "Save As ...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -308,7 +309,7 @@
             this.dataGridViewWithTextures.Name = "dataGridViewWithTextures";
             this.dataGridViewWithTextures.ReadOnly = true;
             this.dataGridViewWithTextures.RowHeadersWidth = 51;
-            this.dataGridViewWithTextures.Size = new System.Drawing.Size(325, 97);
+            this.dataGridViewWithTextures.Size = new System.Drawing.Size(325, 126);
             this.dataGridViewWithTextures.TabIndex = 26;
             this.dataGridViewWithTextures.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewWithTextures_CellMouseClick);
             this.dataGridViewWithTextures.RowContextMenuStripNeeded += new System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler(this.dataGridViewWithTextures_RowContextMenuStripNeeded);
@@ -354,14 +355,14 @@
             this.exportCoordinatesToolStripMenuItem1,
             this.toolStripImportFNT});
             this.contextMenuStripExport_Import.Name = "contextMenuStripExport_Import";
-            this.contextMenuStripExport_Import.Size = new System.Drawing.Size(413, 92);
+            this.contextMenuStripExport_Import.Size = new System.Drawing.Size(438, 92);
             this.contextMenuStripExport_Import.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStripExport_Import_Opening);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Enabled = false;
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(412, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(437, 22);
             this.exportToolStripMenuItem.Text = "Export texture";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
@@ -369,7 +370,7 @@
             // 
             this.importDDSToolStripMenuItem.Enabled = false;
             this.importDDSToolStripMenuItem.Name = "importDDSToolStripMenuItem";
-            this.importDDSToolStripMenuItem.Size = new System.Drawing.Size(412, 22);
+            this.importDDSToolStripMenuItem.Size = new System.Drawing.Size(437, 22);
             this.importDDSToolStripMenuItem.Text = "Import texture";
             this.importDDSToolStripMenuItem.Click += new System.EventHandler(this.importDDSToolStripMenuItem_Click);
             // 
@@ -377,14 +378,14 @@
             // 
             this.exportCoordinatesToolStripMenuItem1.Enabled = false;
             this.exportCoordinatesToolStripMenuItem1.Name = "exportCoordinatesToolStripMenuItem1";
-            this.exportCoordinatesToolStripMenuItem1.Size = new System.Drawing.Size(412, 22);
+            this.exportCoordinatesToolStripMenuItem1.Size = new System.Drawing.Size(437, 22);
             this.exportCoordinatesToolStripMenuItem1.Text = "Export coordinates";
             this.exportCoordinatesToolStripMenuItem1.Click += new System.EventHandler(this.exportCoordinatesToolStripMenuItem1_Click);
             // 
             // toolStripImportFNT
             // 
             this.toolStripImportFNT.Name = "toolStripImportFNT";
-            this.toolStripImportFNT.Size = new System.Drawing.Size(412, 22);
+            this.toolStripImportFNT.Size = new System.Drawing.Size(437, 22);
             this.toolStripImportFNT.Text = "Import coordinates from Bitmap Font Generator (*.fnt XML-like type)";
             this.toolStripImportFNT.Click += new System.EventHandler(this.toolStripImportFNT_Click);
             // 
@@ -418,201 +419,15 @@
             this.Column11,
             this.Column12,
             this.Column13});
-            this.dataGridViewWithCoord.Location = new System.Drawing.Point(12, 134);
+            this.dataGridViewWithCoord.Location = new System.Drawing.Point(12, 159);
             this.dataGridViewWithCoord.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridViewWithCoord.Name = "dataGridViewWithCoord";
             this.dataGridViewWithCoord.RowHeadersWidth = 51;
-            this.dataGridViewWithCoord.Size = new System.Drawing.Size(986, 373);
+            this.dataGridViewWithCoord.Size = new System.Drawing.Size(986, 348);
             this.dataGridViewWithCoord.TabIndex = 27;
             this.dataGridViewWithCoord.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridViewWithCoord_CellBeginEdit);
             this.dataGridViewWithCoord.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewWithCoord_CellEndEdit);
             this.dataGridViewWithCoord.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewWithCoord_CellMouseClick);
-            // 
-            // contextMenuStripExp_imp_Coord
-            // 
-            this.contextMenuStripExp_imp_Coord.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenuStripExp_imp_Coord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportCoordinatesToolStripMenuItem,
-            this.importCoordinatesToolStripMenuItem,
-            this.removeDuplicatesCharsToolStripMenuItem});
-            this.contextMenuStripExp_imp_Coord.Name = "contextMenuStripExp_imp_Coord";
-            this.contextMenuStripExp_imp_Coord.Size = new System.Drawing.Size(206, 70);
-            // 
-            // exportCoordinatesToolStripMenuItem
-            // 
-            this.exportCoordinatesToolStripMenuItem.Name = "exportCoordinatesToolStripMenuItem";
-            this.exportCoordinatesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.exportCoordinatesToolStripMenuItem.Text = "Export coordinates";
-            this.exportCoordinatesToolStripMenuItem.Click += new System.EventHandler(this.exportCoordinatesToolStripMenuItem_Click);
-            // 
-            // importCoordinatesToolStripMenuItem
-            // 
-            this.importCoordinatesToolStripMenuItem.Name = "importCoordinatesToolStripMenuItem";
-            this.importCoordinatesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.importCoordinatesToolStripMenuItem.Text = "Import coordinates";
-            this.importCoordinatesToolStripMenuItem.Click += new System.EventHandler(this.importCoordinatesToolStripMenuItem_Click);
-            // 
-            // removeDuplicatesCharsToolStripMenuItem
-            // 
-            this.removeDuplicatesCharsToolStripMenuItem.Name = "removeDuplicatesCharsToolStripMenuItem";
-            this.removeDuplicatesCharsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.removeDuplicatesCharsToolStripMenuItem.Text = "Remove duplicates chars";
-            this.removeDuplicatesCharsToolStripMenuItem.Click += new System.EventHandler(this.removeDuplicatesCharsToolStripMenuItem_Click);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.rbNoKerning);
-            this.groupBox2.Controls.Add(this.rbKerning);
-            this.groupBox2.Location = new System.Drawing.Point(710, 28);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox2.Size = new System.Drawing.Size(146, 100);
-            this.groupBox2.TabIndex = 28;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Import/Export:";
-            // 
-            // rbNoKerning
-            // 
-            this.rbNoKerning.AutoSize = true;
-            this.rbNoKerning.Location = new System.Drawing.Point(7, 59);
-            this.rbNoKerning.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rbNoKerning.Name = "rbNoKerning";
-            this.rbNoKerning.Size = new System.Drawing.Size(98, 17);
-            this.rbNoKerning.TabIndex = 1;
-            this.rbNoKerning.Text = "without Kerning";
-            this.rbNoKerning.UseVisualStyleBackColor = true;
-            // 
-            // rbKerning
-            // 
-            this.rbKerning.AutoSize = true;
-            this.rbKerning.Checked = true;
-            this.rbKerning.Location = new System.Drawing.Point(7, 36);
-            this.rbKerning.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.rbKerning.Name = "rbKerning";
-            this.rbKerning.Size = new System.Drawing.Size(83, 17);
-            this.rbKerning.TabIndex = 0;
-            this.rbKerning.TabStop = true;
-            this.rbKerning.Text = "with Kerning";
-            this.rbKerning.UseVisualStyleBackColor = true;
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.radioButtonXstart);
-            this.groupBox3.Controls.Add(this.radioButtonXend);
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.textBox1);
-            this.groupBox3.Controls.Add(this.button1);
-            this.groupBox3.Location = new System.Drawing.Point(536, 28);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox3.Size = new System.Drawing.Size(161, 100);
-            this.groupBox3.TabIndex = 29;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Change char width to:";
-            // 
-            // radioButtonXstart
-            // 
-            this.radioButtonXstart.AutoSize = true;
-            this.radioButtonXstart.Location = new System.Drawing.Point(67, 47);
-            this.radioButtonXstart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.radioButtonXstart.Name = "radioButtonXstart";
-            this.radioButtonXstart.Size = new System.Drawing.Size(55, 17);
-            this.radioButtonXstart.TabIndex = 4;
-            this.radioButtonXstart.Text = "X start";
-            this.radioButtonXstart.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonXend
-            // 
-            this.radioButtonXend.AutoSize = true;
-            this.radioButtonXend.Checked = true;
-            this.radioButtonXend.Location = new System.Drawing.Point(7, 47);
-            this.radioButtonXend.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.radioButtonXend.Name = "radioButtonXend";
-            this.radioButtonXend.Size = new System.Drawing.Size(53, 17);
-            this.radioButtonXend.TabIndex = 3;
-            this.radioButtonXend.TabStop = true;
-            this.radioButtonXend.Text = "X end";
-            this.radioButtonXend.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(71, 22);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(36, 13);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "pixels.";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(7, 18);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(58, 20);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "0";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(7, 69);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(148, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Change";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.rbSwitchSwizzle);
-            this.groupBox4.Controls.Add(this.rbPS4Swizzle);
-            this.groupBox4.Controls.Add(this.rbNoSwizzle);
-            this.groupBox4.Location = new System.Drawing.Point(864, 28);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(127, 100);
-            this.groupBox4.TabIndex = 30;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Swizzle methods";
-            // 
-            // rbSwitchSwizzle
-            // 
-            this.rbSwitchSwizzle.AutoSize = true;
-            this.rbSwitchSwizzle.Location = new System.Drawing.Point(7, 74);
-            this.rbSwitchSwizzle.Name = "rbSwitchSwizzle";
-            this.rbSwitchSwizzle.Size = new System.Drawing.Size(103, 17);
-            this.rbSwitchSwizzle.TabIndex = 2;
-            this.rbSwitchSwizzle.TabStop = true;
-            this.rbSwitchSwizzle.Text = "Nintendo Switch";
-            this.rbSwitchSwizzle.UseVisualStyleBackColor = true;
-            this.rbSwitchSwizzle.CheckedChanged += new System.EventHandler(this.rbSwitchSwizzle_CheckedChanged);
-            // 
-            // rbPS4Swizzle
-            // 
-            this.rbPS4Swizzle.AutoSize = true;
-            this.rbPS4Swizzle.Location = new System.Drawing.Point(7, 48);
-            this.rbPS4Swizzle.Name = "rbPS4Swizzle";
-            this.rbPS4Swizzle.Size = new System.Drawing.Size(45, 17);
-            this.rbPS4Swizzle.TabIndex = 1;
-            this.rbPS4Swizzle.TabStop = true;
-            this.rbPS4Swizzle.Text = "PS4";
-            this.rbPS4Swizzle.UseVisualStyleBackColor = true;
-            this.rbPS4Swizzle.CheckedChanged += new System.EventHandler(this.rbPS4Swizzle_CheckedChanged);
-            // 
-            // rbNoSwizzle
-            // 
-            this.rbNoSwizzle.AutoSize = true;
-            this.rbNoSwizzle.Location = new System.Drawing.Point(7, 22);
-            this.rbNoSwizzle.Name = "rbNoSwizzle";
-            this.rbNoSwizzle.Size = new System.Drawing.Size(51, 17);
-            this.rbNoSwizzle.TabIndex = 0;
-            this.rbNoSwizzle.TabStop = true;
-            this.rbNoSwizzle.Text = "None";
-            this.rbNoSwizzle.UseVisualStyleBackColor = true;
-            this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
             // 
             // Column1
             // 
@@ -709,6 +524,205 @@
             this.Column13.Name = "Column13";
             this.Column13.Width = 119;
             // 
+            // contextMenuStripExp_imp_Coord
+            // 
+            this.contextMenuStripExp_imp_Coord.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStripExp_imp_Coord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportCoordinatesToolStripMenuItem,
+            this.importCoordinatesToolStripMenuItem,
+            this.removeDuplicatesCharsToolStripMenuItem});
+            this.contextMenuStripExp_imp_Coord.Name = "contextMenuStripExp_imp_Coord";
+            this.contextMenuStripExp_imp_Coord.Size = new System.Drawing.Size(206, 70);
+            // 
+            // exportCoordinatesToolStripMenuItem
+            // 
+            this.exportCoordinatesToolStripMenuItem.Name = "exportCoordinatesToolStripMenuItem";
+            this.exportCoordinatesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.exportCoordinatesToolStripMenuItem.Text = "Export coordinates";
+            this.exportCoordinatesToolStripMenuItem.Click += new System.EventHandler(this.exportCoordinatesToolStripMenuItem_Click);
+            // 
+            // importCoordinatesToolStripMenuItem
+            // 
+            this.importCoordinatesToolStripMenuItem.Name = "importCoordinatesToolStripMenuItem";
+            this.importCoordinatesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.importCoordinatesToolStripMenuItem.Text = "Import coordinates";
+            this.importCoordinatesToolStripMenuItem.Click += new System.EventHandler(this.importCoordinatesToolStripMenuItem_Click);
+            // 
+            // removeDuplicatesCharsToolStripMenuItem
+            // 
+            this.removeDuplicatesCharsToolStripMenuItem.Name = "removeDuplicatesCharsToolStripMenuItem";
+            this.removeDuplicatesCharsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.removeDuplicatesCharsToolStripMenuItem.Text = "Remove duplicates chars";
+            this.removeDuplicatesCharsToolStripMenuItem.Click += new System.EventHandler(this.removeDuplicatesCharsToolStripMenuItem_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.rbNoKerning);
+            this.groupBox2.Controls.Add(this.rbKerning);
+            this.groupBox2.Location = new System.Drawing.Point(710, 28);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox2.Size = new System.Drawing.Size(146, 125);
+            this.groupBox2.TabIndex = 28;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Import/Export:";
+            // 
+            // rbNoKerning
+            // 
+            this.rbNoKerning.AutoSize = true;
+            this.rbNoKerning.Location = new System.Drawing.Point(7, 59);
+            this.rbNoKerning.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.rbNoKerning.Name = "rbNoKerning";
+            this.rbNoKerning.Size = new System.Drawing.Size(98, 17);
+            this.rbNoKerning.TabIndex = 1;
+            this.rbNoKerning.Text = "without Kerning";
+            this.rbNoKerning.UseVisualStyleBackColor = true;
+            // 
+            // rbKerning
+            // 
+            this.rbKerning.AutoSize = true;
+            this.rbKerning.Checked = true;
+            this.rbKerning.Location = new System.Drawing.Point(7, 36);
+            this.rbKerning.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.rbKerning.Name = "rbKerning";
+            this.rbKerning.Size = new System.Drawing.Size(83, 17);
+            this.rbKerning.TabIndex = 0;
+            this.rbKerning.TabStop = true;
+            this.rbKerning.Text = "with Kerning";
+            this.rbKerning.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.radioButtonXstart);
+            this.groupBox3.Controls.Add(this.radioButtonXend);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.textBox1);
+            this.groupBox3.Controls.Add(this.button1);
+            this.groupBox3.Location = new System.Drawing.Point(536, 28);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox3.Size = new System.Drawing.Size(161, 125);
+            this.groupBox3.TabIndex = 29;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Change char width to:";
+            // 
+            // radioButtonXstart
+            // 
+            this.radioButtonXstart.AutoSize = true;
+            this.radioButtonXstart.Location = new System.Drawing.Point(67, 47);
+            this.radioButtonXstart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.radioButtonXstart.Name = "radioButtonXstart";
+            this.radioButtonXstart.Size = new System.Drawing.Size(55, 17);
+            this.radioButtonXstart.TabIndex = 4;
+            this.radioButtonXstart.Text = "X start";
+            this.radioButtonXstart.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonXend
+            // 
+            this.radioButtonXend.AutoSize = true;
+            this.radioButtonXend.Checked = true;
+            this.radioButtonXend.Location = new System.Drawing.Point(7, 47);
+            this.radioButtonXend.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.radioButtonXend.Name = "radioButtonXend";
+            this.radioButtonXend.Size = new System.Drawing.Size(53, 17);
+            this.radioButtonXend.TabIndex = 3;
+            this.radioButtonXend.TabStop = true;
+            this.radioButtonXend.Text = "X end";
+            this.radioButtonXend.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(71, 22);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(36, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "pixels.";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(7, 18);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(58, 20);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "0";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(7, 69);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(148, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Change";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.rbSwitchSwizzle);
+            this.groupBox4.Controls.Add(this.rbPS4Swizzle);
+            this.groupBox4.Controls.Add(this.rbXbox360Swizzle);
+            this.groupBox4.Controls.Add(this.rbNoSwizzle);
+            this.groupBox4.Location = new System.Drawing.Point(864, 28);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(127, 125);
+            this.groupBox4.TabIndex = 30;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Swizzle methods";
+            // 
+            // rbSwitchSwizzle
+            // 
+            this.rbSwitchSwizzle.AutoSize = true;
+            this.rbSwitchSwizzle.Location = new System.Drawing.Point(7, 74);
+            this.rbSwitchSwizzle.Name = "rbSwitchSwizzle";
+            this.rbSwitchSwizzle.Size = new System.Drawing.Size(103, 17);
+            this.rbSwitchSwizzle.TabIndex = 2;
+            this.rbSwitchSwizzle.TabStop = true;
+            this.rbSwitchSwizzle.Text = "Nintendo Switch";
+            this.rbSwitchSwizzle.UseVisualStyleBackColor = true;
+            this.rbSwitchSwizzle.CheckedChanged += new System.EventHandler(this.rbSwitchSwizzle_CheckedChanged);
+            // 
+            // rbPS4Swizzle
+            // 
+            this.rbPS4Swizzle.AutoSize = true;
+            this.rbPS4Swizzle.Location = new System.Drawing.Point(7, 48);
+            this.rbPS4Swizzle.Name = "rbPS4Swizzle";
+            this.rbPS4Swizzle.Size = new System.Drawing.Size(45, 17);
+            this.rbPS4Swizzle.TabIndex = 1;
+            this.rbPS4Swizzle.TabStop = true;
+            this.rbPS4Swizzle.Text = "PS4";
+            this.rbPS4Swizzle.UseVisualStyleBackColor = true;
+            this.rbPS4Swizzle.CheckedChanged += new System.EventHandler(this.rbPS4Swizzle_CheckedChanged);
+            // 
+            // rbXbox360Swizzle
+            // 
+            this.rbXbox360Swizzle.AutoSize = true;
+            this.rbXbox360Swizzle.Location = new System.Drawing.Point(7, 97);
+            this.rbXbox360Swizzle.Name = "rbXbox360Swizzle";
+            this.rbXbox360Swizzle.Size = new System.Drawing.Size(70, 17);
+            this.rbXbox360Swizzle.TabIndex = 3;
+            this.rbXbox360Swizzle.TabStop = true;
+            this.rbXbox360Swizzle.Text = "Xbox 360";
+            this.rbXbox360Swizzle.UseVisualStyleBackColor = true;
+            this.rbXbox360Swizzle.CheckedChanged += new System.EventHandler(this.rbXbox360Swizzle_CheckedChanged);
+            // 
+            // rbNoSwizzle
+            // 
+            this.rbNoSwizzle.AutoSize = true;
+            this.rbNoSwizzle.Location = new System.Drawing.Point(7, 22);
+            this.rbNoSwizzle.Name = "rbNoSwizzle";
+            this.rbNoSwizzle.Size = new System.Drawing.Size(51, 17);
+            this.rbNoSwizzle.TabIndex = 0;
+            this.rbNoSwizzle.TabStop = true;
+            this.rbNoSwizzle.Text = "None";
+            this.rbNoSwizzle.UseVisualStyleBackColor = true;
+            this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
+            // 
             // FontEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -795,6 +809,7 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RadioButton rbSwitchSwizzle;
         private System.Windows.Forms.RadioButton rbPS4Swizzle;
+        private System.Windows.Forms.RadioButton rbXbox360Swizzle;
         private System.Windows.Forms.RadioButton rbNoSwizzle;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
