@@ -1090,6 +1090,7 @@ namespace TTG_Tools.Graphics
                     {
                         if (MainMenu.settings.swizzleNintendoSwitch) tex.platform.platform = 15;
                         if (MainMenu.settings.swizzlePS4) tex.platform.platform = 11;
+                        if (MainMenu.settings.swizzleXbox360) tex.platform.platform = 4;
 
                         for(mode = 2; mode < 4; mode++)
                         {
@@ -1116,9 +1117,13 @@ namespace TTG_Tools.Graphics
                     return result;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                return fi.Name + ": Unsupported format";
+                // Esta mensagem mostrará o erro exato, a função e a linha onde ocorreu.
+                string detailedError = $"{fi.Name}: An error occurred.\n" +
+                                       $"Message: {ex.Message}\n" +
+                                       $"Location: {ex.StackTrace}";
+                return detailedError;
             }
         }
 
@@ -1495,7 +1500,60 @@ namespace TTG_Tools.Graphics
                     }
                     else
                     {
-                        if (tex.platform.platform == 11)
+                        if (tex.platform.platform == 4) // Xbox 360 Swizzle
+                        {
+                            int w = tex.Width;
+                            int h = tex.Height;
+
+                            int texelBytePitch;
+                            int blockPixelSize;
+                            bool performByteSwap;
+
+                            if (tex.TextureFormat == 0x00) // Formato ARGB 8.8.8.8
+                            {
+                                texelBytePitch = 4;
+                                blockPixelSize = 1;
+                                performByteSwap = false;
+                            }
+                            else if (tex.TextureFormat == 0x40 || tex.TextureFormat == 0x43) // DXT1, BC4
+                            {
+                                texelBytePitch = 8;
+                                blockPixelSize = 4;
+                                performByteSwap = true;
+                            }
+                            else // DXT3, DXT5, BC5
+                            {
+                                texelBytePitch = 16;
+                                blockPixelSize = 4;
+                                performByteSwap = true;
+                            }
+
+                            for (int i = 0; i < tex.Tex.MipCount; i++)
+                            {
+                                if (tex.TextureFormat == 0x00)
+                                {
+                                    tex.Tex.Textures[i].Block = Swizzles.Xbox360.ConvertBGRAtoARGB(tex.Tex.Textures[i].Block);
+                                }
+
+                                byte[] swizzledPaddedBlock = Swizzles.Xbox360.Swizzle(tex.Tex.Textures[i].Block, w, h, texelBytePitch, blockPixelSize, performByteSwap);
+                                int originalMipSize = tex.Tex.Textures[i].MipSize;
+
+                                if (swizzledPaddedBlock.Length > originalMipSize)
+                                {
+                                    byte[] truncatedBlock = new byte[originalMipSize];
+                                    Array.Copy(swizzledPaddedBlock, 0, truncatedBlock, 0, originalMipSize);
+                                    tex.Tex.Textures[i].Block = truncatedBlock;
+                                }
+                                else
+                                {
+                                    tex.Tex.Textures[i].Block = swizzledPaddedBlock;
+                                }
+
+                                if (w > 1) w /= 2;
+                                if (h > 1) h /= 2;
+                            }
+                        }
+                        else if (tex.platform.platform == 11)
                         {
                             int w = tex.Width;
                             int h = tex.Height;
@@ -2088,7 +2146,7 @@ namespace TTG_Tools.Graphics
             uint ArrayMembers = tex.ArrayMembers > 1 ? (uint)tex.ArrayMembers : 0;
             uint Faces = tex.Faces > 1 ? (uint)tex.Faces : 0;
 
-            byte[] header = (tex.platform.platform == 7 || tex.platform.platform == 9) || (tex.ArrayMembers > 1) ? GenPvrHeader(tex.Width, tex.Height, tex.Mip, (uint)tex.TextureFormat, ArrayMembers, Faces, true) : GenHeader(tex.TextureFormat, tex.Width, tex.Height, tex.Tex.TexSize, tex.Faces, tex.ArrayMembers, tex.Mip, ref format);
+            byte[] header = (tex.platform.platform == 7 || tex.platform.platform == 9) || (tex.ArrayMembers > 1) ? GenPvrHeader(tex.Width, tex.Height, tex.Tex.MipCount, (uint)tex.TextureFormat, ArrayMembers, Faces, true) : GenHeader(tex.TextureFormat, tex.Width, tex.Height, tex.Tex.TexSize, tex.Faces, tex.ArrayMembers, tex.Tex.MipCount, ref format);
 
             tex.isPVR = (tex.platform.platform == 7 || tex.platform.platform == 9) || (tex.ArrayMembers > 1);
 
@@ -2097,7 +2155,7 @@ namespace TTG_Tools.Graphics
                 return null;
             }
 
-            AdditionalInfo = "Texture format: " + format + ". Mip count: " + Convert.ToString(tex.Mip);
+            AdditionalInfo = "Platform:" + tex.platform.platform + ". Texture format: " + format + ". Mip count: " + Convert.ToString(tex.Mip);
 
             if (((checkHeader == "6VSM") || (checkHeader == "5VSM")) && tex.SomeValue >= 8)
             {
@@ -2164,11 +2222,13 @@ namespace TTG_Tools.Graphics
                     }
                 }
 
-                if (tex.platform.platform == 11)
+                bool needsReconstruction = false;
+
+                if (tex.platform.platform == 11) // PS4 Unswizzle
                 {
+                    needsReconstruction = true;
                     int w = tex.Width;
                     int h = tex.Height;
-
                     int blockSize = tex.TextureFormat == 0x40 || tex.TextureFormat == 0x43 ? 8 : 16;
 
                     for (int i = 0; i < tex.Tex.MipCount; i++)
@@ -2176,12 +2236,73 @@ namespace TTG_Tools.Graphics
                         if (tex.Tex.Textures[i].Block.Length < blockSize) blockSize = tex.Tex.Textures[i].Block.Length;
                         tex.Tex.Textures[i].Block = PS4.Unswizzle(tex.Tex.Textures[i].Block, w, h, blockSize);
 
-                        Array.Copy(tex.Tex.Textures[i].Block, 0, tex.Tex.Content, texPoz, tex.Tex.Textures[i].Block.Length);
-                        texPoz += tex.Tex.Textures[i].MipSize;
+                        if (w > 1) w /= 2;
+                        if (h > 1) h /= 2;
+                    }
+                }
+                else if (tex.platform.platform == 4) // Xbox 360 Unswizzle
+                {
+                    needsReconstruction = true;
+                    int w = tex.Width;
+                    int h = tex.Height;
+
+                    int texelBytePitch;
+                    int blockPixelSize;
+                    bool performByteSwap;
+
+                    if (tex.TextureFormat == 0x00) // ARGB 8.8.8.8
+                    {
+                        texelBytePitch = 4;
+                        blockPixelSize = 1;
+                        performByteSwap = false;
+                    }
+                    else if (tex.TextureFormat == 0x40 || tex.TextureFormat == 0x43) // DXT1, BC4
+                    {
+                        texelBytePitch = 8;
+                        blockPixelSize = 4;
+                        performByteSwap = true;
+                    }
+                    else // DXT3, DXT5, BC5
+                    {
+                        texelBytePitch = 16;
+                        blockPixelSize = 4;
+                        performByteSwap = true; // FAZER o byte swap de 16-bit
+                    }
+
+                    for (int i = 0; i < tex.Tex.MipCount; i++)
+                    {
+                        tex.Tex.Textures[i].Block = Swizzles.Xbox360.Unswizzle(tex.Tex.Textures[i].Block, w, h, texelBytePitch, blockPixelSize, performByteSwap);
+
+                        if (tex.TextureFormat == 0x00)
+                        {
+                            tex.Tex.Textures[i].Block = Swizzles.Xbox360.ConvertARGBtoBGRA(tex.Tex.Textures[i].Block);
+                        }
 
                         if (w > 1) w /= 2;
                         if (h > 1) h /= 2;
                     }
+                }
+
+                if (needsReconstruction)
+                {
+                    uint newTotalImageSize = 0;
+                    for (int i = 0; i < tex.Tex.MipCount; i++)
+                    {
+                        newTotalImageSize += (uint)tex.Tex.Textures[i].Block.Length;
+                    }
+
+                    byte[] newContent = new byte[header.Length + newTotalImageSize];
+
+                    Array.Copy(header, 0, newContent, 0, header.Length);
+
+                    int currentPosition = header.Length;
+                    for (int i = 0; i < tex.Tex.MipCount; i++)
+                    {
+                        Array.Copy(tex.Tex.Textures[i].Block, 0, newContent, currentPosition, tex.Tex.Textures[i].Block.Length);
+                        currentPosition += tex.Tex.Textures[i].Block.Length;
+                    }
+
+                    tex.Tex.Content = newContent;
                 }
             }
 
