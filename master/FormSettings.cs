@@ -35,90 +35,47 @@ namespace TTG_Tools
             MainMenu.settings.ASCII_N = (int)numericUpDownASCII.Value;
             MainMenu.settings.pathForInputFolder = textBoxInputFolder.Text;
             MainMenu.settings.pathForOutputFolder = textBoxOutputFolder.Text;
+            
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
             else MainMenu.settings.unicodeSettings = 2;
-
-            //if(MainMenu.settings.ASCII_N == 1252) MainMenu.settings.unicodeSettings = 0;
 
             MainMenu.settings.languageIndex = -1;
             if (checkLanguage.Checked)
             {
                 MainMenu.settings.languageIndex = languageComboBox.SelectedIndex;
 
-                if(languageComboBox.Text.IndexOf("(") > 0)
+                string selectedLanguage = languageComboBox.Text;
+                
+                // Check if text contains parentheses to extract ASCII code
+                if (selectedLanguage.Contains("(") && selectedLanguage.Contains(")"))
                 {
-                    int start = languageComboBox.Text.IndexOf("(") + 1;
-                    int end = languageComboBox.Text.IndexOf(")");
-                    string str_num = languageComboBox.Text.Substring(start, end - start);
-                    MainMenu.settings.ASCII_N = Convert.ToInt32(str_num);
+                    int start = selectedLanguage.IndexOf("(") + 1;
+                    int end = selectedLanguage.IndexOf(")");
+                    
+                    if (start < end && start > 0)
+                    {
+                        string str_num = selectedLanguage.Substring(start, end - start).Trim();
+                        
+                        if (int.TryParse(str_num, out int asciiValue) && asciiValue > 0)
+                        {
+                            MainMenu.settings.ASCII_N = asciiValue;
+                        }
+                        else
+                        {
+                            // Fallback to language name mapping
+                            ApplyLanguageASCIIDefault(selectedLanguage);
+                        }
+                    }
+                    else
+                    {
+                        ApplyLanguageASCIIDefault(selectedLanguage);
+                    }
                 }
                 else
                 {
-                    switch (languageComboBox.Text)
-                    {
-                        case "Thai":
-                            MainMenu.settings.ASCII_N = 874;
-                            break;
-
-                        case "Czech":
-                        case "Polish":
-                        case "Slovak":
-                        case "Hungarian":
-                        case "Serbo-Crotian":
-                        case "Montenegrin":
-                        case "Gagauz":
-                            MainMenu.settings.ASCII_N = 1250;
-                            break;
-
-                        case "Belarusian":
-                        case "Bulgarian":
-                        case "Macedonian":
-                        case "Russian":
-                        case "Rusyn":
-                        case "Ukranian":
-                            MainMenu.settings.ASCII_N = 1251;
-                            break;
-
-                        case "Basque":
-                        case "Catalan":
-                        case "Faroese":
-                        case "Occitan":
-                        case "Romansh":
-                        case "Swahili":
-                            MainMenu.settings.ASCII_N = 1252;
-                            break;
-
-                        case "Dutch":
-                        case "Greek":
-                            MainMenu.settings.ASCII_N = 1253;
-                            break;
-
-                        case "Turkish":
-                            MainMenu.settings.ASCII_N = 1254;
-                            break;
-
-                        case "Hebrew":
-                            MainMenu.settings.ASCII_N = 1255;
-                            break;
-
-                        case "Arabic":
-                        case "Persian":
-                        case "Urdu":
-                            MainMenu.settings.ASCII_N = 1256;
-                            break;
-
-                        case "Latvian":
-                        case "Lithianian":
-                        case "Latgalian":
-                        case "Icelandic":
-                            MainMenu.settings.ASCII_N = 1257;
-                            break;
-
-                        case "Vietnamese":
-                            MainMenu.settings.ASCII_N = 1258;
-                            break;
-                    }
+                    // If no parentheses, use name mapping
+                    ApplyLanguageASCIIDefault(selectedLanguage);
                 }
 
                 numericUpDownASCII.Value = MainMenu.settings.ASCII_N;
@@ -137,7 +94,85 @@ namespace TTG_Tools
             }
             else
             {
-                MessageBox.Show("Please set a correct paths for input and output folders!");
+                MessageBox.Show("Please set correct paths for input and output folders!");
+            }
+        }
+
+        private void ApplyLanguageASCIIDefault(string languageName)
+        {
+            // Remove any content in parentheses to get only the language name
+            if (languageName.Contains("("))
+            {
+                languageName = languageName.Substring(0, languageName.IndexOf("(")).Trim();
+            }
+
+            switch (languageName)
+            {
+                case "Thai":
+                    MainMenu.settings.ASCII_N = 874;
+                    break;
+
+                case "Czech":
+                case "Polish":
+                case "Slovak":
+                case "Hungarian":
+                case "Serbo-Croatian":
+                case "Montenegrin":
+                case "Gagauz":
+                    MainMenu.settings.ASCII_N = 1250;
+                    break;
+
+                case "Belarusian":
+                case "Bulgarian":
+                case "Macedonian":
+                case "Russian":
+                case "Rusyn":
+                case "Ukrainian":
+                    MainMenu.settings.ASCII_N = 1251;
+                    break;
+
+                case "Basque":
+                case "Catalan":
+                case "Faroese":
+                case "Occitan":
+                case "Romansh":
+                case "Swahili":
+                    MainMenu.settings.ASCII_N = 1252;
+                    break;
+
+                case "Dutch":
+                case "Greek":
+                    MainMenu.settings.ASCII_N = 1253;
+                    break;
+
+                case "Turkish":
+                    MainMenu.settings.ASCII_N = 1254;
+                    break;
+
+                case "Hebrew":
+                    MainMenu.settings.ASCII_N = 1255;
+                    break;
+
+                case "Arabic":
+                case "Persian":
+                case "Urdu":
+                    MainMenu.settings.ASCII_N = 1256;
+                    break;
+
+                case "Latvian":
+                case "Lithuanian":
+                case "Latgalian":
+                case "Icelandic":
+                    MainMenu.settings.ASCII_N = 1257;
+                    break;
+
+                case "Vietnamese":
+                    MainMenu.settings.ASCII_N = 1258;
+                    break;
+
+                default:
+                    MainMenu.settings.ASCII_N = 1252; // Safe default value
+                    break;
             }
         }
 
@@ -154,7 +189,9 @@ namespace TTG_Tools
 
         private void numericUpDownASCII_ValueChanged(object sender, EventArgs e)
         {
-            switch (Convert.ToInt32(numericUpDownASCII.Value.ToString()))
+            int asciiValue = (int)numericUpDownASCII.Value;
+            
+            switch (asciiValue)
             {
                 case 873:
                     numericUpDownASCII.Value = 874;
@@ -170,8 +207,8 @@ namespace TTG_Tools
                     break;
             }
 
-            //Terrible fix for users windows-1252 encoding
-            if (Convert.ToInt32(numericUpDownASCII.Value.ToString()) == 1252)
+            // Terrible fix for users windows-1252 encoding
+            if ((int)numericUpDownASCII.Value == 1252)
             {
                 if(rbNonNormalUnicode2.Checked) rbNormalUnicode.Checked = true;
                 rbNonNormalUnicode2.Enabled = false;
