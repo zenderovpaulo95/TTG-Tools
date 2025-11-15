@@ -53,7 +53,7 @@
             // 
             // aboutBtn
             // 
-            this.aboutBtn.Location = new System.Drawing.Point(78, 129);
+            this.aboutBtn.Location = new System.Drawing.Point(88, 124);
             this.aboutBtn.Name = "aboutBtn";
             this.aboutBtn.Size = new System.Drawing.Size(112, 23);
             this.aboutBtn.TabIndex = 1;

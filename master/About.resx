@@ -148,6 +148,14 @@ Maybe some games doesn't work.
 ===
 [Version history]
 
+v.1.15.1 (14.11.2025)
++ Auto(De)Packer (Packer and Unpacker)
+Fixing a chronic issue that causes bugs in the reinsertion of some Xbox 360 textures.
+
+v.1.15.0 (10.11.2025)
++ TTG Tools:
+The issue that prevented saving settings has been fixed.
+
 v.1.14.9 (19.08.2025)
 + Auto(De)Packer (Packer and Unpacker)
 Added support for Xbox 360 texture extraction and reinsertion  
