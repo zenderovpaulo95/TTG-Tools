@@ -120,13 +120,10 @@
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>TTG Tools 
 By Den Em (Е.Д.В.)
-Modded by pashok6798 (from Den Em's agreement)
+Modded by Krisp and HeitorSpectre (from Den Em's and Pashok6798 agreement)
 Source code on:
-GitFlic: https://gitflic.ru/project/pashok6798/ttg-tools
 GitHub: https://github.com/zenderovpaulo95/TTG-Tools
-Gitverse: https://gitverse.ru/pashok6798/TTG-tools
-Check all releases here: https://gitflic.ru/project/pashok6798/ttg-tools/release
-or here: https://github.com/zenderovpaulo95/TTG-Tools/releases
+Check all releases here: https://github.com/zenderovpaulo95/TTG-Tools/releases
 (Original developer's e-mail: d3n123@rambler.ru)
 
 Special thanks to:
@@ -140,6 +137,7 @@ Special thanks to:
 - Hajin Jang for Zlib.Wrapper
 - Nemiroff thanks for fixing a bug in the Font Editor.
 - Krisp for adding Xbox texture support and font editing with Swizzle.  
+- Pashok6798 for all your support to the community and for trusting us.
 
 List of supported games:
 Telltale's Texas Hold Em, Tales of Monkey Island, Sam &amp; Max: Season One, Sam &amp; Max: Season Two, Wallace and Gromit's Grand Adventures, CSI: Deadly Intent, Sam &amp; Max: The Devil's Playhouse, Puzzle Agent 1, CSI: Fatal Conspiracy, Poker Night at the Inventory, Back to the Future: The Game, Strong Bad, Hector: The Badge of Carnage, Puzzle Agent 2, Jurassic Park: The Game, The Walking Dead, Poker Night 2, The Wolf Among Us, The Walking Dead Season Two, Tales from the Borderlands, Game of Thrones - A Telltale Games Series, Minecraft: Story Mode (Seasons One and Two), The Walking Dead: Michonne, Batman (Seasons One and Two), The Walking Dead: The Final Season, The Walking Dead : The Telltale Definitive Series, Sam &amp; Max Save the World Remastered, Sam &amp; Max Beyond Time and Space Remastered, Sam &amp; Max The Devil's Playhouse Remastered.
@@ -147,6 +145,11 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
+
+v.1.15.2 (xx.xx.xxxx)
++ Auto(De)Packer (Packer and Unpacker)
+Fixed an issue with reinserting PS4 textures
+Subfolder processing during Decrypt/Export and Encrypt/Pack/Import files.
 
 v.1.15.1 (14.11.2025)
 + Auto(De)Packer (Packer and Unpacker)

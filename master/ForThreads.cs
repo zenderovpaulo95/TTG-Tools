@@ -17,7 +17,7 @@ namespace TTG_Tools
         public event ProgressHandler Progress;
         public event ReportHandler ReportForWork;
 
-        //Import files
+        //Import files (Encrypt, Pack, Import)
         public void DoImportEncoding(object parametres)
         {
             List<string> param = parametres as List<string>;
@@ -27,8 +27,8 @@ namespace TTG_Tools
             string whatImport;
             string pathInput = param[2];
             string pathOutput = param[3];
-            bool deleteFromInputSource = param[5] == "True";//false;
-            bool deleteFromInputImported = param[4] == "True";//false;
+            bool deleteFromInputSource = param[5] == "True";
+            bool deleteFromInputImported = param[4] == "True";
             int version = Convert.ToInt32(param[6]);
             bool FullEncrypt = param[7] == "True";
             bool isNewEngine = param[8] == "True";
@@ -51,6 +51,7 @@ namespace TTG_Tools
             destination.Add(".prop");
             destination.Add(".lua");
             destination.Add(".lenc");
+
             List<string> extention = new List<string>();
             extention.Add(".dds");
             extention.Add(".pvr");
@@ -75,117 +76,126 @@ namespace TTG_Tools
                 if (Directory.Exists(pathInput) && Directory.Exists(pathOutput))
                 {
                     DirectoryInfo dir = new DirectoryInfo(pathInput);
-                    FileInfo[] inputFiles = dir.GetFiles('*' + destinationForExport);
-                    
-                        for (int i = 0; i < inputFiles.Length; i++)
+
+                    // MODIFICAÇÃO: SearchOption.AllDirectories para ler subpastas
+                    FileInfo[] inputFiles = dir.GetFiles('*' + destinationForExport, SearchOption.AllDirectories);
+
+                    for (int i = 0; i < inputFiles.Length; i++)
+                    {
+                        // MODIFICAÇÃO: Calcular o caminho relativo para manter a estrutura de pastas no Output
+                        string relativePath = inputFiles[i].DirectoryName.Substring(dir.FullName.Length);
+                        if (relativePath.StartsWith("\\") || relativePath.StartsWith("/")) relativePath = relativePath.Substring(1);
+
+                        string targetFolder = Path.Combine(pathOutput, relativePath);
+                        if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
+
+                        int countCorrectWork = 0;
+                        int countOfAllFiles = 0;
+                        string onlyNameImporting = inputFiles[i].Name.Split('(')[0].Split('.')[0];
+
+                        for (int q = 0; q < 2; q++)
                         {
-                            int countCorrectWork = 0;//переменная для подсчёта корректного импорта текстур
-                            int countOfAllFiles = 0;//всего файлов для импорта
-                            string onlyNameImporting = inputFiles[i].Name.Split('(')[0].Split('.')[0];
-                            for (int q = 0; q < 2; q++)
+                            bool correct_work = true;
+                            FileInfo[] fileDestination;
+
+                            // MODIFICAÇÃO: Procurar o arquivo a importar NA MESMA PASTA do arquivo original
+                            if (q == 0)
                             {
-                                bool correct_work = true;
-
-                                FileInfo[] fileDestination;
-                                if (q == 0)
-                                {
-                                    fileDestination = dir.GetFiles(onlyNameImporting + whatImport);
-                                }
-                                else
-                                {
-                                    fileDestination = dir.GetFiles(onlyNameImporting + "(*)" + whatImport);
-                                }
-                                countOfAllFiles += fileDestination.Count();
-
-                                for (int j = 0; j < fileDestination.Length; j++)
-                                {
-                                    switch (destinationForExport)
-                                    {
-                                        case ".d3dtx":
-                                            result = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, false, FullEncrypt, ref encKey, version);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[0] = true;    
-                                                break;
-                                        case ".landb":
-                                            result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, encKey, version);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[1] = true;
-                                                break;
-                                        case ".langdb":
-                                            result = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, FullEncrypt, ref encKey, version);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[2] = true;
-                                                break;
-                                        case ".dlog":
-                                            result = Texts.DlogWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, ref encKey, ref version);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[3] = true;
-                                                break;
-                                        case ".prop":
-                                            ImportTXTinPROP(inputFiles[i], fileDestination[j]);
-                                            emptyFiles = false;
-                                            show[4] = true;
-                                                break;
-                                        case ".font":
-                                            result = Graphics.FontWorker.DoWork(inputFiles[i].FullName, false);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[5] = true;
-                                            break;
-                                        case ".lua":
-                                        case ".lenc":
-
-                                            if (MainMenu.settings.customKey)
-                                            {
-                                                encKey = Methods.stringToKey(MainMenu.settings.encCustomKey);
-
-                                                if (encKey == null)
-                                                {
-                                                    ReportForWork("You must enter key encryption!");
-                                                    //MessageBox.Show("You must enter key encryption!", "Error");
-                                                    //return;
-                                                }
-                                            }
-
-                                            FileStream fs = new FileStream(inputFiles[i].FullName, FileMode.Open);
-                                            byte[] luaContent = Methods.ReadFull(fs);
-                                            fs.Close();
-
-                                            luaContent = Methods.encryptLua(luaContent, encKey, isNewEngine, version);
-
-                                            if (File.Exists(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name)) File.Delete(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name);
-                                            fs = new FileStream(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name, FileMode.CreateNew);
-                                            fs.Write(luaContent, 0, luaContent.Length);
-                                            fs.Close();
-
-                                            ReportForWork("File " + inputFiles[i].Name + " encrypted.");
-                                            emptyFiles = false;
-                                            show[6] = true;
-                                            break;
-                                        default:
-                                            MessageBox.Show("Error in Switch!");
-                                            break;
-                                    }
-
-                                    if (correct_work) //If file imported correct then we can delete file if it set in settings form
-                                    {
-                                        countCorrectWork++;
-                                        if (deleteFromInputImported)
-                                        {
-                                            Methods.DeleteCurrentFile(fileDestination[j].FullName);
-                                        }
-                                    }
-                                }
+                                fileDestination = inputFiles[i].Directory.GetFiles(onlyNameImporting + whatImport);
                             }
-                            if (deleteFromInputSource && countCorrectWork == countOfAllFiles)//if all files were imported correctly, then delete the file if necessary
+                            else
                             {
-                                Methods.DeleteCurrentFile(inputFiles[i].FullName);
+                                fileDestination = inputFiles[i].Directory.GetFiles(onlyNameImporting + "(*)" + whatImport);
+                            }
+
+                            countOfAllFiles += fileDestination.Count();
+
+                            for (int j = 0; j < fileDestination.Length; j++)
+                            {
+                                // MODIFICAÇÃO: Usar targetFolder no lugar de pathOutput
+                                switch (destinationForExport)
+                                {
+                                    case ".d3dtx":
+                                        result = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, targetFolder, false, FullEncrypt, ref encKey, version);
+                                        ReportForWork(result);
+                                        emptyFiles = false;
+                                        show[0] = true;
+                                        break;
+                                    case ".landb":
+                                        result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, encKey, version);
+                                        ReportForWork(result);
+                                        emptyFiles = false;
+                                        show[1] = true;
+                                        break;
+                                    case ".langdb":
+                                        result = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, FullEncrypt, ref encKey, version);
+                                        ReportForWork(result);
+                                        emptyFiles = false;
+                                        show[2] = true;
+                                        break;
+                                    case ".dlog":
+                                        result = Texts.DlogWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, ref encKey, ref version);
+                                        ReportForWork(result);
+                                        emptyFiles = false;
+                                        show[3] = true;
+                                        break;
+                                    case ".prop":
+                                        // Passamos a targetFolder para a função modificada
+                                        ImportTXTinPROP(inputFiles[i], fileDestination[j], targetFolder);
+                                        emptyFiles = false;
+                                        show[4] = true;
+                                        break;
+                                    case ".font":
+                                        result = Graphics.FontWorker.DoWork(inputFiles[i].FullName, false);
+                                        ReportForWork(result);
+                                        emptyFiles = false;
+                                        show[5] = true;
+                                        break;
+                                    case ".lua":
+                                    case ".lenc":
+                                        if (MainMenu.settings.customKey)
+                                        {
+                                            encKey = Methods.stringToKey(MainMenu.settings.encCustomKey);
+                                            if (encKey == null) { ReportForWork("You must enter key encryption!"); }
+                                        }
+
+                                        FileStream fs = new FileStream(inputFiles[i].FullName, FileMode.Open);
+                                        byte[] luaContent = Methods.ReadFull(fs);
+                                        fs.Close();
+
+                                        luaContent = Methods.encryptLua(luaContent, encKey, isNewEngine, version);
+
+                                        string destFileLua = Path.Combine(targetFolder, inputFiles[i].Name);
+                                        if (File.Exists(destFileLua)) File.Delete(destFileLua);
+
+                                        fs = new FileStream(destFileLua, FileMode.CreateNew);
+                                        fs.Write(luaContent, 0, luaContent.Length);
+                                        fs.Close();
+
+                                        ReportForWork("File " + inputFiles[i].Name + " encrypted.");
+                                        emptyFiles = false;
+                                        show[6] = true;
+                                        break;
+                                    default:
+                                        MessageBox.Show("Error in Switch!");
+                                        break;
+                                }
+
+                                if (correct_work)
+                                {
+                                    countCorrectWork++;
+                                    if (deleteFromInputImported)
+                                    {
+                                        Methods.DeleteCurrentFile(fileDestination[j].FullName);
+                                    }
+                                }
                             }
                         }
+                        if (deleteFromInputSource && countCorrectWork == countOfAllFiles)
+                        {
+                            Methods.DeleteCurrentFile(inputFiles[i].FullName);
+                        }
+                    }
                 }
                 else
                 {
@@ -240,7 +250,8 @@ namespace TTG_Tools
             if (emptyFiles) ReportForWork("Nothing to import. Empty folder.");
         }
 
-        public void ImportTXTinPROP(FileInfo inputFile, FileInfo DestinationFile)
+        // Import TXT to PROP with subfolder support
+        public void ImportTXTinPROP(FileInfo inputFile, FileInfo DestinationFile, string targetFolder)
         {
             byte[] binContent = File.ReadAllBytes(inputFile.FullName);
             string[] strs = File.ReadAllLines(DestinationFile.FullName);
@@ -249,7 +260,10 @@ namespace TTG_Tools
             int blHeadSize = 0;
             MemoryStream ms = new MemoryStream(binContent);
             BinaryReader br = new BinaryReader(ms);
-            string destFilePath = MainMenu.settings.pathForOutputFolder + "\\" + inputFile.Name;
+
+            // MODIFICAÇÃO: Usando targetFolder para o caminho de saída
+            string destFilePath = Path.Combine(targetFolder, inputFile.Name);
+
             if (File.Exists(destFilePath)) File.Delete(destFilePath);
             FileStream fs = new FileStream(destFilePath, FileMode.CreateNew);
             BinaryWriter bw = new BinaryWriter(fs);
@@ -406,12 +420,17 @@ namespace TTG_Tools
             }
         }
 
-        public void ExportPROP(FileInfo inputFile, string destFilePath)
+        // Export PROP to TXT with subfolder support
+        public void ExportPROP(FileInfo inputFile, string destFilePath, string targetFolder)
         {
             FileStream fs = new FileStream(inputFile.FullName, FileMode.Open);
             BinaryReader br = new BinaryReader(fs);
-            if (File.Exists(MainMenu.settings.pathForOutputFolder + "\\" + destFilePath)) File.Delete(MainMenu.settings.pathForOutputFolder + "\\" + destFilePath);
-            FileStream fsw = new FileStream(MainMenu.settings.pathForOutputFolder + "\\" + destFilePath, FileMode.CreateNew);
+
+            // MODIFICAÇÃO: Usando targetFolder para o caminho de saída
+            string fullDestPath = Path.Combine(targetFolder, destFilePath);
+
+            if (File.Exists(fullDestPath)) File.Delete(fullDestPath);
+            FileStream fsw = new FileStream(fullDestPath, FileMode.CreateNew);
             StreamWriter sw = new StreamWriter(fsw);
             try
             {
@@ -502,7 +521,7 @@ namespace TTG_Tools
             }
         }
 
-        //Экспорт
+        //Export (Decrypt, Export)
         public void DoExportEncoding(object parametres)
         {
             List<string> param = parametres as List<string>;
@@ -525,14 +544,9 @@ namespace TTG_Tools
                 destinationForExportList.Add(".lenc");
 
                 List<int> extractedFormat = new List<int>();
-                extractedFormat.Add(-1);
-                extractedFormat.Add(-1);
-                extractedFormat.Add(-1);
-                extractedFormat.Add(-1);
-                extractedFormat.Add(-1);
-                extractedFormat.Add(-1);
-                extractedFormat.Add(-1);
-                extractedFormat.Add(-1);
+                extractedFormat.Add(-1); extractedFormat.Add(-1); extractedFormat.Add(-1);
+                extractedFormat.Add(-1); extractedFormat.Add(-1); extractedFormat.Add(-1);
+                extractedFormat.Add(-1); extractedFormat.Add(-1);
 
                 string message = "";
                 bool emptyFiles = true;
@@ -540,7 +554,9 @@ namespace TTG_Tools
                 foreach (string destinationForExport in destinationForExportList)
                 {
                     DirectoryInfo dir = new DirectoryInfo(pathInput);
-                    FileInfo[] inputFiles = dir.GetFiles('*' + destinationForExport);
+
+                    // MODIFICAÇÃO: SearchOption.AllDirectories para ler subpastas
+                    FileInfo[] inputFiles = dir.GetFiles('*' + destinationForExport, SearchOption.AllDirectories);
 
                     if (inputFiles.Length > 0)
                     {
@@ -548,39 +564,47 @@ namespace TTG_Tools
 
                         for (int i = 0; i < inputFiles.Length; i++)
                         {
+                            // MODIFICAÇÃO: Calcular o caminho relativo para manter a estrutura de pastas no Output
+                            string relativePath = inputFiles[i].DirectoryName.Substring(dir.FullName.Length);
+                            if (relativePath.StartsWith("\\") || relativePath.StartsWith("/")) relativePath = relativePath.Substring(1);
+
+                            string targetFolder = Path.Combine(pathOutput, relativePath);
+                            if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
+
+                            // MODIFICAÇÃO: Usar targetFolder no lugar de pathOutput
                             switch (destinationForExport)
                             {
                                 case ".langdb":
                                     message = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, "", true, false, ref key, 2);
                                     ReportForWork(message);
                                     extractedFormat[0] = 0;
-                                        break;
+                                    break;
 
                                 case ".d3dtx":
-                                    message = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, pathOutput, true, false, ref key, version);
+                                    message = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, targetFolder, true, false, ref key, version);
                                     ReportForWork(message);
                                     extractedFormat[1] = 1;
-                                        break;
+                                    break;
 
                                 case ".landb":
                                     message = Texts.LandbWorker.DoWork(inputFiles[i].FullName, "", true, key, version);
                                     ReportForWork(message);
                                     extractedFormat[2] = 2;
-                                       break;
+                                    break;
 
                                 case ".dlog":
                                     message = Texts.DlogWorker.DoWork(inputFiles[i].FullName, "", true, ref key, ref version);
-                                    //ExtractDlogFile(inputFiles, i);
                                     ReportForWork(message);
                                     extractedFormat[3] = 3;
-                                       break;
+                                    break;
 
                                 case ".prop":
                                     int lenExt = inputFiles[i].Extension.Length;
                                     string f_name = inputFiles[i].Name.Remove(inputFiles[i].Name.Length - lenExt, lenExt) + ".txt";
-                                    ExportPROP(inputFiles[i], f_name);
+                                    // Passando targetFolder para a função modificada
+                                    ExportPROP(inputFiles[i], f_name, targetFolder);
                                     extractedFormat[4] = 4;
-                                       break;
+                                    break;
 
                                 case ".font":
                                     message = Graphics.FontWorker.DoWork(inputFiles[i].FullName, true);
@@ -594,10 +618,10 @@ namespace TTG_Tools
                                     byte[] luaContent = Methods.ReadFull(fs);
                                     fs.Close();
 
-                                    
                                     luaContent = Methods.decryptLua(luaContent, key, version);
 
-                                    fs = new FileStream(TTG_Tools.MainMenu.settings.pathForOutputFolder + "\\" + inputFiles[i].Name, FileMode.OpenOrCreate);
+                                    string destFileLua = Path.Combine(targetFolder, inputFiles[i].Name);
+                                    fs = new FileStream(destFileLua, FileMode.OpenOrCreate);
                                     fs.Write(luaContent, 0, luaContent.Length);
                                     fs.Close();
 
@@ -608,19 +632,19 @@ namespace TTG_Tools
 
                                 default:
                                     MessageBox.Show("Error in Switch!");
-                                      break;
+                                    break;
                             }
 
                         }
                     }
                 }
 
-                foreach(int extractList in extractedFormat)
+                foreach (int extractList in extractedFormat)
                 {
-                    if(extractList != -1) ReportForWork("EXPORT OF ALL *" + destinationForExportList[extractList].ToUpper() + " FILES COMPLETE!");
+                    if (extractList != -1) ReportForWork("EXPORT OF ALL *" + destinationForExportList[extractList].ToUpper() + " FILES COMPLETE!");
                 }
 
-                if(emptyFiles) ReportForWork("Nothing to extract. Empty folder.");
+                if (emptyFiles) ReportForWork("Nothing to extract. Empty folder.");
             }
 
         }
