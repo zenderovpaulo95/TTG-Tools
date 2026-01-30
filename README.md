@@ -154,7 +154,7 @@ After that you can modify it with Auto(De)Packer or Font editor.
 
 ## Download
 
-<a href="[https://github.com/zenderovpaulo95/TTG-Tools/releases/tag/v.1.14.9](https://github.com/zenderovpaulo95/TTG-Tools/releases)" style="display:inline-block;padding:10px 20px;background-color:#28a745;color:white;border-radius:5px;text-decoration:none;font-weight:bold;">⬇ Download TTG Tools!</a>
+⬇ [Download TTG Tools](https://github.com/zenderovpaulo95/TTG-Tools/releases)!
 
 ## Compilation
 
@@ -210,4 +210,5 @@ TTG Tools makes it easier to translate and modify Telltale Games and Skunkape Ga
 - Sam & Max: Save the World - Remastered  
 - Sam & Max: Beyond Time and Space - Remastered  
 - Sam & Max: The Devil's Playhouse - Remastered
+
 
