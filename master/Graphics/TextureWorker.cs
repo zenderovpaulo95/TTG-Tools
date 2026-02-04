@@ -1287,8 +1287,53 @@ namespace TTG_Tools.Graphics
             //mode = 1 - ERTM
             //mode = 2 & mode = 3 = files NOT header ERTM
             BinaryWriter bw = new BinaryWriter(stream);
-
             int pos = 0;
+
+            // ====================================================================================
+            // CORREÇÃO DE ALINHAMENTO PS4 (Adicione este bloco)
+            // Isso garante que o Header do arquivo tenha o tamanho real com Padding,
+            // sincronizando a leitura do jogo com os dados gravados.
+            // ====================================================================================
+            if (tex.platform.platform == 11) // PS4
+            {
+                int alignW = tex.Width;
+                int alignH = tex.Height;
+                // DXT1/BC4 = 8 bytes, DXT3/DXT5/BC5 = 16 bytes
+                int alignBlockSize = (tex.TextureFormat == 0x40 || tex.TextureFormat == 0x43) ? 8 : 16;
+
+                // Vamos recalcular o tamanho total
+                tex.Tex.TexSize = 0;
+
+                // Simula o loop de mipmaps para calcular o tamanho exato que o Swizzle vai gerar
+                for (int i = 0; i < tex.Tex.MipCount; i++)
+                {
+                    // Lógica de alinhamento idêntica à classe PS4.cs
+                    int hTexels = alignH / 4;
+                    int wTexels = alignW / 4;
+
+                    // Arredonda para cima para o próximo múltiplo de 8 (blocos de 32 pixels)
+                    int hAligned = (hTexels + 7) / 8;
+                    int wAligned = (wTexels + 7) / 8;
+
+                    // Tamanho real ocupado em memória no PS4 (incluindo espaços vazios)
+                    int alignedSize = hAligned * wAligned * 64 * alignBlockSize;
+
+                    // Se o tamanho alinhado for maior que o tamanho linear original, 
+                    // atualizamos o MipSize no objeto para que o Header seja gravado corretamente.
+                    if (alignedSize > tex.Tex.Textures[i].MipSize)
+                    {
+                        tex.Tex.Textures[i].MipSize = alignedSize;
+                    }
+
+                    // Acumula o tamanho total
+                    tex.Tex.TexSize += (uint)tex.Tex.Textures[i].MipSize;
+
+                    // Reduz as dimensões para o próximo mip (se houver)
+                    if (alignW > 1) alignW /= 2;
+                    if (alignH > 1) alignH /= 2;
+                }
+            }
+            // ====================================================================================
 
             if (mode == 1 || mode == 2)
             {
