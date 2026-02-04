@@ -287,9 +287,10 @@ namespace TTG_Tools
         {
             if (FormWindowState.Minimized == WindowState)
             {
-                notifyIcon1.Visible = true;
-                notifyIcon1.Visible = true;
-                Hide();
+                // COMENTE OU REMOVA AS LINHAS ABAIXO:
+                // notifyIcon1.Visible = true;
+                // notifyIcon1.Visible = true;
+                // Hide(); 
             }
         }
 
