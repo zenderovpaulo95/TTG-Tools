@@ -55,6 +55,9 @@ namespace TTG_Tools
             // Salvar o caminho original configurado no MainMenu para restaurar depois
             string originalGlobalOutputPath = MainMenu.settings.pathForOutputFolder;
 
+            // Lista para armazenar arquivos que falharam
+            List<string> failedFiles = new List<string>();
+
             try
             {
                 for (int d = 0; d < destination.Count; d++)
@@ -71,7 +74,6 @@ namespace TTG_Tools
 
                         for (int i = 0; i < inputFiles.Length; i++)
                         {
-                            // CORREÇÃO CRÍTICA:
                             // 1. Calcular a subpasta relativa (Ex: \EP1\MENU\)
                             string relativePath = inputFiles[i].DirectoryName.Substring(dir.FullName.Length);
                             if (relativePath.StartsWith("\\") || relativePath.StartsWith("/")) relativePath = relativePath.Substring(1);
@@ -81,7 +83,6 @@ namespace TTG_Tools
                             if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
 
                             // 3. HACK: Forçar a configuração global para a pasta alvo. 
-                            // Isso obriga LandbWorker e outros a salvarem na subpasta correta.
                             MainMenu.settings.pathForOutputFolder = targetFolder;
 
                             int countCorrectWork = 0;
@@ -107,73 +108,99 @@ namespace TTG_Tools
 
                                 for (int j = 0; j < fileDestination.Length; j++)
                                 {
-                                    switch (destinationForExport)
+                                    // Limpa o resultado anterior
+                                    result = "";
+
+                                    try
                                     {
-                                        case ".d3dtx":
-                                            // TextureWorker aceita path customizado, passamos targetFolder explicitamente
-                                            result = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, targetFolder, false, FullEncrypt, ref encKey, version);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[0] = true;
-                                            break;
-                                        case ".landb":
-                                            // LandbWorker usa a config global, que agora aponta para targetFolder
-                                            result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, encKey, version);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[1] = true;
-                                            break;
-                                        case ".langdb":
-                                            result = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, FullEncrypt, ref encKey, version);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[2] = true;
-                                            break;
-                                        case ".dlog":
-                                            result = Texts.DlogWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, ref encKey, ref version);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[3] = true;
-                                            break;
-                                        case ".prop":
-                                            ImportTXTinPROP(inputFiles[i], fileDestination[j], targetFolder);
-                                            emptyFiles = false;
-                                            show[4] = true;
-                                            break;
-                                        case ".font":
-                                            result = Graphics.FontWorker.DoWork(inputFiles[i].FullName, false);
-                                            ReportForWork(result);
-                                            emptyFiles = false;
-                                            show[5] = true;
-                                            break;
-                                        case ".lua":
-                                        case ".lenc":
-                                            if (MainMenu.settings.customKey)
+                                        switch (destinationForExport)
+                                        {
+                                            case ".d3dtx":
+                                                result = Graphics.TextureWorker.DoWork(inputFiles[i].FullName, targetFolder, false, FullEncrypt, ref encKey, version);
+                                                ReportForWork(result);
+                                                emptyFiles = false;
+                                                show[0] = true;
+                                                break;
+                                            case ".landb":
+                                                result = Texts.LandbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, encKey, version);
+                                                ReportForWork(result);
+                                                emptyFiles = false;
+                                                show[1] = true;
+                                                break;
+                                            case ".langdb":
+                                                result = Texts.LangdbWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, FullEncrypt, ref encKey, version);
+                                                ReportForWork(result);
+                                                emptyFiles = false;
+                                                show[2] = true;
+                                                break;
+                                            case ".dlog":
+                                                result = Texts.DlogWorker.DoWork(inputFiles[i].FullName, fileDestination[j].FullName, false, ref encKey, ref version);
+                                                ReportForWork(result);
+                                                emptyFiles = false;
+                                                show[3] = true;
+                                                break;
+                                            case ".prop":
+                                                int lenExt = inputFiles[i].Extension.Length;
+                                                string f_name = inputFiles[i].Name.Remove(inputFiles[i].Name.Length - lenExt, lenExt) + ".txt";
+                                                // Esse método já adiciona na lista failedFiles internamente se der erro
+                                                ImportTXTinPROP(inputFiles[i], fileDestination[j], targetFolder, failedFiles);
+                                                emptyFiles = false;
+                                                show[4] = true;
+                                                break;
+                                            case ".font":
+                                                result = Graphics.FontWorker.DoWork(inputFiles[i].FullName, false);
+                                                ReportForWork(result);
+                                                emptyFiles = false;
+                                                show[5] = true;
+                                                break;
+                                            case ".lua":
+                                            case ".lenc":
+                                                if (MainMenu.settings.customKey)
+                                                {
+                                                    encKey = Methods.stringToKey(MainMenu.settings.encCustomKey);
+                                                    if (encKey == null) { ReportForWork("You must enter key encryption!"); }
+                                                }
+
+                                                FileStream fs = new FileStream(inputFiles[i].FullName, FileMode.Open);
+                                                byte[] luaContent = Methods.ReadFull(fs);
+                                                fs.Close();
+
+                                                luaContent = Methods.encryptLua(luaContent, encKey, isNewEngine, version);
+
+                                                string destFileLua = Path.Combine(targetFolder, inputFiles[i].Name);
+                                                if (File.Exists(destFileLua)) File.Delete(destFileLua);
+
+                                                fs = new FileStream(destFileLua, FileMode.CreateNew);
+                                                fs.Write(luaContent, 0, luaContent.Length);
+                                                fs.Close();
+
+                                                ReportForWork("File " + inputFiles[i].Name + " encrypted.");
+                                                emptyFiles = false;
+                                                show[6] = true;
+                                                break;
+                                            default:
+                                                MessageBox.Show("Error in Switch!");
+                                                break;
+                                        }
+
+                                        // NOVA VERIFICAÇÃO: Checa se o texto retornado indica erro
+                                        if (!string.IsNullOrEmpty(result))
+                                        {
+                                            string lowerResult = result.ToLower();
+                                            if (lowerResult.Contains("something wrong") || lowerResult.Contains("error") || lowerResult.Contains("failed"))
                                             {
-                                                encKey = Methods.stringToKey(MainMenu.settings.encCustomKey);
-                                                if (encKey == null) { ReportForWork("You must enter key encryption!"); }
+                                                failedFiles.Add(inputFiles[i].Name);
+                                                correct_work = false; // Impede a contagem de sucesso
                                             }
-
-                                            FileStream fs = new FileStream(inputFiles[i].FullName, FileMode.Open);
-                                            byte[] luaContent = Methods.ReadFull(fs);
-                                            fs.Close();
-
-                                            luaContent = Methods.encryptLua(luaContent, encKey, isNewEngine, version);
-
-                                            string destFileLua = Path.Combine(targetFolder, inputFiles[i].Name);
-                                            if (File.Exists(destFileLua)) File.Delete(destFileLua);
-
-                                            fs = new FileStream(destFileLua, FileMode.CreateNew);
-                                            fs.Write(luaContent, 0, luaContent.Length);
-                                            fs.Close();
-
-                                            ReportForWork("File " + inputFiles[i].Name + " encrypted.");
-                                            emptyFiles = false;
-                                            show[6] = true;
-                                            break;
-                                        default:
-                                            MessageBox.Show("Error in Switch!");
-                                            break;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // Captura erros genéricos (ex: falha no bloco Lua)
+                                        string errorMsg = "Critical error processing " + inputFiles[i].Name + ": " + ex.Message;
+                                        ReportForWork(errorMsg);
+                                        failedFiles.Add(inputFiles[i].Name);
+                                        correct_work = false;
                                     }
 
                                     if (correct_work)
@@ -223,6 +250,17 @@ namespace TTG_Tools
 
                 if (emptyFiles) ReportForWork("Nothing to import. Empty folder.");
 
+                // DISPARAR O POP-UP DE ERRO
+                if (failedFiles.Count > 0)
+                {
+                    // Remove duplicatas caso o mesmo arquivo tenha falhado múltiplas vezes
+                    List<string> uniqueFailures = failedFiles.Distinct().ToList();
+
+                    string errorMessage = "WARNING: There were errors in the following files:\r\n\r\n" + string.Join("\r\n", uniqueFailures);
+
+                    // Envia o sinal especial ##POPUP##
+                    ReportForWork("##POPUP##" + errorMessage);
+                }
             }
             finally
             {
@@ -232,7 +270,7 @@ namespace TTG_Tools
         }
 
         // Import TXT to PROP
-        public void ImportTXTinPROP(FileInfo inputFile, FileInfo DestinationFile, string targetFolder)
+        public void ImportTXTinPROP(FileInfo inputFile, FileInfo DestinationFile, string targetFolder, List<string> failedList)
         {
             byte[] binContent = File.ReadAllBytes(inputFile.FullName);
             string[] strs = File.ReadAllLines(DestinationFile.FullName);
@@ -396,7 +434,10 @@ namespace TTG_Tools
                 if (ms != null) ms.Close();
                 if (bw != null) bw.Close();
                 if (fs != null) fs.Close();
-                ReportForWork("Something wrong with file " + inputFile.Name);
+
+                string errorMsg = "Something wrong with file " + inputFile.Name;
+                failedList.Add(inputFile.Name);
+                ReportForWork(errorMsg);
             }
         }
 
@@ -623,6 +664,7 @@ namespace TTG_Tools
                                     default:
                                         MessageBox.Show("Error in Switch!");
                                         break;
+
                                 }
 
                             }

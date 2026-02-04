@@ -21,7 +21,7 @@ namespace TTG_Tools
         public static int EncVersion;
 
         Thread threadExport;
-        Thread threadImport; 
+        Thread threadImport;
 
         public struct langdb
         {
@@ -43,7 +43,8 @@ namespace TTG_Tools
         public static int number;
         langdb[] database = new langdb[5000];
 
-        void AddNewReport(string report)
+        // MODIFICADO: Lógica do Pop-up adicionada aqui
+        public void AddNewReport(string report)
         {
             if (listBox1.InvokeRequired)
             {
@@ -51,6 +52,22 @@ namespace TTG_Tools
             }
             else
             {
+                // DETECTA A MENSAGEM ESPECIAL DE ERRO
+                if (report.StartsWith("##POPUP##"))
+                {
+                    string realMessage = report.Substring(9); // Remove o prefixo
+                    MessageBox.Show(realMessage, "Error Report", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    // Adiciona um aviso no log apenas para constar
+                    listBox1.Items.Add(">>> Error report displayed on screen. <<<");
+
+                    // Rola para o final
+                    listBox1.SelectedIndex = listBox1.Items.Count - 1;
+                    listBox1.SelectedIndex = -1;
+                    return;
+                }
+
+                // Comportamento normal para mensagens que não são de erro crítico
                 listBox1.Items.Add(report);
                 listBox1.SelectedIndex = listBox1.Items.Count - 1;
                 listBox1.SelectedIndex = -1;
@@ -70,7 +87,7 @@ namespace TTG_Tools
             catch
             {
                 MessageBox.Show("Open and close program or fix path in config.xml!", "Error!");
-                return; 
+                return;
             }
 
             /*if (checkUnicode.Checked) MainMenu.settings.unicodeSettings = 0;
@@ -166,7 +183,7 @@ namespace TTG_Tools
             {
                 this.id = id;
                 this.lenght_of_text = lenght_of_text;
-                this.text = text;                
+                this.text = text;
             }
         }
 
@@ -194,11 +211,11 @@ namespace TTG_Tools
             checkEncLangdb.Checked = MainMenu.settings.encLangdb;
             CheckNewEngine.Checked = MainMenu.settings.encNewLua;
 
-            if (MainMenu.settings.swizzlePS4 || MainMenu.settings.swizzleNintendoSwitch || MainMenu.settings.swizzleXbox360) // Modifique esta linha
+            if (MainMenu.settings.swizzlePS4 || MainMenu.settings.swizzleNintendoSwitch || MainMenu.settings.swizzleXbox360)
             {
                 if (MainMenu.settings.swizzleNintendoSwitch) rbSwitchSwizzle.Checked = true;
-                else if (MainMenu.settings.swizzlePS4) rbPS4Swizzle.Checked = true; // Use else if
-                else if (MainMenu.settings.swizzleXbox360) rbXbox360Swizzle.Checked = true; // Adicione esta linha
+                else if (MainMenu.settings.swizzlePS4) rbPS4Swizzle.Checked = true;
+                else if (MainMenu.settings.swizzleXbox360) rbXbox360Swizzle.Checked = true;
             }
             else rbNoSwizzle.Checked = true;
 
@@ -208,7 +225,7 @@ namespace TTG_Tools
                 textBox1.Text = MainMenu.settings.encCustomKey;
             }
 
-            if(MainMenu.settings.ASCII_N == 1252)
+            if (MainMenu.settings.ASCII_N == 1252)
             {
                 //Make unvisible that option for users with windows-1252 encoding
                 labelUnicode.Visible = false;
@@ -222,7 +239,7 @@ namespace TTG_Tools
                 threadExport.Abort();
             }
 
-            if((threadImport != null) && threadImport.IsAlive)
+            if ((threadImport != null) && threadImport.IsAlive)
             {
                 threadImport.Abort();
             }
@@ -262,7 +279,7 @@ namespace TTG_Tools
             MainMenu.settings.customKey = checkCustomKey.Checked;
             Settings.SaveConfig(MainMenu.settings);
 
-            if((MainMenu.settings.customKey == true) && 
+            if ((MainMenu.settings.customKey == true) &&
                 ((MainMenu.settings.encCustomKey != "") && (MainMenu.settings.encCustomKey != null)))
             {
                 textBox1.Text = MainMenu.settings.encCustomKey;
@@ -287,7 +304,7 @@ namespace TTG_Tools
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if(checkCustomKey.Checked && Methods.stringToKey(textBox1.Text) != null)
+            if (checkCustomKey.Checked && Methods.stringToKey(textBox1.Text) != null)
             {
                 MainMenu.settings.customKey = checkCustomKey.Checked;
                 MainMenu.settings.encCustomKey = textBox1.Text;
@@ -319,7 +336,7 @@ namespace TTG_Tools
 
         private void rbNoSwizzle_CheckedChanged(object sender, EventArgs e)
         {
-            if(rbNoSwizzle.Checked)
+            if (rbNoSwizzle.Checked)
             {
                 MainMenu.settings.swizzleNintendoSwitch = false;
                 MainMenu.settings.swizzlePS4 = false;
@@ -329,7 +346,7 @@ namespace TTG_Tools
 
         private void rbPS4Swizzle_CheckedChanged(object sender, EventArgs e)
         {
-            if(rbPS4Swizzle.Checked)
+            if (rbPS4Swizzle.Checked)
             {
                 MainMenu.settings.swizzlePS4 = true;
                 MainMenu.settings.swizzleNintendoSwitch = false;
@@ -340,7 +357,7 @@ namespace TTG_Tools
 
         private void rbSwitchSwizzle_CheckedChanged(object sender, EventArgs e)
         {
-            if(rbSwitchSwizzle.Checked)
+            if (rbSwitchSwizzle.Checked)
             {
                 MainMenu.settings.swizzleNintendoSwitch = true;
                 MainMenu.settings.swizzlePS4 = false;
