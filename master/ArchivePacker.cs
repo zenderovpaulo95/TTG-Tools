@@ -858,6 +858,12 @@ namespace TTG_Tools
             Settings.SaveConfig(MainMenu.settings);
         }
 
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            MainMenu.settings.archivePath = textBox2.Text.Trim();
+            Settings.SaveConfig(MainMenu.settings);
+        }
+
         private void textBox_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
