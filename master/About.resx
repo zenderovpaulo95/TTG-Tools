@@ -148,9 +148,11 @@ Maybe some games doesn't work.
 
 v.1.15.2 (06.02.2026)
 + Auto(De)Packer (Packer and Unpacker)
-Fixed an issue with reinserting PS4 textures
+Fixed an issue with reinserting PS4 textures.
 Subfolder processing during Decrypt/Export and Encrypt/Pack/Import files.
 Added error log with pop-up.
++ Auto(De)Packer
+Added drag and drop functionality to the Archive Packer.
 
 v.1.15.1 (14.11.2025)
 + Auto(De)Packer (Packer and Unpacker)
