@@ -729,6 +729,13 @@ namespace TTG_Tools
 
         private void ArchivePacker_Load(object sender, EventArgs e)
         {
+            AllowDrop = true;
+            DragEnter += ArchivePacker_DragEnter;
+            DragDrop += ArchivePacker_DragDrop;
+            textBox1.AllowDrop = true;
+            textBox1.DragEnter += ArchivePacker_DragEnter;
+            textBox1.DragDrop += ArchivePacker_DragDrop;
+
             for (int i = 0; i < MainMenu.gamelist.Count(); i++)
             {
                 comboGameList.Items.Add(i + ". " + MainMenu.gamelist[i].gamename);
@@ -856,6 +863,63 @@ namespace TTG_Tools
         {
             MainMenu.settings.archivePath = textBox2.Text.Trim();
             Settings.SaveConfig(MainMenu.settings);
+        }
+
+        private void ArchivePacker_DragEnter(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            string[] droppedItems = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if ((droppedItems == null) || (droppedItems.Length == 0))
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            string droppedPath = droppedItems[0];
+            if (Directory.Exists(droppedPath))
+            {
+                e.Effect = DragDropEffects.Copy;
+                return;
+            }
+
+            if (!File.Exists(droppedPath))
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            string ext = Methods.GetExtension(droppedPath).ToLower();
+            e.Effect = ((ext == ".ttarch") || (ext == ".ttarch2") || (ext == ".obb")) ? DragDropEffects.Copy : DragDropEffects.None;
+        }
+
+        private void ArchivePacker_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] droppedItems = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if ((droppedItems == null) || (droppedItems.Length == 0)) return;
+
+            string droppedPath = droppedItems[0];
+            if (Directory.Exists(droppedPath))
+            {
+                textBox1.Text = droppedPath;
+                MainMenu.settings.inputDirPath = droppedPath.Trim();
+                Settings.SaveConfig(MainMenu.settings);
+                return;
+            }
+
+            if (!File.Exists(droppedPath)) return;
+
+            string ext = Methods.GetExtension(droppedPath).ToLower();
+            if ((ext == ".ttarch") || (ext == ".ttarch2") || (ext == ".obb"))
+            {
+                textBox2.Text = droppedPath;
+                MainMenu.settings.archivePath = droppedPath.Trim();
+                Settings.SaveConfig(MainMenu.settings);
+            }
         }
 
         private async void buildButton_Click(object sender, EventArgs e)
