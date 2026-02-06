@@ -146,6 +146,10 @@ Maybe some games doesn't work.
 ===
 [Version history]
 
+v.1.15.3 (06.02.2026)
++ Auto(De)Packer
+Added a fix to reimport the ttarch2 from the Sam &amp; Max: Remastered's games.
+
 v.1.15.2 (06.02.2026)
 + Auto(De)Packer (Packer and Unpacker)
 Fixed an issue with reinserting PS4 textures.
