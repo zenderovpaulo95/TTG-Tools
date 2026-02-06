@@ -812,6 +812,12 @@ namespace TTG_Tools
             }
         }
 
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            MainMenu.settings.inputDirPath = textBox1.Text.Trim();
+            Settings.SaveConfig(MainMenu.settings);
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             if (ttarchRB.Checked)
@@ -844,6 +850,12 @@ namespace TTG_Tools
                     textBox2.Clear();
                 }
             }
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            MainMenu.settings.archivePath = textBox2.Text.Trim();
+            Settings.SaveConfig(MainMenu.settings);
         }
 
         private async void buildButton_Click(object sender, EventArgs e)
