@@ -14,5 +14,10 @@ namespace TTG_Tools
         {
             Close();
         }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
