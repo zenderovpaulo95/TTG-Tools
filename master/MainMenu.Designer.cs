@@ -43,7 +43,7 @@
             // 
             // autopackerBtn
             // 
-            this.autopackerBtn.Location = new System.Drawing.Point(12, 10);
+            this.autopackerBtn.Location = new System.Drawing.Point(32, 23);
             this.autopackerBtn.Name = "autopackerBtn";
             this.autopackerBtn.Size = new System.Drawing.Size(112, 23);
             this.autopackerBtn.TabIndex = 0;
@@ -53,7 +53,7 @@
             // 
             // aboutBtn
             // 
-            this.aboutBtn.Location = new System.Drawing.Point(88, 124);
+            this.aboutBtn.Location = new System.Drawing.Point(129, 155);
             this.aboutBtn.Name = "aboutBtn";
             this.aboutBtn.Size = new System.Drawing.Size(112, 23);
             this.aboutBtn.TabIndex = 1;
@@ -63,7 +63,7 @@
             // 
             // fontEditorBtn
             // 
-            this.fontEditorBtn.Location = new System.Drawing.Point(159, 10);
+            this.fontEditorBtn.Location = new System.Drawing.Point(230, 23);
             this.fontEditorBtn.Name = "fontEditorBtn";
             this.fontEditorBtn.Size = new System.Drawing.Size(111, 23);
             this.fontEditorBtn.TabIndex = 2;
@@ -79,7 +79,7 @@
             // 
             // textEditorBtn
             // 
-            this.textEditorBtn.Location = new System.Drawing.Point(159, 50);
+            this.textEditorBtn.Location = new System.Drawing.Point(230, 69);
             this.textEditorBtn.Name = "textEditorBtn";
             this.textEditorBtn.Size = new System.Drawing.Size(111, 23);
             this.textEditorBtn.TabIndex = 7;
@@ -89,7 +89,7 @@
             // 
             // settingsBtn
             // 
-            this.settingsBtn.Location = new System.Drawing.Point(12, 91);
+            this.settingsBtn.Location = new System.Drawing.Point(33, 108);
             this.settingsBtn.Name = "settingsBtn";
             this.settingsBtn.Size = new System.Drawing.Size(111, 23);
             this.settingsBtn.TabIndex = 9;
@@ -99,7 +99,7 @@
             // 
             // archivePackerBtn
             // 
-            this.archivePackerBtn.Location = new System.Drawing.Point(13, 50);
+            this.archivePackerBtn.Location = new System.Drawing.Point(33, 69);
             this.archivePackerBtn.Margin = new System.Windows.Forms.Padding(2);
             this.archivePackerBtn.Name = "archivePackerBtn";
             this.archivePackerBtn.Size = new System.Drawing.Size(111, 23);
@@ -110,7 +110,7 @@
             // 
             // arcUnpackerBtn
             // 
-            this.arcUnpackerBtn.Location = new System.Drawing.Point(159, 91);
+            this.arcUnpackerBtn.Location = new System.Drawing.Point(230, 108);
             this.arcUnpackerBtn.Margin = new System.Windows.Forms.Padding(2);
             this.arcUnpackerBtn.Name = "arcUnpackerBtn";
             this.arcUnpackerBtn.Size = new System.Drawing.Size(111, 23);
@@ -123,7 +123,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(285, 159);
+            this.ClientSize = new System.Drawing.Size(370, 191);
             this.Controls.Add(this.arcUnpackerBtn);
             this.Controls.Add(this.archivePackerBtn);
             this.Controls.Add(this.settingsBtn);
@@ -135,7 +135,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainMenu";
-            this.Text = "TTG Tools by Den Em";
+            this.Text = "TTG Tools by Den Em and Pashok6798";
             this.Load += new System.EventHandler(this.MainMenu_Load);
             this.Resize += new System.EventHandler(this.MainMenu_Resize);
             this.ResumeLayout(false);
