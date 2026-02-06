@@ -121,6 +121,194 @@ namespace TTG_Tools
             return enc.Crypt_ECB(bytes, archiveVersion, false);
         }
 
+        private static bool IsSamMaxRemasteredIndex(int selectedGameIndex)
+        {
+            return (selectedGameIndex == 65) || (selectedGameIndex == 66) || (selectedGameIndex == 67);
+        }
+
+        void ttarch2BuilderLegacy1132(string inputFolder, string outputPath, bool compression, bool encryption, bool encLua, byte[] key, int versionArchive, bool newEngine)
+        {
+            DirectoryInfo di = new DirectoryInfo(inputFolder);
+            fi = di.GetFiles("*", SearchOption.AllDirectories);
+            ulong[] nameCrc = new ulong[fi.Length];
+            string[] name = new string[fi.Length];
+            ulong offset = 0;
+
+            for (int i = 0; i < fi.Length; i++)
+            {
+                if ((fi[i].Extension.ToLower() == ".lua") && encLua)
+                {
+                    name[i] = !newEngine ? fi[i].Name.Replace(".lua", ".lenc") : fi[i].Name;
+                }
+                else
+                {
+                    name[i] = fi[i].Name;
+                }
+
+                nameCrc[i] = CRCs.CRC64(0, name[i].ToLower());
+            }
+
+            for (int k = 0; k < fi.Length - 1; k++)
+            {
+                for (int l = k + 1; l < fi.Length; l++)
+                {
+                    if (nameCrc[l] < nameCrc[k])
+                    {
+                        FileInfo temp = fi[k];
+                        fi[k] = fi[l];
+                        fi[l] = temp;
+
+                        string tempStr = name[k];
+                        name[k] = name[l];
+                        name[l] = tempStr;
+
+                        ulong tempCrc = nameCrc[k];
+                        nameCrc[k] = nameCrc[l];
+                        nameCrc[l] = tempCrc;
+                    }
+                }
+            }
+
+            uint infoSize = (uint)fi.Length * (8 + 8 + 4 + 4 + 2 + 2);
+            uint dataSize = 0;
+            uint nameSize = 0;
+
+            for (int j = 0; j < fi.Length; j++)
+            {
+                nameSize += (uint)name[j].Length + 1;
+                dataSize += (uint)fi[j].Length;
+            }
+
+            nameSize = (uint)Methods.pad_it(nameSize, 0x10000);
+            byte[] infoTable = new byte[infoSize];
+            byte[] namesTable = new byte[nameSize];
+
+            uint nameOffset = 0;
+            for (int d = 0; d < fi.Length; d++)
+            {
+                name[d] += "\0";
+                Array.Copy(Encoding.ASCII.GetBytes(name[d]), 0, namesTable, nameOffset, name[d].Length);
+                nameOffset += (uint)name[d].Length;
+            }
+
+            byte[] ncttHeader = Encoding.ASCII.GetBytes("NCTT");
+            byte[] att = versionArchive == 1 ? Encoding.ASCII.GetBytes("3ATT") : Encoding.ASCII.GetBytes("4ATT");
+            ulong commonSize = versionArchive == 1 ? dataSize + infoSize + nameSize + 16UL : dataSize + infoSize + nameSize + 12UL;
+
+            uint ns = nameSize;
+            uint tmp;
+            ulong fileOffset = 0;
+
+            SetMaximum(fi.Length);
+
+            for (int k = 0; k < fi.Length; k++)
+            {
+                Array.Copy(BitConverter.GetBytes(nameCrc[k]), 0, infoTable, (long)offset, 8);
+                offset += 8;
+                Array.Copy(BitConverter.GetBytes(fileOffset), 0, infoTable, (long)offset, 8);
+                offset += 8;
+                Array.Copy(BitConverter.GetBytes((int)fi[k].Length), 0, infoTable, (long)offset, 4);
+                offset += 4;
+                Array.Copy(BitConverter.GetBytes(0), 0, infoTable, (long)offset, 4);
+                offset += 4;
+                tmp = ns - nameSize;
+                Array.Copy(BitConverter.GetBytes((ushort)(tmp / 0x10000)), 0, infoTable, (long)offset, 2);
+                offset += 2;
+                Array.Copy(BitConverter.GetBytes((ushort)(tmp % 0x10000)), 0, infoTable, (long)offset, 2);
+                offset += 2;
+                ns += (uint)name[k].Length;
+                fileOffset += (uint)fi[k].Length;
+
+                Progress(k + 1);
+            }
+
+            string format = Methods.GetExtension(outputPath).ToLower() == ".obb" ? ".obb" : ".ttarch2";
+            string tempPath = outputPath.Replace(format, ".tmp");
+
+            using (FileStream fs = new FileStream(tempPath, FileMode.Create))
+            {
+                fs.Write(ncttHeader, 0, 4);
+                fs.Write(BitConverter.GetBytes(commonSize), 0, 8);
+                fs.Write(att, 0, 4);
+
+                if (versionArchive == 1)
+                {
+                    fs.Write(BitConverter.GetBytes(2), 0, 4);
+                }
+
+                fs.Write(BitConverter.GetBytes(nameSize), 0, 4);
+                fs.Write(BitConverter.GetBytes(fi.Length), 0, 4);
+                fs.Write(infoTable, 0, (int)infoSize);
+                fs.Write(namesTable, 0, (int)nameSize);
+
+                SetMaximum(fi.Length);
+                for (int l = 0; l < fi.Length; l++)
+                {
+                    byte[] file = File.ReadAllBytes(fi[l].FullName);
+
+                    if ((fi[l].Extension.ToLower() == ".lua") && encLua)
+                    {
+                        file = Methods.encryptLua(file, key, newEngine, 7);
+                    }
+
+                    fs.Write(file, 0, file.Length);
+                    Progress(l + 1);
+                }
+            }
+
+            if (!compression)
+            {
+                if (File.Exists(outputPath)) File.Delete(outputPath);
+                File.Move(tempPath, outputPath);
+                return;
+            }
+
+            using (FileStream fs = new FileStream(outputPath, FileMode.Create))
+            using (FileStream tempFr = new FileStream(tempPath, FileMode.Open))
+            {
+                ulong fullIt = Methods.pad_it(commonSize, 0x10000);
+                uint blocksCount = (uint)fullIt / 0x10000;
+                byte[] compressedHeader = encryption ? Encoding.ASCII.GetBytes("ECTT") : Encoding.ASCII.GetBytes("ZCTT");
+                byte[] chunkSize = { 0x00, 0x00, 0x01, 0x00 };
+                ulong chunkTableSize = 8 * blocksCount + 8;
+                offset = chunkTableSize + 12;
+                byte[] chunkTable = new byte[chunkTableSize];
+
+                Array.Copy(BitConverter.GetBytes(offset), 0, chunkTable, 0, 8);
+
+                fs.Write(compressedHeader, 0, compressedHeader.Length);
+                fs.Write(chunkSize, 0, 4);
+                fs.Write(BitConverter.GetBytes(blocksCount), 0, 4);
+                fs.Write(chunkTable, 0, chunkTable.Length);
+
+                tempFr.Seek(12, SeekOrigin.Begin);
+                SetMaximum((int)blocksCount);
+
+                for (int i = 0; i < blocksCount; i++)
+                {
+                    byte[] temp = new byte[0x10000];
+                    tempFr.Read(temp, 0, temp.Length);
+                    byte[] compressedBlock = DeflateCompressor(temp);
+
+                    if (encryption)
+                    {
+                        compressedBlock = encryptFunction(compressedBlock, key, 7);
+                    }
+
+                    offset += (uint)compressedBlock.Length;
+                    Array.Copy(BitConverter.GetBytes(offset), 0, chunkTable, 8 + (i * 8), 8);
+                    fs.Write(compressedBlock, 0, compressedBlock.Length);
+                    Progress(i + 1);
+                }
+
+                fs.Seek(12, SeekOrigin.Begin);
+                fs.Write(chunkTable, 0, chunkTable.Length);
+            }
+
+            File.Delete(tempPath);
+            AddNewReport("Sam & Max Remastered compatibility mode (v1.13.2 ttarch2 builder) applied.");
+        }
+
 
         async Task ttarch2Builder(string inputFolder, string outputPath, bool compression, bool encryption, bool encLua, byte[] key, int versionArchive, bool newEngine, int compressAlgorithm)
         {
@@ -967,7 +1155,17 @@ namespace TTG_Tools
                     }
                     else
                     {
-                        await Task.Run(() => ttarch2Builder(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, MainMenu.settings.encArchive, !MainMenu.settings.encryptLuaInArchive, keyEnc, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress));
+                        bool useLegacySamMaxBuilder = IsSamMaxRemasteredIndex(comboGameList.SelectedIndex);
+
+                        if (useLegacySamMaxBuilder)
+                        {
+                            AddNewReport("Enabled Sam & Max Remastered compatibility mode.");
+                            await Task.Run(() => ttarch2BuilderLegacy1132(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, MainMenu.settings.encArchive, !MainMenu.settings.encryptLuaInArchive, keyEnc, archiveVersion, MainMenu.settings.encNewLua));
+                        }
+                        else
+                        {
+                            await Task.Run(() => ttarch2Builder(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, MainMenu.settings.compressArchive, MainMenu.settings.encArchive, !MainMenu.settings.encryptLuaInArchive, keyEnc, archiveVersion, MainMenu.settings.encNewLua, algorithmCompress));
+                        }
                     }
 
                     /*if (ttarchRB.Checked == true) ttarchBuilder(MainMenu.settings.inputDirPath, MainMenu.settings.archivePath, keyEnc, MainMenu.settings.compressArchive, archiveVersion, MainMenu.settings.encArchive, MainMenu.settings.encryptLuaInArchive, algorithmCompress);
