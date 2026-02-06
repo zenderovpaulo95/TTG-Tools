@@ -340,6 +340,7 @@ namespace TTG_Tools
             {
                 MainMenu.settings.swizzleNintendoSwitch = false;
                 MainMenu.settings.swizzlePS4 = false;
+                MainMenu.settings.swizzleXbox360 = false;
                 Settings.SaveConfig(MainMenu.settings);
             }
         }
