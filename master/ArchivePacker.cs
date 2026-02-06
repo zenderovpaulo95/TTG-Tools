@@ -729,6 +729,13 @@ namespace TTG_Tools
 
         private void ArchivePacker_Load(object sender, EventArgs e)
         {
+            AllowDrop = true;
+            DragEnter += ArchivePacker_DragEnter;
+            DragDrop += ArchivePacker_DragDrop;
+            textBox1.AllowDrop = true;
+            textBox1.DragEnter += ArchivePacker_DragEnter;
+            textBox1.DragDrop += ArchivePacker_DragDrop;
+
             for (int i = 0; i < MainMenu.gamelist.Count(); i++)
             {
                 comboGameList.Items.Add(i + ". " + MainMenu.gamelist[i].gamename);
@@ -855,6 +862,36 @@ namespace TTG_Tools
         private void textBox2_Leave(object sender, EventArgs e)
         {
             MainMenu.settings.archivePath = textBox2.Text.Trim();
+            Settings.SaveConfig(MainMenu.settings);
+        }
+
+        private void ArchivePacker_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void ArchivePacker_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] droppedItems = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if ((droppedItems == null) || (droppedItems.Length == 0)) return;
+
+            string droppedPath = droppedItems[0];
+            string inputDirectory = null;
+
+            if (Directory.Exists(droppedPath)) inputDirectory = droppedPath;
+            else if (File.Exists(droppedPath)) inputDirectory = Path.GetDirectoryName(droppedPath);
+
+            if (string.IsNullOrWhiteSpace(inputDirectory)) return;
+
+            textBox1.Text = inputDirectory;
+            MainMenu.settings.inputDirPath = inputDirectory.Trim();
             Settings.SaveConfig(MainMenu.settings);
         }
 
