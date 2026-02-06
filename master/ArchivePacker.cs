@@ -858,6 +858,62 @@ namespace TTG_Tools
             Settings.SaveConfig(MainMenu.settings);
         }
 
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            MainMenu.settings.archivePath = textBox2.Text.Trim();
+            Settings.SaveConfig(MainMenu.settings);
+        }
+
+        private void textBox_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+            else e.Effect = DragDropEffects.None;
+        }
+
+        private static string GetDroppedPath(DragEventArgs e)
+        {
+            string[] droppedItems = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if (droppedItems == null || droppedItems.Length == 0) return string.Empty;
+
+            return droppedItems[0];
+        }
+
+        private void textBox1_DragDrop(object sender, DragEventArgs e)
+        {
+            string droppedPath = GetDroppedPath(e);
+            if (droppedPath == string.Empty) return;
+
+            if (File.Exists(droppedPath)) droppedPath = Path.GetDirectoryName(droppedPath);
+
+            if (Directory.Exists(droppedPath))
+            {
+                textBox1.Text = droppedPath;
+                MainMenu.settings.inputDirPath = droppedPath;
+                Settings.SaveConfig(MainMenu.settings);
+            }
+        }
+
+        private string GetDefaultOutputArchivePath(string droppedPath)
+        {
+            if (File.Exists(droppedPath)) return droppedPath;
+
+            if (!Directory.Exists(droppedPath)) return string.Empty;
+
+            string archiveName = new DirectoryInfo(droppedPath).Name;
+            string extension = ttarchRB.Checked ? ".ttarch" : ".ttarch2";
+            return Path.Combine(droppedPath, archiveName + extension);
+        }
+
+        private void textBox2_DragDrop(object sender, DragEventArgs e)
+        {
+            string outputArchivePath = GetDefaultOutputArchivePath(GetDroppedPath(e));
+            if (outputArchivePath == string.Empty) return;
+
+            textBox2.Text = outputArchivePath;
+            MainMenu.settings.archivePath = outputArchivePath;
+            Settings.SaveConfig(MainMenu.settings);
+        }
+
         private async void buildButton_Click(object sender, EventArgs e)
         {
             if ((MainMenu.settings.inputDirPath != "") && (MainMenu.settings.archivePath != ""))
