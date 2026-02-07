@@ -24,24 +24,12 @@ namespace TTG_Tools
             InitializeComponent();
         }
 
-        public void ApplyLocalizedNonControlTexts()
-        {
-            notifyIcon1.Text = UiLocalizer.GetOrDefault("MainMenu.notifyIcon1.Text", notifyIcon1.Text);
-        }
-
-        private void ShowLocalizedForm(Form form)
-        {
-            UiLocalizer.ApplyToForm(form);
-            form.Show();
-        }
-
-
         private void OpenAutopacker_Form_Click(object sender, EventArgs e)
         {
             if (Application.OpenForms.OfType<AutoPacker>().Count() == 0)
             {
                 Form autopacker = new AutoPacker();
-                ShowLocalizedForm(autopacker);
+                autopacker.Show();
             }
         }
 
@@ -50,7 +38,7 @@ namespace TTG_Tools
             if (Application.OpenForms.OfType<FontEditor>().Count() == 0)
             {
                 Form fonteditor = new FontEditor();
-                ShowLocalizedForm(fonteditor);
+                fonteditor.Show();
             }
         }
 
@@ -59,7 +47,7 @@ namespace TTG_Tools
             if (Application.OpenForms.OfType<About>().Count() == 0)
             {
                 Form about = new About();
-                ShowLocalizedForm(about);
+                about.Show();
             }
         }
 
@@ -293,7 +281,6 @@ namespace TTG_Tools
             reader.Close();
 
             SetProcessWorkingSetSize(System.Diagnostics.Process.GetCurrentProcess().Handle, -1, -1);
-            UiLocalizer.ApplyToForm(this);
         }
 
         private void MainMenu_Resize(object sender, EventArgs e)
@@ -319,7 +306,7 @@ namespace TTG_Tools
             if (Application.OpenForms.OfType<TextEditor>().Count() == 0)
             {
                 Form txteditor = new TextEditor();
-                ShowLocalizedForm(txteditor);
+                txteditor.Show();
             }
         }
         private void buttonSettings_Click(object sender, EventArgs e)
@@ -327,7 +314,6 @@ namespace TTG_Tools
             if (Application.OpenForms.OfType<FormSettings>().Count() == 0)
             {
                 Form settings = new FormSettings();
-                UiLocalizer.ApplyToFormSettings((FormSettings)settings);
                 settings.Show(this);
             }
         }
@@ -352,7 +338,7 @@ namespace TTG_Tools
             if (Application.OpenForms.OfType<ArchivePacker>().Count() == 0)
             {
                 Form archiveForm = new ArchivePacker();
-                ShowLocalizedForm(archiveForm);
+                archiveForm.Show();
             }
         }
 
@@ -361,7 +347,7 @@ namespace TTG_Tools
             if(Application.OpenForms.OfType<ArchiveUnpacker>().Count() == 0)
             {
                 Form arcUnpackerForm = new ArchiveUnpacker();
-                ShowLocalizedForm(arcUnpackerForm);
+                arcUnpackerForm.Show();
             }
         }
     }

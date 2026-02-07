@@ -6,8 +6,6 @@ namespace TTG_Tools
 {
     public partial class FormSettings : Form
     {
-        private bool _loadingUiLanguageList;
-
         private class LanguageOption
         {
             public string Code { get; set; }
@@ -51,9 +49,6 @@ namespace TTG_Tools
 
             LanguageOption selectedUiLanguage = interfaceLanguageComboBox.SelectedItem as LanguageOption;
             MainMenu.settings.uiLanguageCode = selectedUiLanguage != null ? selectedUiLanguage.Code : "en";
-
-            UiLocalizer.Initialize(MainMenu.settings.uiLanguageCode);
-            UiLocalizer.RefreshOpenForms();
 
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
@@ -270,7 +265,6 @@ namespace TTG_Tools
             languageComboBox.Enabled = MainMenu.settings.languageIndex != -1;
             languageComboBox.SelectedIndex = MainMenu.settings.languageIndex != -1 ? languageComboBox.SelectedIndex = MainMenu.settings.languageIndex : 0;
 
-            _loadingUiLanguageList = true;
             interfaceLanguageComboBox.Items.Clear();
             foreach (string code in UiLocalizer.AvailableLanguages)
             {
@@ -295,7 +289,6 @@ namespace TTG_Tools
             {
                 interfaceLanguageComboBox.SelectedIndex = 0;
             }
-            _loadingUiLanguageList = false;
 
             switch (MainMenu.settings.unicodeSettings)
             {
@@ -328,38 +321,6 @@ namespace TTG_Tools
             languageComboBox.SelectedIndex = 0;
             languageComboBox.Enabled = checkLanguage.Checked;
         }
-
-
-        private void interfaceLanguageComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_loadingUiLanguageList)
-            {
-                return;
-            }
-
-            LanguageOption selectedUiLanguage = interfaceLanguageComboBox.SelectedItem as LanguageOption;
-            string selectedCode = selectedUiLanguage != null ? selectedUiLanguage.Code : "en";
-
-            UiLocalizer.Initialize(selectedCode);
-            UiLocalizer.RefreshOpenForms();
-        }
-
-        public string GetAsciiLabelText() { return "ASCII"; }
-        public string GetApplyAndExitButtonText() { return "Apply and Exit"; }
-        public string GetApplyButtonText() { return "Apply"; }
-        public string GetExitButtonText() { return "Exit"; }
-        public string GetInputFolderButtonText() { return "Input Folder"; }
-        public string GetOutputFolderButtonText() { return "Output Folder"; }
-        public string GetPathsGroupText() { return "Auto(De)Packer file paths:"; }
-        public string GetDetectLanguageCheckboxText() { return "I don't know ASCII code for my language!"; }
-        public string GetInterfaceLanguageLabelText() { return "Interface language:"; }
-        public string GetUnicodeGroupText() { return "Unicode mode:"; }
-        public string GetNormalUnicodeText() { return "Normal Unicode"; }
-        public string GetNonNormalUnicodeText() { return "Non normal Unicode"; }
-        public string GetNewBttFUnicodeText() { return "New BttF Unicode"; }
-        public string GetNormalUnicodeTooltipText() { return "Recommend to use in new games (From\r\nMinecraft: Story Mode). This option could help\r\nto export/import text files from a new game and\r\nremake fonts with support of your symbols."; }
-        public string GetNonNormalUnicodeTooltipText() { return "Recommend to use in old and some new games (Until\r\nBatman: A Telltale Series). This option could help\r\nto export/import text files from old games and\r\nremake fonts with support of your symbols."; }
-        public string GetNewBttFUnicodeTooltipText() { return "Support all symbols from all modern languages.\r\nRecommend for new version TftB."; }
 
         public void SetLocalizedTexts(
             string asciiLabel,

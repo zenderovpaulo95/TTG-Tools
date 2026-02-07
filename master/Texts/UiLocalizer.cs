@@ -53,12 +53,6 @@ namespace TTG_Tools
             return key;
         }
 
-        public static string GetOrDefault(string key, string defaultText)
-        {
-            string localized = Get(key);
-            return localized == key ? defaultText : localized;
-        }
-
         public static string GetLanguageDisplayName(string code)
         {
             EnsureLoaded();
@@ -71,77 +65,26 @@ namespace TTG_Tools
             return code;
         }
 
-        public static void ApplyToForm(Form form)
-        {
-            if (form == null)
-            {
-                return;
-            }
-
-            string formKey = form.Name + ".Text";
-            form.Text = GetOrDefault(formKey, form.Text);
-
-            ApplyToControlCollection(form, form.Controls);
-
-            if (form is MainMenu mainMenu)
-            {
-                mainMenu.ApplyLocalizedNonControlTexts();
-            }
-        }
-
-        public static void RefreshOpenForms()
-        {
-            Form[] forms = new Form[Application.OpenForms.Count];
-            Application.OpenForms.CopyTo(forms, 0);
-
-            foreach (Form form in forms)
-            {
-                if (form is FormSettings settingsForm)
-                {
-                    ApplyToFormSettings(settingsForm);
-                }
-                else
-                {
-                    ApplyToForm(form);
-                }
-            }
-        }
-
         public static void ApplyToFormSettings(FormSettings form)
         {
-            ApplyToForm(form);
-
+            form.Text = Get("Settings.FormTitle");
             form.SetLocalizedTexts(
-                GetOrDefault("FormSettings.label1.Text", form.GetAsciiLabelText()),
-                GetOrDefault("FormSettings.buttonApplyAndExitSettings.Text", form.GetApplyAndExitButtonText()),
-                GetOrDefault("FormSettings.buttonSaveSettings.Text", form.GetApplyButtonText()),
-                GetOrDefault("FormSettings.buttonExitSettingsForm.Text", form.GetExitButtonText()),
-                GetOrDefault("FormSettings.buttonInputFolder.Text", form.GetInputFolderButtonText()),
-                GetOrDefault("FormSettings.buttonOutputFolder.Text", form.GetOutputFolderButtonText()),
-                GetOrDefault("FormSettings.groupBox1.Text", form.GetPathsGroupText()),
-                GetOrDefault("FormSettings.checkLanguage.Text", form.GetDetectLanguageCheckboxText()),
-                GetOrDefault("FormSettings.labelInterfaceLanguage.Text", form.GetInterfaceLanguageLabelText()),
-                GetOrDefault("FormSettings.groupBox2.Text", form.GetUnicodeGroupText()),
-                GetOrDefault("FormSettings.rbNormalUnicode.Text", form.GetNormalUnicodeText()),
-                GetOrDefault("FormSettings.rbNonNormalUnicode2.Text", form.GetNonNormalUnicodeText()),
-                GetOrDefault("FormSettings.rbNewBttF.Text", form.GetNewBttFUnicodeText()),
-                GetOrDefault("FormSettings.rbNormalUnicode.ToolTip", form.GetNormalUnicodeTooltipText()),
-                GetOrDefault("FormSettings.rbNonNormalUnicode2.ToolTip", form.GetNonNormalUnicodeTooltipText()),
-                GetOrDefault("FormSettings.rbNewBttF.ToolTip", form.GetNewBttFUnicodeTooltipText()));
-        }
-
-        private static void ApplyToControlCollection(Form form, Control.ControlCollection controls)
-        {
-            foreach (Control control in controls)
-            {
-                string key = form.Name + "." + control.Name + ".Text";
-                control.Text = GetOrDefault(key, control.Text);
-
-                if (control.HasChildren)
-                {
-                    ApplyToControlCollection(form, control.Controls);
-                }
-            }
+                Get("Settings.AsciiLabel"),
+                Get("Settings.ApplyAndExitButton"),
+                Get("Settings.ApplyButton"),
+                Get("Settings.ExitButton"),
+                Get("Settings.InputFolderButton"),
+                Get("Settings.OutputFolderButton"),
+                Get("Settings.PathsGroup"),
+                Get("Settings.DetectLanguageCheckbox"),
+                Get("Settings.InterfaceLanguageLabel"),
+                Get("Settings.UnicodeGroup"),
+                Get("Settings.NormalUnicode"),
+                Get("Settings.NonNormalUnicode"),
+                Get("Settings.NewBttFUnicode"),
+                Get("Settings.NormalUnicodeTooltip"),
+                Get("Settings.NonNormalUnicodeTooltip"),
+                Get("Settings.NewBttFUnicodeTooltip"));
         }
 
         private static void EnsureLoaded()
