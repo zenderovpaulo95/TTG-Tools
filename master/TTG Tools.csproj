@@ -166,7 +166,6 @@
     <Compile Include="Texts\LangdbWorker.cs" />
     <Compile Include="Texts\ReadText.cs" />
     <Compile Include="Texts\SaveText.cs" />
-    <Compile Include="Texts\UiLocalizer.cs" />
     <Compile Include="Wrapper\OodleTools.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
@@ -226,9 +225,6 @@
   <ItemGroup>
     <None Include="Resources\IconSave.ico" />
     <Content Include="ttgtool.ico" />
-    <Content Include="Translations\ui-translations.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
