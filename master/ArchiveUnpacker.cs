@@ -15,6 +15,7 @@ namespace TTG_Tools
         public ArchiveUnpacker()
         {
             InitializeComponent();
+            filesDataGridView.AllowUserToAddRows = false;
         }
 
         private static ClassesStructs.TtarchClass ttarch;
@@ -878,7 +879,7 @@ namespace TTG_Tools
             filesDataGridView.Columns[2].HeaderText = "File offset";
             filesDataGridView.Columns[3].HeaderText = "File size";
 
-            filesDataGridView.RowCount = files.Length;
+            filesDataGridView.RowCount = Math.Max(1, files.Length);
 
             int maxnameLen = 0;
             int maxOffLen = 0;
@@ -915,7 +916,7 @@ namespace TTG_Tools
             filesDataGridView.Columns[2].HeaderText = "File offset";
             filesDataGridView.Columns[3].HeaderText = "File size";
 
-            filesDataGridView.RowCount = files.Length;
+            filesDataGridView.RowCount = Math.Max(1, files.Length);
 
             int maxnameLen = 0;
             int maxOffLen = 0;
@@ -1105,7 +1106,7 @@ namespace TTG_Tools
             filesDataGridView.Columns[2].HeaderText = "File offset";
             filesDataGridView.Columns[3].HeaderText = "File size";
 
-            filesDataGridView.RowCount = files.Length;
+            filesDataGridView.RowCount = Math.Max(1, files.Length);
 
             int maxnameLen = 0;
             int maxOffLen = 0;
@@ -1142,7 +1143,7 @@ namespace TTG_Tools
             filesDataGridView.Columns[2].HeaderText = "File offset";
             filesDataGridView.Columns[3].HeaderText = "File size";
 
-            filesDataGridView.RowCount = files.Length;
+            filesDataGridView.RowCount = Math.Max(1, files.Length);
 
             int maxnameLen = 0;
             int maxOffLen = 0;
