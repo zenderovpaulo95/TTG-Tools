@@ -15,6 +15,7 @@ namespace TTG_Tools
         public ArchiveUnpacker()
         {
             InitializeComponent();
+            filesDataGridView.AllowUserToAddRows = false;
         }
 
         private static ClassesStructs.TtarchClass ttarch;
@@ -867,6 +868,21 @@ namespace TTG_Tools
             versionLabel.Text = arcVersion;
         }
 
+        private void showNoResultsMessage()
+        {
+            filesDataGridView.RowCount = 1;
+            filesDataGridView[0, 0].Value = "-";
+            filesDataGridView[1, 0].Value = "Resultado não encontrado.";
+            filesDataGridView[2, 0].Value = "-";
+            filesDataGridView[3, 0].Value = "-";
+
+            filesDataGridView.Columns[0].Width = 60;
+            filesDataGridView.Columns[1].Width = 520;
+            filesDataGridView.Columns[2].Width = 150;
+            filesDataGridView.Columns[3].Width = 150;
+            filesDataGridView.ClearSelection();
+        }
+
         private void loadTtarchData(string format)
         {
             filesDataGridView.ColumnCount = 4;
@@ -878,7 +894,13 @@ namespace TTG_Tools
             filesDataGridView.Columns[2].HeaderText = "File offset";
             filesDataGridView.Columns[3].HeaderText = "File size";
 
-            filesDataGridView.RowCount = files.Length;
+            filesDataGridView.RowCount = Math.Max(1, files.Length);
+
+            if (files.Length == 0)
+            {
+                showNoResultsMessage();
+                return;
+            }
 
             int maxnameLen = 0;
             int maxOffLen = 0;
@@ -915,7 +937,13 @@ namespace TTG_Tools
             filesDataGridView.Columns[2].HeaderText = "File offset";
             filesDataGridView.Columns[3].HeaderText = "File size";
 
-            filesDataGridView.RowCount = files.Length;
+            filesDataGridView.RowCount = Math.Max(1, files.Length);
+
+            if (files.Length == 0)
+            {
+                showNoResultsMessage();
+                return;
+            }
 
             int maxnameLen = 0;
             int maxOffLen = 0;
@@ -1105,7 +1133,13 @@ namespace TTG_Tools
             filesDataGridView.Columns[2].HeaderText = "File offset";
             filesDataGridView.Columns[3].HeaderText = "File size";
 
-            filesDataGridView.RowCount = files.Length;
+            filesDataGridView.RowCount = Math.Max(1, files.Length);
+
+            if (files.Length == 0)
+            {
+                showNoResultsMessage();
+                return;
+            }
 
             int maxnameLen = 0;
             int maxOffLen = 0;
@@ -1142,7 +1176,13 @@ namespace TTG_Tools
             filesDataGridView.Columns[2].HeaderText = "File offset";
             filesDataGridView.Columns[3].HeaderText = "File size";
 
-            filesDataGridView.RowCount = files.Length;
+            filesDataGridView.RowCount = Math.Max(1, files.Length);
+
+            if (files.Length == 0)
+            {
+                showNoResultsMessage();
+                return;
+            }
 
             int maxnameLen = 0;
             int maxOffLen = 0;
