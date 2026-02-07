@@ -88,7 +88,7 @@
             // 
             // buttonSaveSettings
             // 
-            this.buttonSaveSettings.Location = new System.Drawing.Point(180, 337);
+            this.buttonSaveSettings.Location = new System.Drawing.Point(180, 312);
             this.buttonSaveSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonSaveSettings.Name = "buttonSaveSettings";
             this.buttonSaveSettings.Size = new System.Drawing.Size(136, 23);
@@ -99,7 +99,7 @@
             // 
             // buttonExitSettingsForm
             // 
-            this.buttonExitSettingsForm.Location = new System.Drawing.Point(333, 337);
+            this.buttonExitSettingsForm.Location = new System.Drawing.Point(333, 312);
             this.buttonExitSettingsForm.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonExitSettingsForm.Name = "buttonExitSettingsForm";
             this.buttonExitSettingsForm.Size = new System.Drawing.Size(88, 23);
@@ -110,7 +110,7 @@
             // 
             // buttonApplyAndExitSettings
             // 
-            this.buttonApplyAndExitSettings.Location = new System.Drawing.Point(36, 337);
+            this.buttonApplyAndExitSettings.Location = new System.Drawing.Point(36, 312);
             this.buttonApplyAndExitSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonApplyAndExitSettings.Name = "buttonApplyAndExitSettings";
             this.buttonApplyAndExitSettings.Size = new System.Drawing.Size(136, 23);
@@ -124,7 +124,7 @@
             this.groupBox2.Controls.Add(this.rbNewBttF);
             this.groupBox2.Controls.Add(this.rbNonNormalUnicode2);
             this.groupBox2.Controls.Add(this.rbNormalUnicode);
-            this.groupBox2.Location = new System.Drawing.Point(56, 108);
+            this.groupBox2.Location = new System.Drawing.Point(56, 79);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
@@ -218,7 +218,7 @@
             this.groupBox1.Controls.Add(this.textBoxInputFolder);
             this.groupBox1.Controls.Add(this.buttonInputFolder);
             this.groupBox1.Controls.Add(this.buttonOutputFolder);
-            this.groupBox1.Location = new System.Drawing.Point(19, 224);
+            this.groupBox1.Location = new System.Drawing.Point(19, 199);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(427, 100);
             this.groupBox1.TabIndex = 30;
@@ -249,7 +249,7 @@
             // labelInterfaceLanguage
             // 
             this.labelInterfaceLanguage.AutoSize = true;
-            this.labelInterfaceLanguage.Location = new System.Drawing.Point(19, 78);
+            this.labelInterfaceLanguage.Location = new System.Drawing.Point(19, 81);
             this.labelInterfaceLanguage.Name = "labelInterfaceLanguage";
             this.labelInterfaceLanguage.Size = new System.Drawing.Size(94, 13);
             this.labelInterfaceLanguage.TabIndex = 33;
@@ -263,12 +263,11 @@
             this.interfaceLanguageComboBox.Name = "interfaceLanguageComboBox";
             this.interfaceLanguageComboBox.Size = new System.Drawing.Size(199, 21);
             this.interfaceLanguageComboBox.TabIndex = 34;
-            this.interfaceLanguageComboBox.SelectedIndexChanged += new System.EventHandler(this.interfaceLanguageComboBox_SelectedIndexChanged);
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(475, 400);
+            this.ClientSize = new System.Drawing.Size(475, 368);
             this.Controls.Add(this.interfaceLanguageComboBox);
             this.Controls.Add(this.labelInterfaceLanguage);
             this.Controls.Add(this.languageComboBox);
