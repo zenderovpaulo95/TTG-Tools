@@ -19,10 +19,154 @@ namespace TTG_Tools
 
         private static ClassesStructs.TtarchClass ttarch;
         private static ClassesStructs.Ttarch2Class ttarch2;
-        private ClassesStructs.TtarchClass.ttarchFiles[] searchFiles;
-        private ClassesStructs.Ttarch2Class.Ttarch2files[] search2Files;
         private bool decrypt = false;
         private byte[] key = null;
+
+        private async Task OpenArchiveFile(string filePath)
+        {
+            try
+            {
+                FileInfo fi = new FileInfo(filePath);
+
+                if(fi.Attributes.HasFlag(FileAttributes.ReadOnly) || !fi.Attributes.HasFlag(FileAttributes.Normal)) fi.Attributes = FileAttributes.Normal;
+
+                ttarch = null;
+                ttarch2 = null;
+
+                if (progressBar1.Value > 0) progressBar1.Value = 0;
+
+                byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
+
+                switch (fi.Extension.ToLower())
+                {
+                    case ".ttarch":
+                        ttarch = new ClassesStructs.TtarchClass();
+                        await Task.Run(() => ReadHeaderTtarch(fi.FullName, key));
+
+                        if (ttarch != null)
+                        {
+                            fileFormatsCB.Items.Clear();
+
+                            getArchiveInfo();
+                            populateFileFormats(ttarch.fileFormats);
+                            applyFilters();
+                        }
+                        break;
+
+                    case ".ttarch2":
+                        ttarch2 = new ClassesStructs.Ttarch2Class();
+                        await Task.Run(() => ReadHeaderTtarch2(fi.FullName, key));
+
+                        if(ttarch2 != null)
+                        {
+                            fileFormatsCB.Items.Clear();
+
+                            getArchiveInfo();
+                            populateFileFormats(ttarch2.fileFormats);
+                            applyFilters();
+                        }
+
+                        break;
+
+                    default:
+                        MessageBox.Show("Unsupported file format. Please choose a .ttarch or .ttarch2 file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                }
+
+                if (Form.ActiveForm != null) Form.ActiveForm.Text = "Archive unpacker. Opened file: " + fi.Name;
+                actionsToolStripMenuItem.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open archive. " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void populateFileFormats(List<string> formats)
+        {
+            fileFormatsCB.Items.Clear();
+
+            if (formats != null && formats.Count > 0)
+            {
+                if (formats.Count > 1) fileFormatsCB.Items.Add("All files");
+
+                formats.Sort();
+
+                for (int i = 0; i < formats.Count; i++)
+                {
+                    fileFormatsCB.Items.Add(formats[i]);
+                }
+
+                fileFormatsCB.SelectedIndex = 0;
+            }
+            else
+            {
+                fileFormatsCB.Items.Add("All files");
+                fileFormatsCB.SelectedIndex = 0;
+            }
+        }
+
+        private string getSelectedFormat()
+        {
+            if (fileFormatsCB.Items.Count == 0) return "All files";
+            return string.IsNullOrEmpty(fileFormatsCB.Text) ? "All files" : fileFormatsCB.Text;
+        }
+
+        private bool isSearchEnabled()
+        {
+            return searchFilesByNameCB.Checked && !string.IsNullOrWhiteSpace(searchTB.Text);
+        }
+
+
+        private ClassesStructs.TtarchClass.ttarchFiles[] getFilteredTtarchFiles()
+        {
+            var files = ttarch.files.AsEnumerable();
+            string format = getSelectedFormat();
+
+            if (format != "All files")
+            {
+                files = files.Where(x => Methods.GetExtension(x.fileName).ToLower() == format.ToLower());
+            }
+
+            if (isSearchEnabled())
+            {
+                string pattern = searchTB.Text.ToLower();
+                files = files.Where(x => x.fileName.ToLower().Contains(pattern));
+            }
+
+            return files.ToArray();
+        }
+
+        private ClassesStructs.Ttarch2Class.Ttarch2files[] getFilteredTtarch2Files()
+        {
+            var files = ttarch2.files.AsEnumerable();
+            string format = getSelectedFormat();
+
+            if (format != "All files")
+            {
+                files = files.Where(x => Methods.GetExtension(x.fileName).ToLower() == format.ToLower());
+            }
+
+            if (isSearchEnabled())
+            {
+                string pattern = searchTB.Text.ToLower();
+                files = files.Where(x => x.fileName.ToLower().Contains(pattern));
+            }
+
+            return files.ToArray();
+        }
+
+        private void applyFilters()
+        {
+            if (ttarch != null)
+            {
+                loadTtarchData(getFilteredTtarchFiles());
+            }
+            else if (ttarch2 != null)
+            {
+                loadTtarch2Data(getFilteredTtarch2Files());
+            }
+        }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -353,9 +497,7 @@ namespace TTG_Tools
 
         private void UnpackTtarch(string folderPath, string format, int[] indexes = null)
         {
-            var files = format == "All files" ? ttarch.files : ttarch.files.Where(x => Methods.GetExtension(x.fileName).ToLower() == format.ToLower()).ToArray();
-
-            if ((searchFiles != null) && (searchFiles.Length > 0)) files = searchFiles;
+            var files = getFilteredTtarchFiles();
 
             FileStream fs = new FileStream(ttarch.filePath, FileMode.Open);
             BinaryReader br = new BinaryReader(fs);
@@ -644,9 +786,7 @@ namespace TTG_Tools
 
         private void UnpackTtarch2(string folderPath, string format, int[] indexes = null)
         {
-            var files = format == "All files" ? ttarch2.files : ttarch2.files.Where(x => Methods.GetExtension(x.fileName).ToLower() == format.ToLower()).ToArray();
-
-            if ((search2Files != null) && (search2Files.Length > 0)) files = search2Files;
+            var files = getFilteredTtarch2Files();
 
             int count = indexes != null ? indexes.Length : files.Length;
             
@@ -1037,83 +1177,7 @@ namespace TTG_Tools
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                FileInfo fi = new FileInfo(ofd.FileName);
-
-                if(fi.Attributes.HasFlag(FileAttributes.ReadOnly) || !fi.Attributes.HasFlag(FileAttributes.Normal)) fi.Attributes = FileAttributes.Normal;
-
-                ttarch = null;
-                ttarch2 = null;
-
-                if (progressBar1.Value > 0) progressBar1.Value = 0;
-
-                byte[] key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
-
-                switch (fi.Extension.ToLower())
-                {
-                    case ".ttarch":
-                        ttarch = new ClassesStructs.TtarchClass();
-                        await Task.Run(() => ReadHeaderTtarch(fi.FullName, key));
-
-                        if (ttarch != null)
-                        {
-                            fileFormatsCB.Items.Clear();
-
-                            getArchiveInfo();
-
-                            if (ttarch.fileFormats.Count > 0)
-                            {
-                                if (ttarch.fileFormats.Count > 1) fileFormatsCB.Items.Add("All files");
-
-                                ttarch.fileFormats.Sort();
-
-                                for (int f = 0; f < ttarch.fileFormats.Count; f++)
-                                {
-                                    fileFormatsCB.Items.Add(ttarch.fileFormats[f]);
-                                }
-
-                                fileFormatsCB.SelectedIndex = 0;
-                            }
-                            else
-                            {
-                                loadTtarchData("All files");
-                            }
-                        }
-                        break;
-
-                    case ".ttarch2":
-                        ttarch2 = new ClassesStructs.Ttarch2Class();
-                        await Task.Run(() => ReadHeaderTtarch2(fi.FullName, key));
-
-                        if(ttarch2 != null)
-                        {
-                            fileFormatsCB.Items.Clear();
-
-                            getArchiveInfo();
-
-                            if (ttarch2.fileFormats.Count > 0)
-                            {
-                                if (ttarch2.fileFormats.Count > 1) fileFormatsCB.Items.Add("All files");
-
-                                ttarch2.fileFormats.Sort();
-
-                                for (int f = 0; f < ttarch2.fileFormats.Count; f++)
-                                {
-                                    fileFormatsCB.Items.Add(ttarch2.fileFormats[f]);
-                                }
-
-                                fileFormatsCB.SelectedIndex = 0;
-                            }
-                            else
-                            {
-                                loadTtarch2Data("All files");
-                            }
-                        }
-
-                        break;
-                }
-
-                if (Form.ActiveForm != null) Form.ActiveForm.Text = "Archive unpacker. Opened file: " + fi.Name;
-                actionsToolStripMenuItem.Enabled = true;
+                await OpenArchiveFile(ofd.FileName);
             }
         }
 
@@ -1164,54 +1228,9 @@ namespace TTG_Tools
             }
         }
 
-        private ClassesStructs.TtarchClass.ttarchFiles[] searchTtarchFiles(string pattern)
-        {
-            try
-            {
-                List<ClassesStructs.TtarchClass.ttarchFiles> collection = new List<TtarchClass.ttarchFiles>();
-
-                for (int i = 0; i < ttarch.files.Length; i++)
-                {
-                    if (ttarch.files[i].fileName.ToLower().Contains(pattern.ToLower())) collection.Add(ttarch.files[i]);
-                }
-
-                return collection.ToArray();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private ClassesStructs.Ttarch2Class.Ttarch2files[] searchTtarch2Files(string pattern)
-        {
-            try
-            {
-                List<ClassesStructs.Ttarch2Class.Ttarch2files> collection = new List<Ttarch2Class.Ttarch2files>();
-
-                for (int i = 0; i < ttarch2.files.Length; i++)
-                {
-                    if (ttarch2.files[i].fileName.ToLower().Contains(pattern.ToLower())) collection.Add(ttarch2.files[i]);
-                }
-
-                return collection.ToArray();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
         private void fileFormatsCB_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ttarch != null)
-            {
-                loadTtarchData(fileFormatsCB.Text);
-            }
-            else if(ttarch2 != null) 
-            {
-                loadTtarch2Data(fileFormatsCB.Text);
-            }
+            applyFilters();
         }
 
         private void gameListCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -1272,6 +1291,7 @@ namespace TTG_Tools
         {
             searchBtn.Enabled = searchFilesByNameCB.Checked;
             searchTB.Enabled = searchFilesByNameCB.Checked;
+            applyFilters();
         }
 
         private void searchBtn_Click(object sender, EventArgs e)
@@ -1282,38 +1302,42 @@ namespace TTG_Tools
             }
             else
             {
-                string searchParam = searchTB.Text;
-                string param = fileFormatsCB.Text;
+                applyFilters();
+            }
+        }
 
-                if(ttarch != null)
+        private void searchTB_TextChanged(object sender, EventArgs e)
+        {
+            applyFilters();
+        }
+
+        private void ArchiveUnpacker_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null && files.Length > 0)
                 {
-                    searchFiles = searchTtarchFiles(searchParam);
-
-                    if ((searchFiles != null) && (searchFiles.Length > 0))
+                    string ext = Path.GetExtension(files[0]).ToLower();
+                    if (ext == ".ttarch" || ext == ".ttarch2")
                     {
-                        loadTtarchData(searchFiles);
-                    }
-                    else
-                    {
-                        searchFiles = null;
-                        loadTtarchData(param);
-                    }
-                }
-                if(ttarch2 != null)
-                {
-                    search2Files = searchTtarch2Files(searchParam);
-
-                    if ((search2Files != null) && (search2Files.Length > 0))
-                    {
-                        loadTtarch2Data(search2Files);
-                    }
-                    else
-                    {
-                        search2Files = null;
-                        loadTtarch2Data(param);
+                        e.Effect = DragDropEffects.Copy;
+                        return;
                     }
                 }
             }
+
+            e.Effect = DragDropEffects.None;
+        }
+
+        private async void ArchiveUnpacker_DragDrop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files == null || files.Length == 0) return;
+
+            await OpenArchiveFile(files[0]);
         }
     }
 }
