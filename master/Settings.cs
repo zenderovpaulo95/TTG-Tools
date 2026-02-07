@@ -54,7 +54,6 @@ namespace TTG_Tools
         private bool _swizzleXbox360;
 
         private int _languageIndex;
-        private string _uiLanguageCode;
 
         [XmlAttribute("pathForInputFolder")]
         public string pathForInputFolder
@@ -486,20 +485,6 @@ namespace TTG_Tools
             }
         }
 
-
-        [XmlAttribute("uiLanguageCode")]
-        public string uiLanguageCode
-        {
-            get
-            {
-                return _uiLanguageCode;
-            }
-            set
-            {
-                _uiLanguageCode = value;
-            }
-        }
-
         [XmlAttribute("ASCIILanguageIndex")]
         public int languageIndex
         {
@@ -547,8 +532,7 @@ namespace TTG_Tools
             bool _ignoreEmptyStrings,
             bool _swizzlePS4,
             bool _swizzleXbox360,
-            int _languageIndex,
-            string _uiLanguageCode)
+            int _languageIndex)
         {
             this.ASCII_N = _ASCII_N;
             this.pathForInputFolder = _pathForInputFolder;
@@ -584,7 +568,6 @@ namespace TTG_Tools
             this.swizzlePS4 = _swizzlePS4;
             this.swizzleXbox360 = _swizzleXbox360;
             this.languageIndex = _languageIndex;
-            this.uiLanguageCode = _uiLanguageCode;
         }
 
         public Settings()
