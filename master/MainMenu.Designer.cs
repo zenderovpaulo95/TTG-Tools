@@ -43,7 +43,7 @@
             // 
             // autopackerBtn
             // 
-            this.autopackerBtn.Location = new System.Drawing.Point(32, 23);
+            this.autopackerBtn.Location = new System.Drawing.Point(34, 29);
             this.autopackerBtn.Name = "autopackerBtn";
             this.autopackerBtn.Size = new System.Drawing.Size(112, 23);
             this.autopackerBtn.TabIndex = 0;
@@ -53,7 +53,7 @@
             // 
             // aboutBtn
             // 
-            this.aboutBtn.Location = new System.Drawing.Point(129, 155);
+            this.aboutBtn.Location = new System.Drawing.Point(127, 156);
             this.aboutBtn.Name = "aboutBtn";
             this.aboutBtn.Size = new System.Drawing.Size(112, 23);
             this.aboutBtn.TabIndex = 1;
@@ -63,7 +63,7 @@
             // 
             // fontEditorBtn
             // 
-            this.fontEditorBtn.Location = new System.Drawing.Point(230, 23);
+            this.fontEditorBtn.Location = new System.Drawing.Point(230, 29);
             this.fontEditorBtn.Name = "fontEditorBtn";
             this.fontEditorBtn.Size = new System.Drawing.Size(111, 23);
             this.fontEditorBtn.TabIndex = 2;
@@ -99,7 +99,7 @@
             // 
             // archivePackerBtn
             // 
-            this.archivePackerBtn.Location = new System.Drawing.Point(33, 69);
+            this.archivePackerBtn.Location = new System.Drawing.Point(34, 69);
             this.archivePackerBtn.Margin = new System.Windows.Forms.Padding(2);
             this.archivePackerBtn.Name = "archivePackerBtn";
             this.archivePackerBtn.Size = new System.Drawing.Size(111, 23);
