@@ -91,8 +91,11 @@ namespace TTG_Tools
 
         public static void RefreshOpenForms()
         {
-            Form[] forms = new Form[Application.OpenForms.Count];
-            Application.OpenForms.CopyTo(forms, 0);
+            List<Form> forms = new List<Form>();
+            foreach (Form form in Application.OpenForms)
+            {
+                forms.Add(form);
+            }
 
             foreach (Form form in forms)
             {
