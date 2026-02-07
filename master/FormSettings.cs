@@ -6,6 +6,19 @@ namespace TTG_Tools
 {
     public partial class FormSettings : Form
     {
+        private bool _loadingUiLanguageList;
+
+        private class LanguageOption
+        {
+            public string Code { get; set; }
+            public string DisplayName { get; set; }
+
+            public override string ToString()
+            {
+                return DisplayName;
+            }
+        }
+
         public FormSettings()
         {
             InitializeComponent();
@@ -35,7 +48,13 @@ namespace TTG_Tools
             MainMenu.settings.ASCII_N = (int)numericUpDownASCII.Value;
             MainMenu.settings.pathForInputFolder = textBoxInputFolder.Text;
             MainMenu.settings.pathForOutputFolder = textBoxOutputFolder.Text;
-            
+
+            LanguageOption selectedUiLanguage = interfaceLanguageComboBox.SelectedItem as LanguageOption;
+            MainMenu.settings.uiLanguageCode = selectedUiLanguage != null ? selectedUiLanguage.Code : "en";
+
+            UiLocalizer.Initialize(MainMenu.settings.uiLanguageCode);
+            UiLocalizer.RefreshOpenForms();
+
             if (rbNormalUnicode.Checked == true) MainMenu.settings.unicodeSettings = 0;
             else if (rbNonNormalUnicode2.Checked == true) MainMenu.settings.unicodeSettings = 1;
             else MainMenu.settings.unicodeSettings = 2;
@@ -46,17 +65,17 @@ namespace TTG_Tools
                 MainMenu.settings.languageIndex = languageComboBox.SelectedIndex;
 
                 string selectedLanguage = languageComboBox.Text;
-                
+
                 // Check if text contains parentheses to extract ASCII code
                 if (selectedLanguage.Contains("(") && selectedLanguage.Contains(")"))
                 {
                     int start = selectedLanguage.IndexOf("(") + 1;
                     int end = selectedLanguage.IndexOf(")");
-                    
+
                     if (start < end && start > 0)
                     {
                         string str_num = selectedLanguage.Substring(start, end - start).Trim();
-                        
+
                         if (int.TryParse(str_num, out int asciiValue) && asciiValue > 0)
                         {
                             MainMenu.settings.ASCII_N = asciiValue;
@@ -88,13 +107,13 @@ namespace TTG_Tools
 
                 if (Program.FirstTime)
                 {
-                    MessageBox.Show("Please restart application to confirm settings");
+                    MessageBox.Show(UiLocalizer.Get("Settings.RestartMessage"));
                     this.Close();
                 }
             }
             else
             {
-                MessageBox.Show("Please set correct paths for input and output folders!");
+                MessageBox.Show(UiLocalizer.Get("Settings.InvalidPathsMessage"));
             }
         }
 
@@ -190,7 +209,7 @@ namespace TTG_Tools
         private void numericUpDownASCII_ValueChanged(object sender, EventArgs e)
         {
             int asciiValue = (int)numericUpDownASCII.Value;
-            
+
             switch (asciiValue)
             {
                 case 873:
@@ -251,6 +270,33 @@ namespace TTG_Tools
             languageComboBox.Enabled = MainMenu.settings.languageIndex != -1;
             languageComboBox.SelectedIndex = MainMenu.settings.languageIndex != -1 ? languageComboBox.SelectedIndex = MainMenu.settings.languageIndex : 0;
 
+            _loadingUiLanguageList = true;
+            interfaceLanguageComboBox.Items.Clear();
+            foreach (string code in UiLocalizer.AvailableLanguages)
+            {
+                interfaceLanguageComboBox.Items.Add(new LanguageOption
+                {
+                    Code = code,
+                    DisplayName = UiLocalizer.GetLanguageDisplayName(code)
+                });
+            }
+
+            string currentLanguage = string.IsNullOrWhiteSpace(MainMenu.settings.uiLanguageCode) ? UiLocalizer.CurrentLanguageCode : MainMenu.settings.uiLanguageCode;
+            for (int i = 0; i < interfaceLanguageComboBox.Items.Count; i++)
+            {
+                LanguageOption option = interfaceLanguageComboBox.Items[i] as LanguageOption;
+                if (option != null && option.Code.Equals(currentLanguage, StringComparison.OrdinalIgnoreCase))
+                {
+                    interfaceLanguageComboBox.SelectedIndex = i;
+                    break;
+                }
+            }
+            if (interfaceLanguageComboBox.SelectedIndex == -1 && interfaceLanguageComboBox.Items.Count > 0)
+            {
+                interfaceLanguageComboBox.SelectedIndex = 0;
+            }
+            _loadingUiLanguageList = false;
+
             switch (MainMenu.settings.unicodeSettings)
             {
                 case 1:
@@ -263,6 +309,8 @@ namespace TTG_Tools
                     rbNormalUnicode.Checked = true;
                     break;
             }
+
+            UiLocalizer.ApplyToFormSettings(this);
         }
 
         private void buttonInputFolder_Click(object sender, EventArgs e)
@@ -278,7 +326,75 @@ namespace TTG_Tools
         private void checkLanguage_CheckedChanged(object sender, EventArgs e)
         {
             languageComboBox.SelectedIndex = 0;
-            languageComboBox.Enabled = checkLanguage.Checked;            
+            languageComboBox.Enabled = checkLanguage.Checked;
+        }
+
+
+        private void interfaceLanguageComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_loadingUiLanguageList)
+            {
+                return;
+            }
+
+            LanguageOption selectedUiLanguage = interfaceLanguageComboBox.SelectedItem as LanguageOption;
+            string selectedCode = selectedUiLanguage != null ? selectedUiLanguage.Code : "en";
+
+            UiLocalizer.Initialize(selectedCode);
+            UiLocalizer.RefreshOpenForms();
+        }
+
+        public string GetAsciiLabelText() { return "ASCII"; }
+        public string GetApplyAndExitButtonText() { return "Apply and Exit"; }
+        public string GetApplyButtonText() { return "Apply"; }
+        public string GetExitButtonText() { return "Exit"; }
+        public string GetInputFolderButtonText() { return "Input Folder"; }
+        public string GetOutputFolderButtonText() { return "Output Folder"; }
+        public string GetPathsGroupText() { return "Auto(De)Packer file paths:"; }
+        public string GetDetectLanguageCheckboxText() { return "I don't know ASCII code for my language!"; }
+        public string GetInterfaceLanguageLabelText() { return "Interface language:"; }
+        public string GetUnicodeGroupText() { return "Unicode mode:"; }
+        public string GetNormalUnicodeText() { return "Normal Unicode"; }
+        public string GetNonNormalUnicodeText() { return "Non normal Unicode"; }
+        public string GetNewBttFUnicodeText() { return "New BttF Unicode"; }
+        public string GetNormalUnicodeTooltipText() { return "Recommend to use in new games (From\r\nMinecraft: Story Mode). This option could help\r\nto export/import text files from a new game and\r\nremake fonts with support of your symbols."; }
+        public string GetNonNormalUnicodeTooltipText() { return "Recommend to use in old and some new games (Until\r\nBatman: A Telltale Series). This option could help\r\nto export/import text files from old games and\r\nremake fonts with support of your symbols."; }
+        public string GetNewBttFUnicodeTooltipText() { return "Support all symbols from all modern languages.\r\nRecommend for new version TftB."; }
+
+        public void SetLocalizedTexts(
+            string asciiLabel,
+            string applyAndExit,
+            string apply,
+            string exit,
+            string inputFolder,
+            string outputFolder,
+            string pathsGroup,
+            string detectLanguageCheckbox,
+            string interfaceLanguageLabel,
+            string unicodeGroup,
+            string normalUnicode,
+            string nonNormalUnicode,
+            string newBttFUnicode,
+            string normalUnicodeTooltip,
+            string nonNormalUnicodeTooltip,
+            string newBttFUnicodeTooltip)
+        {
+            label1.Text = asciiLabel;
+            buttonApplyAndExitSettings.Text = applyAndExit;
+            buttonSaveSettings.Text = apply;
+            buttonExitSettingsForm.Text = exit;
+            buttonInputFolder.Text = inputFolder;
+            buttonOutputFolder.Text = outputFolder;
+            groupBox1.Text = pathsGroup;
+            checkLanguage.Text = detectLanguageCheckbox;
+            labelInterfaceLanguage.Text = interfaceLanguageLabel;
+            groupBox2.Text = unicodeGroup;
+            rbNormalUnicode.Text = normalUnicode;
+            rbNonNormalUnicode2.Text = nonNormalUnicode;
+            rbNewBttF.Text = newBttFUnicode;
+            toolTip1.SetToolTip(rbNormalUnicode, normalUnicodeTooltip);
+            toolTip2.SetToolTip(rbNonNormalUnicode2, nonNormalUnicodeTooltip);
+            toolTip3.SetToolTip(rbNewBttF, newBttFUnicodeTooltip);
         }
     }
 }
