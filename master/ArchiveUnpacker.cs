@@ -55,6 +55,7 @@ namespace TTG_Tools
                         break;
 
                     case ".ttarch2":
+                    case ".obb":
                         ttarch2 = new ClassesStructs.Ttarch2Class();
                         await Task.Run(() => ReadHeaderTtarch2(fi.FullName, key));
 
@@ -70,12 +71,11 @@ namespace TTG_Tools
                         break;
 
                     default:
-                        MessageBox.Show("Unsupported file format. Please choose a .ttarch or .ttarch2 file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Unsupported file format. Please choose a .ttarch, .ttarch2 or .obb file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                 }
 
                 if (Form.ActiveForm != null) Form.ActiveForm.Text = "Archive unpacker. Opened file: " + fi.Name;
-                actionsToolStripMenuItem.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -116,6 +116,28 @@ namespace TTG_Tools
         private bool isSearchEnabled()
         {
             return searchFilesByNameCB.Checked && !string.IsNullOrWhiteSpace(searchTB.Text);
+        }
+
+        private bool hasFilteredResults()
+        {
+            if (ttarch != null)
+            {
+                return getFilteredTtarchFiles().Length > 0;
+            }
+
+            if (ttarch2 != null)
+            {
+                return getFilteredTtarch2Files().Length > 0;
+            }
+
+            return false;
+        }
+
+        private void updateExtractionActions(bool hasResults)
+        {
+            actionsToolStripMenuItem.Enabled = ttarch != null || ttarch2 != null;
+            unpackToolStripMenuItem.Enabled = hasResults;
+            unpackSelectedToolStripMenuItem.Enabled = hasResults;
         }
 
 
@@ -161,11 +183,19 @@ namespace TTG_Tools
         {
             if (ttarch != null)
             {
-                loadTtarchData(getFilteredTtarchFiles());
+                var filteredFiles = getFilteredTtarchFiles();
+                loadTtarchData(filteredFiles);
+                updateExtractionActions(filteredFiles.Length > 0);
             }
             else if (ttarch2 != null)
             {
-                loadTtarch2Data(getFilteredTtarch2Files());
+                var filteredFiles = getFilteredTtarch2Files();
+                loadTtarch2Data(filteredFiles);
+                updateExtractionActions(filteredFiles.Length > 0);
+            }
+            else
+            {
+                updateExtractionActions(false);
             }
         }
 
@@ -872,7 +902,7 @@ namespace TTG_Tools
         {
             filesDataGridView.RowCount = 1;
             filesDataGridView[0, 0].Value = "-";
-            filesDataGridView[1, 0].Value = "Resultado não encontrado.";
+            filesDataGridView[1, 0].Value = "No results found.";
             filesDataGridView[2, 0].Value = "-";
             filesDataGridView[3, 0].Value = "-";
 
@@ -1213,7 +1243,7 @@ namespace TTG_Tools
         private async void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "All supported files (*.ttarch, *.ttarch2) | *.ttarch;*.ttarch2| TTARCH archives (*.ttarch) | *.ttarch| TTARCH2 archives (*.ttarch2) | *.ttarch2";
+            ofd.Filter = "All supported files (*.ttarch, *.ttarch2, *.obb) | *.ttarch;*.ttarch2;*.obb| TTARCH archives (*.ttarch) | *.ttarch| TTARCH2/OBB archives (*.ttarch2;*.obb) | *.ttarch2;*.obb";
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
@@ -1235,7 +1265,7 @@ namespace TTG_Tools
             searchTB.Enabled = searchFilesByNameCB.Checked;
             searchBtn.Enabled = searchFilesByNameCB.Checked;
 
-            actionsToolStripMenuItem.Enabled = false;
+            updateExtractionActions(false);
         }
 
         private async void unpackToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1243,6 +1273,12 @@ namespace TTG_Tools
             decrypt = decryptLuaCB.Checked;
             key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
             string format = fileFormatsCB.Text;
+
+            if (!hasFilteredResults())
+            {
+                MessageBox.Show("No files found to extract.", "No results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
             if (ttarch != null)
             {
@@ -1264,7 +1300,7 @@ namespace TTG_Tools
             }
             else
             {
-                MessageBox.Show("Nothing to extract. Please open ttarch/ttarch2 file and then extract.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Nothing to extract. Please open ttarch/ttarch2/obb file and then extract.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1291,6 +1327,12 @@ namespace TTG_Tools
 
         private async void unpackSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!hasFilteredResults())
+            {
+                MessageBox.Show("No files found to extract.", "No results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             if (filesDataGridView.SelectedRows.Count > 0)
             {
                 key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
@@ -1298,13 +1340,27 @@ namespace TTG_Tools
 
                 FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-                int[] indexes = new int[filesDataGridView.SelectedRows.Count];
                 string format = fileFormatsCB.Text;
+                var indexesList = new List<int>();
 
-                for (int i = 0; i < indexes.Length; i++)
+                for (int i = 0; i < filesDataGridView.SelectedRows.Count; i++)
                 {
-                    indexes[i] = Convert.ToInt32(filesDataGridView.SelectedRows[i].Cells[0].Value) - 1;
+                    object cellValue = filesDataGridView.SelectedRows[i].Cells[0].Value;
+                    int rowIndex;
+
+                    if (cellValue != null && int.TryParse(cellValue.ToString(), out rowIndex) && rowIndex > 0)
+                    {
+                        indexesList.Add(rowIndex - 1);
+                    }
                 }
+
+                if (indexesList.Count == 0)
+                {
+                    MessageBox.Show("Please select valid files from list first.", "No selected files from list", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                int[] indexes = indexesList.ToArray();
 
                 if(ttarch != null)
                 {
@@ -1359,7 +1415,7 @@ namespace TTG_Tools
                 if (files != null && files.Length > 0)
                 {
                     string ext = Path.GetExtension(files[0]).ToLower();
-                    if (ext == ".ttarch" || ext == ".ttarch2")
+                    if (ext == ".ttarch" || ext == ".ttarch2" || ext == ".obb")
                     {
                         e.Effect = DragDropEffects.Copy;
                         return;
