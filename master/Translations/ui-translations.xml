@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translations>
+  <language code="en">
+    <entry key="LanguageName">English</entry>
+    <entry key="Program.MissingConfigTitle">Error</entry>
+    <entry key="Program.MissingConfigMessage">Can't find config.xml!&#10;Please set path for folders, save changes and restart the program!</entry>
+    <entry key="Settings.FormTitle">Settings</entry>
+    <entry key="Settings.AsciiLabel">ASCII</entry>
+    <entry key="Settings.ApplyAndExitButton">Apply and Exit</entry>
+    <entry key="Settings.ApplyButton">Apply</entry>
+    <entry key="Settings.ExitButton">Exit</entry>
+    <entry key="Settings.InputFolderButton">Input Folder</entry>
+    <entry key="Settings.OutputFolderButton">Output Folder</entry>
+    <entry key="Settings.PathsGroup">Auto(De)Packer file paths:</entry>
+    <entry key="Settings.DetectLanguageCheckbox">I don't know ASCII code for my language!</entry>
+    <entry key="Settings.InterfaceLanguageLabel">Interface language:</entry>
+    <entry key="Settings.UnicodeGroup">Unicode mode:</entry>
+    <entry key="Settings.NormalUnicode">Normal Unicode</entry>
+    <entry key="Settings.NonNormalUnicode">Non normal Unicode</entry>
+    <entry key="Settings.NewBttFUnicode">New BttF Unicode</entry>
+    <entry key="Settings.NormalUnicodeTooltip">Recommend to use in new games (From&#10;Minecraft: Story Mode). This option could help&#10;to export/import text files from a new game and&#10;remake fonts with support of your symbols.</entry>
+    <entry key="Settings.NonNormalUnicodeTooltip">Recommend to use in old and some new games (Until&#10;Batman: A Telltale Series). This option could help&#10;to export/import text files from old games and&#10;remake fonts with support of your symbols.</entry>
+    <entry key="Settings.NewBttFUnicodeTooltip">Support all symbols from all modern languages.&#10;Recommend for new version TftB.</entry>
+    <entry key="Settings.RestartMessage">Please restart application to confirm settings.</entry>
+    <entry key="Settings.InvalidPathsMessage">Please set correct paths for input and output folders!</entry>
+  </language>
+
+  <language code="pt-BR">
+    <entry key="LanguageName">Português (Brasil)</entry>
+    <entry key="Program.MissingConfigTitle">Erro</entry>
+    <entry key="Program.MissingConfigMessage">Não foi possível encontrar o arquivo config.xml!&#10;Defina os caminhos das pastas, salve as alterações e reinicie o programa.</entry>
+    <entry key="Settings.FormTitle">Configurações</entry>
+    <entry key="Settings.AsciiLabel">ASCII</entry>
+    <entry key="Settings.ApplyAndExitButton">Aplicar e sair</entry>
+    <entry key="Settings.ApplyButton">Aplicar</entry>
+    <entry key="Settings.ExitButton">Sair</entry>
+    <entry key="Settings.InputFolderButton">Pasta de entrada</entry>
+    <entry key="Settings.OutputFolderButton">Pasta de saída</entry>
+    <entry key="Settings.PathsGroup">Caminhos de arquivos do Auto(De)Packer:</entry>
+    <entry key="Settings.DetectLanguageCheckbox">Não sei o código ASCII do meu idioma!</entry>
+    <entry key="Settings.InterfaceLanguageLabel">Idioma da interface:</entry>
+    <entry key="Settings.UnicodeGroup">Modo Unicode:</entry>
+    <entry key="Settings.NormalUnicode">Unicode normal</entry>
+    <entry key="Settings.NonNormalUnicode">Unicode não normal</entry>
+    <entry key="Settings.NewBttFUnicode">Unicode novo do BttF</entry>
+    <entry key="Settings.NormalUnicodeTooltip">Recomendado para jogos novos (a partir de&#10;Minecraft: Story Mode). Esta opção pode ajudar&#10;a exportar/importar textos e refazer fontes com&#10;suporte aos seus símbolos.</entry>
+    <entry key="Settings.NonNormalUnicodeTooltip">Recomendado para jogos antigos e alguns novos (até&#10;Batman: A Telltale Series). Esta opção pode ajudar&#10;a exportar/importar textos de jogos antigos e&#10;refazer fontes com suporte aos seus símbolos.</entry>
+    <entry key="Settings.NewBttFUnicodeTooltip">Suporta todos os símbolos dos idiomas modernos.&#10;Recomendado para a nova versão de TftB.</entry>
+    <entry key="Settings.RestartMessage">Reinicie o aplicativo para confirmar as configurações.</entry>
+    <entry key="Settings.InvalidPathsMessage">Defina caminhos válidos para as pastas de entrada e saída!</entry>
+  </language>
+
+  <language code="es">
+    <entry key="LanguageName">Español</entry>
+    <entry key="Program.MissingConfigTitle">Error</entry>
+    <entry key="Program.MissingConfigMessage">No se encontró config.xml.&#10;Configura las rutas de carpetas, guarda los cambios y reinicia el programa.</entry>
+    <entry key="Settings.FormTitle">Configuración</entry>
+    <entry key="Settings.AsciiLabel">ASCII</entry>
+    <entry key="Settings.ApplyAndExitButton">Aplicar y salir</entry>
+    <entry key="Settings.ApplyButton">Aplicar</entry>
+    <entry key="Settings.ExitButton">Salir</entry>
+    <entry key="Settings.InputFolderButton">Carpeta de entrada</entry>
+    <entry key="Settings.OutputFolderButton">Carpeta de salida</entry>
+    <entry key="Settings.PathsGroup">Rutas de archivos de Auto(De)Packer:</entry>
+    <entry key="Settings.DetectLanguageCheckbox">¡No conozco el código ASCII de mi idioma!</entry>
+    <entry key="Settings.InterfaceLanguageLabel">Idioma de la interfaz:</entry>
+    <entry key="Settings.UnicodeGroup">Modo Unicode:</entry>
+    <entry key="Settings.NormalUnicode">Unicode normal</entry>
+    <entry key="Settings.NonNormalUnicode">Unicode no normal</entry>
+    <entry key="Settings.NewBttFUnicode">Unicode nuevo de BttF</entry>
+    <entry key="Settings.NormalUnicodeTooltip">Recomendado para juegos nuevos (desde&#10;Minecraft: Story Mode). Esta opción puede ayudar&#10;a exportar/importar textos y rehacer fuentes con&#10;soporte para tus símbolos.</entry>
+    <entry key="Settings.NonNormalUnicodeTooltip">Recomendado para juegos antiguos y algunos nuevos (hasta&#10;Batman: A Telltale Series). Esta opción puede ayudar&#10;a exportar/importar textos de juegos antiguos y&#10;rehacer fuentes con soporte para tus símbolos.</entry>
+    <entry key="Settings.NewBttFUnicodeTooltip">Soporta todos los símbolos de los idiomas modernos.&#10;Recomendado para la nueva versión de TftB.</entry>
+    <entry key="Settings.RestartMessage">Reinicia la aplicación para confirmar la configuración.</entry>
+    <entry key="Settings.InvalidPathsMessage">¡Configura rutas válidas para las carpetas de entrada y salida!</entry>
+  </language>
+
+  <language code="ru">
+    <entry key="LanguageName">Русский</entry>
+    <entry key="Program.MissingConfigTitle">Ошибка</entry>
+    <entry key="Program.MissingConfigMessage">Не удаётся найти файл config.xml.&#10;Укажите пути к папкам, сохраните настройки и перезапустите программу.</entry>
+    <entry key="Settings.FormTitle">Настройки</entry>
+    <entry key="Settings.AsciiLabel">ASCII</entry>
+    <entry key="Settings.ApplyAndExitButton">Применить и выйти</entry>
+    <entry key="Settings.ApplyButton">Применить</entry>
+    <entry key="Settings.ExitButton">Выход</entry>
+    <entry key="Settings.InputFolderButton">Папка входа</entry>
+    <entry key="Settings.OutputFolderButton">Папка выхода</entry>
+    <entry key="Settings.PathsGroup">Пути файлов Auto(De)Packer:</entry>
+    <entry key="Settings.DetectLanguageCheckbox">Я не знаю ASCII-код своего языка!</entry>
+    <entry key="Settings.InterfaceLanguageLabel">Язык интерфейса:</entry>
+    <entry key="Settings.UnicodeGroup">Режим Unicode:</entry>
+    <entry key="Settings.NormalUnicode">Обычный Unicode</entry>
+    <entry key="Settings.NonNormalUnicode">Необычный Unicode</entry>
+    <entry key="Settings.NewBttFUnicode">Новый Unicode BttF</entry>
+    <entry key="Settings.NormalUnicodeTooltip">Рекомендуется для новых игр (начиная с&#10;Minecraft: Story Mode). Эта опция может помочь&#10;экспортировать/импортировать тексты и пересобрать&#10;шрифты с поддержкой ваших символов.</entry>
+    <entry key="Settings.NonNormalUnicodeTooltip">Рекомендуется для старых и некоторых новых игр (до&#10;Batman: A Telltale Series). Эта опция может помочь&#10;экспортировать/импортировать тексты из старых игр и&#10;пересобрать шрифты с поддержкой ваших символов.</entry>
+    <entry key="Settings.NewBttFUnicodeTooltip">Поддерживает все символы современных языков.&#10;Рекомендуется для новой версии TftB.</entry>
+    <entry key="Settings.RestartMessage">Перезапустите приложение, чтобы применить настройки.</entry>
+    <entry key="Settings.InvalidPathsMessage">Укажите корректные пути для входной и выходной папок!</entry>
+  </language>
+</translations>

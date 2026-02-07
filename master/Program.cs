@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace TTG_Tools
 {
@@ -18,13 +20,30 @@ namespace TTG_Tools
             {
                 FirstTime = false;
 
+                Settings loadedSettings = null;
+                try
+                {
+                    using (XmlReader reader = new XmlTextReader(xmlPath))
+                    {
+                        XmlSerializer settingsDeserializer = new XmlSerializer(typeof(Settings));
+                        loadedSettings = (Settings)settingsDeserializer.Deserialize(reader);
+                    }
+                }
+                catch
+                {
+                    loadedSettings = null;
+                }
+
+                UiLocalizer.Initialize(loadedSettings != null ? loadedSettings.uiLanguageCode : "en");
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new MainMenu());
             }
             else
             {
-                MessageBox.Show("Can't find config.xml!\r\nPlease set path for folders, save changes and restart the program!", "Error");
+                UiLocalizer.Initialize("en");
+                MessageBox.Show(UiLocalizer.Get("Program.MissingConfigMessage"), UiLocalizer.Get("Program.MissingConfigTitle"));
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new FormSettings());

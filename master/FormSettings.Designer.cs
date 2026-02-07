@@ -49,6 +49,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.checkLanguage = new System.Windows.Forms.CheckBox();
             this.languageComboBox = new System.Windows.Forms.ComboBox();
+            this.labelInterfaceLanguage = new System.Windows.Forms.Label();
+            this.interfaceLanguageComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownASCII)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -243,11 +245,31 @@
             this.languageComboBox.Size = new System.Drawing.Size(199, 21);
             this.languageComboBox.TabIndex = 32;
             // 
+            // 
+            // labelInterfaceLanguage
+            // 
+            this.labelInterfaceLanguage.AutoSize = true;
+            this.labelInterfaceLanguage.Location = new System.Drawing.Point(19, 81);
+            this.labelInterfaceLanguage.Name = "labelInterfaceLanguage";
+            this.labelInterfaceLanguage.Size = new System.Drawing.Size(94, 13);
+            this.labelInterfaceLanguage.TabIndex = 33;
+            this.labelInterfaceLanguage.Text = "Interface language:";
+            // 
+            // interfaceLanguageComboBox
+            // 
+            this.interfaceLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.interfaceLanguageComboBox.FormattingEnabled = true;
+            this.interfaceLanguageComboBox.Location = new System.Drawing.Point(247, 78);
+            this.interfaceLanguageComboBox.Name = "interfaceLanguageComboBox";
+            this.interfaceLanguageComboBox.Size = new System.Drawing.Size(199, 21);
+            this.interfaceLanguageComboBox.TabIndex = 34;
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(475, 368);
+            this.Controls.Add(this.interfaceLanguageComboBox);
+            this.Controls.Add(this.labelInterfaceLanguage);
             this.Controls.Add(this.languageComboBox);
             this.Controls.Add(this.checkLanguage);
             this.Controls.Add(this.groupBox1);
@@ -295,5 +317,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox checkLanguage;
         private System.Windows.Forms.ComboBox languageComboBox;
+        private System.Windows.Forms.Label labelInterfaceLanguage;
+        private System.Windows.Forms.ComboBox interfaceLanguageComboBox;
     }
 }
