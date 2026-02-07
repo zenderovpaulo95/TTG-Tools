@@ -286,6 +286,7 @@
             this.searchTB.Name = "searchTB";
             this.searchTB.Size = new System.Drawing.Size(415, 20);
             this.searchTB.TabIndex = 13;
+            this.searchTB.TextChanged += new System.EventHandler(this.searchTB_TextChanged);
             // 
             // searchBtn
             // 
@@ -301,6 +302,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AllowDrop = true;
             this.ClientSize = new System.Drawing.Size(978, 696);
             this.Controls.Add(this.searchBtn);
             this.Controls.Add(this.searchTB);
@@ -322,6 +324,8 @@
             this.MaximizeBox = false;
             this.Name = "ArchiveUnpacker";
             this.Text = "Archive unpacker";
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.ArchiveUnpacker_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.ArchiveUnpacker_DragEnter);
             this.Load += new System.EventHandler(this.ArchiveUnpacker_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
