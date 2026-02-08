@@ -1126,6 +1126,7 @@ namespace TTG_Tools.Graphics
                         if (MainMenu.settings.swizzleNintendoSwitch) tex.platform.platform = 15;
                         if (MainMenu.settings.swizzlePS4) tex.platform.platform = 11;
                         if (MainMenu.settings.swizzleXbox360) tex.platform.platform = 4;
+                        if (MainMenu.settings.swizzlePSVita) tex.platform.platform = 9;
 
                         for(mode = 2; mode < 4; mode++)
                         {
@@ -2254,7 +2255,8 @@ namespace TTG_Tools.Graphics
             uint ArrayMembers = tex.ArrayMembers > 1 ? (uint)tex.ArrayMembers : 0;
             uint Faces = tex.Faces > 1 ? (uint)tex.Faces : 0;
 
-            bool usePvrHeader = (tex.platform.platform == 7) || (tex.ArrayMembers > 1);
+            bool vitaIsPvr = tex.platform.platform == 9 && (tex.TextureFormat == 0x51 || tex.TextureFormat == 0x52 || tex.TextureFormat == 0x53 || tex.TextureFormat == 0x70);
+            bool usePvrHeader = (tex.platform.platform == 7) || vitaIsPvr || (tex.ArrayMembers > 1);
 
             byte[] header = usePvrHeader ? GenPvrHeader(tex.Width, tex.Height, tex.Tex.MipCount, (uint)tex.TextureFormat, ArrayMembers, Faces, true) : GenHeader(tex.TextureFormat, tex.Width, tex.Height, tex.Tex.TexSize, tex.Faces, tex.ArrayMembers, tex.Tex.MipCount, ref format);
 
