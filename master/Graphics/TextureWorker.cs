@@ -14,6 +14,39 @@ namespace TTG_Tools.Graphics
         static string[] FourCC = { "\0\0\0\0", "\0\0\0\0", "\0\0\0\0", "\0\0\0\0", "\x74\0\0\0", "DXT1", "DXT3", "DXT5", "BC4U", "ATI1", "ATI2", "BC6H", "ATI2" };
         static string[] Formats = { "uncompressed 8.8.8.8 ARGB", "uncompressed 4.4.4.4 ARGB", "Alpha 8 bit (A8)", "IL8", "uncompressed 32f.32f.32f.32f ARGB", "DXT1", "DXT3", "DXT5", "BC4", "BC5", "BC6", "BC7" };
 
+        private static void GetVitaSwizzleInfo(uint textureFormat, out int bytesPerPixelSet, out int formatBitsPerPixel)
+        {
+            switch (textureFormat)
+            {
+                case 0x00: // ARGB8
+                    bytesPerPixelSet = 4;
+                    formatBitsPerPixel = 32;
+                    break;
+
+                case 0x04: // ARGB4
+                    bytesPerPixelSet = 2;
+                    formatBitsPerPixel = 16;
+                    break;
+
+                case 0x10: // A8
+                case 0x11: // IL8
+                    bytesPerPixelSet = 1;
+                    formatBitsPerPixel = 8;
+                    break;
+
+                case 0x40: // BC1
+                case 0x43: // BC4
+                    bytesPerPixelSet = 8;
+                    formatBitsPerPixel = 4;
+                    break;
+
+                default: // BC2/BC3/BC5/BC6/BC7
+                    bytesPerPixelSet = 16;
+                    formatBitsPerPixel = 8;
+                    break;
+            }
+        }
+
         public static int ReadDDSHeader(Stream stream, ref int width, ref int height, ref int mip, ref uint textureFormat, bool newFormat)
         {
             BinaryReader br = new BinaryReader(stream);
@@ -1614,6 +1647,30 @@ namespace TTG_Tools.Graphics
                                 if (h > 1) h /= 2;
                             }
                         }
+                        else if (tex.platform.platform == 9)
+                        {
+                            int w = tex.Width;
+                            int h = tex.Height;
+
+                            GetVitaSwizzleInfo(tex.TextureFormat, out int bytesPerPixelSet, out int formatBitsPerPixel);
+
+                            for (int i = 0; i < tex.Tex.MipCount; i++)
+                            {
+                                int safeBppSet = bytesPerPixelSet;
+                                if (tex.Tex.Textures[i].Block.Length > 0 && safeBppSet > tex.Tex.Textures[i].Block.Length)
+                                {
+                                    safeBppSet = tex.Tex.Textures[i].Block.Length;
+                                }
+
+                                if (safeBppSet > 0)
+                                {
+                                    tex.Tex.Textures[i].Block = PSVita.Swizzle(tex.Tex.Textures[i].Block, w, h, safeBppSet, formatBitsPerPixel);
+                                }
+
+                                if (w > 1) w /= 2;
+                                if (h > 1) h /= 2;
+                            }
+                        }
 
                         for (int i = tex.Tex.MipCount - 1; i >= 0; i--)
                         {
@@ -2321,6 +2378,31 @@ namespace TTG_Tools.Graphics
                         if (tex.TextureFormat == 0x00)
                         {
                             tex.Tex.Textures[i].Block = Swizzles.Xbox360.ConvertARGBtoBGRA(tex.Tex.Textures[i].Block);
+                        }
+
+                        if (w > 1) w /= 2;
+                        if (h > 1) h /= 2;
+                    }
+                }
+                else if (tex.platform.platform == 9) // PS Vita Unswizzle
+                {
+                    needsReconstruction = true;
+                    int w = tex.Width;
+                    int h = tex.Height;
+
+                    GetVitaSwizzleInfo(tex.TextureFormat, out int bytesPerPixelSet, out int formatBitsPerPixel);
+
+                    for (int i = 0; i < tex.Tex.MipCount; i++)
+                    {
+                        int safeBppSet = bytesPerPixelSet;
+                        if (tex.Tex.Textures[i].Block.Length > 0 && safeBppSet > tex.Tex.Textures[i].Block.Length)
+                        {
+                            safeBppSet = tex.Tex.Textures[i].Block.Length;
+                        }
+
+                        if (safeBppSet > 0)
+                        {
+                            tex.Tex.Textures[i].Block = PSVita.Unswizzle(tex.Tex.Textures[i].Block, w, h, safeBppSet, formatBitsPerPixel);
                         }
 
                         if (w > 1) w /= 2;
