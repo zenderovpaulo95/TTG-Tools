@@ -14,6 +14,11 @@ namespace TTG_Tools.Graphics
         static string[] FourCC = { "\0\0\0\0", "\0\0\0\0", "\0\0\0\0", "\0\0\0\0", "\x74\0\0\0", "DXT1", "DXT3", "DXT5", "BC4U", "ATI1", "ATI2", "BC6H", "ATI2" };
         static string[] Formats = { "uncompressed 8.8.8.8 ARGB", "uncompressed 4.4.4.4 ARGB", "Alpha 8 bit (A8)", "IL8", "uncompressed 32f.32f.32f.32f ARGB", "DXT1", "DXT3", "DXT5", "BC4", "BC5", "BC6", "BC7" };
 
+        private static bool IsVitaPvrFormat(uint textureFormat)
+        {
+            return textureFormat == 0x51 || textureFormat == 0x52 || textureFormat == 0x53 || textureFormat == 0x70;
+        }
+
         private static void GetVitaSwizzleInfo(uint textureFormat, int width, int height, out int swizzleWidth, out int swizzleHeight, out int bytesPerPixelSet, out int formatBitsPerPixel)
         {
             bool blockCompressed = textureFormat >= 0x40 && textureFormat <= 0x46;
@@ -1650,7 +1655,7 @@ namespace TTG_Tools.Graphics
                                 if (h > 1) h /= 2;
                             }
                         }
-                        else if (tex.platform.platform == 9)
+                        else if (tex.platform.platform == 9 && !IsVitaPvrFormat(tex.TextureFormat))
                         {
                             int w = tex.Width;
                             int h = tex.Height;
@@ -2255,7 +2260,7 @@ namespace TTG_Tools.Graphics
             uint ArrayMembers = tex.ArrayMembers > 1 ? (uint)tex.ArrayMembers : 0;
             uint Faces = tex.Faces > 1 ? (uint)tex.Faces : 0;
 
-            bool vitaIsPvr = tex.platform.platform == 9 && (tex.TextureFormat == 0x51 || tex.TextureFormat == 0x52 || tex.TextureFormat == 0x53 || tex.TextureFormat == 0x70);
+            bool vitaIsPvr = tex.platform.platform == 9 && IsVitaPvrFormat(tex.TextureFormat);
             bool usePvrHeader = (tex.platform.platform == 7) || vitaIsPvr || (tex.ArrayMembers > 1);
 
             byte[] header = usePvrHeader ? GenPvrHeader(tex.Width, tex.Height, tex.Tex.MipCount, (uint)tex.TextureFormat, ArrayMembers, Faces, true) : GenHeader(tex.TextureFormat, tex.Width, tex.Height, tex.Tex.TexSize, tex.Faces, tex.ArrayMembers, tex.Tex.MipCount, ref format);
@@ -2394,7 +2399,7 @@ namespace TTG_Tools.Graphics
                         if (h > 1) h /= 2;
                     }
                 }
-                else if (tex.platform.platform == 9) // PS Vita Unswizzle
+                else if (tex.platform.platform == 9 && !IsVitaPvrFormat(tex.TextureFormat)) // PS Vita Unswizzle
                 {
                     needsReconstruction = true;
                     int w = tex.Width;
