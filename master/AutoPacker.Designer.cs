@@ -38,6 +38,7 @@
             this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
             this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
             this.rbXbox360Swizzle = new System.Windows.Forms.RadioButton();
+            this.rbPSVitaSwizzle = new System.Windows.Forms.RadioButton();
             this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
             this.labelUnicode = new System.Windows.Forms.Label();
             this.checkIOS = new System.Windows.Forms.CheckBox();
@@ -138,10 +139,11 @@
             this.groupBox2.Controls.Add(this.rbSwitchSwizzle);
             this.groupBox2.Controls.Add(this.rbPS4Swizzle);
             this.groupBox2.Controls.Add(this.rbXbox360Swizzle);
+            this.groupBox2.Controls.Add(this.rbPSVitaSwizzle);
             this.groupBox2.Controls.Add(this.rbNoSwizzle);
             this.groupBox2.Location = new System.Drawing.Point(276, 15);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(126, 109);
+            this.groupBox2.Size = new System.Drawing.Size(126, 130);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Swizzle methods";
@@ -173,14 +175,26 @@
             // rbXbox360Swizzle
             // 
             this.rbXbox360Swizzle.AutoSize = true;
-            this.rbXbox360Swizzle.Location = new System.Drawing.Point(16, 86);
+            this.rbXbox360Swizzle.Location = new System.Drawing.Point(16, 107);
             this.rbXbox360Swizzle.Name = "rbXbox360Swizzle";
             this.rbXbox360Swizzle.Size = new System.Drawing.Size(70, 17);
-            this.rbXbox360Swizzle.TabIndex = 3;
+            this.rbXbox360Swizzle.TabIndex = 4;
             this.rbXbox360Swizzle.TabStop = true;
             this.rbXbox360Swizzle.Text = "Xbox 360";
             this.rbXbox360Swizzle.UseVisualStyleBackColor = true;
             this.rbXbox360Swizzle.CheckedChanged += new System.EventHandler(this.rbXbox360Swizzle_CheckedChanged);
+            // 
+            // rbPSVitaSwizzle
+            // 
+            this.rbPSVitaSwizzle.AutoSize = true;
+            this.rbPSVitaSwizzle.Location = new System.Drawing.Point(16, 86);
+            this.rbPSVitaSwizzle.Name = "rbPSVitaSwizzle";
+            this.rbPSVitaSwizzle.Size = new System.Drawing.Size(55, 17);
+            this.rbPSVitaSwizzle.TabIndex = 3;
+            this.rbPSVitaSwizzle.TabStop = true;
+            this.rbPSVitaSwizzle.Text = "PS Vita";
+            this.rbPSVitaSwizzle.UseVisualStyleBackColor = true;
+            this.rbPSVitaSwizzle.CheckedChanged += new System.EventHandler(this.rbPSVitaSwizzle_CheckedChanged);
             // 
             // rbNoSwizzle
             // 
@@ -388,6 +402,7 @@
         private System.Windows.Forms.RadioButton rbSwitchSwizzle;
         private System.Windows.Forms.RadioButton rbPS4Swizzle;
         private System.Windows.Forms.RadioButton rbXbox360Swizzle;
+        private System.Windows.Forms.RadioButton rbPSVitaSwizzle;
         private System.Windows.Forms.RadioButton rbNoSwizzle;
         private System.Windows.Forms.Label sortLabel;
     }
