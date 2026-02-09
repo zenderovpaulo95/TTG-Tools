@@ -54,6 +54,33 @@ namespace TTG_Tools.Graphics
             formatBitsPerPixel = bytesPerPixelSet * 8;
         }
 
+        private static int GetPvrDataOffset(byte[] pvrContent)
+        {
+            const int pvrHeaderSize = 0x34;
+            const int metaSizeOffset = 0x30;
+
+            if (pvrContent == null || pvrContent.Length < pvrHeaderSize)
+            {
+                return 0;
+            }
+
+            int metaSize = BitConverter.ToInt32(pvrContent, metaSizeOffset);
+
+            if (metaSize < 0)
+            {
+                metaSize = 0;
+            }
+
+            int dataOffset = pvrHeaderSize + metaSize;
+
+            if (dataOffset > pvrContent.Length)
+            {
+                return pvrHeaderSize;
+            }
+
+            return dataOffset;
+        }
+
         public static int ReadDDSHeader(Stream stream, ref int width, ref int height, ref int mip, ref uint textureFormat, bool newFormat)
         {
             BinaryReader br = new BinaryReader(stream);
@@ -1069,14 +1096,63 @@ namespace TTG_Tools.Graphics
                 {
                     result = "File " + fi.Name + " successfully imported.";
 
-                    string format = tex.isPVR ? "pvr" : "dds";
-                    byte[] NewContent = File.ReadAllBytes(fi.FullName.Remove(fi.FullName.Length - 5) + format);
+                    string textureBasePath = fi.FullName.Remove(fi.FullName.Length - 5);
+                    bool importedFromPvr = false;
+                    string importPath = textureBasePath + "dds";
+
+                    if (tex.isPVR)
+                    {
+                        if (File.Exists(textureBasePath + "dds"))
+                        {
+                            importPath = textureBasePath + "dds";
+                        }
+                        else if (File.Exists(textureBasePath + "pvr"))
+                        {
+                            importPath = textureBasePath + "pvr";
+                            importedFromPvr = true;
+                        }
+                        else
+                        {
+                            throw new FileNotFoundException("Could not find .dds or .pvr texture to import.", textureBasePath + "dds");
+                        }
+                    }
+                    else if (!File.Exists(importPath))
+                    {
+                        throw new FileNotFoundException("Could not find .dds texture to import.", importPath);
+                    }
+
+                    byte[] NewContent = File.ReadAllBytes(importPath);
                     tex.Tex.Content = new byte[NewContent.Length];
                     Array.Copy(NewContent, 0, tex.Tex.Content, 0, tex.Tex.Content.Length);
 
                     MemoryStream ms = new MemoryStream(NewContent);
 
-                    ReadDDSHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, true);
+                    int pos;
+
+                    if (importedFromPvr)
+                    {
+                        int pvrReadResult = ReadPvrHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, true);
+
+                        if (pvrReadResult != 0)
+                        {
+                            ms.Close();
+                            return "Unsupported PVR format";
+                        }
+
+                        pos = GetPvrDataOffset(NewContent);
+                    }
+                    else
+                    {
+                        int ddsReadResult = ReadDDSHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, true);
+
+                        if (ddsReadResult != 0)
+                        {
+                            ms.Close();
+                            return "Unsupported DDS format";
+                        }
+
+                        pos = (int)ms.Position;
+                    }
 
                     int checkMip = Methods.CalculateMip(tex.Width, tex.Height, tex.TextureFormat);
 
@@ -1088,8 +1164,6 @@ namespace TTG_Tools.Graphics
 
                     int w = tex.Width;
                     int h = tex.Height;
-
-                    int pos = (int)ms.Position;
 
                     ms.Close();
 
