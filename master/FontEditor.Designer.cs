@@ -90,6 +90,7 @@
             this.rbSwitchSwizzle = new System.Windows.Forms.RadioButton();
             this.rbPS4Swizzle = new System.Windows.Forms.RadioButton();
             this.rbXbox360Swizzle = new System.Windows.Forms.RadioButton();
+            this.rbPSVitaSwizzle = new System.Windows.Forms.RadioButton();
             this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -667,10 +668,11 @@
             this.groupBox4.Controls.Add(this.rbSwitchSwizzle);
             this.groupBox4.Controls.Add(this.rbPS4Swizzle);
             this.groupBox4.Controls.Add(this.rbXbox360Swizzle);
+            this.groupBox4.Controls.Add(this.rbPSVitaSwizzle);
             this.groupBox4.Controls.Add(this.rbNoSwizzle);
             this.groupBox4.Location = new System.Drawing.Point(864, 28);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(127, 125);
+            this.groupBox4.Size = new System.Drawing.Size(127, 145);
             this.groupBox4.TabIndex = 30;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Swizzle methods";
@@ -710,6 +712,18 @@
             this.rbXbox360Swizzle.Text = "Xbox 360";
             this.rbXbox360Swizzle.UseVisualStyleBackColor = true;
             this.rbXbox360Swizzle.CheckedChanged += new System.EventHandler(this.rbXbox360Swizzle_CheckedChanged);
+            // 
+            // rbPSVitaSwizzle
+            // 
+            this.rbPSVitaSwizzle.AutoSize = true;
+            this.rbPSVitaSwizzle.Location = new System.Drawing.Point(7, 120);
+            this.rbPSVitaSwizzle.Name = "rbPSVitaSwizzle";
+            this.rbPSVitaSwizzle.Size = new System.Drawing.Size(55, 17);
+            this.rbPSVitaSwizzle.TabIndex = 4;
+            this.rbPSVitaSwizzle.TabStop = true;
+            this.rbPSVitaSwizzle.Text = "PS Vita";
+            this.rbPSVitaSwizzle.UseVisualStyleBackColor = true;
+            this.rbPSVitaSwizzle.CheckedChanged += new System.EventHandler(this.rbPSVitaSwizzle_CheckedChanged);
             // 
             // rbNoSwizzle
             // 
@@ -810,6 +824,7 @@
         private System.Windows.Forms.RadioButton rbSwitchSwizzle;
         private System.Windows.Forms.RadioButton rbPS4Swizzle;
         private System.Windows.Forms.RadioButton rbXbox360Swizzle;
+        private System.Windows.Forms.RadioButton rbPSVitaSwizzle;
         private System.Windows.Forms.RadioButton rbNoSwizzle;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
