@@ -19,26 +19,6 @@ namespace TTG_Tools.Graphics
             return textureFormat == 0x51 || textureFormat == 0x52 || textureFormat == 0x53 || textureFormat == 0x70;
         }
 
-        private static string FindCompanionTextureFile(string d3dtxPath, string expectedExtensionWithoutDot)
-        {
-            string basePath = Path.Combine(Path.GetDirectoryName(d3dtxPath), Path.GetFileNameWithoutExtension(d3dtxPath));
-            string expectedPath = basePath + "." + expectedExtensionWithoutDot;
-
-            if (File.Exists(expectedPath)) return expectedPath;
-
-            string expectedFileName = Path.GetFileName(expectedPath);
-            string directory = Path.GetDirectoryName(expectedPath);
-
-            string[] matches = Directory.GetFiles(directory, Path.GetFileNameWithoutExtension(expectedPath) + ".*");
-
-            for (int i = 0; i < matches.Length; i++)
-            {
-                if (string.Equals(Path.GetFileName(matches[i]), expectedFileName, StringComparison.OrdinalIgnoreCase)) return matches[i];
-            }
-
-            return expectedPath;
-        }
-
         private static void GetVitaSwizzleInfo(uint textureFormat, int width, int height, out int swizzleWidth, out int swizzleHeight, out int bytesPerPixelSet, out int formatBitsPerPixel)
         {
             bool blockCompressed = textureFormat >= 0x40 && textureFormat <= 0x46;
@@ -1008,8 +988,7 @@ namespace TTG_Tools.Graphics
                     else
                     {
                         result = "File " + fi.Name + " successfully imported. ";
-                        string oldTextureFilePath = FindCompanionTextureFile(fi.FullName, oldTex.isIOS ? "pvr" : "dds");
-                        byte[] NewContent = File.ReadAllBytes(oldTextureFilePath);
+                        byte[] NewContent = oldTex.isIOS ? File.ReadAllBytes(fi.FullName.Remove(fi.FullName.Length - 5) + "pvr") : File.ReadAllBytes(fi.FullName.Remove(fi.FullName.Length - 5) + "dds");
                         oldTex.Content = new byte[NewContent.Length];
                         Array.Copy(NewContent, 0, oldTex.Content, 0, oldTex.Content.Length);
 
@@ -1091,15 +1070,13 @@ namespace TTG_Tools.Graphics
                     result = "File " + fi.Name + " successfully imported.";
 
                     string format = tex.isPVR ? "pvr" : "dds";
-                    string textureFilePath = FindCompanionTextureFile(fi.FullName, format);
-                    byte[] NewContent = File.ReadAllBytes(textureFilePath);
+                    byte[] NewContent = File.ReadAllBytes(fi.FullName.Remove(fi.FullName.Length - 5) + format);
                     tex.Tex.Content = new byte[NewContent.Length];
                     Array.Copy(NewContent, 0, tex.Tex.Content, 0, tex.Tex.Content.Length);
 
                     MemoryStream ms = new MemoryStream(NewContent);
 
-                    if (tex.isPVR) ReadPvrHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, true);
-                    else ReadDDSHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, true);
+                    ReadDDSHeader(ms, ref tex.Width, ref tex.Height, ref tex.Mip, ref tex.TextureFormat, true);
 
                     int checkMip = Methods.CalculateMip(tex.Width, tex.Height, tex.TextureFormat);
 
