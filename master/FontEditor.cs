@@ -41,9 +41,11 @@ namespace TTG_Tools
         {
             edited = false; //Tell a program about first launch window form so font is not modified.
             
-            if(MainMenu.settings.swizzlePS4 || MainMenu.settings.swizzleNintendoSwitch)
+            if(MainMenu.settings.swizzlePS4 || MainMenu.settings.swizzleNintendoSwitch || MainMenu.settings.swizzleXbox360 || MainMenu.settings.swizzlePSVita)
             {
                 if (MainMenu.settings.swizzlePS4) rbPS4Swizzle.Checked = true;
+                else if (MainMenu.settings.swizzlePSVita) rbPSVitaSwizzle.Checked = true;
+                else if (MainMenu.settings.swizzleXbox360) rbXbox360Swizzle.Checked = true;
                 else rbSwitchSwizzle.Checked = true;
             }
             else
@@ -151,6 +153,7 @@ namespace TTG_Tools
                 if (MainMenu.settings.swizzleNintendoSwitch) NewTex.platform.platform = 15;
                 if (MainMenu.settings.swizzlePS4) NewTex.platform.platform = 11;
                 if (MainMenu.settings.swizzleXbox360) NewTex.platform.platform = 4;
+                if (MainMenu.settings.swizzlePSVita) NewTex.platform.platform = 9;
             }
             else
             {
@@ -230,6 +233,48 @@ namespace TTG_Tools
                         else
                         {
                             NewTex.Tex.Textures[i].Block = swizzledBlock;
+                        }
+                        break;
+                    case 9:
+                        bool blockCompressed = NewTex.TextureFormat >= 0x40 && NewTex.TextureFormat <= 0x46;
+                        int swizzleWidth = blockCompressed ? Math.Max(1, (w + 3) / 4) : w;
+                        int swizzleHeight = blockCompressed ? Math.Max(1, (h + 3) / 4) : h;
+
+                        int bytesPerPixelSet;
+                        switch (NewTex.TextureFormat)
+                        {
+                            case 0x04:
+                                bytesPerPixelSet = 2;
+                                break;
+                            case 0x10:
+                            case 0x11:
+                                bytesPerPixelSet = 1;
+                                break;
+                            case 0x40:
+                            case 0x43:
+                                bytesPerPixelSet = 8;
+                                break;
+                            case 0x41:
+                            case 0x42:
+                            case 0x44:
+                            case 0x45:
+                            case 0x46:
+                                bytesPerPixelSet = 16;
+                                break;
+                            default:
+                                bytesPerPixelSet = 4;
+                                break;
+                        }
+
+                        int safeBppSet = bytesPerPixelSet;
+                        if (NewTex.Tex.Textures[i].Block.Length > 0 && safeBppSet > NewTex.Tex.Textures[i].Block.Length)
+                        {
+                            safeBppSet = NewTex.Tex.Textures[i].Block.Length;
+                        }
+
+                        if (safeBppSet > 0)
+                        {
+                            NewTex.Tex.Textures[i].Block = PSVita.Swizzle(NewTex.Tex.Textures[i].Block, swizzleWidth, swizzleHeight, safeBppSet, bytesPerPixelSet * 8);
                         }
                         break;
                 }
@@ -2078,6 +2123,7 @@ namespace TTG_Tools
             MainMenu.settings.swizzleXbox360 = false;
             MainMenu.settings.swizzlePS4 = false;
             MainMenu.settings.swizzleNintendoSwitch = false;
+            MainMenu.settings.swizzlePSVita = false;
             Settings.SaveConfig(MainMenu.settings);
         }
 
@@ -2086,6 +2132,7 @@ namespace TTG_Tools
             MainMenu.settings.swizzleXbox360 = false;
             MainMenu.settings.swizzlePS4 = true;
             MainMenu.settings.swizzleNintendoSwitch = false;
+            MainMenu.settings.swizzlePSVita = false;
             Settings.SaveConfig(MainMenu.settings);
         }
 
@@ -2094,6 +2141,7 @@ namespace TTG_Tools
             MainMenu.settings.swizzleXbox360 = false;
             MainMenu.settings.swizzlePS4 = false;
             MainMenu.settings.swizzleNintendoSwitch = true;
+            MainMenu.settings.swizzlePSVita = false;
             Settings.SaveConfig(MainMenu.settings);
         }
 
@@ -2104,6 +2152,19 @@ namespace TTG_Tools
                 MainMenu.settings.swizzleXbox360 = true;
                 MainMenu.settings.swizzlePS4 = false;
                 MainMenu.settings.swizzleNintendoSwitch = false;
+                MainMenu.settings.swizzlePSVita = false;
+                Settings.SaveConfig(MainMenu.settings);
+            }
+        }
+
+        private void rbPSVitaSwizzle_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbPSVitaSwizzle.Checked)
+            {
+                MainMenu.settings.swizzlePSVita = true;
+                MainMenu.settings.swizzlePS4 = false;
+                MainMenu.settings.swizzleNintendoSwitch = false;
+                MainMenu.settings.swizzleXbox360 = false;
                 Settings.SaveConfig(MainMenu.settings);
             }
         }
