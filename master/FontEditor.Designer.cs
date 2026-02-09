@@ -310,7 +310,7 @@
             this.dataGridViewWithTextures.Name = "dataGridViewWithTextures";
             this.dataGridViewWithTextures.ReadOnly = true;
             this.dataGridViewWithTextures.RowHeadersWidth = 51;
-            this.dataGridViewWithTextures.Size = new System.Drawing.Size(325, 126);
+            this.dataGridViewWithTextures.Size = new System.Drawing.Size(325, 150);
             this.dataGridViewWithTextures.TabIndex = 26;
             this.dataGridViewWithTextures.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewWithTextures_CellMouseClick);
             this.dataGridViewWithTextures.RowContextMenuStripNeeded += new System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler(this.dataGridViewWithTextures_RowContextMenuStripNeeded);
@@ -420,11 +420,11 @@
             this.Column11,
             this.Column12,
             this.Column13});
-            this.dataGridViewWithCoord.Location = new System.Drawing.Point(12, 159);
+            this.dataGridViewWithCoord.Location = new System.Drawing.Point(12, 183);
             this.dataGridViewWithCoord.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridViewWithCoord.Name = "dataGridViewWithCoord";
             this.dataGridViewWithCoord.RowHeadersWidth = 51;
-            this.dataGridViewWithCoord.Size = new System.Drawing.Size(986, 348);
+            this.dataGridViewWithCoord.Size = new System.Drawing.Size(986, 324);
             this.dataGridViewWithCoord.TabIndex = 27;
             this.dataGridViewWithCoord.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridViewWithCoord_CellBeginEdit);
             this.dataGridViewWithCoord.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewWithCoord_CellEndEdit);
@@ -672,7 +672,7 @@
             this.groupBox4.Controls.Add(this.rbNoSwizzle);
             this.groupBox4.Location = new System.Drawing.Point(864, 28);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(127, 145);
+            this.groupBox4.Size = new System.Drawing.Size(122, 149);
             this.groupBox4.TabIndex = 30;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Swizzle methods";
@@ -718,7 +718,7 @@
             this.rbPSVitaSwizzle.AutoSize = true;
             this.rbPSVitaSwizzle.Location = new System.Drawing.Point(7, 120);
             this.rbPSVitaSwizzle.Name = "rbPSVitaSwizzle";
-            this.rbPSVitaSwizzle.Size = new System.Drawing.Size(55, 17);
+            this.rbPSVitaSwizzle.Size = new System.Drawing.Size(60, 17);
             this.rbPSVitaSwizzle.TabIndex = 4;
             this.rbPSVitaSwizzle.TabStop = true;
             this.rbPSVitaSwizzle.Text = "PS Vita";
