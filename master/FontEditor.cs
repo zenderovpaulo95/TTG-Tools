@@ -21,6 +21,11 @@ namespace TTG_Tools
         {
             InitializeComponent();
             SetProcessWorkingSetSize(System.Diagnostics.Process.GetCurrentProcess().Handle, -1, -1);
+
+            AllowDrop = true;
+            DragEnter += FontEditor_DragEnter;
+            DragDrop += FontEditor_DragDrop;
+            EnableDragDropForControls(this);
         }
 
         OpenFileDialog ofd = new OpenFileDialog();
@@ -32,6 +37,54 @@ namespace TTG_Tools
         byte[] check_header;
         bool someTexData;
         bool AddInfo;
+        string droppedFontPath;
+
+        private void EnableDragDropForControls(Control parent)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                control.AllowDrop = true;
+                control.DragEnter += FontEditor_DragEnter;
+                control.DragDrop += FontEditor_DragDrop;
+
+                if (control.HasChildren)
+                {
+                    EnableDragDropForControls(control);
+                }
+            }
+        }
+
+        private void FontEditor_DragEnter(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            bool hasFontFile = files != null && files.Any(file => Path.GetExtension(file).Equals(".font", StringComparison.OrdinalIgnoreCase));
+            e.Effect = hasFontFile ? DragDropEffects.Copy : DragDropEffects.None;
+        }
+
+        private void FontEditor_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files == null || files.Length == 0)
+            {
+                return;
+            }
+
+            string firstFontFile = files.FirstOrDefault(file => Path.GetExtension(file).Equals(".font", StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrEmpty(firstFontFile))
+            {
+                MessageBox.Show("Please drop a .font file.", "Unsupported file type");
+                return;
+            }
+
+            droppedFontPath = firstFontFile;
+            openToolStripMenuItem_Click(this, EventArgs.Empty);
+        }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -419,7 +472,15 @@ namespace TTG_Tools
                 byte[] binContent = new byte[0];
                 string FileName = "";
 
-                if (ofd.ShowDialog() == DialogResult.OK)
+                string selectedFontPath = droppedFontPath;
+                droppedFontPath = null;
+
+                if (string.IsNullOrEmpty(selectedFontPath) && ofd.ShowDialog() == DialogResult.OK)
+                {
+                    selectedFontPath = ofd.FileName;
+                }
+
+                if (!string.IsNullOrEmpty(selectedFontPath))
                 {
                     encrypted = false;
                     bool read = false;
@@ -427,8 +488,9 @@ namespace TTG_Tools
                     FileStream fs;
                     try
                     {
-                        FileName = ofd.FileName;
-                        fs = new FileStream(ofd.FileName, FileMode.Open);
+                        FileName = selectedFontPath;
+                        ofd.FileName = selectedFontPath;
+                        fs = new FileStream(selectedFontPath, FileMode.Open);
                         binContent = Methods.ReadFull(fs);
                         fs.Close();
                         read = true;
