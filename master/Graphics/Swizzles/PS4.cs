@@ -32,27 +32,26 @@ namespace TTG_Tools.Graphics.Swizzles
             var heightTexelsAligned = (heightTexels + 7) / 8;
             var widthTexelsAligned = (widthTexels + 7) / 8;
 
-            // 3. Calcula o tamanho total necessário (incluindo o padding do PS4)
+            // 3. Calcula o tamanho total necessário (incluindo o Padding do PS4)
             int alignedSize = heightTexelsAligned * widthTexelsAligned * 64 * blockSize;
-            int compactSize = widthTexels * heightTexels * blockSize;
 
             byte[] processed;
 
-            // Alguns arquivos armazenam o swizzle completo com padding, outros armazenam apenas blocos válidos (compacto).
-            // Detectamos pelo tamanho disponível.
-            bool hasPaddingLayout = data.Length >= alignedSize;
-
+            // CORREÇÃO AQUI:
+            // Se estivermos fazendo Swizzle (Importando: Linear -> PS4), o destino deve ter o tamanho alinhado (maior).
+            // Se estivermos fazendo Unswizzle (Exportando: PS4 -> Linear), usamos o tamanho original ou calculado.
             if (!unswizzle)
             {
-                processed = new byte[hasPaddingLayout ? alignedSize : compactSize];
+                // Garante que o array de destino seja grande o suficiente para conter o padding
+                int targetSize = (alignedSize > data.Length) ? alignedSize : data.Length;
+                processed = new byte[targetSize];
             }
             else
             {
-                processed = new byte[compactSize];
+                processed = new byte[data.Length];
             }
 
-            int swizzledIndex = 0;
-            int compactIndex = 0;
+            var dataIndex = 0;
 
             for (int y = 0; y < heightTexelsAligned; ++y)
             {
@@ -76,31 +75,23 @@ namespace TTG_Tools.Graphics.Swizzles
                             if (unswizzle)
                             {
                                 // PS4 (data) -> Linear (processed)
-                                if (swizzledIndex + blockSize <= data.Length && destIndex + blockSize <= processed.Length)
+                                if (dataIndex + blockSize <= data.Length && destIndex + blockSize <= processed.Length)
                                 {
-                                    Array.Copy(data, swizzledIndex, processed, destIndex, blockSize);
+                                    Array.Copy(data, dataIndex, processed, destIndex, blockSize);
                                 }
                             }
                             else
                             {
                                 // Linear (data) -> PS4 (processed)
-                                int destinationIndex = hasPaddingLayout ? swizzledIndex : compactIndex;
-
-                                if (destIndex + blockSize <= data.Length && destinationIndex + blockSize <= processed.Length)
+                                if (destIndex + blockSize <= data.Length && dataIndex + blockSize <= processed.Length)
                                 {
-                                    Array.Copy(data, destIndex, processed, destinationIndex, blockSize);
+                                    Array.Copy(data, destIndex, processed, dataIndex, blockSize);
                                 }
                             }
-
-                            compactIndex += blockSize;
                         }
 
-                        // Em layout com padding, o índice swizzled avança sempre.
-                        // Em layout compacto, ele avança apenas quando o bloco é válido.
-                        if (hasPaddingLayout || ((xOffset < widthTexels) && (yOffset < heightTexels)))
-                        {
-                            swizzledIndex += blockSize;
-                        }
+                        // O índice do PS4 avança sempre, mesmo que seja área de padding
+                        dataIndex += blockSize;
                     }
                 }
             }
