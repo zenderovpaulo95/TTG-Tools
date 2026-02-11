@@ -119,7 +119,7 @@
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>TTG Tools 
-By Den Em (Е.Д.В.)
+By Den Em (Е.Д.В.) and Pashok6798
 Modded by Krisp and HeitorSpectre (from Den Em's and Pashok6798 agreement)
 Source code on:
 GitHub: https://github.com/HeitorSpectre/TTG-Tools
@@ -145,6 +145,18 @@ Maybe some games doesn't work.
 
 ===
 [Version history]
+
+v.1.15.4 (11.02.2026)
++ Auto(De)Packer:
+Added PS Vita swizzle support
+Added the option to insert a DDS file into PS Vita textures instead of a PVR, which the game will read correctly.
++ Font Editor:
+Added PS Vita swizzle support.
+Added drag and drop.
++ Archive Unpacker and Archive Packer:
+Added drag and drop.
++ TTG Tools:
+Replaced the folder browser dialog with the Common Open File Dialog for improved usability.
 
 v.1.15.3 (06.02.2026)
 + Archive Packer
