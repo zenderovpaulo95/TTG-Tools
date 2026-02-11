@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using TTG_Tools.ClassesStructs;
 using System.Threading.Tasks;
 using System.Runtime.Remoting.Messaging;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace TTG_Tools
 {
@@ -22,6 +23,14 @@ namespace TTG_Tools
         private static ClassesStructs.Ttarch2Class ttarch2;
         private bool decrypt = false;
         private byte[] key = null;
+
+        private string SelectFolder()
+        {
+            CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
+            folderDialog.IsFolderPicker = true;
+            folderDialog.EnsurePathExists = true;
+            return folderDialog.ShowDialog() == CommonFileDialogResult.Ok ? folderDialog.FileName : null;
+        }
 
         private async Task OpenArchiveFile(string filePath)
         {
@@ -1282,20 +1291,20 @@ namespace TTG_Tools
 
             if (ttarch != null)
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                string selectedFolder = SelectFolder();
 
-                if (fbd.ShowDialog() == DialogResult.OK)
+                if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    await Task.Run(() => UnpackTtarch(fbd.SelectedPath, format));
+                    await Task.Run(() => UnpackTtarch(selectedFolder, format));
                 }
             }
             else if(ttarch2 != null)
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                string selectedFolder = SelectFolder();
 
-                if (fbd.ShowDialog() == DialogResult.OK)
+                if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    await Task.Run(() => UnpackTtarch2(fbd.SelectedPath, format));
+                    await Task.Run(() => UnpackTtarch2(selectedFolder, format));
                 }
             }
             else
@@ -1338,8 +1347,6 @@ namespace TTG_Tools
                 key = MainMenu.gamelist[gameListCB.SelectedIndex].key;
                 decrypt = decryptLuaCB.Checked;
 
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
-
                 string format = fileFormatsCB.Text;
                 var indexesList = new List<int>();
 
@@ -1364,16 +1371,20 @@ namespace TTG_Tools
 
                 if(ttarch != null)
                 {
-                    if (fbd.ShowDialog() == DialogResult.OK)
+                    string selectedFolder = SelectFolder();
+
+                    if (!string.IsNullOrEmpty(selectedFolder))
                     {
-                        await Task.Run(() => UnpackTtarch(fbd.SelectedPath, format, indexes));
+                        await Task.Run(() => UnpackTtarch(selectedFolder, format, indexes));
                     }
                 }
                 else if(ttarch2 != null)
                 {
-                    if(fbd.ShowDialog() == DialogResult.OK)
+                    string selectedFolder = SelectFolder();
+
+                    if (!string.IsNullOrEmpty(selectedFolder))
                     {
-                        await Task.Run(() => UnpackTtarch2(fbd.SelectedPath, format, indexes));
+                        await Task.Run(() => UnpackTtarch2(selectedFolder, format, indexes));
                     }
                 }
             }

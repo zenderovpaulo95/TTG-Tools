@@ -9,6 +9,7 @@ using TTG_Tools.ClassesStructs.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Security.Cryptography;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace TTG_Tools
 {
@@ -17,6 +18,20 @@ namespace TTG_Tools
         public TextEditor()
         {
             InitializeComponent();
+        }
+
+        private string SelectFolder(string description = "")
+        {
+            CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
+            folderDialog.IsFolderPicker = true;
+            folderDialog.EnsurePathExists = true;
+
+            if (!string.IsNullOrEmpty(description))
+            {
+                folderDialog.Title = description;
+            }
+
+            return folderDialog.ShowDialog() == CommonFileDialogResult.Ok ? folderDialog.FileName : null;
         }
 
         //For main progress bar
@@ -60,11 +75,11 @@ namespace TTG_Tools
             }
             else
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                string selectedFolder = SelectFolder();
 
-                if(fbd.ShowDialog() == DialogResult.OK)
+                if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    firstFilePath.Text = fbd.SelectedPath;
+                    firstFilePath.Text = selectedFolder;
                 }
             }
         }
@@ -84,22 +99,22 @@ namespace TTG_Tools
             }
             else
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                string selectedFolder = SelectFolder();
 
-                if(fbd.ShowDialog() == DialogResult.OK)
+                if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    secondFilePath.Text = fbd.SelectedPath;
+                    secondFilePath.Text = selectedFolder;
                 }
             }
         }
 
         private void readyFileBtn_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            string selectedFolder = SelectFolder();
 
-            if (fbd.ShowDialog() == DialogResult.OK)
+            if (!string.IsNullOrEmpty(selectedFolder))
             {
-                readyFilePath.Text = fbd.SelectedPath;
+                readyFilePath.Text = selectedFolder;
             }
         }
 
@@ -129,11 +144,11 @@ namespace TTG_Tools
             }
             else
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                string selectedFolder = SelectFolder();
 
-                if(fbd.ShowDialog() == DialogResult.OK)
+                if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    firstDoubledFilePath.Text = fbd.SelectedPath;
+                    firstDoubledFilePath.Text = selectedFolder;
                 }
             }
         }
@@ -152,22 +167,22 @@ namespace TTG_Tools
             }
             else
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                string selectedFolder = SelectFolder();
 
-                if (fbd.ShowDialog() == DialogResult.OK)
+                if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    secondDoubledFilePath.Text = fbd.SelectedPath;
+                    secondDoubledFilePath.Text = selectedFolder;
                 }
             }
         }
 
         private void readyDoubledFileBtn_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            string selectedFolder = SelectFolder();
 
-            if (fbd.ShowDialog() == DialogResult.OK)
+            if (!string.IsNullOrEmpty(selectedFolder))
             {
-                readyDoubledFilePath.Text = fbd.SelectedPath;
+                readyDoubledFilePath.Text = selectedFolder;
             }
         }
 
@@ -703,12 +718,11 @@ namespace TTG_Tools
             }
             else
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
-                fbd.Description = "Set input directory with needed files";
+                string selectedFolder = SelectFolder("Set input directory with needed files");
 
-                if (fbd.ShowDialog() == DialogResult.OK)
+                if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    firstPath.Text = fbd.SelectedPath;
+                    firstPath.Text = selectedFolder;
                 }
             }
         }
@@ -727,12 +741,11 @@ namespace TTG_Tools
             }
             else
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
-                fbd.Description = "Set output directory for founded duplicated strings in file";
+                string selectedFolder = SelectFolder("Set output directory for founded duplicated strings in file");
 
-                if (fbd.ShowDialog() == DialogResult.OK)
+                if (!string.IsNullOrEmpty(selectedFolder))
                 {
-                    readyPath.Text = fbd.SelectedPath;
+                    readyPath.Text = selectedFolder;
                 }
             }
         }
