@@ -54,39 +54,6 @@ namespace TTG_Tools.Graphics
             formatBitsPerPixel = bytesPerPixelSet * 8;
         }
 
-        private static void GetPS4SwizzleInfo(uint textureFormat, out int blockSize, out int blockWidth, out int blockHeight)
-        {
-            bool blockCompressed = textureFormat >= 0x40 && textureFormat <= 0x46;
-            blockWidth = blockCompressed ? 4 : 1;
-            blockHeight = blockCompressed ? 4 : 1;
-
-            switch (textureFormat)
-            {
-                case 0x04:
-                    blockSize = 2;
-                    break;
-                case 0x10:
-                case 0x11:
-                    blockSize = 1;
-                    break;
-                case 0x40:
-                case 0x43:
-                    blockSize = 8;
-                    break;
-                case 0x41:
-                case 0x42:
-                case 0x44:
-                case 0x45:
-                case 0x46:
-                case 0x25:
-                    blockSize = 16;
-                    break;
-                default:
-                    blockSize = 4;
-                    break;
-            }
-        }
-
         private static int GetPvrDataOffset(byte[] pvrContent)
         {
             const int pvrHeaderSize = 0x34;
@@ -1751,16 +1718,12 @@ namespace TTG_Tools.Graphics
                             int w = tex.Width;
                             int h = tex.Height;
 
-                            int blockSize;
-                            int blockWidth;
-                            int blockHeight;
-                            GetPS4SwizzleInfo(tex.TextureFormat, out blockSize, out blockWidth, out blockHeight);
+                            int blockSize = tex.TextureFormat == 0x40 || tex.TextureFormat == 0x43 ? 8 : 16;
 
                             for (int i = 0; i < tex.Tex.MipCount; i++)
                             {
-                                int currentBlockSize = blockSize;
-                                if (tex.Tex.Textures[i].Block.Length < currentBlockSize) currentBlockSize = tex.Tex.Textures[i].Block.Length;
-                                tex.Tex.Textures[i].Block = PS4.Swizzle(tex.Tex.Textures[i].Block, w, h, currentBlockSize, blockWidth, blockHeight);
+                                if (tex.Tex.Textures[i].Block.Length < blockSize) blockSize = tex.Tex.Textures[i].Block.Length;
+                                tex.Tex.Textures[i].Block = PS4.Swizzle(tex.Tex.Textures[i].Block, w, h, blockSize);
 
                                 if (w > 1) w /= 2;
                                 if (h > 1) h /= 2;
@@ -2457,16 +2420,12 @@ namespace TTG_Tools.Graphics
                     needsReconstruction = true;
                     int w = tex.Width;
                     int h = tex.Height;
-                    int blockSize;
-                    int blockWidth;
-                    int blockHeight;
-                    GetPS4SwizzleInfo(tex.TextureFormat, out blockSize, out blockWidth, out blockHeight);
+                    int blockSize = tex.TextureFormat == 0x40 || tex.TextureFormat == 0x43 ? 8 : 16;
 
                     for (int i = 0; i < tex.Tex.MipCount; i++)
                     {
-                        int currentBlockSize = blockSize;
-                        if (tex.Tex.Textures[i].Block.Length < currentBlockSize) currentBlockSize = tex.Tex.Textures[i].Block.Length;
-                        tex.Tex.Textures[i].Block = PS4.Unswizzle(tex.Tex.Textures[i].Block, w, h, currentBlockSize, blockWidth, blockHeight);
+                        if (tex.Tex.Textures[i].Block.Length < blockSize) blockSize = tex.Tex.Textures[i].Block.Length;
+                        tex.Tex.Textures[i].Block = PS4.Unswizzle(tex.Tex.Textures[i].Block, w, h, blockSize);
 
                         if (w > 1) w /= 2;
                         if (h > 1) h /= 2;
