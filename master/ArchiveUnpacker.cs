@@ -6,8 +6,7 @@ using System.IO;
 using System.Windows.Forms;
 using TTG_Tools.ClassesStructs;
 using System.Threading.Tasks;
-using System.Runtime.Remoting.Messaging;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using System.IO.Compression;
 
 namespace TTG_Tools
 {
@@ -26,10 +25,10 @@ namespace TTG_Tools
 
         private string SelectFolder()
         {
-            CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
-            folderDialog.IsFolderPicker = true;
-            folderDialog.EnsurePathExists = true;
-            return folderDialog.ShowDialog() == CommonFileDialogResult.Ok ? folderDialog.FileName : null;
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+            {
+                return folderDialog.ShowDialog() == DialogResult.OK ? folderDialog.SelectedPath : null;
+            }
         }
 
         private async Task OpenArchiveFile(string filePath)
@@ -346,7 +345,7 @@ namespace TTG_Tools
 
             using (Stream inMemoryStream = new MemoryStream(bytes))
             {
-                using (Joveler.ZLibWrapper.ZLibStream inZStream = new Joveler.ZLibWrapper.ZLibStream(inMemoryStream, Joveler.ZLibWrapper.ZLibMode.Decompress))
+                using (ZLibStream inZStream = new ZLibStream(inMemoryStream, CompressionMode.Decompress, true))
                 {
                     using (MemoryStream outMemoryStream = new MemoryStream())
                     {

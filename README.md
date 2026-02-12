@@ -10,7 +10,17 @@ This version of TTG Tools includes some modifications and has been uploaded with
 
 ## Compilation
 
-For correct compilation, you need to download `zlib.net.dll` from [here](http://www.componentace.com/download/download.php?editionid=25) and place it in the `zlib` folder.
+This project now targets **.NET 8 (Windows)**.
+
+1. Install the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
+2. Build from the `master` directory:
+
+```bash
+dotnet restore "TTG Tools.sln"
+dotnet build "TTG Tools.sln" -c Release
+```
+
+No external `zlib.net.dll` download is required anymore, because compression now uses the .NET runtime zlib implementation.
 
 ## Special Thanks
 

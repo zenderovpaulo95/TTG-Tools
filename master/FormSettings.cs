@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace TTG_Tools
 {
@@ -14,24 +13,11 @@ namespace TTG_Tools
 
         public string SetFolder(string inputPath)
         {
-            CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
-            folderDialog.IsFolderPicker = true;
-            folderDialog.EnsurePathExists = true;
-
-            if (Directory.Exists(inputPath))
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
-                folderDialog.InitialDirectory = inputPath;
+                folderDialog.SelectedPath = Directory.Exists(inputPath) ? inputPath : Application.StartupPath;
+                return folderDialog.ShowDialog() == DialogResult.OK ? folderDialog.SelectedPath : inputPath;
             }
-            else
-            {
-                folderDialog.InitialDirectory = Application.StartupPath;
-            }
-
-            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                return folderDialog.FileName;
-            }
-            else { return inputPath; }
         }
 
         private void buttonSaveSettings_Click(object sender, EventArgs e)

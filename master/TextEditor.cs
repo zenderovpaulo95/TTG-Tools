@@ -9,7 +9,6 @@ using TTG_Tools.ClassesStructs.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Security.Cryptography;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace TTG_Tools
 {
@@ -22,16 +21,15 @@ namespace TTG_Tools
 
         private string SelectFolder(string description = "")
         {
-            CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
-            folderDialog.IsFolderPicker = true;
-            folderDialog.EnsurePathExists = true;
-
-            if (!string.IsNullOrEmpty(description))
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
-                folderDialog.Title = description;
-            }
+                if (!string.IsNullOrEmpty(description))
+                {
+                    folderDialog.Description = description;
+                }
 
-            return folderDialog.ShowDialog() == CommonFileDialogResult.Ok ? folderDialog.FileName : null;
+                return folderDialog.ShowDialog() == DialogResult.OK ? folderDialog.SelectedPath : null;
+            }
         }
 
         //For main progress bar
