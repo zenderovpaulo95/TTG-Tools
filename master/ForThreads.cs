@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TTG_Tools
@@ -14,11 +15,15 @@ namespace TTG_Tools
 
     public class ForThreads
     {
-        public event ProgressHandler Progress;
-        public event ReportHandler ReportForWork;
+                public event ReportHandler ReportForWork;
 
         // Import files (Encrypt, Pack, Import)
         public void DoImportEncoding(object parametres)
+        {
+            DoImportEncoding(parametres, CancellationToken.None);
+        }
+
+        public void DoImportEncoding(object parametres, CancellationToken cancellationToken)
         {
             List<string> param = parametres as List<string>;
             string versionOfGame = param[0];
@@ -61,7 +66,8 @@ namespace TTG_Tools
             try
             {
                 for (int d = 0; d < destination.Count; d++)
-                {
+                    {
+                        if (cancellationToken.IsCancellationRequested) return;
                     destinationForExport = destination[d];
                     whatImport = extention[d];
 
@@ -74,6 +80,7 @@ namespace TTG_Tools
 
                         for (int i = 0; i < inputFiles.Length; i++)
                         {
+                            if (cancellationToken.IsCancellationRequested) return;
                             // 1. Calcular a subpasta relativa (Ex: \EP1\MENU\)
                             string relativePath = inputFiles[i].DirectoryName.Substring(dir.FullName.Length);
                             if (relativePath.StartsWith("\\") || relativePath.StartsWith("/")) relativePath = relativePath.Substring(1);
@@ -544,6 +551,11 @@ namespace TTG_Tools
         //Export (Decrypt, Export)
         public void DoExportEncoding(object parametres)
         {
+            DoExportEncoding(parametres, CancellationToken.None);
+        }
+
+        public void DoExportEncoding(object parametres, CancellationToken cancellationToken)
+        {
             List<string> param = parametres as List<string>;
             string pathInput = param[0];
             string pathOutput = param[1];
@@ -578,6 +590,7 @@ namespace TTG_Tools
 
                     foreach (string destinationForExport in destinationForExportList)
                     {
+                        if (cancellationToken.IsCancellationRequested) return;
                         DirectoryInfo dir = new DirectoryInfo(pathInput);
 
                         // Busca recursiva para exportação também
@@ -589,6 +602,7 @@ namespace TTG_Tools
 
                             for (int i = 0; i < inputFiles.Length; i++)
                             {
+                                if (cancellationToken.IsCancellationRequested) return;
                                 // 1. Calcular a subpasta relativa
                                 string relativePath = inputFiles[i].DirectoryName.Substring(dir.FullName.Length);
                                 if (relativePath.StartsWith("\\") || relativePath.StartsWith("/")) relativePath = relativePath.Substring(1);

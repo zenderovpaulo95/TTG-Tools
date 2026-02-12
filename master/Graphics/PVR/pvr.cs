@@ -1,6 +1,6 @@
 ﻿namespace TTG_Tools.Graphics.PVR
 {
-    public static class pvr
+    public static class Pvr
     {
         public enum HeaderFormat : ulong
         {
@@ -34,7 +34,7 @@
             EACRG11 = 26
         }
 
-        public struct header
+        public struct Header
         {
             public uint Version;
             public uint Flags;

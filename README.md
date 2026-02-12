@@ -10,9 +10,9 @@ This version of TTG Tools includes some modifications and has been uploaded with
 
 ## Compilation
 
-This project now targets **.NET 8** (`net8.0-windows`) with **Windows Forms**.
+This project now targets **.NET 9** (`net9.0-windows`) with **Windows Forms**.
 
-1. Install the .NET 8 SDK and Visual Studio 2022 (or newer) with desktop development tools.
+1. Install the .NET 9 SDK and Visual Studio 2022 (or newer) with desktop development tools.
 2. Open `master/TTG Tools.sln` and build in `Debug` or `Release` mode.
 
 > Legacy dependencies on `Joveler.ZLibWrapper` and `WindowsAPICodePack` were removed in favor of built-in .NET APIs (`System.IO.Compression.ZLibStream` and `FolderBrowserDialog`), so no manual `zlib.net.dll` setup is required.
@@ -68,7 +68,6 @@ TTG Tools makes it easier to translate and modify Telltale Games and Skunkape Ga
 - Sam & Max: Save the World - Remastered  
 - Sam & Max: Beyond Time and Space - Remastered  
 - Sam & Max: The Devil's Playhouse - Remastered
-
 
 
 

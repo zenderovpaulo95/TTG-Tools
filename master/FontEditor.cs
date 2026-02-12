@@ -2077,12 +2077,7 @@ namespace TTG_Tools
                                             tmpChar = Convert.ToUInt32(splitted[k + 1]);
 
                                             if (isUnicodeFnt)
-                                            {
-                                                if(tmpChar == 126)
-                                                {
-                                                    int puase = 1;
-                                                }
-                                                byte[] tmp_ch = BitConverter.GetBytes(Convert.ToUInt32(splitted[k + 1]));
+                                            {                                                byte[] tmp_ch = BitConverter.GetBytes(Convert.ToUInt32(splitted[k + 1]));
                                                 tmp_ch = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmp_ch);
                                                 tmpChar = BitConverter.ToUInt16(tmp_ch, 0);
                                             }

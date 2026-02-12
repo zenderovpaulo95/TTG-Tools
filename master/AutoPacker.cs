@@ -22,8 +22,10 @@ namespace TTG_Tools
 
         Thread threadExport;
         Thread threadImport;
+        CancellationTokenSource? importCancellation;
+        CancellationTokenSource? exportCancellation;
 
-        public struct langdb
+        public struct LangDb
         {
             public byte[] head;
             public byte[] hz_data;
@@ -41,7 +43,7 @@ namespace TTG_Tools
 
 
         public static int number;
-        langdb[] database = new langdb[5000];
+        LangDb[] database = new LangDb[5000];
 
         // MODIFICADO: Lógica do Pop-up adicionada aqui
         public void AddNewReport(string report)
@@ -115,7 +117,8 @@ namespace TTG_Tools
             parametresImport.Add(MainMenu.settings.encNewLua.ToString());
             parametresImport.Add(BitConverter.ToString(encKey).Replace("-", ""));
 
-            threadImport = new Thread(new ParameterizedThreadStart(processImport.DoImportEncoding));
+            importCancellation = new CancellationTokenSource();
+            threadImport = new Thread(new ParameterizedThreadStart(p => processImport.DoImportEncoding(p, importCancellation.Token)));
             threadImport.Start(parametresImport);
         }
 
@@ -160,7 +163,8 @@ namespace TTG_Tools
             parametresExport.Add(BitConverter.ToString(encKey).Replace("-", ""));
             parametresExport.Add(Convert.ToString(arc_version));
 
-            threadExport = new Thread(new ParameterizedThreadStart(processExport.DoExportEncoding));
+            exportCancellation = new CancellationTokenSource();
+            threadExport = new Thread(new ParameterizedThreadStart(p => processExport.DoExportEncoding(p, exportCancellation.Token)));
             threadExport.Start(parametresExport);
 
             if (debug != null)
@@ -235,14 +239,17 @@ namespace TTG_Tools
 
         private void AutoPacker_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if ((threadExport != null) && threadExport.IsAlive)
+            exportCancellation?.Cancel();
+            importCancellation?.Cancel();
+
+            if (threadExport != null && threadExport.IsAlive)
             {
-                threadExport.Abort();
+                threadExport.Join(500);
             }
 
-            if ((threadImport != null) && threadImport.IsAlive)
+            if (threadImport != null && threadImport.IsAlive)
             {
-                threadImport.Abort();
+                threadImport.Join(500);
             }
         }
 

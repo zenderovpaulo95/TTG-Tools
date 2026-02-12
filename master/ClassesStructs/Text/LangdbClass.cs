@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TTG_Tools.ClassesStructs.Text
 {
-    public struct langdb
+    public struct LangDb
     {
         public uint stringNumber; //Current string number
         public uint anmID; //Actor's animation
@@ -24,7 +24,7 @@ namespace TTG_Tools.ClassesStructs.Text
         public int newBlockLength;
         public int langdbCount;
 
-        public langdb[] langdbs;
+        public LangDb[] langdbs;
         public FlagsClass.LangdbFlagClass[] flags;
     }
 }

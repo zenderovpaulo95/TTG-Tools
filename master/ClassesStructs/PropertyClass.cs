@@ -10,27 +10,27 @@ namespace TTG_Tools.ClassesStructs
     {
         public class ClassPropertySet
         {
-            struct inengineValueTypes
+            struct InEngineValueTypes
             {
-                public string name;
-                public byte[] crc64_code;
+                public string? Name;
+                public byte[]? Crc64Code;
             }
 
-            public struct props
+            public struct Props
             {
                 public importProps imProps;
                 public int block_length;
                 public int count;
-                public prop_values[] vals;
+                public PropValues[] Values;
             }
 
-            public struct im_props
+            public struct ImProps
             {
                 public int str_name_len;
                 public string str_name;
             }
 
-            public struct values
+            public struct Values
             {
                 public byte[] crc64_val_type;
                 public int block_len_str_type;
@@ -40,24 +40,24 @@ namespace TTG_Tools.ClassesStructs
                 public string str_val;
             }
 
-            public struct prop_values
+            public struct PropValues
             {
                 public byte[] crc64_value;
                 public int str_val_len;
                 public string str_val; // value type
 
                 public int count_values;
-                public values[] values_s;
+                public Values[] ValuesList;
             }
 
             public struct importProps
             {
                 public int block_length;
                 public int count;
-                public im_props[] import_props;
+                public ImProps[] ImportProps;
             }
 
-            public props properties;
+            public Props Properties;
         }
     }
 }

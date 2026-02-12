@@ -51,9 +51,9 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridViewWithTextures = new System.Windows.Forms.DataGridView();
             this.N = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Height = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Width = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Size = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.TextureHeightColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.TextureWidthColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.TextureSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStripExport_Import = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importDDSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -301,9 +301,9 @@
             this.dataGridViewWithTextures.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewWithTextures.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.N,
-            this.Height,
-            this.Width,
-            this.Size});
+            this.TextureHeightColumn,
+            this.TextureWidthColumn,
+            this.TextureSizeColumn});
             this.dataGridViewWithTextures.ContextMenuStrip = this.contextMenuStripExport_Import;
             this.dataGridViewWithTextures.Location = new System.Drawing.Point(12, 27);
             this.dataGridViewWithTextures.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -325,27 +325,27 @@
             // 
             // Height
             // 
-            this.Height.HeaderText = "Height";
-            this.Height.MinimumWidth = 6;
-            this.Height.Name = "Height";
-            this.Height.ReadOnly = true;
-            this.Height.Width = 102;
+            this.TextureHeightColumn.HeaderText = "Height";
+            this.TextureHeightColumn.MinimumWidth = 6;
+            this.TextureHeightColumn.Name = "Height";
+            this.TextureHeightColumn.ReadOnly = true;
+            this.TextureHeightColumn.Width = 102;
             // 
             // Width
             // 
-            this.Width.HeaderText = "Width";
-            this.Width.MinimumWidth = 6;
-            this.Width.Name = "Width";
-            this.Width.ReadOnly = true;
-            this.Width.Width = 102;
+            this.TextureWidthColumn.HeaderText = "Width";
+            this.TextureWidthColumn.MinimumWidth = 6;
+            this.TextureWidthColumn.Name = "Width";
+            this.TextureWidthColumn.ReadOnly = true;
+            this.TextureWidthColumn.Width = 102;
             // 
             // Size
             // 
-            this.Size.HeaderText = "Size";
-            this.Size.MinimumWidth = 6;
-            this.Size.Name = "Size";
-            this.Size.ReadOnly = true;
-            this.Size.Width = 102;
+            this.TextureSizeColumn.HeaderText = "Size";
+            this.TextureSizeColumn.MinimumWidth = 6;
+            this.TextureSizeColumn.Name = "Size";
+            this.TextureSizeColumn.ReadOnly = true;
+            this.TextureSizeColumn.Width = 102;
             // 
             // contextMenuStripExport_Import
             // 
@@ -816,9 +816,9 @@
         private System.Windows.Forms.RadioButton radioButtonXend;
         private System.Windows.Forms.ToolStripMenuItem toolStripImportFNT;
         private System.Windows.Forms.DataGridViewTextBoxColumn N;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Height;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Width;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Size;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TextureHeightColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TextureWidthColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TextureSizeColumn;
         private System.Windows.Forms.ToolStripMenuItem removeDuplicatesCharsToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RadioButton rbSwitchSwizzle;

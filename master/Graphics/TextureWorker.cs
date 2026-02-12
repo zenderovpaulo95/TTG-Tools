@@ -86,7 +86,7 @@ namespace TTG_Tools.Graphics
             BinaryReader br = new BinaryReader(stream);
             try
             {
-                dds.header head;
+                Dds.header head;
                 byte[] tmp = br.ReadBytes(4);
                 head.head = Encoding.ASCII.GetString(tmp);
                 head.Size = br.ReadUInt32();
@@ -187,53 +187,53 @@ namespace TTG_Tools.Graphics
 
                             switch (Format)
                             {
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_R8G8B8A8_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_R8G8B8A8_UNORM:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.ARGB8;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_B4G4R4A4_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_B4G4R4A4_UNORM:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.ARGB4;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_A8_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_A8_UNORM:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.A8;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC1_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC1_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC1_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC1_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC1;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC2_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC2_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC2_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC2_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC2;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC3_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC3_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC3_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC3_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC3;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC4_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC4_SNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC4_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC4_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC4_SNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC4_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC4;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC5_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC5_SNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC5_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC5_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC5_SNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC5_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC5;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC6H_TYPELESS:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC6H_SF16:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC6H_UF16:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC6H_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC6H_SF16:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC6H_UF16:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC6;
                                     break;
 
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC7_UNORM:
-                                case (int)dds.DxgiFormat.DXGI_FORMAT_BC7_TYPELESS:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC7_UNORM:
+                                case (int)Dds.DxgiFormat.DXGI_FORMAT_BC7_TYPELESS:
                                     textureFormat = (uint)ClassesStructs.TextureClass.NewTextureFormat.BC7;
                                     break;
                             }
@@ -297,8 +297,8 @@ namespace TTG_Tools.Graphics
         public static int ReadPvrHeader(Stream stream, ref int width, ref int height, ref int mip, ref uint TexFormat, bool NewFormat)
         {
             BinaryReader br = new BinaryReader(stream);
-            pvr.header head;
-            pvr.metaHeader metaHead;
+            Pvr.header head;
+            Pvr.metaHeader metaHead;
 
             head.Version = br.ReadUInt32();
             head.Flags = br.ReadUInt32();
@@ -327,35 +327,35 @@ namespace TTG_Tools.Graphics
             if (NewFormat) {
                 switch (head.PixelFormat)
                 {
-                    case (ulong)pvr.HeaderFormat.BC1:
+                    case (ulong)Pvr.HeaderFormat.BC1:
                         TexFormat = 0x40;
                         break;
 
-                    case (ulong)pvr.HeaderFormat.DXT2:
+                    case (ulong)Pvr.HeaderFormat.DXT2:
                         TexFormat = 0x41;
                         break;
 
-                    case (ulong)pvr.HeaderFormat.DXT3:
+                    case (ulong)Pvr.HeaderFormat.DXT3:
                         TexFormat = 0x41;
                         break;
 
-                    case (ulong)pvr.HeaderFormat.DXT5:
+                    case (ulong)Pvr.HeaderFormat.DXT5:
                         TexFormat = 0x42;
                         break;
 
-                    case (ulong)pvr.HeaderFormat.BC4:
+                    case (ulong)Pvr.HeaderFormat.BC4:
                         TexFormat = 0x43;
                         break;
 
-                    case (ulong)pvr.HeaderFormat.BC5:
+                    case (ulong)Pvr.HeaderFormat.BC5:
                         TexFormat = 0x44;
                         break;
 
-                    case (ulong)pvr.HeaderFormat.BC6:
+                    case (ulong)Pvr.HeaderFormat.BC6:
                         TexFormat = 0x45;
                         break;
 
-                    case (ulong)pvr.HeaderFormat.BC7:
+                    case (ulong)Pvr.HeaderFormat.BC7:
                         TexFormat = 0x46;
                         break;
                 }
@@ -364,19 +364,19 @@ namespace TTG_Tools.Graphics
             {
                 switch (head.PixelFormat)
                 {
-                    case (ulong)pvr.HeaderFormat.PVRTC4bppRGB:
+                    case (ulong)Pvr.HeaderFormat.PVRTC4bppRGB:
                         TexFormat = (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.PVRTC4bppRGB_1;
                         break;
 
-                    case (ulong)pvr.HeaderFormat.PVRTC4bppRGBA:
+                    case (ulong)Pvr.HeaderFormat.PVRTC4bppRGBA:
                         TexFormat = (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.PVRTC4bppRGBA_1;
                         break;
 
-                    /*case (ulong)pvr.HeaderFormat.PVRTCII2Bpp:
+                    /*case (ulong)Pvr.HeaderFormat.PVRTCII2Bpp:
                         TexFormat = (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.;
                         break;*/
 
-                    /*case (ulong)pvr.HeaderFormat.PVRTCII4Bpp:
+                    /*case (ulong)Pvr.HeaderFormat.PVRTCII4Bpp:
 
                         break;*/
 
@@ -409,7 +409,7 @@ namespace TTG_Tools.Graphics
             BinaryWriter bw = new BinaryWriter(ms);
             try
             {
-                dds.header head;
+                Dds.header head;
                 head.head = "DDS ";
                 byte[] tmp = Encoding.ASCII.GetBytes(head.head);
                 bw.Write(tmp);
@@ -593,52 +593,52 @@ namespace TTG_Tools.Graphics
 
                 if(head.PF.FourCC == "DX10")
                 {
-                    head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_UNKNOWN;
+                    head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_UNKNOWN;
 
                     switch (Format)
                     {
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.ARGB8:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_R8G8B8A8_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_R8G8B8A8_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.ARGB4:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_B4G4R4A4_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_B4G4R4A4_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.A8:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_A8_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_A8_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC1:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC1_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC1_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC2:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC2_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC2_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC3:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC3_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC3_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC4:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC4_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC4_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC5:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC5_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC5_UNORM;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC6:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC6H_TYPELESS;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC6H_TYPELESS;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.NewTextureFormat.BC7:
-                            head.headDX11.DF = dds.DxgiFormat.DXGI_FORMAT_BC7_UNORM;
+                            head.headDX11.DF = Dds.DxgiFormat.DXGI_FORMAT_BC7_UNORM;
                             break;
                     }
 
-                    head.headDX11.ResourceDimension = dds.D3D10ResourceDimension.D3D10_RESOURCE_DIMENSION_TEXTURE2D;
+                    head.headDX11.ResourceDimension = Dds.D3D10ResourceDimension.D3D10_RESOURCE_DIMENSION_TEXTURE2D;
                     head.headDX11.MiscFlag = 0;
                     head.headDX11.MiscFlag2 = 0;
                     head.headDX11.ArraySize = (uint)ArrayMember;
@@ -670,7 +670,7 @@ namespace TTG_Tools.Graphics
             BinaryWriter bw = new BinaryWriter(ms);
             try
             {
-                pvr.header head;
+                Pvr.header head;
                 head.Version = BitConverter.ToUInt32(Encoding.ASCII.GetBytes("PVR\x03"), 0);
                 bw.Write(head.Version);
 
@@ -689,12 +689,12 @@ namespace TTG_Tools.Graphics
                         case (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.PVRTC4bppRGBA_3:
                         case (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.PVRTC4bppRGBA_4:
                         case (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.PVRTC4bppRGBA_5:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.PVRTC4bppRGBA;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.PVRTC4bppRGBA;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.PVRTC4bppRGB_1:
                         case (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.PVRTC4bppRGB_2:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.PVRTC4bppRGB;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.PVRTC4bppRGB;
                             break;
 
                         case (uint)ClassesStructs.TextureClass.OldTexturePVRFormat.PVRTC_RGB565_1:
@@ -736,43 +736,43 @@ namespace TTG_Tools.Graphics
 
                         case 0x52:
                         case 0x53:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.PVRTC4bppRGBA;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.PVRTC4bppRGBA;
                             break;
 
                         case 0x51:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.PVRTC4bppRGB;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.PVRTC4bppRGB;
                             break;
 
                         case 0x70:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.ETC1;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.ETC1;
                             break;
 
                         case 0x40:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.DXT1;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.DXT1;
                             break;
 
                         case 0x41:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.DXT3;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.DXT3;
                             break;
 
                         case 0x42:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.DXT5;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.DXT5;
                             break;
 
                         case 0x43:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.BC4;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.BC4;
                             break;
 
                         case 0x44:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.BC5;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.BC5;
                             break;
 
                         case 0x45:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.BC6;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.BC6;
                             break;
 
                         case 0x46:
-                            head.PixelFormat = (ulong)pvr.HeaderFormat.BC7;
+                            head.PixelFormat = (ulong)Pvr.HeaderFormat.BC7;
                             break;
 
                         default:
@@ -921,9 +921,7 @@ namespace TTG_Tools.Graphics
                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
 
                 bool flags = false;
-                bool someData = false;
-                bool PossibleNewFlags = false;
-                bool AddInfo = false; //For 01 00 00 00 and 01 02 03 values
+                bool someData = false;                bool AddInfo = false; //For 01 00 00 00 and 01 02 03 values
 
                 if (BitConverter.ToString(tmp) == "E2-CC-38-6F-7E-9E-24-3E")
                 {
@@ -949,9 +947,7 @@ namespace TTG_Tools.Graphics
                                 NewFormat = true;
                                 break;
 
-                            case "D2-15-9F-6B-4F-DC-75-CD":
-                                PossibleNewFlags = true;
-                                break;
+                            case "D2-15-9F-6B-4F-DC-75-CD":                                break;
 
                             case "7A-BA-6E-87-89-88-6C-FA":
                                 AddInfo = true;

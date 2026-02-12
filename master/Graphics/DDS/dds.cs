@@ -7,7 +7,7 @@
 
 namespace TTG_Tools.Graphics.DDS
 {
-    public static class dds
+    public static class Dds
     {
         public struct PixelFormat
         {
@@ -21,7 +21,7 @@ namespace TTG_Tools.Graphics.DDS
             public uint ABitMask;
         }
 
-        public struct header
+        public struct Header
         {
             public string head;
             public uint Size;

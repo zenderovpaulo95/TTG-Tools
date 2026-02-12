@@ -37,7 +37,7 @@ namespace TTG_Tools.Texts
                     langdb.langdbCount = checkBlockLength;
                 }
 
-                langdb.langdbs = new langdb[langdb.langdbCount];
+                langdb.langdbs = new LangDb[langdb.langdbCount];
 
                 langdb.flags = new ClassesStructs.FlagsClass.LangdbFlagClass[langdb.langdbCount];
 
@@ -359,12 +359,8 @@ namespace TTG_Tools.Texts
                 byte[] checkBlock = br.ReadBytes(8);
                 br.BaseStream.Seek(8, SeekOrigin.Begin);
                 ulong checkCRC64 = 0;
-                bool isHashStrings = false;
-
                 if (BitConverter.ToString(checkBlock) == BitConverter.ToString(BitConverter.GetBytes(CRCs.CRC64(checkCRC64, InEngineWords.ClassStructsNames.languagedatabaseClass.ToLower()))))
                 {
-                    isHashStrings = true;
-
                     for (int i = 0; i < countBlocks; i++)
                     {
                         byte[] tmp = br.ReadBytes(8);

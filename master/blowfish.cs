@@ -30,11 +30,7 @@ namespace BlowFishCS
     {
         #region "Global variables and constants"
 
-        const int ROUNDS = 16; //standard is 16, to increase the number of rounds, bf_P needs to be equal to the number of rouds. Use digits of PI.
-
-        //Random number generator for creating IVs
-        RNGCryptoServiceProvider randomSource;
-
+        const int ROUNDS = 16; //standard is 16, to increase the number of rounds, bf_P needs to be equal to the number of rouds. Use digits of PI.
         //SBLOCKS
         private ulong[] bf_s0;
         private ulong[] bf_s1;
@@ -64,9 +60,7 @@ namespace BlowFishCS
         /// </summary>
         /// <param name="hexKey">Cipher key as a hex string</param>
         public BlowFish(string hexKey)
-        {
-            randomSource = new RNGCryptoServiceProvider();
-            SetupKey(HexToByte(hexKey));
+        {            SetupKey(HexToByte(hexKey));
         }
 
         /// <summary>
@@ -74,9 +68,7 @@ namespace BlowFishCS
         /// </summary>
         /// <param name="cipherKey">Cipher key as a byte array</param>
         public BlowFish(byte[] cipherKey, int archive_version)
-        {
-            randomSource = new RNGCryptoServiceProvider();
-            if (archive_version >= 7) SetupKey7(cipherKey);
+        {            if (archive_version >= 7) SetupKey7(cipherKey);
             else SetupKey(cipherKey);
         }
 
