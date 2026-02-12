@@ -324,7 +324,7 @@ namespace TTG_Tools
             byte[] retVal;
             using (MemoryStream decompressedMemoryStream = new MemoryStream(bytes))
             {
-                using (System.IO.Compression.DeflateStream decompressStream = new System.IO.Compression.DeflateStream(decompressedMemoryStream, System.IO.Compression.CompressionMode.Decompress))
+                using (ZLibStream decompressStream = new ZLibStream(decompressedMemoryStream, CompressionMode.Decompress, leaveOpen: true))
                 {
                     using (MemoryStream memOutStream = new MemoryStream())
                     {

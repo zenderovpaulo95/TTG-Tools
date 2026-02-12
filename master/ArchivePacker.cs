@@ -99,12 +99,12 @@ namespace TTG_Tools
             byte[] retVal;
             using (MemoryStream compressedMemoryStream = new MemoryStream())
             {
-                using (System.IO.Compression.DeflateStream compressStream = new System.IO.Compression.DeflateStream(compressedMemoryStream, System.IO.Compression.CompressionMode.Compress))
+                using (ZLibStream compressStream = new ZLibStream(compressedMemoryStream, CompressionLevel.SmallestSize, leaveOpen: true))
                 {
-                    using(MemoryStream inMemStream = new MemoryStream(bytes))
+                    using (MemoryStream inMemStream = new MemoryStream(bytes))
                     {
                         inMemStream.CopyTo(compressStream);
-                        compressStream.Close();
+                        compressStream.Flush();
                         retVal = compressedMemoryStream.ToArray();
                     }
                 }
