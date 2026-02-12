@@ -243,9 +243,9 @@ namespace TTG_Tools.Texts
 
                 if (landb.isNewFormat) landb.lastNewBlockData = br.ReadBytes(landb.landbLastFileSize);
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                throw new InvalidDataException("Failed to parse .landb structure.", ex);
             }
 
             return landb;
@@ -543,7 +543,7 @@ namespace TTG_Tools.Texts
 
                 if (landbs == null)
                 {
-                    return "File " + fi.Name + ": unknown error.";
+                    return "File " + fi.Name + ": failed to parse .landb content.";
                 }
                 if ((landbs != null) && (landbs.landbCount == 0))
                 {
@@ -634,12 +634,12 @@ namespace TTG_Tools.Texts
 
                 buffer = null;
             }
-            catch
+            catch (Exception ex)
             {
                 if (br != null) br.Close();
                 if (ms != null) ms.Close();
 
-                result = "Something wrong with langdb file " + fi.Name;
+                result = "Something wrong with landb file " + fi.Name + ": " + ex.Message;
             }
 
             GC.Collect();

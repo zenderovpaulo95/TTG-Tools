@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
+using System.Text;
 
 namespace TTG_Tools
 {
@@ -13,6 +14,7 @@ namespace TTG_Tools
         [STAThread]
         static void Main()
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             string xmlPath = Application.StartupPath + "\\config.xml";
             if (File.Exists(xmlPath))
             {
