@@ -541,7 +541,7 @@ namespace TTG_Tools
             {
                 byte[] file = File.ReadAllBytes(fi[a].FullName);
 
-                if ((encLua && fi[a].Extension.ToLower() == ".lua") || fi[a].Extension.ToLower() == ".lenc")
+                if (encLua && ((fi[a].Extension.ToLower() == ".lua") || (fi[a].Extension.ToLower() == ".lenc")))
                 {
                     file = Methods.encryptLua(file, key, newEngine, 7);
                 }
@@ -829,7 +829,7 @@ namespace TTG_Tools
 
                 int res = Methods.meta_crypt(file, key, versionArchive, false);
 
-                if ((!DontEncLua && fi[a].Extension.ToLower() == ".lua") || fi[a].Extension.ToLower() == ".lenc") file = Methods.encryptLua(file, key, false, versionArchive);
+                if (!DontEncLua && ((fi[a].Extension.ToLower() == ".lua") || (fi[a].Extension.ToLower() == ".lenc"))) file = Methods.encryptLua(file, key, false, versionArchive);
 
                 int fileChunkCount = Methods.pad_size(chunkOff + file.Length, chunkSize) / chunkSize;
                 int chunkFile = file.Length;
