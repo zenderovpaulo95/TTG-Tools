@@ -22,8 +22,8 @@ namespace TTG_Tools
 
         Thread threadExport;
         Thread threadImport;
-        CancellationTokenSource? importCancellation;
-        CancellationTokenSource? exportCancellation;
+        CancellationTokenSource importCancellation;
+        CancellationTokenSource exportCancellation;
 
         public struct LangDb
         {
@@ -406,4 +406,4 @@ namespace TTG_Tools
         {
         }
     }
-}
+}

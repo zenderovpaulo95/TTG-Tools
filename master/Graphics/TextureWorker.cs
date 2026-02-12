@@ -86,7 +86,7 @@ namespace TTG_Tools.Graphics
             BinaryReader br = new BinaryReader(stream);
             try
             {
-                Dds.header head;
+                Dds.Header head;
                 byte[] tmp = br.ReadBytes(4);
                 head.head = Encoding.ASCII.GetString(tmp);
                 head.Size = br.ReadUInt32();
@@ -297,7 +297,7 @@ namespace TTG_Tools.Graphics
         public static int ReadPvrHeader(Stream stream, ref int width, ref int height, ref int mip, ref uint TexFormat, bool NewFormat)
         {
             BinaryReader br = new BinaryReader(stream);
-            Pvr.header head;
+            Pvr.Header head;
             Pvr.metaHeader metaHead;
 
             head.Version = br.ReadUInt32();
@@ -409,7 +409,7 @@ namespace TTG_Tools.Graphics
             BinaryWriter bw = new BinaryWriter(ms);
             try
             {
-                Dds.header head;
+                Dds.Header head;
                 head.head = "DDS ";
                 byte[] tmp = Encoding.ASCII.GetBytes(head.head);
                 bw.Write(tmp);
@@ -670,7 +670,7 @@ namespace TTG_Tools.Graphics
             BinaryWriter bw = new BinaryWriter(ms);
             try
             {
-                Pvr.header head;
+                Pvr.Header head;
                 head.Version = BitConverter.ToUInt32(Encoding.ASCII.GetBytes("PVR\x03"), 0);
                 bw.Write(head.Version);
 

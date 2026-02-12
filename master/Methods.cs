@@ -728,7 +728,7 @@ namespace TTG_Tools
             FileStream fs = new FileStream(fi.FullName, FileMode.Open);
             
             byte[] header = new byte[4];
-            fs.Read(header, 0, header.Length);
+            fs.ReadExactly(header, 0, header.Length);
             fs.Close();
 
             uint header_type = BitConverter.ToUInt32(header, 0);

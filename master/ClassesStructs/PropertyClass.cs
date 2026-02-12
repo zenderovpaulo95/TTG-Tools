@@ -12,8 +12,14 @@ namespace TTG_Tools.ClassesStructs
         {
             struct InEngineValueTypes
             {
-                public string? Name;
-                public byte[]? Crc64Code;
+                public string Name;
+                public byte[] Crc64Code;
+
+                public InEngineValueTypes()
+                {
+                    Name = string.Empty;
+                    Crc64Code = Array.Empty<byte>();
+                }
             }
 
             public struct Props

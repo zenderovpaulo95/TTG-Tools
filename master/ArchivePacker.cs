@@ -287,7 +287,7 @@ namespace TTG_Tools
                 for (int i = 0; i < blocksCount; i++)
                 {
                     byte[] temp = new byte[0x10000];
-                    tempFr.Read(temp, 0, temp.Length);
+                    tempFr.ReadExactly(temp, 0, temp.Length);
                     byte[] compressedBlock = DeflateCompressor(temp);
 
                     if (encryption)
