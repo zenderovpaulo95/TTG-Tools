@@ -20,7 +20,7 @@ dotnet restore "TTG Tools.sln"
 dotnet build "TTG Tools.sln" -c Release
 ```
 
-No external `zlib.net.dll` download is required anymore, because compression now uses the .NET runtime zlib implementation.
+No external `zlib.net.dll` manual download is required anymore, because zlib support is restored via NuGet (`Joveler.ZLibWrapper`).
 
 ## Special Thanks
 

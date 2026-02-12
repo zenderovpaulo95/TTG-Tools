@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.IO.Compression;
 
 namespace TTG_Tools
 {
@@ -69,7 +68,7 @@ namespace TTG_Tools
 
             using (MemoryStream outMemoryStream = new MemoryStream())
             {
-                using (ZLibStream outZStream = new ZLibStream(outMemoryStream, CompressionLevel.SmallestSize, true))
+                using (Joveler.ZLibWrapper.ZLibStream outZStream = new Joveler.ZLibWrapper.ZLibStream(outMemoryStream, Joveler.ZLibWrapper.ZLibMode.Compress, Joveler.ZLibWrapper.ZLibCompLevel.Level9))
                 {
                     using (Stream inMemoryStream = new MemoryStream(bytes))
                     {

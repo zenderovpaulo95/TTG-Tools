@@ -6,7 +6,6 @@ using System.IO;
 using System.Windows.Forms;
 using TTG_Tools.ClassesStructs;
 using System.Threading.Tasks;
-using System.IO.Compression;
 
 namespace TTG_Tools
 {
@@ -345,7 +344,7 @@ namespace TTG_Tools
 
             using (Stream inMemoryStream = new MemoryStream(bytes))
             {
-                using (ZLibStream inZStream = new ZLibStream(inMemoryStream, CompressionMode.Decompress, true))
+                using (Joveler.ZLibWrapper.ZLibStream inZStream = new Joveler.ZLibWrapper.ZLibStream(inMemoryStream, Joveler.ZLibWrapper.ZLibMode.Decompress))
                 {
                     using (MemoryStream outMemoryStream = new MemoryStream())
                     {
