@@ -8,13 +8,12 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using System.IO.Compression;
 
 namespace TTG_Tools
 {
     public partial class ArchivePacker : Form
     {
-        CommonOpenFileDialog fbd = new CommonOpenFileDialog(); //Для выбора папки
         SaveFileDialog sfd = new SaveFileDialog(); //Для сохранения архива
 
         public static FileInfo[] fi; //Получение списка файлов
@@ -23,8 +22,6 @@ namespace TTG_Tools
         public ArchivePacker()
         {
             InitializeComponent();
-            fbd.IsFolderPicker = true;
-            fbd.EnsurePathExists = true;
         }
 
         public void AddNewReport(string report)
@@ -71,7 +68,7 @@ namespace TTG_Tools
 
             using (MemoryStream outMemoryStream = new MemoryStream())
             {
-                using (Joveler.ZLibWrapper.ZLibStream outZStream = new Joveler.ZLibWrapper.ZLibStream(outMemoryStream, Joveler.ZLibWrapper.ZLibMode.Compress, Joveler.ZLibWrapper.ZLibCompLevel.Level9))
+                using (ZLibStream outZStream = new ZLibStream(outMemoryStream, CompressionLevel.SmallestSize, leaveOpen: true))
                 {
                     using (Stream inMemoryStream = new MemoryStream(bytes))
                     {
@@ -997,9 +994,10 @@ namespace TTG_Tools
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (fbd.ShowDialog() == CommonFileDialogResult.Ok)
+            string selectedPath = Methods.SelectFolder(textBox1.Text, this);
+            if (!string.IsNullOrEmpty(selectedPath))
             {
-                textBox1.Text = fbd.FileName;
+                textBox1.Text = selectedPath;
 
                 MainMenu.settings.inputDirPath = textBox1.Text;
                 Settings.SaveConfig(MainMenu.settings);

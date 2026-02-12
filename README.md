@@ -10,7 +10,12 @@ This version of TTG Tools includes some modifications and has been uploaded with
 
 ## Compilation
 
-For correct compilation, you need to download `zlib.net.dll` from [here](http://www.componentace.com/download/download.php?editionid=25) and place it in the `zlib` folder.
+This project now targets **.NET 8** (`net8.0-windows`) with **Windows Forms**.
+
+1. Install the .NET 8 SDK and Visual Studio 2022 (or newer) with desktop development tools.
+2. Open `master/TTG Tools.sln` and build in `Debug` or `Release` mode.
+
+> Legacy dependencies on `Joveler.ZLibWrapper` and `WindowsAPICodePack` were removed in favor of built-in .NET APIs (`System.IO.Compression.ZLibStream` and `FolderBrowserDialog`), so no manual `zlib.net.dll` setup is required.
 
 ## Special Thanks
 

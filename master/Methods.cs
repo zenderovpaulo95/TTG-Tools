@@ -36,6 +36,30 @@ namespace TTG_Tools
             outStream.Flush();
         }
 
+
+        public static string SelectFolder(string initialPath, IWin32Window owner = null, string description = "")
+        {
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+            {
+                if (!string.IsNullOrEmpty(description))
+                {
+                    folderDialog.Description = description;
+                }
+
+                if (!string.IsNullOrEmpty(initialPath) && Directory.Exists(initialPath))
+                {
+                    folderDialog.SelectedPath = initialPath;
+                }
+                else
+                {
+                    folderDialog.SelectedPath = Application.StartupPath;
+                }
+
+                DialogResult result = owner != null ? folderDialog.ShowDialog(owner) : folderDialog.ShowDialog();
+                return result == DialogResult.OK ? folderDialog.SelectedPath : null;
+            }
+        }
+
         public static string GetExtension(string fileName)
         {
             string ext = "";
