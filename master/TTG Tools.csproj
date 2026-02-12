@@ -3,6 +3,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <SupportedOSPlatformVersion>6.1</SupportedOSPlatformVersion>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
     <RootNamespace>TTG_Tools</RootNamespace>
     <AssemblyName>TTG Tools</AssemblyName>
     <ApplicationIcon>ttgtool.ico</ApplicationIcon>
