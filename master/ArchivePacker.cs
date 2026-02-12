@@ -129,7 +129,9 @@ namespace TTG_Tools
         void ttarch2BuilderLegacy1132(string inputFolder, string outputPath, bool compression, bool encryption, bool encLua, byte[] key, int versionArchive, bool newEngine)
         {
             DirectoryInfo di = new DirectoryInfo(inputFolder);
-            fi = di.GetFiles("*", SearchOption.AllDirectories);
+            fi = di.GetFiles("*", SearchOption.AllDirectories)
+                .OrderBy(f => f.FullName, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
             ulong[] nameCrc = new ulong[fi.Length];
             string[] name = new string[fi.Length];
             ulong offset = 0;
@@ -148,26 +150,16 @@ namespace TTG_Tools
                 nameCrc[i] = CRCs.CRC64(0, name[i].ToLower());
             }
 
-            for (int k = 0; k < fi.Length - 1; k++)
-            {
-                for (int l = k + 1; l < fi.Length; l++)
-                {
-                    if (nameCrc[l] < nameCrc[k])
-                    {
-                        FileInfo temp = fi[k];
-                        fi[k] = fi[l];
-                        fi[l] = temp;
+            var legacySortedEntries = fi
+                .Select((file, index) => new { File = file, Name = name[index], Crc = nameCrc[index] })
+                .OrderBy(entry => entry.Crc)
+                .ThenBy(entry => entry.Name, StringComparer.Ordinal)
+                .ThenBy(entry => entry.File.FullName, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
 
-                        string tempStr = name[k];
-                        name[k] = name[l];
-                        name[l] = tempStr;
-
-                        ulong tempCrc = nameCrc[k];
-                        nameCrc[k] = nameCrc[l];
-                        nameCrc[l] = tempCrc;
-                    }
-                }
-            }
+            fi = legacySortedEntries.Select(entry => entry.File).ToArray();
+            name = legacySortedEntries.Select(entry => entry.Name).ToArray();
+            nameCrc = legacySortedEntries.Select(entry => entry.Crc).ToArray();
 
             uint infoSize = (uint)fi.Length * (8 + 8 + 4 + 4 + 2 + 2);
             uint dataSize = 0;
@@ -287,7 +279,11 @@ namespace TTG_Tools
                 for (int i = 0; i < blocksCount; i++)
                 {
                     byte[] temp = new byte[0x10000];
-                    tempFr.ReadExactly(temp, 0, temp.Length);
+                    int read = tempFr.Read(temp, 0, temp.Length);
+                    if (read < temp.Length)
+                    {
+                        Array.Clear(temp, read, temp.Length - read);
+                    }
                     byte[] compressedBlock = DeflateCompressor(temp);
 
                     if (encryption)
@@ -313,11 +309,16 @@ namespace TTG_Tools
         void ttarch2Builder(string inputFolder, string outputPath, bool compression, bool encryption, bool encLua, byte[] key, int versionArchive, bool newEngine, int compressAlgorithm)
         {
             DirectoryInfo di = new DirectoryInfo(inputFolder);
-            fi = di.GetFiles("*", SearchOption.AllDirectories);
+            fi = di.GetFiles("*", SearchOption.AllDirectories)
+                .OrderBy(f => f.FullName, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
 
-            if (fi.GroupBy(f => f.Name).Where(group => group.Count() > 1).Select(group => group.Key).Count() > 0)
+            if (fi.GroupBy(f => f.Name, StringComparer.OrdinalIgnoreCase).Any(group => group.Count() > 1))
             {
-                fi = fi.Distinct(new FileNameComparer()).ToArray();
+                fi = fi
+                    .GroupBy(f => f.Name, StringComparer.OrdinalIgnoreCase)
+                    .Select(group => group.OrderBy(f => f.FullName, StringComparer.OrdinalIgnoreCase).First())
+                    .ToArray();
                 AddNewReport("Found duplicated files in directories. Successfully removed duplicated files.");
             }
 
@@ -338,26 +339,16 @@ namespace TTG_Tools
                 dataSize += (ulong)fi[i].Length;
             }
 
-            for (int k = 0; k < fi.Length - 1; k++) //Sort file names by less crc64
-            {
-                for (int l = k + 1; l < fi.Length; l++)
-                {
-                    if (nameCRC[l] < nameCRC[k])
-                    {
-                        FileInfo temp = fi[k];
-                        fi[k] = fi[l];
-                        fi[l] = temp;
+            var sortedEntries = fi
+                .Select((file, index) => new { File = file, Name = name[index], Crc = nameCRC[index] })
+                .OrderBy(entry => entry.Crc)
+                .ThenBy(entry => entry.Name, StringComparer.Ordinal)
+                .ThenBy(entry => entry.File.FullName, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
 
-                        string temp_str = name[k];
-                        name[k] = name[l];
-                        name[l] = temp_str;
-
-                        ulong temp_crc = nameCRC[k];
-                        nameCRC[k] = nameCRC[l];
-                        nameCRC[l] = temp_crc;
-                    }
-                }
-            }
+            fi = sortedEntries.Select(entry => entry.File).ToArray();
+            name = sortedEntries.Select(entry => entry.Name).ToArray();
+            nameCRC = sortedEntries.Select(entry => entry.Crc).ToArray();
 
             if (Methods.GetExtension(outputPath).ToLower() == ".obb" && compression)
             {
@@ -629,13 +620,18 @@ namespace TTG_Tools
             DirectoryInfo di = new DirectoryInfo(inputFolder);
             DirectoryInfo[] di1 = di.GetDirectories("*", SearchOption.AllDirectories); //Just for fun if files were in different directories for Telltale Tool engine this optional
 
-            FileInfo[] fi = di.GetFiles("*", SearchOption.AllDirectories);
+            FileInfo[] fi = di.GetFiles("*", SearchOption.AllDirectories)
+                .OrderBy(f => f.FullName, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
             int chunkSize = versionArchive == 7 ? 0x20000 : 0x10000;
             int headerChunkSize = versionArchive == 7 ? 128 : 64;
 
-            if(fi.GroupBy(f => f.Name).Where(group => group.Count() > 1).Select(group => group.Key).Count() > 0)
+            if(fi.GroupBy(f => f.Name, StringComparer.OrdinalIgnoreCase).Any(group => group.Count() > 1))
             {
-                fi = fi.Distinct(new FileNameComparer()).ToArray();
+                fi = fi
+                    .GroupBy(f => f.Name, StringComparer.OrdinalIgnoreCase)
+                    .Select(group => group.OrderBy(f => f.FullName, StringComparer.OrdinalIgnoreCase).First())
+                    .ToArray();
                 AddNewReport("Found duplicated files in directories. Successfully removed duplicated files.");
             }
 
