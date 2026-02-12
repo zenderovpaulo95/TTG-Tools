@@ -10,7 +10,14 @@ This version of TTG Tools includes some modifications and has been uploaded with
 
 ## Compilation
 
-For correct compilation, you need to download `zlib.net.dll` from [here](http://www.componentace.com/download/download.php?editionid=25) and place it in the `zlib` folder.
+This project now targets **.NET 8 (Windows)** and keeps **Joveler.ZLibWrapper** via NuGet.
+
+```bash
+dotnet restore master/"TTG Tools.csproj"
+dotnet build master/"TTG Tools.csproj" -c Release
+```
+
+> Requirement: .NET 8 SDK and Windows (WinForms desktop target).
 
 ## Special Thanks
 
