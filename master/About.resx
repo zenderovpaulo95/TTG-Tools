@@ -146,6 +146,12 @@ Maybe some games doesn't work.
 ===
 [Version history]
 
+v.1.15.4 (13.02.2026)
++ Archive Packer
+Lua encryption has been fixed when a .lenc file is present during the building of a ttarch.
++ TTG Tools:
+An updater has been added inside the tool.
+
 v.1.15.4 (11.02.2026)
 + Auto(De)Packer:
 Added PS Vita swizzle support
