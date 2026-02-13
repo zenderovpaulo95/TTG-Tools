@@ -95,20 +95,17 @@ namespace TTG_Tools
 
         private static byte[] DeflateCompressor(byte[] bytes) //Для старых (версии 8 и 9) и новых архивов
         {
-            byte[] retVal;
             using (MemoryStream compressedMemoryStream = new MemoryStream())
             {
-                using (System.IO.Compression.DeflateStream compressStream = new System.IO.Compression.DeflateStream(compressedMemoryStream, System.IO.Compression.CompressionMode.Compress))
+                // .NET Framework 4.x DeflateStream generated zlib-wrapped output.
+                // On .NET 8 we explicitly use ZLibStream to keep archive compatibility.
+                using (System.IO.Compression.ZLibStream compressStream = new System.IO.Compression.ZLibStream(compressedMemoryStream, System.IO.Compression.CompressionLevel.Optimal, true))
                 {
-                    using(MemoryStream inMemStream = new MemoryStream(bytes))
-                    {
-                        inMemStream.CopyTo(compressStream);
-                        compressStream.Close();
-                        retVal = compressedMemoryStream.ToArray();
-                    }
+                    compressStream.Write(bytes, 0, bytes.Length);
                 }
+
+                return compressedMemoryStream.ToArray();
             }
-            return retVal;
         }
 
         

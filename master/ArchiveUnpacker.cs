@@ -320,19 +320,29 @@ namespace TTG_Tools
 
         private static byte[] DeflateDecompressor(byte[] bytes) //Для старых (версии 8 и 9) и новых архивов
         {
-            byte[] retVal;
-            using (MemoryStream decompressedMemoryStream = new MemoryStream(bytes))
+            // Compatibility strategy:
+            // 1) Try raw Deflate first.
+            // 2) If it fails, fallback to zlib-wrapped data used by legacy archives.
+            try
             {
+                using (MemoryStream decompressedMemoryStream = new MemoryStream(bytes))
                 using (System.IO.Compression.DeflateStream decompressStream = new System.IO.Compression.DeflateStream(decompressedMemoryStream, System.IO.Compression.CompressionMode.Decompress))
+                using (MemoryStream memOutStream = new MemoryStream())
                 {
-                    using (MemoryStream memOutStream = new MemoryStream())
-                    {
-                        decompressStream.CopyTo(memOutStream);
-                        retVal = memOutStream.ToArray();
-                    }
+                    decompressStream.CopyTo(memOutStream);
+                    return memOutStream.ToArray();
                 }
             }
-            return retVal;
+            catch (System.IO.InvalidDataException)
+            {
+                using (MemoryStream decompressedMemoryStream = new MemoryStream(bytes))
+                using (System.IO.Compression.ZLibStream decompressStream = new System.IO.Compression.ZLibStream(decompressedMemoryStream, System.IO.Compression.CompressionMode.Decompress))
+                using (MemoryStream memOutStream = new MemoryStream())
+                {
+                    decompressStream.CopyTo(memOutStream);
+                    return memOutStream.ToArray();
+                }
+            }
         }
 
         private static byte[] ZLibDecompressor(byte[] bytes)
