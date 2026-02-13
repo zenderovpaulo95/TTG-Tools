@@ -281,6 +281,8 @@ namespace TTG_Tools
             reader.Close();
 
             SetProcessWorkingSetSize(System.Diagnostics.Process.GetCurrentProcess().Handle, -1, -1);
+
+            Updater.CheckForUpdatesAsync(this);
         }
 
         private void MainMenu_Resize(object sender, EventArgs e)

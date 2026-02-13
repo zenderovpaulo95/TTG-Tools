@@ -82,6 +82,7 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
@@ -179,6 +180,7 @@
     <Compile Include="Texts\LangdbWorker.cs" />
     <Compile Include="Texts\ReadText.cs" />
     <Compile Include="Texts\SaveText.cs" />
+    <Compile Include="Updater.cs" />
     <Compile Include="Wrapper\OodleTools.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
