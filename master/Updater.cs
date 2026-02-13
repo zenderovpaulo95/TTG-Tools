@@ -13,14 +13,16 @@ namespace TTG_Tools
 {
     internal static class Updater
     {
-        private const string LatestReleaseApi = "https://api.github.com/repos/zenderovpaulo95/TTG-Tools/releases/latest";
+        private const string GithubOwner = "HeitorSpectre";
+        private const string GithubRepo = "TTG-Tools";
+        private const string LatestReleaseApi = "https://api.github.com/repos/" + GithubOwner + "/" + GithubRepo + "/releases/latest";
+        private const string ReleasesPageUrl = "https://github.com/" + GithubOwner + "/" + GithubRepo + "/releases";
 
         private class ReleaseInfo
         {
             public string Version;
-            public string Name;
-            public string Body;
             public string DownloadUrl;
+            public string HtmlUrl;
         }
 
         public static void CheckForUpdatesAsync(Form owner)
@@ -43,7 +45,7 @@ namespace TTG_Tools
                 }
                 catch
                 {
-                    // Silent fail: update checks should never break the main app flow.
+                    // Update checks should not break the app startup.
                 }
             });
         }
@@ -51,7 +53,7 @@ namespace TTG_Tools
         private static void PromptAndUpdate(Form owner, ReleaseInfo release, Version currentVersion, Version latestVersion)
         {
             string message = string.Format(
-                "A new TTG Tools version is available.\n\nCurrent version: {0}\nLatest version: {1}\n\nDo you want to download and install it now?",
+                "A new TTG Tools version is available.\n\nCurrent version: {0}\nLatest version: {1}\n\nDo you want to update now?",
                 currentVersion,
                 latestVersion);
 
@@ -65,7 +67,17 @@ namespace TTG_Tools
             }
             catch (Exception ex)
             {
-                MessageBox.Show(owner, "Update failed:\n" + ex.Message, "Updater", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DialogResult openBrowser = MessageBox.Show(
+                    owner,
+                    "Automatic update failed:\n" + ex.Message + "\n\nOpen releases page in browser?",
+                    "Updater",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (openBrowser == DialogResult.Yes)
+                {
+                    Process.Start(release.HtmlUrl ?? ReleasesPageUrl);
+                }
             }
         }
 
@@ -73,7 +85,7 @@ namespace TTG_Tools
         {
             if (string.IsNullOrEmpty(release.DownloadUrl))
             {
-                throw new InvalidOperationException("No downloadable asset was found in the latest GitHub release.");
+                throw new InvalidOperationException("No supported downloadable asset (.zip/.exe) found in the latest GitHub release.");
             }
 
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
@@ -90,7 +102,7 @@ namespace TTG_Tools
             if (extension == ".exe")
             {
                 Process.Start(downloadFile);
-                MessageBox.Show(owner, "The updater executable has been launched.\nTTG Tools will close now.", "Updater", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(owner, "The updater executable was launched. TTG Tools will close now.", "Updater", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Application.Exit();
                 return;
             }
@@ -112,14 +124,10 @@ namespace TTG_Tools
             if (!File.Exists(extractedExePath))
             {
                 string[] exes = Directory.GetFiles(extractDir, "*.exe", SearchOption.AllDirectories);
-                if (exes.Length > 0)
-                {
-                    extractedExePath = exes[0];
-                }
-                else
-                {
+                if (exes.Length == 0)
                     throw new InvalidOperationException("Downloaded package does not contain an executable file.");
-                }
+
+                extractedExePath = exes[0];
             }
 
             int currentPid = Process.GetCurrentProcess().Id;
@@ -150,7 +158,7 @@ namespace TTG_Tools
                 UseShellExecute = false
             });
 
-            MessageBox.Show(owner, "Update downloaded. TTG Tools will close to finish updating and then restart automatically.", "Updater", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(owner, "Update downloaded. TTG Tools will close and restart automatically.", "Updater", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Exit();
         }
 
@@ -171,9 +179,8 @@ namespace TTG_Tools
             ReleaseInfo release = new ReleaseInfo
             {
                 Version = ReadJsonString(json, "tag_name"),
-                Name = ReadJsonString(json, "name"),
-                Body = ReadJsonString(json, "body"),
-                DownloadUrl = SelectDownloadUrl(json)
+                DownloadUrl = SelectDownloadUrl(json),
+                HtmlUrl = ReadJsonString(json, "html_url")
             };
 
             if (string.IsNullOrEmpty(release.Version))
@@ -202,7 +209,7 @@ namespace TTG_Tools
             if (!string.IsNullOrEmpty(exe))
                 return exe;
 
-            return urls[0];
+            return null;
         }
 
         private static string ReadJsonString(string json, string key)
@@ -227,8 +234,7 @@ namespace TTG_Tools
                 return false;
 
             string normalized = rawVersion.Trim();
-            if (normalized.StartsWith("v", StringComparison.OrdinalIgnoreCase))
-                normalized = normalized.Substring(1);
+            normalized = Regex.Replace(normalized, "^[^0-9]+", string.Empty);
 
             int suffixStart = normalized.IndexOf('-');
             if (suffixStart >= 0)
