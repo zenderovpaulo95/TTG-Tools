@@ -10,7 +10,19 @@ This version of TTG Tools includes some modifications and has been uploaded with
 
 ## Compilation
 
-For correct compilation, you need to download `zlib.net.dll` from [here](http://www.componentace.com/download/download.php?editionid=25) and place it in the `zlib` folder.
+This project is now fully migrated to **.NET 8** (`net8.0-windows`, WinForms).
+
+### Requirements
+- .NET 8 SDK
+- Windows (for running the WinForms app)
+
+### Build
+```bash
+dotnet restore master/"TTG Tools.csproj"
+dotnet build master/"TTG Tools.csproj" -c Release
+```
+
+`Joveler.ZLibWrapper` is restored automatically via NuGet, so no manual `zlib.net.dll` setup is required.
 
 ## Special Thanks
 

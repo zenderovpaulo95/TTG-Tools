@@ -6,8 +6,6 @@ using System.IO;
 using System.Windows.Forms;
 using TTG_Tools.ClassesStructs;
 using System.Threading.Tasks;
-using System.Runtime.Remoting.Messaging;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace TTG_Tools
 {
@@ -26,10 +24,7 @@ namespace TTG_Tools
 
         private string SelectFolder()
         {
-            CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
-            folderDialog.IsFolderPicker = true;
-            folderDialog.EnsurePathExists = true;
-            return folderDialog.ShowDialog() == CommonFileDialogResult.Ok ? folderDialog.FileName : null;
+            return FolderDialogHelper.SelectFolder();
         }
 
         private async Task OpenArchiveFile(string filePath)

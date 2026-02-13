@@ -8,13 +8,11 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace TTG_Tools
 {
     public partial class ArchivePacker : Form
     {
-        CommonOpenFileDialog fbd = new CommonOpenFileDialog(); //Для выбора папки
         SaveFileDialog sfd = new SaveFileDialog(); //Для сохранения архива
 
         public static FileInfo[] fi; //Получение списка файлов
@@ -23,8 +21,6 @@ namespace TTG_Tools
         public ArchivePacker()
         {
             InitializeComponent();
-            fbd.IsFolderPicker = true;
-            fbd.EnsurePathExists = true;
         }
 
         public void AddNewReport(string report)
@@ -997,9 +993,10 @@ namespace TTG_Tools
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (fbd.ShowDialog() == CommonFileDialogResult.Ok)
+            string selectedPath = FolderDialogHelper.SelectFolder(textBox1.Text);
+            if (!string.IsNullOrEmpty(selectedPath))
             {
-                textBox1.Text = fbd.FileName;
+                textBox1.Text = selectedPath;
 
                 MainMenu.settings.inputDirPath = textBox1.Text;
                 Settings.SaveConfig(MainMenu.settings);
