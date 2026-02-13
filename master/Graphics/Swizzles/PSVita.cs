@@ -39,11 +39,13 @@ namespace TTG_Tools.Graphics.Swizzles
                 return deswizzledData;
             }
 
-            int calculatedBufferSize = (formatBitsPerPixel * width * height) / 8;
-            byte[] swizzledData = new byte[Math.Max(calculatedBufferSize, bytesPerPixelSet)];
-
             int paddedWidth = NextPowerOfTwo(width);
             int paddedHeight = NextPowerOfTwo(height);
+
+            int calculatedBufferSize = (formatBitsPerPixel * width * height) / 8;
+            int paddedBufferSize = (formatBitsPerPixel * paddedWidth * paddedHeight) / 8;
+            byte[] swizzledData = new byte[Math.Max(Math.Max(calculatedBufferSize, paddedBufferSize), bytesPerPixelSet)];
+
             int maxU = IntegerLog2(paddedWidth);
             int maxV = IntegerLog2(paddedHeight);
             int maxSwizzledTexels = Math.Min((swizzledData.Length / bytesPerPixelSet), paddedWidth * paddedHeight);
