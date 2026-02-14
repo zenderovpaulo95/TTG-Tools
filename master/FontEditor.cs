@@ -233,6 +233,7 @@ namespace TTG_Tools
             {
                 NewTex.Tex.Textures[i].CurrentMip = i;
                 Methods.getSizeAndKratnost(w, h, (int)NewTex.TextureFormat, ref NewTex.Tex.Textures[i].MipSize, ref NewTex.Tex.Textures[i].BlockSize);
+                int sourceMipSize = NewTex.Tex.Textures[i].MipSize;
 
                 NewTex.Tex.Textures[i].Block = new byte[NewTex.Tex.Textures[i].MipSize];
 
@@ -329,12 +330,19 @@ namespace TTG_Tools
                         if (safeBppSet > 0)
                         {
                             NewTex.Tex.Textures[i].Block = PSVita.Swizzle(NewTex.Tex.Textures[i].Block, swizzleWidth, swizzleHeight, safeBppSet, bytesPerPixelSet * 8);
+
+                            // PS Vita NPOT textures can expand after swizzle padding (power-of-two backing).
+                            // Keep mip/header sizes in sync to avoid truncating the bottom part of glyph atlas.
+                            if (NewTex.Tex.Textures[i].Block != null)
+                            {
+                                NewTex.Tex.Textures[i].MipSize = NewTex.Tex.Textures[i].Block.Length;
+                            }
                         }
                         break;
                 }
 
 
-                pos += NewTex.Tex.Textures[i].MipSize;
+                pos += sourceMipSize;
                 NewTex.Tex.TexSize += (uint)NewTex.Tex.Textures[i].MipSize;
 
                 if (NewTex.SomeValue >= 5) NewTex.Tex.Textures[i].SubTexNum = 0;
