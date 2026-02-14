@@ -564,7 +564,7 @@ namespace TTG_Tools
             int right = Math.Max(left + 1, Math.Min(bitmap.Width, (int)Math.Round(xEnd)));
             int bottom = Math.Max(top + 1, Math.Min(bitmap.Height, (int)Math.Round(yEnd)));
 
-            using (Graphics g = Graphics.FromImage(bitmap))
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap))
             using (Pen pen = new Pen(Color.Red, 2f))
             {
                 g.DrawRectangle(pen, left, top, Math.Max(1, right - left), Math.Max(1, bottom - top));
@@ -593,7 +593,7 @@ namespace TTG_Tools
         private Bitmap CreateFallbackPreview(int width, int height)
         {
             Bitmap bmp = new Bitmap(Math.Max(1, width), Math.Max(1, height));
-            using (Graphics g = Graphics.FromImage(bmp))
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
             {
                 g.Clear(Color.DimGray);
             }
