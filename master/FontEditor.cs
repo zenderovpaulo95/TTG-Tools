@@ -1815,11 +1815,15 @@ namespace TTG_Tools
                     var yEn = font.glyph.charsNew[i].YEnd / font.NewTex[font.glyph.charsNew[i].TexNum].Height;
                     bw.Write(yEn);
 
+                    float xOffset = rbNoKerning.Checked ? 0 : font.glyph.charsNew[i].XOffset;
+                    float yOffset = rbNoKerning.Checked ? 0 : font.glyph.charsNew[i].YOffset;
+                    float xAdvance = rbNoKerning.Checked ? font.glyph.charsNew[i].CharWidth : font.glyph.charsNew[i].XAdvance;
+
                     bw.Write(font.glyph.charsNew[i].CharWidth);
                     bw.Write(font.glyph.charsNew[i].CharHeight);
-                    bw.Write(font.glyph.charsNew[i].XOffset);
-                    bw.Write(font.glyph.charsNew[i].YOffset);
-                    bw.Write(font.glyph.charsNew[i].XAdvance);
+                    bw.Write(xOffset);
+                    bw.Write(yOffset);
+                    bw.Write(xAdvance);
 
                     font.headerSize += (4 * 12);
                 }
@@ -2361,9 +2365,13 @@ namespace TTG_Tools
                     for (int i = 0; i < font.glyph.CharCount; i++)
                     {
                         info = "char id=" + font.glyph.charsNew[i].charId + " x=" + font.glyph.charsNew[i].XStart + " y=" + font.glyph.charsNew[i].YStart;
+                        float xOffset = rbNoKerning.Checked ? 0 : font.glyph.charsNew[i].XOffset;
+                        float yOffset = rbNoKerning.Checked ? 0 : font.glyph.charsNew[i].YOffset;
+                        float xAdvance = rbNoKerning.Checked ? font.glyph.charsNew[i].CharWidth : font.glyph.charsNew[i].XAdvance;
+
                         info += " width=" + font.glyph.charsNew[i].CharWidth + " height=" + font.glyph.charsNew[i].CharHeight;
-                        info += " xoffset=" + font.glyph.charsNew[i].XOffset + " yoffset=" + font.glyph.charsNew[i].YOffset + " xadvance=";
-                        info += font.glyph.charsNew[i].XAdvance + " page=" + font.glyph.charsNew[i].TexNum + " chnl=" + font.glyph.charsNew[i].Channel + "\r\n";
+                        info += " xoffset=" + xOffset + " yoffset=" + yOffset + " xadvance=";
+                        info += xAdvance + " page=" + font.glyph.charsNew[i].TexNum + " chnl=" + font.glyph.charsNew[i].Channel + "\r\n";
 
                         sw.Write(info);
                     }
@@ -2584,6 +2592,13 @@ namespace TTG_Tools
                                         font.glyph.charsNew[ch].Channel = Convert.ToInt32(splitted[k + 1]);
                                         break;
                                 }
+                            }
+
+                            if (rbNoKerning.Checked)
+                            {
+                                font.glyph.charsNew[ch].XOffset = 0;
+                                font.glyph.charsNew[ch].YOffset = 0;
+                                font.glyph.charsNew[ch].XAdvance = font.glyph.charsNew[ch].CharWidth;
                             }
                         }
                     }
