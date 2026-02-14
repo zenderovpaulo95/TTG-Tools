@@ -608,21 +608,15 @@ namespace TTG_Tools
                 return null;
             }
 
-            if (texContent.Length >= 4 && Encoding.ASCII.GetString(texContent, 0, 4) == "DDS ")
+            byte[] ddsPixels;
+            int ddsWidth;
+            int ddsHeight;
+            if (TryDecodeDdsToBgra(texContent, out ddsPixels, out ddsWidth, out ddsHeight))
             {
-                try
-                {
-                    using (MemoryStream stream = new MemoryStream(texContent))
-                    {
-                        return new Bitmap(stream);
-                    }
-                }
-                catch
-                {
-                }
+                return BuildBitmapFromRgbaBuffer(ddsPixels, ddsWidth, ddsHeight);
             }
 
-            int dataOffset = texContent.Length > 128 ? 128 : 0;
+            int dataOffset = 0;
             byte[] pixels = new byte[width * height * 4];
 
             if (texFormat == (uint)TextureClass.OldTextureFormat.DX_ARGB8888 || texFormat == (uint)TextureClass.NewTextureFormat.ARGB8)
@@ -667,6 +661,374 @@ namespace TTG_Tools
             }
 
             return null;
+        }
+
+        private bool TryDecodeDdsToBgra(byte[] content, out byte[] pixels, out int width, out int height)
+        {
+            pixels = null;
+            width = 0;
+            height = 0;
+
+            if (content.Length < 128 || Encoding.ASCII.GetString(content, 0, 4) != "DDS ")
+            {
+                return false;
+            }
+
+            width = BitConverter.ToInt32(content, 16);
+            height = BitConverter.ToInt32(content, 12);
+            if (width <= 0 || height <= 0)
+            {
+                return false;
+            }
+
+            int fourCc = BitConverter.ToInt32(content, 84);
+            int rgbBitCount = BitConverter.ToInt32(content, 88);
+            int rMask = BitConverter.ToInt32(content, 92);
+            int gMask = BitConverter.ToInt32(content, 96);
+            int bMask = BitConverter.ToInt32(content, 100);
+            int aMask = BitConverter.ToInt32(content, 104);
+
+            int dataOffset = 128;
+
+            if (fourCc == 0x31545844) // DXT1
+            {
+                return DecodeDxt1(content, dataOffset, width, height, out pixels);
+            }
+
+            if (fourCc == 0x33545844) // DXT3
+            {
+                return DecodeDxt3(content, dataOffset, width, height, out pixels);
+            }
+
+            if (fourCc == 0x35545844) // DXT5
+            {
+                return DecodeDxt5(content, dataOffset, width, height, out pixels);
+            }
+
+            if (fourCc == 0 && rgbBitCount == 32)
+            {
+                return DecodeBgra32(content, dataOffset, width, height, rMask, gMask, bMask, aMask, out pixels);
+            }
+
+            if (fourCc == 0 && rgbBitCount == 8)
+            {
+                int required = width * height;
+                if (content.Length - dataOffset < required)
+                {
+                    return false;
+                }
+
+                pixels = new byte[width * height * 4];
+                for (int i = 0; i < required; i++)
+                {
+                    byte v = content[dataOffset + i];
+                    int d = i * 4;
+                    pixels[d] = v;
+                    pixels[d + 1] = v;
+                    pixels[d + 2] = v;
+                    pixels[d + 3] = 255;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool DecodeBgra32(byte[] content, int dataOffset, int width, int height, int rMask, int gMask, int bMask, int aMask, out byte[] pixels)
+        {
+            pixels = null;
+            int required = width * height * 4;
+            if (content.Length - dataOffset < required)
+            {
+                return false;
+            }
+
+            pixels = new byte[required];
+            bool standardBgra = rMask == unchecked((int)0x00ff0000) && gMask == 0x0000ff00 && bMask == 0x000000ff;
+            for (int i = 0; i < width * height; i++)
+            {
+                int s = dataOffset + i * 4;
+                int d = i * 4;
+
+                if (standardBgra)
+                {
+                    pixels[d] = content[s];
+                    pixels[d + 1] = content[s + 1];
+                    pixels[d + 2] = content[s + 2];
+                    pixels[d + 3] = aMask == 0 ? (byte)255 : content[s + 3];
+                }
+                else
+                {
+                    uint packed = BitConverter.ToUInt32(content, s);
+                    byte r = ExtractMaskedByte(packed, (uint)rMask);
+                    byte g = ExtractMaskedByte(packed, (uint)gMask);
+                    byte b = ExtractMaskedByte(packed, (uint)bMask);
+                    byte a = aMask == 0 ? (byte)255 : ExtractMaskedByte(packed, (uint)aMask);
+
+                    pixels[d] = b;
+                    pixels[d + 1] = g;
+                    pixels[d + 2] = r;
+                    pixels[d + 3] = a;
+                }
+            }
+
+            return true;
+        }
+
+        private byte ExtractMaskedByte(uint value, uint mask)
+        {
+            if (mask == 0)
+            {
+                return 0;
+            }
+
+            int shift = 0;
+            while (((mask >> shift) & 1u) == 0u && shift < 32)
+            {
+                shift++;
+            }
+
+            uint raw = (value & mask) >> shift;
+            uint max = mask >> shift;
+            if (max == 0)
+            {
+                return 0;
+            }
+
+            return (byte)((raw * 255u) / max);
+        }
+
+        private bool DecodeDxt1(byte[] content, int dataOffset, int width, int height, out byte[] pixels)
+        {
+            pixels = new byte[width * height * 4];
+            int blockCountX = (width + 3) / 4;
+            int blockCountY = (height + 3) / 4;
+            int offset = dataOffset;
+
+            for (int by = 0; by < blockCountY; by++)
+            {
+                for (int bx = 0; bx < blockCountX; bx++)
+                {
+                    if (offset + 8 > content.Length)
+                    {
+                        return false;
+                    }
+
+                    ushort c0 = BitConverter.ToUInt16(content, offset);
+                    ushort c1 = BitConverter.ToUInt16(content, offset + 2);
+                    uint indices = BitConverter.ToUInt32(content, offset + 4);
+                    offset += 8;
+
+                    Color32[] palette = BuildDxt1Palette(c0, c1);
+                    WriteColorBlock(pixels, width, height, bx, by, indices, palette);
+                }
+            }
+
+            return true;
+        }
+
+        private bool DecodeDxt3(byte[] content, int dataOffset, int width, int height, out byte[] pixels)
+        {
+            pixels = new byte[width * height * 4];
+            int blockCountX = (width + 3) / 4;
+            int blockCountY = (height + 3) / 4;
+            int offset = dataOffset;
+
+            for (int by = 0; by < blockCountY; by++)
+            {
+                for (int bx = 0; bx < blockCountX; bx++)
+                {
+                    if (offset + 16 > content.Length)
+                    {
+                        return false;
+                    }
+
+                    ulong alphaBits = BitConverter.ToUInt64(content, offset);
+                    ushort c0 = BitConverter.ToUInt16(content, offset + 8);
+                    ushort c1 = BitConverter.ToUInt16(content, offset + 10);
+                    uint indices = BitConverter.ToUInt32(content, offset + 12);
+                    offset += 16;
+
+                    Color32[] palette = BuildDxt1PaletteOpaque(c0, c1);
+                    for (int py = 0; py < 4; py++)
+                    {
+                        for (int px = 0; px < 4; px++)
+                        {
+                            int pixelIndex = py * 4 + px;
+                            int alpha4 = (int)((alphaBits >> (pixelIndex * 4)) & 0xF);
+                            byte alpha = (byte)(alpha4 * 17);
+                            int code = (int)((indices >> (2 * pixelIndex)) & 0x3);
+                            SetPixelFromBlock(pixels, width, height, bx, by, px, py, palette[code], alpha);
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private bool DecodeDxt5(byte[] content, int dataOffset, int width, int height, out byte[] pixels)
+        {
+            pixels = new byte[width * height * 4];
+            int blockCountX = (width + 3) / 4;
+            int blockCountY = (height + 3) / 4;
+            int offset = dataOffset;
+
+            for (int by = 0; by < blockCountY; by++)
+            {
+                for (int bx = 0; bx < blockCountX; bx++)
+                {
+                    if (offset + 16 > content.Length)
+                    {
+                        return false;
+                    }
+
+                    byte a0 = content[offset];
+                    byte a1 = content[offset + 1];
+                    ulong alphaBits = 0;
+                    for (int i = 0; i < 6; i++)
+                    {
+                        alphaBits |= ((ulong)content[offset + 2 + i]) << (8 * i);
+                    }
+
+                    ushort c0 = BitConverter.ToUInt16(content, offset + 8);
+                    ushort c1 = BitConverter.ToUInt16(content, offset + 10);
+                    uint indices = BitConverter.ToUInt32(content, offset + 12);
+                    offset += 16;
+
+                    byte[] alphaPalette = BuildDxt5AlphaPalette(a0, a1);
+                    Color32[] colorPalette = BuildDxt1PaletteOpaque(c0, c1);
+
+                    for (int py = 0; py < 4; py++)
+                    {
+                        for (int px = 0; px < 4; px++)
+                        {
+                            int pixelIndex = py * 4 + px;
+                            int alphaCode = (int)((alphaBits >> (3 * pixelIndex)) & 0x7);
+                            byte alpha = alphaPalette[alphaCode];
+                            int colorCode = (int)((indices >> (2 * pixelIndex)) & 0x3);
+                            SetPixelFromBlock(pixels, width, height, bx, by, px, py, colorPalette[colorCode], alpha);
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private struct Color32
+        {
+            public byte B;
+            public byte G;
+            public byte R;
+            public byte A;
+        }
+
+        private Color32[] BuildDxt1Palette(ushort c0, ushort c1)
+        {
+            Color32[] palette = new Color32[4];
+            palette[0] = Rgb565ToColor(c0);
+            palette[1] = Rgb565ToColor(c1);
+
+            if (c0 > c1)
+            {
+                palette[2] = LerpColor(palette[0], palette[1], 2, 1, 3);
+                palette[3] = LerpColor(palette[0], palette[1], 1, 2, 3);
+            }
+            else
+            {
+                palette[2] = LerpColor(palette[0], palette[1], 1, 1, 2);
+                palette[3] = new Color32 { B = 0, G = 0, R = 0, A = 0 };
+            }
+
+            return palette;
+        }
+
+        private Color32[] BuildDxt1PaletteOpaque(ushort c0, ushort c1)
+        {
+            Color32[] palette = new Color32[4];
+            palette[0] = Rgb565ToColor(c0);
+            palette[1] = Rgb565ToColor(c1);
+            palette[2] = LerpColor(palette[0], palette[1], 2, 1, 3);
+            palette[3] = LerpColor(palette[0], palette[1], 1, 2, 3);
+            return palette;
+        }
+
+        private byte[] BuildDxt5AlphaPalette(byte a0, byte a1)
+        {
+            byte[] p = new byte[8];
+            p[0] = a0;
+            p[1] = a1;
+
+            if (a0 > a1)
+            {
+                p[2] = (byte)((6 * a0 + 1 * a1) / 7);
+                p[3] = (byte)((5 * a0 + 2 * a1) / 7);
+                p[4] = (byte)((4 * a0 + 3 * a1) / 7);
+                p[5] = (byte)((3 * a0 + 4 * a1) / 7);
+                p[6] = (byte)((2 * a0 + 5 * a1) / 7);
+                p[7] = (byte)((1 * a0 + 6 * a1) / 7);
+            }
+            else
+            {
+                p[2] = (byte)((4 * a0 + 1 * a1) / 5);
+                p[3] = (byte)((3 * a0 + 2 * a1) / 5);
+                p[4] = (byte)((2 * a0 + 3 * a1) / 5);
+                p[5] = (byte)((1 * a0 + 4 * a1) / 5);
+                p[6] = 0;
+                p[7] = 255;
+            }
+
+            return p;
+        }
+
+        private Color32 Rgb565ToColor(ushort value)
+        {
+            byte r = (byte)((((value >> 11) & 0x1F) * 255 + 15) / 31);
+            byte g = (byte)((((value >> 5) & 0x3F) * 255 + 31) / 63);
+            byte b = (byte)(((value & 0x1F) * 255 + 15) / 31);
+            return new Color32 { B = b, G = g, R = r, A = 255 };
+        }
+
+        private Color32 LerpColor(Color32 a, Color32 b, int wa, int wb, int div)
+        {
+            return new Color32
+            {
+                B = (byte)((a.B * wa + b.B * wb) / div),
+                G = (byte)((a.G * wa + b.G * wb) / div),
+                R = (byte)((a.R * wa + b.R * wb) / div),
+                A = 255
+            };
+        }
+
+        private void WriteColorBlock(byte[] dst, int width, int height, int bx, int by, uint indices, Color32[] palette)
+        {
+            for (int py = 0; py < 4; py++)
+            {
+                for (int px = 0; px < 4; px++)
+                {
+                    int pixelIndex = py * 4 + px;
+                    int code = (int)((indices >> (2 * pixelIndex)) & 0x3);
+                    SetPixelFromBlock(dst, width, height, bx, by, px, py, palette[code], palette[code].A);
+                }
+            }
+        }
+
+        private void SetPixelFromBlock(byte[] dst, int width, int height, int bx, int by, int px, int py, Color32 color, byte alpha)
+        {
+            int x = bx * 4 + px;
+            int y = by * 4 + py;
+            if (x >= width || y >= height)
+            {
+                return;
+            }
+
+            int d = (y * width + x) * 4;
+            dst[d] = color.B;
+            dst[d + 1] = color.G;
+            dst[d + 2] = color.R;
+            dst[d + 3] = alpha;
         }
 
         private Bitmap BuildBitmapFromRgbaBuffer(byte[] rgbaPixels, int width, int height)
