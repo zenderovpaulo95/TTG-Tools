@@ -38,6 +38,7 @@ namespace TTG_Tools
         bool someTexData;
         bool AddInfo;
         string droppedFontPath;
+        private Bitmap basePreviewBitmap;
 
         private void EnableDragDropForControls(Control parent)
         {
@@ -445,6 +446,236 @@ namespace TTG_Tools
                     dataGridViewWithTextures[3, i].Value = font.NewTex[i].Tex.TexSize;
                 }
             }
+
+            if (dataGridViewWithTextures.RowCount > 0)
+            {
+                dataGridViewWithTextures.Rows[0].Selected = true;
+            }
+
+            UpdateTexturePreview();
+        }
+
+        private void UpdateTexturePreview()
+        {
+            if (font == null)
+            {
+                SetPreviewImage(null);
+                return;
+            }
+
+            int texIndex = GetSelectedTextureIndex();
+            if (texIndex < 0)
+            {
+                SetPreviewImage(null);
+                return;
+            }
+
+            int texWidth = 0;
+            int texHeight = 0;
+
+            if (!font.NewFormat && font.tex != null && texIndex < font.tex.Length)
+            {
+                texWidth = font.tex[texIndex].Width;
+                texHeight = font.tex[texIndex].Height;
+                Bitmap preview = BuildBitmapPreview(font.tex[texIndex].Content, font.tex[texIndex].TextureFormat, texWidth, texHeight);
+                if (basePreviewBitmap != null) basePreviewBitmap.Dispose();
+                basePreviewBitmap = preview;
+            }
+            else if (font.NewFormat && font.NewTex != null && texIndex < font.NewTex.Length)
+            {
+                texWidth = font.NewTex[texIndex].Width;
+                texHeight = font.NewTex[texIndex].Height;
+                Bitmap preview = BuildBitmapPreview(font.NewTex[texIndex].Tex.Content, font.NewTex[texIndex].TextureFormat, texWidth, texHeight);
+                if (basePreviewBitmap != null) basePreviewBitmap.Dispose();
+                basePreviewBitmap = preview;
+            }
+
+            if (basePreviewBitmap == null && texWidth > 0 && texHeight > 0)
+            {
+                if (basePreviewBitmap != null) basePreviewBitmap.Dispose();
+                basePreviewBitmap = CreateFallbackPreview(texWidth, texHeight);
+            }
+
+            if (basePreviewBitmap == null)
+            {
+                SetPreviewImage(null);
+                return;
+            }
+
+            Bitmap rendered = (Bitmap)basePreviewBitmap.Clone();
+            DrawSelectedCharacterBounds(rendered, texIndex);
+            SetPreviewImage(rendered);
+        }
+
+        private void SetPreviewImage(Image image)
+        {
+            if (pictureBoxTexturePreview.Image != null)
+            {
+                var oldImage = pictureBoxTexturePreview.Image;
+                pictureBoxTexturePreview.Image = null;
+                oldImage.Dispose();
+            }
+
+            pictureBoxTexturePreview.Image = image;
+        }
+
+        private int GetSelectedTextureIndex()
+        {
+            if (dataGridViewWithTextures.SelectedCells.Count == 0)
+            {
+                return -1;
+            }
+
+            int rowIndex = dataGridViewWithTextures.SelectedCells[0].RowIndex;
+            if (rowIndex < 0 || rowIndex >= dataGridViewWithTextures.RowCount)
+            {
+                return -1;
+            }
+
+            return rowIndex;
+        }
+
+        private void DrawSelectedCharacterBounds(Bitmap bitmap, int selectedTexture)
+        {
+            if (dataGridViewWithCoord.SelectedCells.Count == 0)
+            {
+                return;
+            }
+
+            int rowIndex = dataGridViewWithCoord.SelectedCells[0].RowIndex;
+            if (rowIndex < 0 || rowIndex >= dataGridViewWithCoord.RowCount)
+            {
+                return;
+            }
+
+            int texNum;
+            float xStart;
+            float xEnd;
+            float yStart;
+            float yEnd;
+
+            if (!TryGetGlyphRectFromRow(rowIndex, out xStart, out xEnd, out yStart, out yEnd, out texNum) || texNum != selectedTexture)
+            {
+                return;
+            }
+
+            int left = Math.Max(0, Math.Min(bitmap.Width - 1, (int)Math.Round(xStart)));
+            int top = Math.Max(0, Math.Min(bitmap.Height - 1, (int)Math.Round(yStart)));
+            int right = Math.Max(left + 1, Math.Min(bitmap.Width, (int)Math.Round(xEnd)));
+            int bottom = Math.Max(top + 1, Math.Min(bitmap.Height, (int)Math.Round(yEnd)));
+
+            using (Graphics g = Graphics.FromImage(bitmap))
+            using (Pen pen = new Pen(Color.Red, 2f))
+            {
+                g.DrawRectangle(pen, left, top, Math.Max(1, right - left), Math.Max(1, bottom - top));
+            }
+        }
+
+        private bool TryGetGlyphRectFromRow(int rowIndex, out float xStart, out float xEnd, out float yStart, out float yEnd, out int texNum)
+        {
+            xStart = xEnd = yStart = yEnd = 0;
+            texNum = -1;
+
+            if (rowIndex < 0 || rowIndex >= dataGridViewWithCoord.RowCount)
+            {
+                return false;
+            }
+
+            if (!float.TryParse(Convert.ToString(dataGridViewWithCoord[2, rowIndex].Value), out xStart)) return false;
+            if (!float.TryParse(Convert.ToString(dataGridViewWithCoord[3, rowIndex].Value), out xEnd)) return false;
+            if (!float.TryParse(Convert.ToString(dataGridViewWithCoord[4, rowIndex].Value), out yStart)) return false;
+            if (!float.TryParse(Convert.ToString(dataGridViewWithCoord[5, rowIndex].Value), out yEnd)) return false;
+            if (!int.TryParse(Convert.ToString(dataGridViewWithCoord[6, rowIndex].Value), out texNum)) return false;
+
+            return true;
+        }
+
+        private Bitmap CreateFallbackPreview(int width, int height)
+        {
+            Bitmap bmp = new Bitmap(Math.Max(1, width), Math.Max(1, height));
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.DimGray);
+            }
+
+            return bmp;
+        }
+
+        private Bitmap BuildBitmapPreview(byte[] texContent, uint texFormat, int width, int height)
+        {
+            if (texContent == null || texContent.Length == 0 || width <= 0 || height <= 0)
+            {
+                return null;
+            }
+
+            if (texContent.Length >= 4 && Encoding.ASCII.GetString(texContent, 0, 4) == "DDS ")
+            {
+                try
+                {
+                    using (MemoryStream stream = new MemoryStream(texContent))
+                    {
+                        return new Bitmap(stream);
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            int dataOffset = texContent.Length > 128 ? 128 : 0;
+            byte[] pixels = new byte[width * height * 4];
+
+            if (texFormat == (uint)TextureClass.OldTextureFormat.DX_ARGB8888 || texFormat == (uint)TextureClass.NewTextureFormat.ARGB8)
+            {
+                int needed = width * height * 4;
+                if (texContent.Length - dataOffset < needed)
+                {
+                    return null;
+                }
+
+                for (int i = 0; i < needed; i += 4)
+                {
+                    int src = dataOffset + i;
+                    pixels[i] = texContent[src + 2];
+                    pixels[i + 1] = texContent[src + 1];
+                    pixels[i + 2] = texContent[src];
+                    pixels[i + 3] = texContent[src + 3];
+                }
+
+                return BuildBitmapFromRgbaBuffer(pixels, width, height);
+            }
+
+            if (texFormat == (uint)TextureClass.OldTextureFormat.DX_L8 || texFormat == (uint)TextureClass.NewTextureFormat.IL8 || texFormat == (uint)TextureClass.NewTextureFormat.A8)
+            {
+                int needed = width * height;
+                if (texContent.Length - dataOffset < needed)
+                {
+                    return null;
+                }
+
+                for (int i = 0; i < needed; i++)
+                {
+                    byte value = texContent[dataOffset + i];
+                    int dst = i * 4;
+                    pixels[dst] = value;
+                    pixels[dst + 1] = value;
+                    pixels[dst + 2] = value;
+                    pixels[dst + 3] = 255;
+                }
+
+                return BuildBitmapFromRgbaBuffer(pixels, width, height);
+            }
+
+            return null;
+        }
+
+        private Bitmap BuildBitmapFromRgbaBuffer(byte[] rgbaPixels, int width, int height)
+        {
+            Bitmap bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var data = bitmap.LockBits(new Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.WriteOnly, bitmap.PixelFormat);
+            Marshal.Copy(rgbaPixels, 0, data.Scan0, rgbaPixels.Length);
+            bitmap.UnlockBits(data);
+            return bitmap;
         }
 
         private string ConvertToString(byte[] mas)
@@ -994,6 +1225,7 @@ namespace TTG_Tools
 
                         fillTableofCoordinates(font, false);
                         fillTableofTextures(font);
+                        UpdateTexturePreview();
 
                         saveToolStripMenuItem.Enabled = true;
                         saveAsToolStripMenuItem.Enabled = true;
@@ -1438,6 +1670,8 @@ namespace TTG_Tools
                 // вызываем менюшку
                 contextMenuStripExport_Import.Show(dataGridViewWithTextures, pntCell);
             }
+
+            UpdateTexturePreview();
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1490,6 +1724,7 @@ namespace TTG_Tools
 
                 fillTableofTextures(font);
                 edited = true; //Отмечаем, что шрифт изменился
+                UpdateTexturePreview();
             }
         }
 
@@ -1530,6 +1765,12 @@ namespace TTG_Tools
                 else //А иначе просто закрываем программу и чистим списки
                 {
                 }
+            }
+
+            if (basePreviewBitmap != null)
+            {
+                basePreviewBitmap.Dispose();
+                basePreviewBitmap = null;
             }
         }
 
@@ -1610,6 +1851,7 @@ namespace TTG_Tools
                 edited = success;
             }
 
+            UpdateTexturePreview();
         }
         public static string old_data;
 
@@ -1636,6 +1878,18 @@ namespace TTG_Tools
                 // вызываем менюшку
                 contextMenuStripExp_imp_Coord.Show(dataGridViewWithCoord, pntCell);
             }
+
+            UpdateTexturePreview();
+        }
+
+        private void dataGridViewWithTextures_SelectionChanged(object sender, EventArgs e)
+        {
+            UpdateTexturePreview();
+        }
+
+        private void dataGridViewWithCoord_SelectionChanged(object sender, EventArgs e)
+        {
+            UpdateTexturePreview();
         }
 
         private void exportCoordinatesToolStripMenuItem_Click(object sender, EventArgs e)
