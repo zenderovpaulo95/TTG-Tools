@@ -1450,6 +1450,53 @@ namespace TTG_Tools.Graphics
             }
             // ====================================================================================
 
+            // ====================================================================================
+            // CORREÇÃO DE ALINHAMENTO PS VITA (NPOT swizzle padding)
+            // O Vita pode exigir mips maiores (padded) em memória swizzled para texturas NPOT.
+            // Se o header mantiver MipSize linear, a cauda padded é truncada na leitura seguinte.
+            // ====================================================================================
+            if (tex.platform.platform == 9 && !IsVitaPvrFormat(tex.TextureFormat))
+            {
+                int vitaW = tex.Width;
+                int vitaH = tex.Height;
+
+                tex.Tex.TexSize = 0;
+
+                for (int i = 0; i < tex.Tex.MipCount; i++)
+                {
+                    int swizzleWidth;
+                    int swizzleHeight;
+                    int bytesPerPixelSet;
+                    int formatBitsPerPixel;
+                    GetVitaSwizzleInfo(tex.TextureFormat, vitaW, vitaH, out swizzleWidth, out swizzleHeight, out bytesPerPixelSet, out formatBitsPerPixel);
+
+                    int paddedWidth = 1;
+                    while (paddedWidth < swizzleWidth)
+                    {
+                        paddedWidth <<= 1;
+                    }
+
+                    int paddedHeight = 1;
+                    while (paddedHeight < swizzleHeight)
+                    {
+                        paddedHeight <<= 1;
+                    }
+
+                    int paddedMipSize = (formatBitsPerPixel * paddedWidth * paddedHeight) / 8;
+
+                    if (paddedMipSize > tex.Tex.Textures[i].MipSize)
+                    {
+                        tex.Tex.Textures[i].MipSize = paddedMipSize;
+                    }
+
+                    tex.Tex.TexSize += (uint)tex.Tex.Textures[i].MipSize;
+
+                    if (vitaW > 1) vitaW /= 2;
+                    if (vitaH > 1) vitaH /= 2;
+                }
+            }
+            // ====================================================================================
+
             if (mode == 1 || mode == 2)
             {
                 bw.Write(tex.SomeValue);

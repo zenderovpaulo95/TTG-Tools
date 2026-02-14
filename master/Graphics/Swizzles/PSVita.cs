@@ -4,6 +4,34 @@ namespace TTG_Tools.Graphics.Swizzles
 {
     public static class PSVita
     {
+        private static int NextPowerOfTwo(int value)
+        {
+            if (value <= 1)
+            {
+                return 1;
+            }
+
+            int power = 1;
+            while (power < value)
+            {
+                power <<= 1;
+            }
+
+            return power;
+        }
+
+        private static int IntegerLog2(int value)
+        {
+            int log = 0;
+            while (value > 1)
+            {
+                value >>= 1;
+                log++;
+            }
+
+            return log;
+        }
+
         public static byte[] Swizzle(byte[] deswizzledData, int width, int height, int bytesPerPixelSet, int formatBitsPerPixel)
         {
             if (bytesPerPixelSet <= 0 || deswizzledData == null || deswizzledData.Length <= bytesPerPixelSet)
@@ -11,13 +39,18 @@ namespace TTG_Tools.Graphics.Swizzles
                 return deswizzledData;
             }
 
+            int paddedWidth = NextPowerOfTwo(width);
+            int paddedHeight = NextPowerOfTwo(height);
+
             int calculatedBufferSize = (formatBitsPerPixel * width * height) / 8;
-            byte[] swizzledData = new byte[Math.Max(calculatedBufferSize, bytesPerPixelSet)];
+            int paddedBufferSize = (formatBitsPerPixel * paddedWidth * paddedHeight) / 8;
+            byte[] swizzledData = new byte[Math.Max(Math.Max(calculatedBufferSize, paddedBufferSize), bytesPerPixelSet)];
 
-            int maxU = (int)Math.Log(width, 2);
-            int maxV = (int)Math.Log(height, 2);
+            int maxU = IntegerLog2(paddedWidth);
+            int maxV = IntegerLog2(paddedHeight);
+            int maxSwizzledTexels = Math.Min((swizzledData.Length / bytesPerPixelSet), paddedWidth * paddedHeight);
 
-            for (int j = 0; (j < width * height) && (j * bytesPerPixelSet < deswizzledData.Length); j++)
+            for (int j = 0; j < maxSwizzledTexels; j++)
             {
                 int u = 0;
                 int v = 0;
@@ -63,10 +96,13 @@ namespace TTG_Tools.Graphics.Swizzles
             int calculatedBufferSize = (formatBitsPerPixel * width * height) / 8;
             byte[] unswizzledData = new byte[Math.Max(calculatedBufferSize, bytesPerPixelSet)];
 
-            int maxU = (int)Math.Log(width, 2);
-            int maxV = (int)Math.Log(height, 2);
+            int paddedWidth = NextPowerOfTwo(width);
+            int paddedHeight = NextPowerOfTwo(height);
+            int maxU = IntegerLog2(paddedWidth);
+            int maxV = IntegerLog2(paddedHeight);
+            int maxSwizzledTexels = Math.Min((swizzledData.Length / bytesPerPixelSet), paddedWidth * paddedHeight);
 
-            for (int j = 0; (j < width * height) && (j * bytesPerPixelSet < swizzledData.Length); j++)
+            for (int j = 0; j < maxSwizzledTexels; j++)
             {
                 int u = 0;
                 int v = 0;
