@@ -39,18 +39,16 @@ namespace TTG_Tools.Graphics.Swizzles
                 return deswizzledData;
             }
 
+            int calculatedBufferSize = Math.Max((formatBitsPerPixel * width * height) / 8, bytesPerPixelSet);
+            byte[] swizzledData = new byte[calculatedBufferSize];
+
             int paddedWidth = NextPowerOfTwo(width);
             int paddedHeight = NextPowerOfTwo(height);
-
-            int calculatedBufferSize = (formatBitsPerPixel * width * height) / 8;
-            int paddedBufferSize = (formatBitsPerPixel * paddedWidth * paddedHeight) / 8;
-            byte[] swizzledData = new byte[Math.Max(Math.Max(calculatedBufferSize, paddedBufferSize), bytesPerPixelSet)];
-
             int maxU = IntegerLog2(paddedWidth);
             int maxV = IntegerLog2(paddedHeight);
-            int maxSwizzledTexels = Math.Min((swizzledData.Length / bytesPerPixelSet), paddedWidth * paddedHeight);
+            int swizzledIndex = 0;
 
-            for (int j = 0; j < maxSwizzledTexels; j++)
+            for (int j = 0; j < paddedWidth * paddedHeight; j++)
             {
                 int u = 0;
                 int v = 0;
@@ -71,15 +69,22 @@ namespace TTG_Tools.Graphics.Swizzles
                     }
                 }
 
-                if (u < width && v < height)
+                if (u >= width || v >= height)
                 {
-                    int srcPos = (v * width + u) * bytesPerPixelSet;
-                    int dstPos = j * bytesPerPixelSet;
+                    continue;
+                }
 
-                    if (srcPos + bytesPerPixelSet <= deswizzledData.Length && dstPos + bytesPerPixelSet <= swizzledData.Length)
-                    {
-                        Array.Copy(deswizzledData, srcPos, swizzledData, dstPos, bytesPerPixelSet);
-                    }
+                int srcPos = (v * width + u) * bytesPerPixelSet;
+                int dstPos = swizzledIndex * bytesPerPixelSet;
+
+                if (srcPos + bytesPerPixelSet <= deswizzledData.Length && dstPos + bytesPerPixelSet <= swizzledData.Length)
+                {
+                    Array.Copy(deswizzledData, srcPos, swizzledData, dstPos, bytesPerPixelSet);
+                    swizzledIndex++;
+                }
+                else
+                {
+                    break;
                 }
             }
 
@@ -93,16 +98,17 @@ namespace TTG_Tools.Graphics.Swizzles
                 return swizzledData;
             }
 
-            int calculatedBufferSize = (formatBitsPerPixel * width * height) / 8;
-            byte[] unswizzledData = new byte[Math.Max(calculatedBufferSize, bytesPerPixelSet)];
+            int calculatedBufferSize = Math.Max((formatBitsPerPixel * width * height) / 8, bytesPerPixelSet);
+            byte[] unswizzledData = new byte[calculatedBufferSize];
 
             int paddedWidth = NextPowerOfTwo(width);
             int paddedHeight = NextPowerOfTwo(height);
             int maxU = IntegerLog2(paddedWidth);
             int maxV = IntegerLog2(paddedHeight);
-            int maxSwizzledTexels = Math.Min((swizzledData.Length / bytesPerPixelSet), paddedWidth * paddedHeight);
+            int swizzledIndex = 0;
+            int maxSwizzledTexels = swizzledData.Length / bytesPerPixelSet;
 
-            for (int j = 0; j < maxSwizzledTexels; j++)
+            for (int j = 0; j < paddedWidth * paddedHeight && swizzledIndex < maxSwizzledTexels; j++)
             {
                 int u = 0;
                 int v = 0;
@@ -123,15 +129,22 @@ namespace TTG_Tools.Graphics.Swizzles
                     }
                 }
 
-                if (u < width && v < height)
+                if (u >= width || v >= height)
                 {
-                    int srcPos = j * bytesPerPixelSet;
-                    int dstPos = (v * width + u) * bytesPerPixelSet;
+                    continue;
+                }
 
-                    if (srcPos + bytesPerPixelSet <= swizzledData.Length && dstPos + bytesPerPixelSet <= unswizzledData.Length)
-                    {
-                        Array.Copy(swizzledData, srcPos, unswizzledData, dstPos, bytesPerPixelSet);
-                    }
+                int srcPos = swizzledIndex * bytesPerPixelSet;
+                int dstPos = (v * width + u) * bytesPerPixelSet;
+
+                if (srcPos + bytesPerPixelSet <= swizzledData.Length && dstPos + bytesPerPixelSet <= unswizzledData.Length)
+                {
+                    Array.Copy(swizzledData, srcPos, unswizzledData, dstPos, bytesPerPixelSet);
+                    swizzledIndex++;
+                }
+                else
+                {
+                    break;
                 }
             }
 

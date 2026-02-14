@@ -1451,50 +1451,9 @@ namespace TTG_Tools.Graphics
             // ====================================================================================
 
             // ====================================================================================
-            // CORREÇÃO DE ALINHAMENTO PS VITA (NPOT swizzle padding)
-            // O Vita pode exigir mips maiores (padded) em memória swizzled para texturas NPOT.
-            // Se o header mantiver MipSize linear, a cauda padded é truncada na leitura seguinte.
-            // ====================================================================================
-            if (tex.platform.platform == 9 && !IsVitaPvrFormat(tex.TextureFormat))
-            {
-                int vitaW = tex.Width;
-                int vitaH = tex.Height;
-
-                tex.Tex.TexSize = 0;
-
-                for (int i = 0; i < tex.Tex.MipCount; i++)
-                {
-                    int swizzleWidth;
-                    int swizzleHeight;
-                    int bytesPerPixelSet;
-                    int formatBitsPerPixel;
-                    GetVitaSwizzleInfo(tex.TextureFormat, vitaW, vitaH, out swizzleWidth, out swizzleHeight, out bytesPerPixelSet, out formatBitsPerPixel);
-
-                    int paddedWidth = 1;
-                    while (paddedWidth < swizzleWidth)
-                    {
-                        paddedWidth <<= 1;
-                    }
-
-                    int paddedHeight = 1;
-                    while (paddedHeight < swizzleHeight)
-                    {
-                        paddedHeight <<= 1;
-                    }
-
-                    int paddedMipSize = (formatBitsPerPixel * paddedWidth * paddedHeight) / 8;
-
-                    if (paddedMipSize > tex.Tex.Textures[i].MipSize)
-                    {
-                        tex.Tex.Textures[i].MipSize = paddedMipSize;
-                    }
-
-                    tex.Tex.TexSize += (uint)tex.Tex.Textures[i].MipSize;
-
-                    if (vitaW > 1) vitaW /= 2;
-                    if (vitaH > 1) vitaH /= 2;
-                }
-            }
+            // PS VITA: manter o MipSize original do arquivo.
+            // Alguns jogos (ex.: TWD S1 Vita) dependem dos offsets/mip sizes originais,
+            // então não expandimos o header para o tamanho padded do swizzle.
             // ====================================================================================
 
             if (mode == 1 || mode == 2)
@@ -1797,7 +1756,19 @@ namespace TTG_Tools.Graphics
 
                                 if (safeBppSet > 0)
                                 {
-                                    tex.Tex.Textures[i].Block = PSVita.Swizzle(tex.Tex.Textures[i].Block, swizzleWidth, swizzleHeight, safeBppSet, formatBitsPerPixel);
+                                    byte[] swizzledBlock = PSVita.Swizzle(tex.Tex.Textures[i].Block, swizzleWidth, swizzleHeight, safeBppSet, formatBitsPerPixel);
+                                    int originalMipSize = tex.Tex.Textures[i].MipSize;
+
+                                    if (swizzledBlock.Length != originalMipSize)
+                                    {
+                                        byte[] normalizedBlock = new byte[originalMipSize];
+                                        Array.Copy(swizzledBlock, 0, normalizedBlock, 0, Math.Min(swizzledBlock.Length, originalMipSize));
+                                        tex.Tex.Textures[i].Block = normalizedBlock;
+                                    }
+                                    else
+                                    {
+                                        tex.Tex.Textures[i].Block = swizzledBlock;
+                                    }
                                 }
 
                                 if (w > 1) w /= 2;

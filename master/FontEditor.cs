@@ -328,7 +328,19 @@ namespace TTG_Tools
 
                         if (safeBppSet > 0)
                         {
-                            NewTex.Tex.Textures[i].Block = PSVita.Swizzle(NewTex.Tex.Textures[i].Block, swizzleWidth, swizzleHeight, safeBppSet, bytesPerPixelSet * 8);
+                            byte[] swizzledBlock = PSVita.Swizzle(NewTex.Tex.Textures[i].Block, swizzleWidth, swizzleHeight, safeBppSet, bytesPerPixelSet * 8);
+                            int originalMipSize = NewTex.Tex.Textures[i].MipSize;
+
+                            if (swizzledBlock.Length != originalMipSize)
+                            {
+                                byte[] normalizedBlock = new byte[originalMipSize];
+                                Array.Copy(swizzledBlock, 0, normalizedBlock, 0, Math.Min(swizzledBlock.Length, originalMipSize));
+                                NewTex.Tex.Textures[i].Block = normalizedBlock;
+                            }
+                            else
+                            {
+                                NewTex.Tex.Textures[i].Block = swizzledBlock;
+                            }
                         }
                         break;
                 }
