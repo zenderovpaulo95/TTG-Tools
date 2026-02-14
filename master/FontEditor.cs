@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TTG_Tools.ClassesStructs;
-using TTG_Tools.Graphics.Swizzles;
 
 namespace TTG_Tools
 {
@@ -227,8 +226,6 @@ namespace TTG_Tools
 
             NewTex.Tex.TexSize = 0;
 
-            int blockSize = NewTex.TextureFormat == 0x40 || NewTex.TextureFormat == 0x43 ? 8 : 16;
-
             for (int i = 0; i < NewTex.Tex.MipCount; i++)
             {
                 NewTex.Tex.Textures[i].CurrentMip = i;
@@ -237,102 +234,6 @@ namespace TTG_Tools
                 NewTex.Tex.Textures[i].Block = new byte[NewTex.Tex.Textures[i].MipSize];
 
                 Array.Copy(NewTex.Tex.Content, pos, NewTex.Tex.Textures[i].Block, 0, NewTex.Tex.Textures[i].Block.Length);
-                switch (NewTex.platform.platform)
-                {
-                    case 11:
-                        if (NewTex.Tex.Textures[i].Block.Length < blockSize) blockSize = NewTex.Tex.Textures[i].Block.Length;
-                        NewTex.Tex.Textures[i].Block = PS4.Swizzle(NewTex.Tex.Textures[i].Block, w, h, blockSize);
-                        break;
-
-                    case 15:
-                        NewTex.Tex.Textures[i].Block = NintendoSwitch.NintendoSwizzle(NewTex.Tex.Textures[i].Block, w, h, (int)NewTex.TextureFormat, false);
-                        break;
-                    case 4:
-                        int texelBytePitch;
-                        int blockPixelSize;
-                        bool performByteSwap;
-
-                        if (NewTex.TextureFormat == 0x00) // ARGB 8.8.8.8
-                        {
-                            texelBytePitch = 4;
-                            blockPixelSize = 1;
-                            performByteSwap = false;
-                        }
-                        else if (NewTex.TextureFormat == 0x40 || NewTex.TextureFormat == 0x43) // DXT1, BC4
-                        {
-                            texelBytePitch = 8;
-                            blockPixelSize = 4;
-                            performByteSwap = true;
-                        }
-                        else // DXT3, DXT5, BC5
-                        {
-                            texelBytePitch = 16;
-                            blockPixelSize = 4;
-                            performByteSwap = true;
-                        }
-
-                        if (NewTex.TextureFormat == 0x00)
-                        {
-                            NewTex.Tex.Textures[i].Block = Xbox360.ConvertBGRAtoARGB(NewTex.Tex.Textures[i].Block);
-                        }
-
-                        byte[] swizzledBlock = Xbox360.Swizzle(NewTex.Tex.Textures[i].Block, w, h, texelBytePitch, blockPixelSize, performByteSwap);
-
-                        if (swizzledBlock.Length > NewTex.Tex.Textures[i].MipSize)
-                        {
-                            byte[] truncatedBlock = new byte[NewTex.Tex.Textures[i].MipSize];
-                            Array.Copy(swizzledBlock, 0, truncatedBlock, 0, NewTex.Tex.Textures[i].MipSize);
-                            NewTex.Tex.Textures[i].Block = truncatedBlock;
-                        }
-                        else
-                        {
-                            NewTex.Tex.Textures[i].Block = swizzledBlock;
-                        }
-                        break;
-                    case 9:
-                        bool blockCompressed = NewTex.TextureFormat >= 0x40 && NewTex.TextureFormat <= 0x46;
-                        int swizzleWidth = blockCompressed ? Math.Max(1, (w + 3) / 4) : w;
-                        int swizzleHeight = blockCompressed ? Math.Max(1, (h + 3) / 4) : h;
-
-                        int bytesPerPixelSet;
-                        switch (NewTex.TextureFormat)
-                        {
-                            case 0x04:
-                                bytesPerPixelSet = 2;
-                                break;
-                            case 0x10:
-                            case 0x11:
-                                bytesPerPixelSet = 1;
-                                break;
-                            case 0x40:
-                            case 0x43:
-                                bytesPerPixelSet = 8;
-                                break;
-                            case 0x41:
-                            case 0x42:
-                            case 0x44:
-                            case 0x45:
-                            case 0x46:
-                                bytesPerPixelSet = 16;
-                                break;
-                            default:
-                                bytesPerPixelSet = 4;
-                                break;
-                        }
-
-                        int safeBppSet = bytesPerPixelSet;
-                        if (NewTex.Tex.Textures[i].Block.Length > 0 && safeBppSet > NewTex.Tex.Textures[i].Block.Length)
-                        {
-                            safeBppSet = NewTex.Tex.Textures[i].Block.Length;
-                        }
-
-                        if (safeBppSet > 0)
-                        {
-                            NewTex.Tex.Textures[i].Block = PSVita.Swizzle(NewTex.Tex.Textures[i].Block, swizzleWidth, swizzleHeight, safeBppSet, bytesPerPixelSet * 8);
-                        }
-                        break;
-                }
-
 
                 pos += NewTex.Tex.Textures[i].MipSize;
                 NewTex.Tex.TexSize += (uint)NewTex.Tex.Textures[i].MipSize;
