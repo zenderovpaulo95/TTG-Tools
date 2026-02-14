@@ -92,6 +92,8 @@
             this.rbXbox360Swizzle = new System.Windows.Forms.RadioButton();
             this.rbPSVitaSwizzle = new System.Windows.Forms.RadioButton();
             this.rbNoSwizzle = new System.Windows.Forms.RadioButton();
+            this.pictureBoxTexturePreview = new System.Windows.Forms.PictureBox();
+            this.labelTexturePreview = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewWithTextures)).BeginInit();
@@ -101,6 +103,7 @@
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTexturePreview)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -115,7 +118,7 @@
             this.groupBox1.Controls.Add(this.checkBox2);
             this.groupBox1.Controls.Add(this.textBox9);
             this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Location = new System.Drawing.Point(343, 27);
+            this.groupBox1.Location = new System.Drawing.Point(411, 27);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -238,7 +241,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1011, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1412, 24);
             this.menuStrip1.TabIndex = 24;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -305,15 +308,16 @@
             this.Width,
             this.Size});
             this.dataGridViewWithTextures.ContextMenuStrip = this.contextMenuStripExport_Import;
-            this.dataGridViewWithTextures.Location = new System.Drawing.Point(12, 27);
+            this.dataGridViewWithTextures.Location = new System.Drawing.Point(13, 27);
             this.dataGridViewWithTextures.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridViewWithTextures.Name = "dataGridViewWithTextures";
             this.dataGridViewWithTextures.ReadOnly = true;
             this.dataGridViewWithTextures.RowHeadersWidth = 51;
-            this.dataGridViewWithTextures.Size = new System.Drawing.Size(325, 150);
+            this.dataGridViewWithTextures.Size = new System.Drawing.Size(390, 150);
             this.dataGridViewWithTextures.TabIndex = 26;
             this.dataGridViewWithTextures.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewWithTextures_CellMouseClick);
             this.dataGridViewWithTextures.RowContextMenuStripNeeded += new System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler(this.dataGridViewWithTextures_RowContextMenuStripNeeded);
+            this.dataGridViewWithTextures.SelectionChanged += new System.EventHandler(this.dataGridViewWithTextures_SelectionChanged);
             // 
             // N
             // 
@@ -424,11 +428,12 @@
             this.dataGridViewWithCoord.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridViewWithCoord.Name = "dataGridViewWithCoord";
             this.dataGridViewWithCoord.RowHeadersWidth = 51;
-            this.dataGridViewWithCoord.Size = new System.Drawing.Size(986, 324);
+            this.dataGridViewWithCoord.Size = new System.Drawing.Size(1155, 324);
             this.dataGridViewWithCoord.TabIndex = 27;
             this.dataGridViewWithCoord.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridViewWithCoord_CellBeginEdit);
             this.dataGridViewWithCoord.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewWithCoord_CellEndEdit);
             this.dataGridViewWithCoord.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewWithCoord_CellMouseClick);
+            this.dataGridViewWithCoord.SelectionChanged += new System.EventHandler(this.dataGridViewWithCoord_SelectionChanged);
             // 
             // Column1
             // 
@@ -560,7 +565,7 @@
             // 
             this.groupBox2.Controls.Add(this.rbNoKerning);
             this.groupBox2.Controls.Add(this.rbKerning);
-            this.groupBox2.Location = new System.Drawing.Point(710, 28);
+            this.groupBox2.Location = new System.Drawing.Point(827, 28);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -600,7 +605,7 @@
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.textBox1);
             this.groupBox3.Controls.Add(this.button1);
-            this.groupBox3.Location = new System.Drawing.Point(536, 28);
+            this.groupBox3.Location = new System.Drawing.Point(632, 28);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -670,7 +675,7 @@
             this.groupBox4.Controls.Add(this.rbXbox360Swizzle);
             this.groupBox4.Controls.Add(this.rbPSVitaSwizzle);
             this.groupBox4.Controls.Add(this.rbNoSwizzle);
-            this.groupBox4.Location = new System.Drawing.Point(864, 28);
+            this.groupBox4.Location = new System.Drawing.Point(1005, 28);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(122, 149);
             this.groupBox4.TabIndex = 30;
@@ -737,13 +742,35 @@
             this.rbNoSwizzle.UseVisualStyleBackColor = true;
             this.rbNoSwizzle.CheckedChanged += new System.EventHandler(this.rbNoSwizzle_CheckedChanged);
             // 
+            // pictureBoxTexturePreview
+            // 
+            this.pictureBoxTexturePreview.BackColor = System.Drawing.Color.Black;
+            this.pictureBoxTexturePreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxTexturePreview.Location = new System.Drawing.Point(1164, 183);
+            this.pictureBoxTexturePreview.Name = "pictureBoxTexturePreview";
+            this.pictureBoxTexturePreview.Size = new System.Drawing.Size(248, 324);
+            this.pictureBoxTexturePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxTexturePreview.TabIndex = 31;
+            this.pictureBoxTexturePreview.TabStop = false;
+            // 
+            // labelTexturePreview
+            // 
+            this.labelTexturePreview.AutoSize = true;
+            this.labelTexturePreview.Location = new System.Drawing.Point(1161, 164);
+            this.labelTexturePreview.Name = "labelTexturePreview";
+            this.labelTexturePreview.Size = new System.Drawing.Size(135, 13);
+            this.labelTexturePreview.TabIndex = 32;
+            this.labelTexturePreview.Text = "Texture preview (read-only)";
+            // 
             // FontEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1011, 519);
+            this.ClientSize = new System.Drawing.Size(1412, 519);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.labelTexturePreview);
+            this.Controls.Add(this.pictureBoxTexturePreview);
             this.Controls.Add(this.dataGridViewWithCoord);
             this.Controls.Add(this.dataGridViewWithTextures);
             this.Controls.Add(this.groupBox2);
@@ -772,6 +799,7 @@
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTexturePreview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -839,5 +867,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
+        private System.Windows.Forms.PictureBox pictureBoxTexturePreview;
+        private System.Windows.Forms.Label labelTexturePreview;
     }
 }
