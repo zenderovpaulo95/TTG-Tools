@@ -1418,12 +1418,12 @@ namespace TTG_Tools
                                 {
                                     tmp = new byte[4];
                                     Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-                                    font.glyph.chars[i].CharWidth = (float)Math.Round(BitConverter.ToSingle(tmp, 0));
+                                    font.glyph.chars[i].CharWidth = BitConverter.ToSingle(tmp, 0);
                                     poz += 4;
 
                                     tmp = new byte[4];
                                     Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-                                    font.glyph.chars[i].CharHeight = (float)Math.Round(BitConverter.ToSingle(tmp, 0));
+                                    font.glyph.chars[i].CharHeight = BitConverter.ToSingle(tmp, 0);
                                     poz += 4;
                                 }
                             }
@@ -1474,27 +1474,27 @@ namespace TTG_Tools
 
                                 tmp = new byte[4];
                                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-                                font.glyph.charsNew[i].CharWidth = (float)Math.Round(BitConverter.ToSingle(tmp, 0));
+                                font.glyph.charsNew[i].CharWidth = BitConverter.ToSingle(tmp, 0);
                                 poz += 4;
 
                                 tmp = new byte[4];
                                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-                                font.glyph.charsNew[i].CharHeight = (float)Math.Round(BitConverter.ToSingle(tmp, 0));
+                                font.glyph.charsNew[i].CharHeight = BitConverter.ToSingle(tmp, 0);
                                 poz += 4;
 
                                 tmp = new byte[4];
                                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-                                font.glyph.charsNew[i].XOffset = (float)Math.Round(BitConverter.ToSingle(tmp, 0));
+                                font.glyph.charsNew[i].XOffset = BitConverter.ToSingle(tmp, 0);
                                 poz += 4;
 
                                 tmp = new byte[4];
                                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-                                font.glyph.charsNew[i].YOffset = (float)Math.Round(BitConverter.ToSingle(tmp, 0));
+                                font.glyph.charsNew[i].YOffset = BitConverter.ToSingle(tmp, 0);
                                 poz += 4;
 
                                 tmp = new byte[4];
                                 Array.Copy(binContent, poz, tmp, 0, tmp.Length);
-                                font.glyph.charsNew[i].XAdvance = (float)Math.Round(BitConverter.ToSingle(tmp, 0));
+                                font.glyph.charsNew[i].XAdvance = BitConverter.ToSingle(tmp, 0);
                                 poz += 4;
                             }
                         }
@@ -1530,14 +1530,14 @@ namespace TTG_Tools
                             for (int k = 0; k < font.glyph.CharCount; k++)
                             {
                                 font.glyph.chars[k].XStart *= font.tex[font.glyph.chars[k].TexNum].Width;
-                                font.glyph.chars[k].XStart = (float)Math.Round(font.glyph.chars[k].XStart);
+                                
                                 font.glyph.chars[k].XEnd *= font.tex[font.glyph.chars[k].TexNum].Width;
-                                font.glyph.chars[k].XEnd = (float)Math.Round(font.glyph.chars[k].XEnd);
+                                
 
                                 font.glyph.chars[k].YStart *= font.tex[font.glyph.chars[k].TexNum].Height;
-                                font.glyph.chars[k].YStart = (float)Math.Round(font.glyph.chars[k].YStart);
+                                
                                 font.glyph.chars[k].YEnd *= font.tex[font.glyph.chars[k].TexNum].Height;
-                                font.glyph.chars[k].YEnd = (float)Math.Round(font.glyph.chars[k].YEnd);
+                                
                             }
                         }
                         else
@@ -1574,14 +1574,14 @@ namespace TTG_Tools
                             for (int k = 0; k < font.glyph.CharCount; k++)
                             {
                                 font.glyph.charsNew[k].XStart *= font.NewTex[font.glyph.charsNew[k].TexNum].Width;
-                                font.glyph.charsNew[k].XStart = (float)Math.Round(font.glyph.charsNew[k].XStart);
+                                
                                 font.glyph.charsNew[k].XEnd *= font.NewTex[font.glyph.charsNew[k].TexNum].Width;
-                                font.glyph.charsNew[k].XEnd = (float)Math.Round(font.glyph.charsNew[k].XEnd);
+                                
 
                                 font.glyph.charsNew[k].YStart *= font.NewTex[font.glyph.charsNew[k].TexNum].Height;
-                                font.glyph.charsNew[k].YStart = (float)Math.Round(font.glyph.charsNew[k].YStart);
+                                
                                 font.glyph.charsNew[k].YEnd *= font.NewTex[font.glyph.charsNew[k].TexNum].Height;
-                                font.glyph.charsNew[k].YEnd = (float)Math.Round(font.glyph.charsNew[k].YEnd);
+                                
                             }
                         }
 
