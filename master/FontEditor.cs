@@ -2078,19 +2078,19 @@ namespace TTG_Tools
 
                                             if (isUnicodeFnt)
                                             {
-                                                if(tmpChar == 126)
+                                                byte[] tmpCharBytes = BitConverter.GetBytes(tmpChar);
+                                                byte[] converted = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmpCharBytes);
+                                                if (converted.Length > 0)
                                                 {
-                                                    int puase = 1;
+                                                    tmpChar = converted[0];
                                                 }
-                                                byte[] tmp_ch = BitConverter.GetBytes(Convert.ToUInt32(splitted[k + 1]));
-                                                tmp_ch = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding(MainMenu.settings.ASCII_N), tmp_ch);
-                                                tmpChar = BitConverter.ToUInt16(tmp_ch, 0);
                                             }
                                         }
 
-                                        for(int t = 0; t < font.glyph.CharCount; t++)
+                                        ch = -1;
+                                        for (int t = 0; t < font.glyph.CharCount; t++)
                                         {
-                                            if(Convert.ToUInt32(dataGridViewWithCoord[0, t].Value) == tmpChar)
+                                            if (Convert.ToUInt32(dataGridViewWithCoord[0, t].Value) == tmpChar)
                                             {
                                                 ch = t;
                                                 break;
@@ -2100,39 +2100,45 @@ namespace TTG_Tools
                                         break;
 
                                     case "x":
-                                        font.glyph.chars[ch].XStart = Convert.ToSingle(splitted[k + 1]);
+                                        if (ch >= 0) font.glyph.chars[ch].XStart = Convert.ToSingle(splitted[k + 1]);
                                         break;
 
                                     case "y":
-                                        font.glyph.chars[ch].YStart = Convert.ToSingle(splitted[k + 1]);
+                                        if (ch >= 0) font.glyph.chars[ch].YStart = Convert.ToSingle(splitted[k + 1]);
                                         break;
 
                                     case "width":
-                                        if (font.hasScaleValue)
+                                        if (ch >= 0)
                                         {
-                                            font.glyph.chars[ch].CharWidth = Convert.ToSingle(splitted[k + 1]);
-                                            font.glyph.chars[ch].XEnd = font.glyph.chars[ch].XStart + font.glyph.chars[ch].CharWidth;
-                                        }
-                                        else
-                                        {
-                                            font.glyph.chars[ch].XEnd = font.glyph.chars[ch].XStart + Convert.ToSingle(splitted[k + 1]);
+                                            if (font.hasScaleValue)
+                                            {
+                                                font.glyph.chars[ch].CharWidth = Convert.ToSingle(splitted[k + 1]);
+                                                font.glyph.chars[ch].XEnd = font.glyph.chars[ch].XStart + font.glyph.chars[ch].CharWidth;
+                                            }
+                                            else
+                                            {
+                                                font.glyph.chars[ch].XEnd = font.glyph.chars[ch].XStart + Convert.ToSingle(splitted[k + 1]);
+                                            }
                                         }
                                         break;
 
                                     case "height":
-                                        if (font.hasScaleValue)
+                                        if (ch >= 0)
                                         {
-                                            font.glyph.chars[ch].CharHeight = Convert.ToSingle(splitted[k + 1]);
-                                            font.glyph.chars[ch].YEnd = font.glyph.chars[ch].YStart + font.glyph.chars[ch].CharHeight;
-                                        }
-                                        else
-                                        {
-                                            font.glyph.chars[ch].YEnd = font.glyph.chars[ch].YStart + Convert.ToSingle(splitted[k + 1]);
+                                            if (font.hasScaleValue)
+                                            {
+                                                font.glyph.chars[ch].CharHeight = Convert.ToSingle(splitted[k + 1]);
+                                                font.glyph.chars[ch].YEnd = font.glyph.chars[ch].YStart + font.glyph.chars[ch].CharHeight;
+                                            }
+                                            else
+                                            {
+                                                font.glyph.chars[ch].YEnd = font.glyph.chars[ch].YStart + Convert.ToSingle(splitted[k + 1]);
+                                            }
                                         }
                                         break;
 
                                     case "page":
-                                        font.glyph.chars[ch].TexNum = Convert.ToInt32(splitted[k + 1]);
+                                        if (ch >= 0) font.glyph.chars[ch].TexNum = Convert.ToInt32(splitted[k + 1]);
                                         break;
                                 }
                             }
